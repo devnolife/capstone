@@ -49,26 +49,26 @@ enum ReviewStatus {
 // ==================== MODELS ====================
 
 model User {
-  id             String    @id @default(cuid())
-  email          String    @unique
+  id             String   @id @default(cuid())
+  email          String   @unique
   name           String
-  password       String?   // Nullable for OAuth users
-  role           Role      @default(MAHASISWA)
-  nim            String?   // Nomor Induk Mahasiswa
-  nip            String?   // Nomor Induk Pegawai (Dosen)
+  password       String? // Nullable for OAuth users
+  role           Role     @default(MAHASISWA)
+  nim            String? // Nomor Induk Mahasiswa
+  nip            String? // Nomor Induk Pegawai (Dosen)
   avatarUrl      String?
-  githubId       String?   @unique
+  githubId       String?  @unique
   githubUsername String?
-  githubToken    String?   // Encrypted GitHub access token
-  isActive       Boolean   @default(true)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  githubToken    String? // Encrypted GitHub access token
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Relations
-  projects          Project[]           @relation("ProjectOwner")
-  reviews           Review[]            @relation("Reviewer")
-  notifications     Notification[]
-  assignedProjects  ProjectAssignment[]
+  projects         Project[]           @relation("ProjectOwner")
+  reviews          Review[]            @relation("Reviewer")
+  notifications    Notification[]
+  assignedProjects ProjectAssignment[]
 
   @@map("users")
 }
@@ -80,9 +80,9 @@ model Project {
   status         ProjectStatus @default(DRAFT)
   githubRepoUrl  String?
   githubRepoName String?
-  semester       String        // e.g., "Ganjil 2024/2025"
-  tahunAkademik  String        // e.g., "2024/2025"
-  submittedAt    DateTime?     // When project was submitted for review
+  semester       String // e.g., "Ganjil 2024/2025"
+  tahunAkademik  String // e.g., "2024/2025"
+  submittedAt    DateTime? // When project was submitted for review
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
@@ -116,7 +116,7 @@ model Document {
   type       DocumentType
   fileName   String
   filePath   String
-  fileSize   Int          // in bytes
+  fileSize   Int // in bytes
   mimeType   String
   uploadedAt DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -132,7 +132,7 @@ model Review {
   projectId      String
   reviewerId     String
   status         ReviewStatus @default(PENDING)
-  overallScore   Int?         // 0-100
+  overallScore   Int? // 0-100
   overallComment String?      @db.Text
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
@@ -152,8 +152,8 @@ model ReviewComment {
   id         String   @id @default(cuid())
   reviewId   String
   content    String   @db.Text
-  filePath   String?  // For inline code review (e.g., "src/app/page.tsx")
-  lineNumber Int?     // For inline code review
+  filePath   String? // For inline code review (e.g., "src/app/page.tsx")
+  lineNumber Int? // For inline code review
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -167,8 +167,8 @@ model RubrikPenilaian {
   id          String   @id @default(cuid())
   name        String
   description String?  @db.Text
-  kategori    String   // e.g., "Kualitas Kode", "Dokumentasi", "Presentasi"
-  bobotMax    Int      // Max score for this category (e.g., 20)
+  kategori    String // e.g., "Kualitas Kode", "Dokumentasi", "Presentasi"
+  bobotMax    Int // Max score for this category (e.g., 20)
   urutan      Int      @default(0) // Order of display
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -184,7 +184,7 @@ model ReviewScore {
   id        String   @id @default(cuid())
   reviewId  String
   rubrikId  String
-  score     Int      // Actual score given
+  score     Int // Actual score given
   feedback  String?  @db.Text
   createdAt DateTime @default(now())
 
@@ -202,8 +202,8 @@ model Notification {
   title     String
   message   String   @db.Text
   isRead    Boolean  @default(false)
-  type      String   // e.g., "review", "submission", "assignment", "system"
-  link      String?  // URL to navigate when clicked
+  type      String // e.g., "review", "submission", "assignment", "system"
+  link      String? // URL to navigate when clicked
   createdAt DateTime @default(now())
 
   // Relations
@@ -216,14 +216,14 @@ model Notification {
 // ==================== SEMESTER CONFIGURATION ====================
 
 model Semester {
-  id          String   @id @default(cuid())
-  name        String   // e.g., "Ganjil 2024/2025"
+  id            String   @id @default(cuid())
+  name          String // e.g., "Ganjil 2024/2025"
   tahunAkademik String // e.g., "2024/2025"
-  startDate   DateTime
-  endDate     DateTime
-  isActive    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  startDate     DateTime
+  endDate       DateTime
+  isActive      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("semesters")
 }
