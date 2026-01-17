@@ -26,8 +26,7 @@ export async function GET(
               select: {
                 id: true,
                 name: true,
-                email: true,
-                nim: true,
+                username: true,
               },
             },
           },
@@ -36,7 +35,7 @@ export async function GET(
           select: {
             id: true,
             name: true,
-            email: true,
+            username: true,
           },
         },
         comments: true,

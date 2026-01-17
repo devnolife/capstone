@@ -21,16 +21,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, email, password, role, nim, nip } = body;
+    const { name, username, password, role } = body;
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { username },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Email sudah terdaftar' },
+        { error: 'Username sudah terdaftar' },
         { status: 400 },
       );
     }
@@ -42,11 +42,9 @@ export async function POST(request: Request) {
     const user = await prisma.user.create({
       data: {
         name,
-        email,
+        username,
         password: hashedPassword,
         role: role as Role,
-        nim: role === 'MAHASISWA' ? nim : null,
-        nip: role === 'DOSEN_PENGUJI' ? nip : null,
       },
     });
 
@@ -56,7 +54,7 @@ export async function POST(request: Request) {
         user: {
           id: user.id,
           name: user.name,
-          email: user.email,
+          username: user.username,
           role: user.role,
         },
       },

@@ -28,10 +28,8 @@ export async function GET(
       select: {
         id: true,
         name: true,
-        email: true,
+        username: true,
         role: true,
-        nim: true,
-        nip: true,
         avatarUrl: true,
         githubUsername: true,
         isActive: true,
@@ -86,20 +84,20 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, email, password, role, nim, nip, isActive } = body;
+    const { name, username, password, role, isActive } = body;
 
-    // Check if email is taken by another user
-    if (email) {
+    // Check if username is taken by another user
+    if (username) {
       const existingUser = await prisma.user.findFirst({
         where: {
-          email,
+          username,
           NOT: { id },
         },
       });
 
       if (existingUser) {
         return NextResponse.json(
-          { error: 'Email sudah digunakan' },
+          { error: 'Username sudah digunakan' },
           { status: 400 },
         );
       }
@@ -108,21 +106,13 @@ export async function PUT(
     const updateData: Record<string, unknown> = {};
 
     if (name) updateData.name = name;
-    if (email) updateData.email = email;
+    if (username) updateData.username = username;
     if (password) updateData.password = await bcrypt.hash(password, 12);
 
     // Only admin can change role and active status
     if (isAdmin) {
       if (role) updateData.role = role as Role;
       if (isActive !== undefined) updateData.isActive = isActive;
-
-      if (role === 'MAHASISWA' && nim) {
-        updateData.nim = nim;
-        updateData.nip = null;
-      } else if (role === 'DOSEN_PENGUJI' && nip) {
-        updateData.nip = nip;
-        updateData.nim = null;
-      }
     }
 
     const user = await prisma.user.update({
@@ -131,10 +121,8 @@ export async function PUT(
       select: {
         id: true,
         name: true,
-        email: true,
+        username: true,
         role: true,
-        nim: true,
-        nip: true,
         isActive: true,
         updatedAt: true,
       },
