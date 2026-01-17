@@ -77,6 +77,7 @@ export async function GET(request: Request) {
             select: {
               documents: true,
               reviews: true,
+              assignments: true,
             },
           },
         },

@@ -1,24 +1,49 @@
-import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-  const userRole = req.auth?.user?.role;
+export async function middleware(request: NextRequest) {
+  const { nextUrl } = request;
 
-  // Public routes
-  const publicRoutes = ['/', '/login', '/register'];
+  // Get token from NextAuth
+  const token = await getToken({
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+
+  const isLoggedIn = !!token;
+  const userRole = token?.role as string | undefined;
+
+  // Public routes (registration disabled)
+  const publicRoutes = ['/', '/login'];
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
 
-  // Auth routes
-  const authRoutes = ['/login', '/register'];
+  // Auth routes (only login, registration disabled)
+  const authRoutes = ['/login'];
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  // Dashboard routes
-  const isDashboardRoute = nextUrl.pathname.startsWith('/dashboard');
-  const isMahasiswaRoute = nextUrl.pathname.startsWith('/dashboard/mahasiswa');
-  const isDosenRoute = nextUrl.pathname.startsWith('/dashboard/dosen');
-  const isAdminRoute = nextUrl.pathname.startsWith('/dashboard/admin');
+  // Redirect /register to /login (registration disabled)
+  if (nextUrl.pathname === '/register') {
+    return NextResponse.redirect(new URL('/login', nextUrl));
+  }
+
+  // Legacy dashboard route - redirect to role-based dashboard
+  if (nextUrl.pathname === '/dashboard' || nextUrl.pathname.startsWith('/dashboard/')) {
+    if (isLoggedIn) {
+      const redirectUrl = getDashboardUrl(userRole);
+      return NextResponse.redirect(new URL(redirectUrl, nextUrl));
+    } else {
+      return NextResponse.redirect(new URL('/login', nextUrl));
+    }
+  }
+
+  // Role-based routes (NEW STRUCTURE)
+  const isMahasiswaRoute = nextUrl.pathname.startsWith('/mahasiswa');
+  const isDosenRoute = nextUrl.pathname.startsWith('/dosen');
+  const isAdminRoute = nextUrl.pathname.startsWith('/admin');
+  
+  // Check if it's a protected route (any role-based route)
+  const isProtectedRoute = isMahasiswaRoute || isDosenRoute || isAdminRoute;
 
   // API routes
   const isApiRoute = nextUrl.pathname.startsWith('/api');
@@ -28,7 +53,7 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Redirect logged-in users from auth routes to dashboard
+  // Redirect logged-in users from auth routes to their dashboard
   if (isAuthRoute && isLoggedIn) {
     const redirectUrl = getDashboardUrl(userRole);
     return NextResponse.redirect(new URL(redirectUrl, nextUrl));
@@ -40,49 +65,41 @@ export default auth((req) => {
   }
 
   // Redirect unauthenticated users to login
-  if (!isLoggedIn && isDashboardRoute) {
+  if (!isLoggedIn && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', nextUrl));
   }
 
   // Role-based access control
-  if (isLoggedIn && isDashboardRoute) {
+  if (isLoggedIn && isProtectedRoute) {
     // Mahasiswa can only access mahasiswa routes
-    if (
-      userRole === 'MAHASISWA' &&
-      !isMahasiswaRoute &&
-      !nextUrl.pathname.startsWith('/dashboard/profile')
-    ) {
-      return NextResponse.redirect(new URL('/dashboard/mahasiswa', nextUrl));
+    if (userRole === 'MAHASISWA' && !isMahasiswaRoute) {
+      return NextResponse.redirect(new URL('/mahasiswa/dashboard', nextUrl));
     }
 
     // Dosen can only access dosen routes
-    if (
-      userRole === 'DOSEN_PENGUJI' &&
-      !isDosenRoute &&
-      !nextUrl.pathname.startsWith('/dashboard/profile')
-    ) {
-      return NextResponse.redirect(new URL('/dashboard/dosen', nextUrl));
+    if (userRole === 'DOSEN_PENGUJI' && !isDosenRoute) {
+      return NextResponse.redirect(new URL('/dosen/dashboard', nextUrl));
     }
 
-    // Admin can access all routes
+    // Admin can access all routes (admin, dosen, mahasiswa for viewing)
     if (userRole === 'ADMIN') {
       return NextResponse.next();
     }
   }
 
   return NextResponse.next();
-});
+}
 
 function getDashboardUrl(role?: string): string {
   switch (role) {
     case 'MAHASISWA':
-      return '/dashboard/mahasiswa';
+      return '/mahasiswa/dashboard';
     case 'DOSEN_PENGUJI':
-      return '/dashboard/dosen';
+      return '/dosen/dashboard';
     case 'ADMIN':
-      return '/dashboard/admin';
+      return '/admin/dashboard';
     default:
-      return '/dashboard';
+      return '/login';
   }
 }
 

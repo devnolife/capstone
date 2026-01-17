@@ -19,26 +19,37 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const repoUrl = searchParams.get('repoUrl');
+    const ownerParam = searchParams.get('owner');
+    const repoParam = searchParams.get('repo');
     const path = searchParams.get('path') || '';
+    const ref = searchParams.get('ref'); // branch/commit reference
     const action = searchParams.get('action') || 'list'; // list, content, tree, commits
+    const getContent = searchParams.get('content') === 'true'; // shortcut for content action
 
-    if (!repoUrl) {
+    let owner: string;
+    let repo: string;
+
+    // Support both repoUrl and owner/repo params
+    if (ownerParam && repoParam) {
+      owner = ownerParam;
+      repo = repoParam;
+    } else if (repoUrl) {
+      // Parse GitHub URL
+      const parsed = parseGitHubUrl(repoUrl);
+      if (!parsed) {
+        return NextResponse.json(
+          { error: 'URL GitHub tidak valid' },
+          { status: 400 },
+        );
+      }
+      owner = parsed.owner;
+      repo = parsed.repo;
+    } else {
       return NextResponse.json(
-        { error: 'Repository URL diperlukan' },
+        { error: 'Repository URL atau owner/repo diperlukan' },
         { status: 400 },
       );
     }
-
-    // Parse GitHub URL
-    const parsed = parseGitHubUrl(repoUrl);
-    if (!parsed) {
-      return NextResponse.json(
-        { error: 'URL GitHub tidak valid' },
-        { status: 400 },
-      );
-    }
-
-    const { owner, repo } = parsed;
 
     // Get user's GitHub token
     const user = await prisma.user.findUnique({
@@ -55,10 +66,40 @@ export async function GET(request: Request) {
 
     const github = createGitHubClient(user.githubToken);
 
+    // Handle shortcut for getting file content directly
+    if (getContent && path) {
+      if (isBinaryFile(path)) {
+        return NextResponse.json({
+          content: '[Binary file - cannot display]',
+          path,
+          isBinary: true,
+        });
+      }
+
+      const fileContent = await github.getFileContent(
+        owner,
+        repo,
+        path,
+        ref || undefined,
+      );
+      const language = getLanguageFromPath(path);
+
+      return NextResponse.json({
+        ...fileContent,
+        content: fileContent.content,
+        language,
+      });
+    }
+
     switch (action) {
       case 'list': {
         // Get files/folders at specific path
-        const contents = await github.getRepoContents(owner, repo, path);
+        const contents = await github.getRepoContents(
+          owner,
+          repo,
+          path,
+          ref || undefined,
+        );
 
         // Sort: directories first, then files
         contents.sort((a, b) => {
@@ -69,6 +110,7 @@ export async function GET(request: Request) {
 
         return NextResponse.json({
           path,
+          files: contents, // Also return as 'files' for compatibility
           contents,
         });
       }
@@ -76,13 +118,19 @@ export async function GET(request: Request) {
       case 'content': {
         // Get file content
         if (isBinaryFile(path)) {
-          return NextResponse.json(
-            { error: 'File binary tidak dapat ditampilkan' },
-            { status: 400 },
-          );
+          return NextResponse.json({
+            content: '[Binary file - cannot display]',
+            path,
+            isBinary: true,
+          });
         }
 
-        const fileContent = await github.getFileContent(owner, repo, path);
+        const fileContent = await github.getFileContent(
+          owner,
+          repo,
+          path,
+          ref || undefined,
+        );
         const language = getLanguageFromPath(path);
 
         return NextResponse.json({

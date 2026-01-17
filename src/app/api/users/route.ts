@@ -32,10 +32,8 @@ export async function GET(request: Request) {
       select: {
         id: true,
         name: true,
-        email: true,
+        username: true,
         role: true,
-        nim: true,
-        nip: true,
         avatarUrl: true,
         githubUsername: true,
         isActive: true,
@@ -71,23 +69,23 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, email, password, role, nim, nip, isActive } = body;
+    const { name, username, password, role, isActive } = body;
 
-    if (!name || !email || !password || !role) {
+    if (!name || !username || !password || !role) {
       return NextResponse.json(
-        { error: 'Nama, email, password, dan role diperlukan' },
+        { error: 'Nama, username (NIM/NIP), password, dan role diperlukan' },
         { status: 400 },
       );
     }
 
-    // Check if email exists
+    // Check if username exists
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { username },
     });
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Email sudah terdaftar' },
+        { error: 'Username (NIM/NIP) sudah terdaftar' },
         { status: 400 },
       );
     }
@@ -98,20 +96,16 @@ export async function POST(request: Request) {
     const user = await prisma.user.create({
       data: {
         name,
-        email,
+        username,
         password: hashedPassword,
         role: role as Role,
-        nim: role === 'MAHASISWA' ? nim : null,
-        nip: role === 'DOSEN_PENGUJI' ? nip : null,
         isActive: isActive !== false,
       },
       select: {
         id: true,
         name: true,
-        email: true,
+        username: true,
         role: true,
-        nim: true,
-        nip: true,
         isActive: true,
         createdAt: true,
       },

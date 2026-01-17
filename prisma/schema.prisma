@@ -50,12 +50,10 @@ enum ReviewStatus {
 
 model User {
   id             String    @id @default(cuid())
-  email          String    @unique
+  username       String    @unique  // NIM untuk mahasiswa, NIP untuk dosen, username untuk admin
   name           String
-  password       String?   // Nullable for OAuth users
+  password       String    // Required for all users
   role           Role      @default(MAHASISWA)
-  nim            String?   // Nomor Induk Mahasiswa
-  nip            String?   // Nomor Induk Pegawai (Dosen)
   avatarUrl      String?
   githubId       String?   @unique
   githubUsername String?

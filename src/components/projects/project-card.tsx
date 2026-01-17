@@ -11,11 +11,20 @@ import {
 } from '@heroui/react';
 import { FolderGit2, FileText, Github, ExternalLink } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
-import type { Project, Document, Review } from '@/generated/prisma';
 
-interface ProjectWithRelations extends Project {
-  documents?: Document[];
-  reviews?: Review[];
+interface ProjectWithRelations {
+  id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  githubRepoUrl: string | null;
+  githubRepoName: string | null;
+  semester: string;
+  tahunAkademik: string;
+  createdAt: Date;
+  updatedAt: Date;
+  documents?: { id: string }[];
+  reviews?: { id: string }[];
   _count?: {
     documents: number;
     reviews: number;
@@ -62,7 +71,7 @@ export function ProjectCard({ project, showActions = true }: ProjectCardProps) {
             </div>
             <div>
               <Link
-                href={`/dashboard/mahasiswa/projects/${project.id}`}
+                href={`/mahasiswa/projects/${project.id}`}
                 className="font-semibold hover:text-primary transition-colors"
               >
                 {project.title}
@@ -122,7 +131,7 @@ export function ProjectCard({ project, showActions = true }: ProjectCardProps) {
         <CardFooter className="gap-2 pt-0">
           <Button
             as={Link}
-            href={`/dashboard/mahasiswa/projects/${project.id}`}
+            href={`/mahasiswa/projects/${project.id}`}
             size="sm"
             variant="flat"
             className="flex-1"
@@ -132,7 +141,7 @@ export function ProjectCard({ project, showActions = true }: ProjectCardProps) {
           {project.status === 'DRAFT' && (
             <Button
               as={Link}
-              href={`/dashboard/mahasiswa/projects/${project.id}/edit`}
+              href={`/mahasiswa/projects/${project.id}/edit`}
               size="sm"
               color="primary"
               variant="flat"

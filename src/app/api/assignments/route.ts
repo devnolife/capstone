@@ -160,7 +160,7 @@ export async function POST(request: Request) {
         title: 'Penugasan Baru',
         message: `Anda ditugaskan untuk mereview project "${project.title}"`,
         type: 'assignment',
-        link: `/dashboard/dosen/projects/${projectId}/review`,
+        link: `/dosen/projects/${projectId}/review`,
       },
     });
 
@@ -171,7 +171,7 @@ export async function POST(request: Request) {
         title: 'Dosen Penguji Ditugaskan',
         message: `${dosen.name} ditugaskan sebagai penguji untuk project Anda`,
         type: 'assignment',
-        link: `/dashboard/mahasiswa/projects/${projectId}`,
+        link: `/mahasiswa/projects/${projectId}`,
       },
     });
 

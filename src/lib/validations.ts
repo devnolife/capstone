@@ -2,48 +2,23 @@ import { z } from 'zod';
 
 // Auth Validations
 export const loginSchema = z.object({
-  email: z.string().email('Email tidak valid'),
+  username: z.string().min(1, 'NIM/NIP/Username wajib diisi'),
   password: z.string().min(6, 'Password minimal 6 karakter'),
 });
 
+// Registration disabled - users are created by admin
 export const registerSchema = z
   .object({
     name: z.string().min(2, 'Nama minimal 2 karakter'),
-    email: z.string().email('Email tidak valid'),
+    username: z.string().min(1, 'Username (NIM/NIP) wajib diisi'),
     password: z.string().min(6, 'Password minimal 6 karakter'),
     confirmPassword: z.string(),
-    role: z.enum(['MAHASISWA', 'DOSEN_PENGUJI']),
-    nim: z.string().optional(),
-    nip: z.string().optional(),
+    role: z.enum(['MAHASISWA', 'DOSEN_PENGUJI', 'ADMIN']),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Password tidak cocok',
     path: ['confirmPassword'],
-  })
-  .refine(
-    (data) => {
-      if (data.role === 'MAHASISWA' && !data.nim) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: 'NIM wajib diisi untuk mahasiswa',
-      path: ['nim'],
-    },
-  )
-  .refine(
-    (data) => {
-      if (data.role === 'DOSEN_PENGUJI' && !data.nip) {
-        return false;
-      }
-      return true;
-    },
-    {
-      message: 'NIP wajib diisi untuk dosen',
-      path: ['nip'],
-    },
-  );
+  });
 
 // Project Validations
 export const projectSchema = z.object({
@@ -100,10 +75,8 @@ export const completeReviewSchema = z.object({
 // User Management Validations
 export const userUpdateSchema = z.object({
   name: z.string().min(2, 'Nama minimal 2 karakter'),
-  email: z.string().email('Email tidak valid'),
+  username: z.string().min(1, 'Username (NIM/NIP) wajib diisi'),
   role: z.enum(['MAHASISWA', 'DOSEN_PENGUJI', 'ADMIN']),
-  nim: z.string().optional(),
-  nip: z.string().optional(),
   isActive: z.boolean(),
 });
 
