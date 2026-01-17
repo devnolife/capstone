@@ -101,48 +101,6 @@ function BentoCard({
   );
 }
 
-// Requirement Card Component
-function RequirementCard({
-  icon: Icon,
-  title,
-  items,
-  gradient,
-  delay = 0,
-}: {
-  icon: React.ElementType;
-  title: string;
-  items: string[];
-  gradient: string;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      className="relative group"
-    >
-      <div className="absolute inset-0 bg-gradient-to-r opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl blur-xl -z-10"
-        style={{ background: `linear-gradient(to right, ${gradient})` }} />
-      <div className="h-full p-6 rounded-2xl border border-default-200 bg-background/80 backdrop-blur-sm hover:border-primary/50 transition-all duration-300">
-        <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center mb-4`}>
-          <Icon className="text-white" size={24} />
-        </div>
-        <h3 className="text-lg font-bold mb-3">{title}</h3>
-        <ul className="space-y-2">
-          {items.map((item, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-default-600">
-              <CheckCircle2 size={16} className="text-emerald-500 mt-0.5 flex-shrink-0" />
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </motion.div>
-  );
-}
-
 // Timeline Item Component
 function TimelineItem({
   week,
@@ -166,11 +124,10 @@ function TimelineItem({
       className="flex gap-4"
     >
       <div className="flex flex-col items-center">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
-          isActive 
-            ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white' 
-            : 'bg-default-100 text-default-500'
-        }`}>
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${isActive
+          ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
+          : 'bg-default-100 text-default-500'
+          }`}>
           {week}
         </div>
         <div className="w-px h-full bg-default-200 my-2" />
@@ -211,51 +168,113 @@ export default function LandingPage() {
 
   const requirements = [
     {
-      icon: FileCheck,
-      title: 'Dokumen Wajib',
+      icon: BookOpen,
+      title: 'Judul Proyek',
       gradient: 'from-blue-500 to-cyan-500',
       items: [
-        'Proposal Capstone (BAB 1-3)',
-        'Laporan Akhir (BAB 1-5)',
-        'Slide Presentasi',
-        'Source Code (GitHub)',
-        'Video Demo Aplikasi',
+        'Mencerminkan topik utama yang relevan dengan bidang studi',
+        'Spesifik, jelas, dan mudah dipahami',
+        'Menunjukkan tujuan dan ruang lingkup proyek',
       ],
     },
     {
       icon: Target,
-      title: 'Kriteria Project',
-      gradient: 'from-purple-500 to-pink-500',
+      title: 'Tujuan dan Manfaat Proyek',
+      gradient: 'from-green-500 to-emerald-500',
       items: [
-        'Menyelesaikan masalah nyata',
-        'Implementasi teknologi modern',
-        'Dokumentasi lengkap',
-        'Clean code & best practices',
-        'Responsive & user-friendly',
+        'Memiliki tujuan yang jelas dan terukur',
+        'Kontribusi terhadap ilmu pengetahuan atau industri',
+        'Manfaat aplikatif untuk pengembangan produk/solusi',
       ],
     },
     {
-      icon: Award,
-      title: 'Penilaian',
-      gradient: 'from-amber-500 to-orange-500',
+      icon: Layers,
+      title: 'Integrasi Mata Kuliah',
+      gradient: 'from-purple-500 to-pink-500',
       items: [
-        'Kualitas Kode (20%)',
-        'Fungsionalitas (25%)',
-        'Dokumentasi (20%)',
-        'Inovasi & Kreativitas (15%)',
-        'Presentasi (20%)',
+        'Mengintegrasikan konsep dari beberapa mata kuliah',
+        'Penerapan teori dan keterampilan masa studi',
+        'Penjelasan relevansi mata kuliah dengan proyek',
+      ],
+    },
+    {
+      icon: GitBranch,
+      title: 'Metodologi',
+      gradient: 'from-orange-500 to-amber-500',
+      items: [
+        'Metodologi yang tepat sesuai bidang studi',
+        'Teknik pengumpulan dan analisis data yang jelas',
+        'Metodologi pengembangan, pengujian, dan evaluasi',
+      ],
+    },
+    {
+      icon: FileCheck,
+      title: 'Sumber Daya dan Batasan',
+      gradient: 'from-pink-500 to-rose-500',
+      items: [
+        'Penjelasan sumber daya yang diperlukan',
+        'Identifikasi batasan waktu, anggaran, akses data',
+        'Pemahaman kendala pelaksanaan proyek',
       ],
     },
     {
       icon: Calendar,
-      title: 'Timeline',
-      gradient: 'from-emerald-500 to-teal-500',
+      title: 'Kerangka Waktu',
+      gradient: 'from-teal-500 to-cyan-500',
       items: [
-        'Minggu 1-4: Proposal & Planning',
-        'Minggu 5-10: Development',
-        'Minggu 11-12: Testing & Docs',
-        'Minggu 13-14: Review & Revisi',
-        'Minggu 15-16: Presentasi Final',
+        'Jadwal pelaksanaan yang terstruktur',
+        'Tenggat waktu realistis setiap tahapan',
+        'Waktu untuk penelitian, pengembangan, dan laporan',
+      ],
+    },
+    {
+      icon: Sparkles,
+      title: 'Analisis dan Temuan',
+      gradient: 'from-yellow-500 to-orange-500',
+      items: [
+        'Analisis mendalam dengan data dan bukti relevan',
+        'Temuan yang dapat diaplikasikan dalam konteks nyata',
+        'Kontribusi untuk akademis, industri, atau masyarakat',
+      ],
+    },
+    {
+      icon: FileText,
+      title: 'Penulisan Laporan',
+      gradient: 'from-indigo-500 to-purple-500',
+      items: [
+        'Format akademik yang telah ditentukan (APA/MLA)',
+        'Struktur: pendahuluan, metodologi, analisis, kesimpulan',
+        'Referensi relevan dan mutakhir',
+      ],
+    },
+    {
+      icon: Award,
+      title: 'Presentasi dan Ujian',
+      gradient: 'from-red-500 to-pink-500',
+      items: [
+        'Presentasi lisan yang komunikatif',
+        'Mencakup tujuan, metodologi, temuan, dan rekomendasi',
+        'Evaluasi di depan penguji atau panel',
+      ],
+    },
+    {
+      icon: Users,
+      title: 'Keterlibatan Stakeholder',
+      gradient: 'from-cyan-500 to-blue-500',
+      items: [
+        'Melibatkan stakeholder dalam perencanaan/evaluasi',
+        'Feedback dari klien, pengguna, atau komunitas',
+        'Penjelasan kontribusi stakeholder dalam proyek',
+      ],
+    },
+    {
+      icon: Shield,
+      title: 'Kepatuhan Terhadap Etika',
+      gradient: 'from-emerald-500 to-green-500',
+      items: [
+        'Mematuhi standar etika yang berlaku',
+        'Penanganan data sensitif dan informasi pribadi',
+        'Penjelasan isu privasi dan persetujuan',
       ],
     },
   ];
@@ -304,7 +323,7 @@ export default function LandingPage() {
           <div className="max-w-6xl mx-auto px-6 py-3 rounded-2xl glass">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2.5 group">
-                <motion.div 
+                <motion.div
                   className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center"
                   whileHover={{ scale: 1.05, rotate: 5 }}
                   transition={{ type: 'spring', stiffness: 400 }}
@@ -619,29 +638,67 @@ export default function LandingPage() {
           >
             <span className="badge-modern inline-flex items-center gap-2 mb-4">
               <FileCheck className="text-emerald-400" size={14} />
-              <span className="text-sm">Persyaratan Capstone</span>
+              <span className="text-sm">Persyaratan Umum</span>
             </span>
             <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Apa saja yang{' '}
-              <span className="gradient-text">perlu disiapkan?</span>
+              Persyaratan{' '}
+              <span className="gradient-text">Capstone Project</span>
             </h2>
             <p className="text-default-500 max-w-2xl mx-auto">
-              Pastikan kamu memenuhi semua persyaratan berikut sebelum memulai capstone project
+              Panduan lengkap persyaratan yang harus dipenuhi dalam pelaksanaan Capstone Project. Pastikan setiap aspek dipahami dan diterapkan dengan baik.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {requirements.map((req, i) => (
-              <RequirementCard
-                key={i}
-                icon={req.icon}
-                title={req.title}
-                items={req.items}
-                gradient={req.gradient}
-                delay={i * 0.1}
-              />
-            ))}
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="max-w-4xl mx-auto"
+          >
+            <Accordion
+              variant="splitted"
+              selectionMode="multiple"
+              className="gap-4"
+              itemClasses={{
+                base: "px-0 rounded-2xl border border-default-200 bg-white dark:bg-content1 shadow-sm hover:shadow-md transition-shadow",
+                title: "font-semibold text-base",
+                trigger: "px-6 py-4 data-[hover=true]:bg-default-50",
+                content: "px-6 pb-6 pt-0",
+                indicator: "text-primary"
+              }}
+            >
+              {requirements.map((req, i) => {
+                const Icon = req.icon;
+                return (
+                  <AccordionItem
+                    key={i}
+                    aria-label={req.title}
+                    title={
+                      <div className="flex items-center gap-3">
+                        <div className={`w-10 h-10 rounded-xl bg-linear-to-br ${req.gradient} flex items-center justify-center shrink-0`}>
+                          <Icon className="text-white" size={20} />
+                        </div>
+                        <span>{req.title}</span>
+                      </div>
+                    }
+                  >
+                    <div className="space-y-3 pt-4">
+                      {req.items.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-start gap-3 p-3 rounded-lg bg-default-50 dark:bg-default-100/50"
+                        >
+                          <CheckCircle2 size={18} className="text-success shrink-0 mt-0.5" />
+                          <span className="text-sm text-default-700 leading-relaxed">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          </motion.div>
 
           {/* Important Notice */}
           <motion.div
@@ -656,20 +713,10 @@ export default function LandingPage() {
               </div>
               <div>
                 <h4 className="font-bold text-amber-600 dark:text-amber-400 mb-2">Catatan Penting</h4>
-                <ul className="space-y-1 text-sm text-default-600">
-                  <li className="flex items-center gap-2">
-                    <ChevronDown size={14} className="text-amber-500" />
-                    Mahasiswa harus sudah menyelesaikan minimal 120 SKS
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronDown size={14} className="text-amber-500" />
-                    Telah lulus mata kuliah prasyarat (Pemrograman Web, Basis Data, RPL)
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <ChevronDown size={14} className="text-amber-500" />
-                    IPK minimal 2.75 untuk mendaftar capstone
-                  </li>
-                </ul>
+                <p className="text-sm text-default-600">
+                  Persyaratan ini bersifat wajib dan akan menjadi acuan dalam penilaian Capstone Project.
+                  Diskusikan dengan dosen pembimbing jika ada hal yang belum jelas atau memerlukan klarifikasi lebih lanjut.
+                </p>
               </div>
             </div>
           </motion.div>
@@ -936,7 +983,7 @@ export default function LandingPage() {
                 <span className="font-bold text-lg">Capstone</span>
               </div>
               <p className="text-default-500 text-sm max-w-sm">
-                Platform manajemen capstone project untuk Program Studi Informatika. 
+                Platform manajemen capstone project untuk Program Studi Informatika.
                 Terintegrasi dengan GitHub untuk pengalaman development yang lebih baik.
               </p>
             </div>
