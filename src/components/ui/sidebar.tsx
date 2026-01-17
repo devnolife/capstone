@@ -49,6 +49,11 @@ const mahasiswaMenuItems: SidebarItem[] = [
     icon: <FileText size={20} />,
   },
   {
+    title: 'Persyaratan',
+    href: '/mahasiswa/requirements',
+    icon: <BookOpen size={20} />,
+  },
+  {
     title: 'Review & Feedback',
     href: '/mahasiswa/reviews',
     icon: <ClipboardCheck size={20} />,
