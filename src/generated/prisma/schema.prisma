@@ -85,11 +85,12 @@ model Project {
   updatedAt      DateTime      @updatedAt
 
   // Relations
-  mahasiswaId String
-  mahasiswa   User                @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
-  documents   Document[]
-  reviews     Review[]
-  assignments ProjectAssignment[]
+  mahasiswaId  String
+  mahasiswa    User                 @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
+  documents    Document[]
+  reviews      Review[]
+  assignments  ProjectAssignment[]
+  requirements ProjectRequirement[]
 
   @@map("projects")
 }
@@ -224,4 +225,22 @@ model Semester {
   updatedAt     DateTime @updatedAt
 
   @@map("semesters")
+}
+
+// ==================== PROJECT REQUIREMENTS ====================
+
+model ProjectRequirement {
+  id          String   @id @default(cuid())
+  projectId   String
+  category    String // e.g., "judul", "tujuan", "metodologi", etc.
+  content     String   @db.Text
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, category])
+  @@map("project_requirements")
 }

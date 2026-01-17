@@ -152,14 +152,27 @@ export function ProjectDetailContent({
 
         <div className="flex gap-2">
           {canEdit && (
-            <Button
-              as={Link}
-              href={`/mahasiswa/projects/${project.id}/edit`}
-              variant="flat"
-              startContent={<Edit size={18} />}
-            >
-              Edit
-            </Button>
+            <>
+              <Button
+                as={Link}
+                href={`/mahasiswa/projects/${project.id}/edit`}
+                variant="flat"
+                startContent={<Edit size={18} />}
+              >
+                Edit
+              </Button>
+              {project.githubRepoUrl && (
+                <Button
+                  as={Link}
+                  href={`/mahasiswa/projects/${project.id}/requirements`}
+                  color="primary"
+                  variant="flat"
+                  startContent={<FileText size={18} />}
+                >
+                  Isi Persyaratan
+                </Button>
+              )}
+            </>
           )}
           <SubmitProjectButton
             projectId={project.id}
@@ -458,51 +471,46 @@ export function ProjectDetailContent({
               <div className="space-y-2 text-sm">
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-3 h-3 rounded-full ${
-                      project.status !== 'DRAFT'
+                    className={`w-3 h-3 rounded-full ${project.status !== 'DRAFT'
                         ? 'bg-success'
                         : 'bg-default-300'
-                    }`}
+                      }`}
                   />
                   <span>Project dibuat</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-3 h-3 rounded-full ${
-                      project.documents.length > 0
+                    className={`w-3 h-3 rounded-full ${project.documents.length > 0
                         ? 'bg-success'
                         : 'bg-default-300'
-                    }`}
+                      }`}
                   />
                   <span>Dokumen diupload</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-3 h-3 rounded-full ${
-                      project.status !== 'DRAFT'
+                    className={`w-3 h-3 rounded-full ${project.status !== 'DRAFT'
                         ? 'bg-success'
                         : 'bg-default-300'
-                    }`}
+                      }`}
                   />
                   <span>Disubmit untuk review</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-3 h-3 rounded-full ${
-                      project.reviews.length > 0
+                    className={`w-3 h-3 rounded-full ${project.reviews.length > 0
                         ? 'bg-success'
                         : 'bg-default-300'
-                    }`}
+                      }`}
                   />
                   <span>Dalam proses review</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div
-                    className={`w-3 h-3 rounded-full ${
-                      project.status === 'APPROVED'
+                    className={`w-3 h-3 rounded-full ${project.status === 'APPROVED'
                         ? 'bg-success'
                         : 'bg-default-300'
-                    }`}
+                      }`}
                   />
                   <span>Disetujui</span>
                 </div>

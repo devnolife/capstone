@@ -234,6 +234,16 @@ exports.Prisma.SemesterScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ProjectRequirementScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  category: 'category',
+  content: 'content',
+  isCompleted: 'isCompleted',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -292,7 +302,8 @@ exports.Prisma.ModelName = {
   RubrikPenilaian: 'RubrikPenilaian',
   ReviewScore: 'ReviewScore',
   Notification: 'Notification',
-  Semester: 'Semester'
+  Semester: 'Semester',
+  ProjectRequirement: 'ProjectRequirement'
 };
 
 /**
