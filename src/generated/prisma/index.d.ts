@@ -78,6 +78,11 @@ export type Semester = $Result.DefaultSelection<Prisma.$SemesterPayload>
  * 
  */
 export type ProjectRequirements = $Result.DefaultSelection<Prisma.$ProjectRequirementsPayload>
+/**
+ * Model StakeholderDocument
+ * 
+ */
+export type StakeholderDocument = $Result.DefaultSelection<Prisma.$StakeholderDocumentPayload>
 
 /**
  * Enums
@@ -128,6 +133,19 @@ export const ReviewStatus: {
 
 export type ReviewStatus = (typeof ReviewStatus)[keyof typeof ReviewStatus]
 
+
+export const StakeholderDocumentType: {
+  SIGNATURE: 'SIGNATURE',
+  PHOTO: 'PHOTO',
+  AGREEMENT_LETTER: 'AGREEMENT_LETTER',
+  ID_CARD: 'ID_CARD',
+  SCREENSHOT: 'SCREENSHOT',
+  SUPPORTING_DOCUMENT: 'SUPPORTING_DOCUMENT',
+  OTHER: 'OTHER'
+};
+
+export type StakeholderDocumentType = (typeof StakeholderDocumentType)[keyof typeof StakeholderDocumentType]
+
 }
 
 export type Role = $Enums.Role
@@ -145,6 +163,10 @@ export const DocumentType: typeof $Enums.DocumentType
 export type ReviewStatus = $Enums.ReviewStatus
 
 export const ReviewStatus: typeof $Enums.ReviewStatus
+
+export type StakeholderDocumentType = $Enums.StakeholderDocumentType
+
+export const StakeholderDocumentType: typeof $Enums.StakeholderDocumentType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -392,6 +414,16 @@ export class PrismaClient<
     * ```
     */
   get projectRequirements(): Prisma.ProjectRequirementsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.stakeholderDocument`: Exposes CRUD operations for the **StakeholderDocument** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more StakeholderDocuments
+    * const stakeholderDocuments = await prisma.stakeholderDocument.findMany()
+    * ```
+    */
+  get stakeholderDocument(): Prisma.StakeholderDocumentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -838,7 +870,8 @@ export namespace Prisma {
     ReviewScore: 'ReviewScore',
     Notification: 'Notification',
     Semester: 'Semester',
-    ProjectRequirements: 'ProjectRequirements'
+    ProjectRequirements: 'ProjectRequirements',
+    StakeholderDocument: 'StakeholderDocument'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -854,7 +887,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "project" | "projectMember" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirements"
+      modelProps: "user" | "account" | "project" | "projectMember" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirements" | "stakeholderDocument"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1820,6 +1853,80 @@ export namespace Prisma {
           }
         }
       }
+      StakeholderDocument: {
+        payload: Prisma.$StakeholderDocumentPayload<ExtArgs>
+        fields: Prisma.StakeholderDocumentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.StakeholderDocumentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.StakeholderDocumentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>
+          }
+          findFirst: {
+            args: Prisma.StakeholderDocumentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.StakeholderDocumentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>
+          }
+          findMany: {
+            args: Prisma.StakeholderDocumentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>[]
+          }
+          create: {
+            args: Prisma.StakeholderDocumentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>
+          }
+          createMany: {
+            args: Prisma.StakeholderDocumentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.StakeholderDocumentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>[]
+          }
+          delete: {
+            args: Prisma.StakeholderDocumentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>
+          }
+          update: {
+            args: Prisma.StakeholderDocumentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>
+          }
+          deleteMany: {
+            args: Prisma.StakeholderDocumentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.StakeholderDocumentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.StakeholderDocumentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>[]
+          }
+          upsert: {
+            args: Prisma.StakeholderDocumentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$StakeholderDocumentPayload>
+          }
+          aggregate: {
+            args: Prisma.StakeholderDocumentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateStakeholderDocument>
+          }
+          groupBy: {
+            args: Prisma.StakeholderDocumentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<StakeholderDocumentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.StakeholderDocumentCountArgs<ExtArgs>
+            result: $Utils.Optional<StakeholderDocumentCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1941,6 +2048,7 @@ export namespace Prisma {
     notification?: NotificationOmit
     semester?: SemesterOmit
     projectRequirements?: ProjectRequirementsOmit
+    stakeholderDocument?: StakeholderDocumentOmit
   }
 
   /* Types for Logging */
@@ -2092,6 +2200,7 @@ export namespace Prisma {
     reviews: number
     assignments: number
     members: number
+    stakeholderDocuments: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2099,6 +2208,7 @@ export namespace Prisma {
     reviews?: boolean | ProjectCountOutputTypeCountReviewsArgs
     assignments?: boolean | ProjectCountOutputTypeCountAssignmentsArgs
     members?: boolean | ProjectCountOutputTypeCountMembersArgs
+    stakeholderDocuments?: boolean | ProjectCountOutputTypeCountStakeholderDocumentsArgs
   }
 
   // Custom InputTypes
@@ -2138,6 +2248,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectMemberWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountStakeholderDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StakeholderDocumentWhereInput
   }
 
 
@@ -4956,6 +5073,7 @@ export namespace Prisma {
     assignments?: boolean | Project$assignmentsArgs<ExtArgs>
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
+    stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -5026,6 +5144,7 @@ export namespace Prisma {
     assignments?: boolean | Project$assignmentsArgs<ExtArgs>
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
+    stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5044,6 +5163,7 @@ export namespace Prisma {
       assignments: Prisma.$ProjectAssignmentPayload<ExtArgs>[]
       requirements: Prisma.$ProjectRequirementsPayload<ExtArgs> | null
       members: Prisma.$ProjectMemberPayload<ExtArgs>[]
+      stakeholderDocuments: Prisma.$StakeholderDocumentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5462,6 +5582,7 @@ export namespace Prisma {
     assignments<T extends Project$assignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     requirements<T extends Project$requirementsArgs<ExtArgs> = {}>(args?: Subset<T, Project$requirementsArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     members<T extends Project$membersArgs<ExtArgs> = {}>(args?: Subset<T, Project$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    stakeholderDocuments<T extends Project$stakeholderDocumentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$stakeholderDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6015,6 +6136,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProjectMemberScalarFieldEnum | ProjectMemberScalarFieldEnum[]
+  }
+
+  /**
+   * Project.stakeholderDocuments
+   */
+  export type Project$stakeholderDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    where?: StakeholderDocumentWhereInput
+    orderBy?: StakeholderDocumentOrderByWithRelationInput | StakeholderDocumentOrderByWithRelationInput[]
+    cursor?: StakeholderDocumentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: StakeholderDocumentScalarFieldEnum | StakeholderDocumentScalarFieldEnum[]
   }
 
   /**
@@ -17402,6 +17547,1215 @@ export namespace Prisma {
 
 
   /**
+   * Model StakeholderDocument
+   */
+
+  export type AggregateStakeholderDocument = {
+    _count: StakeholderDocumentCountAggregateOutputType | null
+    _avg: StakeholderDocumentAvgAggregateOutputType | null
+    _sum: StakeholderDocumentSumAggregateOutputType | null
+    _min: StakeholderDocumentMinAggregateOutputType | null
+    _max: StakeholderDocumentMaxAggregateOutputType | null
+  }
+
+  export type StakeholderDocumentAvgAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type StakeholderDocumentSumAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type StakeholderDocumentMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    stakeholderName: string | null
+    stakeholderRole: string | null
+    organization: string | null
+    type: $Enums.StakeholderDocumentType | null
+    fileName: string | null
+    fileKey: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    mimeType: string | null
+    description: string | null
+    uploadedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StakeholderDocumentMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    stakeholderName: string | null
+    stakeholderRole: string | null
+    organization: string | null
+    type: $Enums.StakeholderDocumentType | null
+    fileName: string | null
+    fileKey: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    mimeType: string | null
+    description: string | null
+    uploadedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type StakeholderDocumentCountAggregateOutputType = {
+    id: number
+    projectId: number
+    stakeholderName: number
+    stakeholderRole: number
+    organization: number
+    type: number
+    fileName: number
+    fileKey: number
+    fileUrl: number
+    fileSize: number
+    mimeType: number
+    description: number
+    uploadedAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type StakeholderDocumentAvgAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type StakeholderDocumentSumAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type StakeholderDocumentMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    stakeholderName?: true
+    stakeholderRole?: true
+    organization?: true
+    type?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    description?: true
+    uploadedAt?: true
+    updatedAt?: true
+  }
+
+  export type StakeholderDocumentMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    stakeholderName?: true
+    stakeholderRole?: true
+    organization?: true
+    type?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    description?: true
+    uploadedAt?: true
+    updatedAt?: true
+  }
+
+  export type StakeholderDocumentCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    stakeholderName?: true
+    stakeholderRole?: true
+    organization?: true
+    type?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    description?: true
+    uploadedAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type StakeholderDocumentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StakeholderDocument to aggregate.
+     */
+    where?: StakeholderDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StakeholderDocuments to fetch.
+     */
+    orderBy?: StakeholderDocumentOrderByWithRelationInput | StakeholderDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: StakeholderDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StakeholderDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StakeholderDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned StakeholderDocuments
+    **/
+    _count?: true | StakeholderDocumentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: StakeholderDocumentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: StakeholderDocumentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: StakeholderDocumentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: StakeholderDocumentMaxAggregateInputType
+  }
+
+  export type GetStakeholderDocumentAggregateType<T extends StakeholderDocumentAggregateArgs> = {
+        [P in keyof T & keyof AggregateStakeholderDocument]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateStakeholderDocument[P]>
+      : GetScalarType<T[P], AggregateStakeholderDocument[P]>
+  }
+
+
+
+
+  export type StakeholderDocumentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: StakeholderDocumentWhereInput
+    orderBy?: StakeholderDocumentOrderByWithAggregationInput | StakeholderDocumentOrderByWithAggregationInput[]
+    by: StakeholderDocumentScalarFieldEnum[] | StakeholderDocumentScalarFieldEnum
+    having?: StakeholderDocumentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: StakeholderDocumentCountAggregateInputType | true
+    _avg?: StakeholderDocumentAvgAggregateInputType
+    _sum?: StakeholderDocumentSumAggregateInputType
+    _min?: StakeholderDocumentMinAggregateInputType
+    _max?: StakeholderDocumentMaxAggregateInputType
+  }
+
+  export type StakeholderDocumentGroupByOutputType = {
+    id: string
+    projectId: string
+    stakeholderName: string
+    stakeholderRole: string | null
+    organization: string | null
+    type: $Enums.StakeholderDocumentType
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    description: string | null
+    uploadedAt: Date
+    updatedAt: Date
+    _count: StakeholderDocumentCountAggregateOutputType | null
+    _avg: StakeholderDocumentAvgAggregateOutputType | null
+    _sum: StakeholderDocumentSumAggregateOutputType | null
+    _min: StakeholderDocumentMinAggregateOutputType | null
+    _max: StakeholderDocumentMaxAggregateOutputType | null
+  }
+
+  type GetStakeholderDocumentGroupByPayload<T extends StakeholderDocumentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<StakeholderDocumentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof StakeholderDocumentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], StakeholderDocumentGroupByOutputType[P]>
+            : GetScalarType<T[P], StakeholderDocumentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type StakeholderDocumentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    stakeholderName?: boolean
+    stakeholderRole?: boolean
+    organization?: boolean
+    type?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    description?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stakeholderDocument"]>
+
+  export type StakeholderDocumentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    stakeholderName?: boolean
+    stakeholderRole?: boolean
+    organization?: boolean
+    type?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    description?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stakeholderDocument"]>
+
+  export type StakeholderDocumentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    stakeholderName?: boolean
+    stakeholderRole?: boolean
+    organization?: boolean
+    type?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    description?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["stakeholderDocument"]>
+
+  export type StakeholderDocumentSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    stakeholderName?: boolean
+    stakeholderRole?: boolean
+    organization?: boolean
+    type?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    description?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type StakeholderDocumentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "stakeholderName" | "stakeholderRole" | "organization" | "type" | "fileName" | "fileKey" | "fileUrl" | "fileSize" | "mimeType" | "description" | "uploadedAt" | "updatedAt", ExtArgs["result"]["stakeholderDocument"]>
+  export type StakeholderDocumentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type StakeholderDocumentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type StakeholderDocumentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+
+  export type $StakeholderDocumentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "StakeholderDocument"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      stakeholderName: string
+      stakeholderRole: string | null
+      organization: string | null
+      type: $Enums.StakeholderDocumentType
+      fileName: string
+      fileKey: string
+      fileUrl: string
+      fileSize: number
+      mimeType: string
+      description: string | null
+      uploadedAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["stakeholderDocument"]>
+    composites: {}
+  }
+
+  type StakeholderDocumentGetPayload<S extends boolean | null | undefined | StakeholderDocumentDefaultArgs> = $Result.GetResult<Prisma.$StakeholderDocumentPayload, S>
+
+  type StakeholderDocumentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<StakeholderDocumentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: StakeholderDocumentCountAggregateInputType | true
+    }
+
+  export interface StakeholderDocumentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['StakeholderDocument'], meta: { name: 'StakeholderDocument' } }
+    /**
+     * Find zero or one StakeholderDocument that matches the filter.
+     * @param {StakeholderDocumentFindUniqueArgs} args - Arguments to find a StakeholderDocument
+     * @example
+     * // Get one StakeholderDocument
+     * const stakeholderDocument = await prisma.stakeholderDocument.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends StakeholderDocumentFindUniqueArgs>(args: SelectSubset<T, StakeholderDocumentFindUniqueArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one StakeholderDocument that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {StakeholderDocumentFindUniqueOrThrowArgs} args - Arguments to find a StakeholderDocument
+     * @example
+     * // Get one StakeholderDocument
+     * const stakeholderDocument = await prisma.stakeholderDocument.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends StakeholderDocumentFindUniqueOrThrowArgs>(args: SelectSubset<T, StakeholderDocumentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StakeholderDocument that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StakeholderDocumentFindFirstArgs} args - Arguments to find a StakeholderDocument
+     * @example
+     * // Get one StakeholderDocument
+     * const stakeholderDocument = await prisma.stakeholderDocument.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends StakeholderDocumentFindFirstArgs>(args?: SelectSubset<T, StakeholderDocumentFindFirstArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first StakeholderDocument that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StakeholderDocumentFindFirstOrThrowArgs} args - Arguments to find a StakeholderDocument
+     * @example
+     * // Get one StakeholderDocument
+     * const stakeholderDocument = await prisma.stakeholderDocument.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends StakeholderDocumentFindFirstOrThrowArgs>(args?: SelectSubset<T, StakeholderDocumentFindFirstOrThrowArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more StakeholderDocuments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StakeholderDocumentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all StakeholderDocuments
+     * const stakeholderDocuments = await prisma.stakeholderDocument.findMany()
+     * 
+     * // Get first 10 StakeholderDocuments
+     * const stakeholderDocuments = await prisma.stakeholderDocument.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const stakeholderDocumentWithIdOnly = await prisma.stakeholderDocument.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends StakeholderDocumentFindManyArgs>(args?: SelectSubset<T, StakeholderDocumentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a StakeholderDocument.
+     * @param {StakeholderDocumentCreateArgs} args - Arguments to create a StakeholderDocument.
+     * @example
+     * // Create one StakeholderDocument
+     * const StakeholderDocument = await prisma.stakeholderDocument.create({
+     *   data: {
+     *     // ... data to create a StakeholderDocument
+     *   }
+     * })
+     * 
+     */
+    create<T extends StakeholderDocumentCreateArgs>(args: SelectSubset<T, StakeholderDocumentCreateArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many StakeholderDocuments.
+     * @param {StakeholderDocumentCreateManyArgs} args - Arguments to create many StakeholderDocuments.
+     * @example
+     * // Create many StakeholderDocuments
+     * const stakeholderDocument = await prisma.stakeholderDocument.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends StakeholderDocumentCreateManyArgs>(args?: SelectSubset<T, StakeholderDocumentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many StakeholderDocuments and returns the data saved in the database.
+     * @param {StakeholderDocumentCreateManyAndReturnArgs} args - Arguments to create many StakeholderDocuments.
+     * @example
+     * // Create many StakeholderDocuments
+     * const stakeholderDocument = await prisma.stakeholderDocument.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many StakeholderDocuments and only return the `id`
+     * const stakeholderDocumentWithIdOnly = await prisma.stakeholderDocument.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends StakeholderDocumentCreateManyAndReturnArgs>(args?: SelectSubset<T, StakeholderDocumentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a StakeholderDocument.
+     * @param {StakeholderDocumentDeleteArgs} args - Arguments to delete one StakeholderDocument.
+     * @example
+     * // Delete one StakeholderDocument
+     * const StakeholderDocument = await prisma.stakeholderDocument.delete({
+     *   where: {
+     *     // ... filter to delete one StakeholderDocument
+     *   }
+     * })
+     * 
+     */
+    delete<T extends StakeholderDocumentDeleteArgs>(args: SelectSubset<T, StakeholderDocumentDeleteArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one StakeholderDocument.
+     * @param {StakeholderDocumentUpdateArgs} args - Arguments to update one StakeholderDocument.
+     * @example
+     * // Update one StakeholderDocument
+     * const stakeholderDocument = await prisma.stakeholderDocument.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends StakeholderDocumentUpdateArgs>(args: SelectSubset<T, StakeholderDocumentUpdateArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more StakeholderDocuments.
+     * @param {StakeholderDocumentDeleteManyArgs} args - Arguments to filter StakeholderDocuments to delete.
+     * @example
+     * // Delete a few StakeholderDocuments
+     * const { count } = await prisma.stakeholderDocument.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends StakeholderDocumentDeleteManyArgs>(args?: SelectSubset<T, StakeholderDocumentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StakeholderDocuments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StakeholderDocumentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many StakeholderDocuments
+     * const stakeholderDocument = await prisma.stakeholderDocument.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends StakeholderDocumentUpdateManyArgs>(args: SelectSubset<T, StakeholderDocumentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more StakeholderDocuments and returns the data updated in the database.
+     * @param {StakeholderDocumentUpdateManyAndReturnArgs} args - Arguments to update many StakeholderDocuments.
+     * @example
+     * // Update many StakeholderDocuments
+     * const stakeholderDocument = await prisma.stakeholderDocument.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more StakeholderDocuments and only return the `id`
+     * const stakeholderDocumentWithIdOnly = await prisma.stakeholderDocument.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends StakeholderDocumentUpdateManyAndReturnArgs>(args: SelectSubset<T, StakeholderDocumentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one StakeholderDocument.
+     * @param {StakeholderDocumentUpsertArgs} args - Arguments to update or create a StakeholderDocument.
+     * @example
+     * // Update or create a StakeholderDocument
+     * const stakeholderDocument = await prisma.stakeholderDocument.upsert({
+     *   create: {
+     *     // ... data to create a StakeholderDocument
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the StakeholderDocument we want to update
+     *   }
+     * })
+     */
+    upsert<T extends StakeholderDocumentUpsertArgs>(args: SelectSubset<T, StakeholderDocumentUpsertArgs<ExtArgs>>): Prisma__StakeholderDocumentClient<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of StakeholderDocuments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StakeholderDocumentCountArgs} args - Arguments to filter StakeholderDocuments to count.
+     * @example
+     * // Count the number of StakeholderDocuments
+     * const count = await prisma.stakeholderDocument.count({
+     *   where: {
+     *     // ... the filter for the StakeholderDocuments we want to count
+     *   }
+     * })
+    **/
+    count<T extends StakeholderDocumentCountArgs>(
+      args?: Subset<T, StakeholderDocumentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], StakeholderDocumentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a StakeholderDocument.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StakeholderDocumentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends StakeholderDocumentAggregateArgs>(args: Subset<T, StakeholderDocumentAggregateArgs>): Prisma.PrismaPromise<GetStakeholderDocumentAggregateType<T>>
+
+    /**
+     * Group by StakeholderDocument.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {StakeholderDocumentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends StakeholderDocumentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: StakeholderDocumentGroupByArgs['orderBy'] }
+        : { orderBy?: StakeholderDocumentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, StakeholderDocumentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetStakeholderDocumentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the StakeholderDocument model
+   */
+  readonly fields: StakeholderDocumentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for StakeholderDocument.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__StakeholderDocumentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the StakeholderDocument model
+   */
+  interface StakeholderDocumentFieldRefs {
+    readonly id: FieldRef<"StakeholderDocument", 'String'>
+    readonly projectId: FieldRef<"StakeholderDocument", 'String'>
+    readonly stakeholderName: FieldRef<"StakeholderDocument", 'String'>
+    readonly stakeholderRole: FieldRef<"StakeholderDocument", 'String'>
+    readonly organization: FieldRef<"StakeholderDocument", 'String'>
+    readonly type: FieldRef<"StakeholderDocument", 'StakeholderDocumentType'>
+    readonly fileName: FieldRef<"StakeholderDocument", 'String'>
+    readonly fileKey: FieldRef<"StakeholderDocument", 'String'>
+    readonly fileUrl: FieldRef<"StakeholderDocument", 'String'>
+    readonly fileSize: FieldRef<"StakeholderDocument", 'Int'>
+    readonly mimeType: FieldRef<"StakeholderDocument", 'String'>
+    readonly description: FieldRef<"StakeholderDocument", 'String'>
+    readonly uploadedAt: FieldRef<"StakeholderDocument", 'DateTime'>
+    readonly updatedAt: FieldRef<"StakeholderDocument", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * StakeholderDocument findUnique
+   */
+  export type StakeholderDocumentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which StakeholderDocument to fetch.
+     */
+    where: StakeholderDocumentWhereUniqueInput
+  }
+
+  /**
+   * StakeholderDocument findUniqueOrThrow
+   */
+  export type StakeholderDocumentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which StakeholderDocument to fetch.
+     */
+    where: StakeholderDocumentWhereUniqueInput
+  }
+
+  /**
+   * StakeholderDocument findFirst
+   */
+  export type StakeholderDocumentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which StakeholderDocument to fetch.
+     */
+    where?: StakeholderDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StakeholderDocuments to fetch.
+     */
+    orderBy?: StakeholderDocumentOrderByWithRelationInput | StakeholderDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StakeholderDocuments.
+     */
+    cursor?: StakeholderDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StakeholderDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StakeholderDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StakeholderDocuments.
+     */
+    distinct?: StakeholderDocumentScalarFieldEnum | StakeholderDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * StakeholderDocument findFirstOrThrow
+   */
+  export type StakeholderDocumentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which StakeholderDocument to fetch.
+     */
+    where?: StakeholderDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StakeholderDocuments to fetch.
+     */
+    orderBy?: StakeholderDocumentOrderByWithRelationInput | StakeholderDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for StakeholderDocuments.
+     */
+    cursor?: StakeholderDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StakeholderDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StakeholderDocuments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of StakeholderDocuments.
+     */
+    distinct?: StakeholderDocumentScalarFieldEnum | StakeholderDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * StakeholderDocument findMany
+   */
+  export type StakeholderDocumentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * Filter, which StakeholderDocuments to fetch.
+     */
+    where?: StakeholderDocumentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of StakeholderDocuments to fetch.
+     */
+    orderBy?: StakeholderDocumentOrderByWithRelationInput | StakeholderDocumentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing StakeholderDocuments.
+     */
+    cursor?: StakeholderDocumentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` StakeholderDocuments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` StakeholderDocuments.
+     */
+    skip?: number
+    distinct?: StakeholderDocumentScalarFieldEnum | StakeholderDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * StakeholderDocument create
+   */
+  export type StakeholderDocumentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a StakeholderDocument.
+     */
+    data: XOR<StakeholderDocumentCreateInput, StakeholderDocumentUncheckedCreateInput>
+  }
+
+  /**
+   * StakeholderDocument createMany
+   */
+  export type StakeholderDocumentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many StakeholderDocuments.
+     */
+    data: StakeholderDocumentCreateManyInput | StakeholderDocumentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * StakeholderDocument createManyAndReturn
+   */
+  export type StakeholderDocumentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * The data used to create many StakeholderDocuments.
+     */
+    data: StakeholderDocumentCreateManyInput | StakeholderDocumentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StakeholderDocument update
+   */
+  export type StakeholderDocumentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a StakeholderDocument.
+     */
+    data: XOR<StakeholderDocumentUpdateInput, StakeholderDocumentUncheckedUpdateInput>
+    /**
+     * Choose, which StakeholderDocument to update.
+     */
+    where: StakeholderDocumentWhereUniqueInput
+  }
+
+  /**
+   * StakeholderDocument updateMany
+   */
+  export type StakeholderDocumentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update StakeholderDocuments.
+     */
+    data: XOR<StakeholderDocumentUpdateManyMutationInput, StakeholderDocumentUncheckedUpdateManyInput>
+    /**
+     * Filter which StakeholderDocuments to update
+     */
+    where?: StakeholderDocumentWhereInput
+    /**
+     * Limit how many StakeholderDocuments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * StakeholderDocument updateManyAndReturn
+   */
+  export type StakeholderDocumentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * The data used to update StakeholderDocuments.
+     */
+    data: XOR<StakeholderDocumentUpdateManyMutationInput, StakeholderDocumentUncheckedUpdateManyInput>
+    /**
+     * Filter which StakeholderDocuments to update
+     */
+    where?: StakeholderDocumentWhereInput
+    /**
+     * Limit how many StakeholderDocuments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * StakeholderDocument upsert
+   */
+  export type StakeholderDocumentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the StakeholderDocument to update in case it exists.
+     */
+    where: StakeholderDocumentWhereUniqueInput
+    /**
+     * In case the StakeholderDocument found by the `where` argument doesn't exist, create a new StakeholderDocument with this data.
+     */
+    create: XOR<StakeholderDocumentCreateInput, StakeholderDocumentUncheckedCreateInput>
+    /**
+     * In case the StakeholderDocument was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<StakeholderDocumentUpdateInput, StakeholderDocumentUncheckedUpdateInput>
+  }
+
+  /**
+   * StakeholderDocument delete
+   */
+  export type StakeholderDocumentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+    /**
+     * Filter which StakeholderDocument to delete.
+     */
+    where: StakeholderDocumentWhereUniqueInput
+  }
+
+  /**
+   * StakeholderDocument deleteMany
+   */
+  export type StakeholderDocumentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which StakeholderDocuments to delete
+     */
+    where?: StakeholderDocumentWhereInput
+    /**
+     * Limit how many StakeholderDocuments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * StakeholderDocument without action
+   */
+  export type StakeholderDocumentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the StakeholderDocument
+     */
+    select?: StakeholderDocumentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the StakeholderDocument
+     */
+    omit?: StakeholderDocumentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: StakeholderDocumentInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -17627,6 +18981,26 @@ export namespace Prisma {
   export type ProjectRequirementsScalarFieldEnum = (typeof ProjectRequirementsScalarFieldEnum)[keyof typeof ProjectRequirementsScalarFieldEnum]
 
 
+  export const StakeholderDocumentScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    stakeholderName: 'stakeholderName',
+    stakeholderRole: 'stakeholderRole',
+    organization: 'organization',
+    type: 'type',
+    fileName: 'fileName',
+    fileKey: 'fileKey',
+    fileUrl: 'fileUrl',
+    fileSize: 'fileSize',
+    mimeType: 'mimeType',
+    description: 'description',
+    uploadedAt: 'uploadedAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type StakeholderDocumentScalarFieldEnum = (typeof StakeholderDocumentScalarFieldEnum)[keyof typeof StakeholderDocumentScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -17758,6 +19132,20 @@ export namespace Prisma {
    * Reference to a field of type 'ReviewStatus[]'
    */
   export type ListEnumReviewStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReviewStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'StakeholderDocumentType'
+   */
+  export type EnumStakeholderDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StakeholderDocumentType'>
+    
+
+
+  /**
+   * Reference to a field of type 'StakeholderDocumentType[]'
+   */
+  export type ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StakeholderDocumentType[]'>
     
 
 
@@ -18009,6 +19397,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentListRelationFilter
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     members?: ProjectMemberListRelationFilter
+    stakeholderDocuments?: StakeholderDocumentListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -18034,6 +19423,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentOrderByRelationAggregateInput
     requirements?: ProjectRequirementsOrderByWithRelationInput
     members?: ProjectMemberOrderByRelationAggregateInput
+    stakeholderDocuments?: StakeholderDocumentOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -18062,6 +19452,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentListRelationFilter
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     members?: ProjectMemberListRelationFilter
+    stakeholderDocuments?: StakeholderDocumentListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -18896,6 +20287,108 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"ProjectRequirements"> | Date | string
   }
 
+  export type StakeholderDocumentWhereInput = {
+    AND?: StakeholderDocumentWhereInput | StakeholderDocumentWhereInput[]
+    OR?: StakeholderDocumentWhereInput[]
+    NOT?: StakeholderDocumentWhereInput | StakeholderDocumentWhereInput[]
+    id?: StringFilter<"StakeholderDocument"> | string
+    projectId?: StringFilter<"StakeholderDocument"> | string
+    stakeholderName?: StringFilter<"StakeholderDocument"> | string
+    stakeholderRole?: StringNullableFilter<"StakeholderDocument"> | string | null
+    organization?: StringNullableFilter<"StakeholderDocument"> | string | null
+    type?: EnumStakeholderDocumentTypeFilter<"StakeholderDocument"> | $Enums.StakeholderDocumentType
+    fileName?: StringFilter<"StakeholderDocument"> | string
+    fileKey?: StringFilter<"StakeholderDocument"> | string
+    fileUrl?: StringFilter<"StakeholderDocument"> | string
+    fileSize?: IntFilter<"StakeholderDocument"> | number
+    mimeType?: StringFilter<"StakeholderDocument"> | string
+    description?: StringNullableFilter<"StakeholderDocument"> | string | null
+    uploadedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
+    updatedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }
+
+  export type StakeholderDocumentOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    stakeholderName?: SortOrder
+    stakeholderRole?: SortOrderInput | SortOrder
+    organization?: SortOrderInput | SortOrder
+    type?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    description?: SortOrderInput | SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+  }
+
+  export type StakeholderDocumentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: StakeholderDocumentWhereInput | StakeholderDocumentWhereInput[]
+    OR?: StakeholderDocumentWhereInput[]
+    NOT?: StakeholderDocumentWhereInput | StakeholderDocumentWhereInput[]
+    projectId?: StringFilter<"StakeholderDocument"> | string
+    stakeholderName?: StringFilter<"StakeholderDocument"> | string
+    stakeholderRole?: StringNullableFilter<"StakeholderDocument"> | string | null
+    organization?: StringNullableFilter<"StakeholderDocument"> | string | null
+    type?: EnumStakeholderDocumentTypeFilter<"StakeholderDocument"> | $Enums.StakeholderDocumentType
+    fileName?: StringFilter<"StakeholderDocument"> | string
+    fileKey?: StringFilter<"StakeholderDocument"> | string
+    fileUrl?: StringFilter<"StakeholderDocument"> | string
+    fileSize?: IntFilter<"StakeholderDocument"> | number
+    mimeType?: StringFilter<"StakeholderDocument"> | string
+    description?: StringNullableFilter<"StakeholderDocument"> | string | null
+    uploadedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
+    updatedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }, "id">
+
+  export type StakeholderDocumentOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    stakeholderName?: SortOrder
+    stakeholderRole?: SortOrderInput | SortOrder
+    organization?: SortOrderInput | SortOrder
+    type?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    description?: SortOrderInput | SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: StakeholderDocumentCountOrderByAggregateInput
+    _avg?: StakeholderDocumentAvgOrderByAggregateInput
+    _max?: StakeholderDocumentMaxOrderByAggregateInput
+    _min?: StakeholderDocumentMinOrderByAggregateInput
+    _sum?: StakeholderDocumentSumOrderByAggregateInput
+  }
+
+  export type StakeholderDocumentScalarWhereWithAggregatesInput = {
+    AND?: StakeholderDocumentScalarWhereWithAggregatesInput | StakeholderDocumentScalarWhereWithAggregatesInput[]
+    OR?: StakeholderDocumentScalarWhereWithAggregatesInput[]
+    NOT?: StakeholderDocumentScalarWhereWithAggregatesInput | StakeholderDocumentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"StakeholderDocument"> | string
+    projectId?: StringWithAggregatesFilter<"StakeholderDocument"> | string
+    stakeholderName?: StringWithAggregatesFilter<"StakeholderDocument"> | string
+    stakeholderRole?: StringNullableWithAggregatesFilter<"StakeholderDocument"> | string | null
+    organization?: StringNullableWithAggregatesFilter<"StakeholderDocument"> | string | null
+    type?: EnumStakeholderDocumentTypeWithAggregatesFilter<"StakeholderDocument"> | $Enums.StakeholderDocumentType
+    fileName?: StringWithAggregatesFilter<"StakeholderDocument"> | string
+    fileKey?: StringWithAggregatesFilter<"StakeholderDocument"> | string
+    fileUrl?: StringWithAggregatesFilter<"StakeholderDocument"> | string
+    fileSize?: IntWithAggregatesFilter<"StakeholderDocument"> | number
+    mimeType?: StringWithAggregatesFilter<"StakeholderDocument"> | string
+    description?: StringNullableWithAggregatesFilter<"StakeholderDocument"> | string | null
+    uploadedAt?: DateTimeWithAggregatesFilter<"StakeholderDocument"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"StakeholderDocument"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -19161,6 +20654,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -19185,6 +20679,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -19209,6 +20704,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -19233,6 +20729,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -20146,6 +21643,124 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type StakeholderDocumentCreateInput = {
+    id?: string
+    stakeholderName: string
+    stakeholderRole?: string | null
+    organization?: string | null
+    type: $Enums.StakeholderDocumentType
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    description?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutStakeholderDocumentsInput
+  }
+
+  export type StakeholderDocumentUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    stakeholderName: string
+    stakeholderRole?: string | null
+    organization?: string | null
+    type: $Enums.StakeholderDocumentType
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    description?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StakeholderDocumentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    stakeholderName?: StringFieldUpdateOperationsInput | string
+    stakeholderRole?: NullableStringFieldUpdateOperationsInput | string | null
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumStakeholderDocumentTypeFieldUpdateOperationsInput | $Enums.StakeholderDocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutStakeholderDocumentsNestedInput
+  }
+
+  export type StakeholderDocumentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    stakeholderName?: StringFieldUpdateOperationsInput | string
+    stakeholderRole?: NullableStringFieldUpdateOperationsInput | string | null
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumStakeholderDocumentTypeFieldUpdateOperationsInput | $Enums.StakeholderDocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StakeholderDocumentCreateManyInput = {
+    id?: string
+    projectId: string
+    stakeholderName: string
+    stakeholderRole?: string | null
+    organization?: string | null
+    type: $Enums.StakeholderDocumentType
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    description?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StakeholderDocumentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    stakeholderName?: StringFieldUpdateOperationsInput | string
+    stakeholderRole?: NullableStringFieldUpdateOperationsInput | string | null
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumStakeholderDocumentTypeFieldUpdateOperationsInput | $Enums.StakeholderDocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StakeholderDocumentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    stakeholderName?: StringFieldUpdateOperationsInput | string
+    stakeholderRole?: NullableStringFieldUpdateOperationsInput | string | null
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumStakeholderDocumentTypeFieldUpdateOperationsInput | $Enums.StakeholderDocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -20512,11 +22127,21 @@ export namespace Prisma {
     none?: ProjectMemberWhereInput
   }
 
+  export type StakeholderDocumentListRelationFilter = {
+    every?: StakeholderDocumentWhereInput
+    some?: StakeholderDocumentWhereInput
+    none?: StakeholderDocumentWhereInput
+  }
+
   export type DocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type ProjectMemberOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type StakeholderDocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -21119,6 +22744,82 @@ export namespace Prisma {
     completionPercent?: SortOrder
   }
 
+  export type EnumStakeholderDocumentTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.StakeholderDocumentType | EnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStakeholderDocumentTypeFilter<$PrismaModel> | $Enums.StakeholderDocumentType
+  }
+
+  export type StakeholderDocumentCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    stakeholderName?: SortOrder
+    stakeholderRole?: SortOrder
+    organization?: SortOrder
+    type?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    description?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StakeholderDocumentAvgOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type StakeholderDocumentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    stakeholderName?: SortOrder
+    stakeholderRole?: SortOrder
+    organization?: SortOrder
+    type?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    description?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StakeholderDocumentMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    stakeholderName?: SortOrder
+    stakeholderRole?: SortOrder
+    organization?: SortOrder
+    type?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    description?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type StakeholderDocumentSumOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type EnumStakeholderDocumentTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StakeholderDocumentType | EnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStakeholderDocumentTypeWithAggregatesFilter<$PrismaModel> | $Enums.StakeholderDocumentType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStakeholderDocumentTypeFilter<$PrismaModel>
+    _max?: NestedEnumStakeholderDocumentTypeFilter<$PrismaModel>
+  }
+
   export type ProjectCreateNestedManyWithoutMahasiswaInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -21415,6 +23116,13 @@ export namespace Prisma {
     connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
   }
 
+  export type StakeholderDocumentCreateNestedManyWithoutProjectInput = {
+    create?: XOR<StakeholderDocumentCreateWithoutProjectInput, StakeholderDocumentUncheckedCreateWithoutProjectInput> | StakeholderDocumentCreateWithoutProjectInput[] | StakeholderDocumentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: StakeholderDocumentCreateOrConnectWithoutProjectInput | StakeholderDocumentCreateOrConnectWithoutProjectInput[]
+    createMany?: StakeholderDocumentCreateManyProjectInputEnvelope
+    connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+  }
+
   export type DocumentUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -21447,6 +23155,13 @@ export namespace Prisma {
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
     createMany?: ProjectMemberCreateManyProjectInputEnvelope
     connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+  }
+
+  export type StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<StakeholderDocumentCreateWithoutProjectInput, StakeholderDocumentUncheckedCreateWithoutProjectInput> | StakeholderDocumentCreateWithoutProjectInput[] | StakeholderDocumentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: StakeholderDocumentCreateOrConnectWithoutProjectInput | StakeholderDocumentCreateOrConnectWithoutProjectInput[]
+    createMany?: StakeholderDocumentCreateManyProjectInputEnvelope
+    connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
   }
 
   export type EnumProjectStatusFieldUpdateOperationsInput = {
@@ -21527,6 +23242,20 @@ export namespace Prisma {
     deleteMany?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
   }
 
+  export type StakeholderDocumentUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<StakeholderDocumentCreateWithoutProjectInput, StakeholderDocumentUncheckedCreateWithoutProjectInput> | StakeholderDocumentCreateWithoutProjectInput[] | StakeholderDocumentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: StakeholderDocumentCreateOrConnectWithoutProjectInput | StakeholderDocumentCreateOrConnectWithoutProjectInput[]
+    upsert?: StakeholderDocumentUpsertWithWhereUniqueWithoutProjectInput | StakeholderDocumentUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: StakeholderDocumentCreateManyProjectInputEnvelope
+    set?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    disconnect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    delete?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    update?: StakeholderDocumentUpdateWithWhereUniqueWithoutProjectInput | StakeholderDocumentUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: StakeholderDocumentUpdateManyWithWhereWithoutProjectInput | StakeholderDocumentUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
+  }
+
   export type DocumentUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -21591,6 +23320,20 @@ export namespace Prisma {
     update?: ProjectMemberUpdateWithWhereUniqueWithoutProjectInput | ProjectMemberUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: ProjectMemberUpdateManyWithWhereWithoutProjectInput | ProjectMemberUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+  }
+
+  export type StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<StakeholderDocumentCreateWithoutProjectInput, StakeholderDocumentUncheckedCreateWithoutProjectInput> | StakeholderDocumentCreateWithoutProjectInput[] | StakeholderDocumentUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: StakeholderDocumentCreateOrConnectWithoutProjectInput | StakeholderDocumentCreateOrConnectWithoutProjectInput[]
+    upsert?: StakeholderDocumentUpsertWithWhereUniqueWithoutProjectInput | StakeholderDocumentUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: StakeholderDocumentCreateManyProjectInputEnvelope
+    set?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    disconnect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    delete?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+    update?: StakeholderDocumentUpdateWithWhereUniqueWithoutProjectInput | StakeholderDocumentUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: StakeholderDocumentUpdateManyWithWhereWithoutProjectInput | StakeholderDocumentUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutMembersInput = {
@@ -21889,6 +23632,24 @@ export namespace Prisma {
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutRequirementsInput, ProjectUpdateWithoutRequirementsInput>, ProjectUncheckedUpdateWithoutRequirementsInput>
   }
 
+  export type ProjectCreateNestedOneWithoutStakeholderDocumentsInput = {
+    create?: XOR<ProjectCreateWithoutStakeholderDocumentsInput, ProjectUncheckedCreateWithoutStakeholderDocumentsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutStakeholderDocumentsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type EnumStakeholderDocumentTypeFieldUpdateOperationsInput = {
+    set?: $Enums.StakeholderDocumentType
+  }
+
+  export type ProjectUpdateOneRequiredWithoutStakeholderDocumentsNestedInput = {
+    create?: XOR<ProjectCreateWithoutStakeholderDocumentsInput, ProjectUncheckedCreateWithoutStakeholderDocumentsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutStakeholderDocumentsInput
+    upsert?: ProjectUpsertWithoutStakeholderDocumentsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutStakeholderDocumentsInput, ProjectUpdateWithoutStakeholderDocumentsInput>, ProjectUncheckedUpdateWithoutStakeholderDocumentsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -22158,6 +23919,23 @@ export namespace Prisma {
     _max?: NestedEnumReviewStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumStakeholderDocumentTypeFilter<$PrismaModel = never> = {
+    equals?: $Enums.StakeholderDocumentType | EnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStakeholderDocumentTypeFilter<$PrismaModel> | $Enums.StakeholderDocumentType
+  }
+
+  export type NestedEnumStakeholderDocumentTypeWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StakeholderDocumentType | EnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    in?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StakeholderDocumentType[] | ListEnumStakeholderDocumentTypeFieldRefInput<$PrismaModel>
+    not?: NestedEnumStakeholderDocumentTypeWithAggregatesFilter<$PrismaModel> | $Enums.StakeholderDocumentType
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStakeholderDocumentTypeFilter<$PrismaModel>
+    _max?: NestedEnumStakeholderDocumentTypeFilter<$PrismaModel>
+  }
+
   export type ProjectCreateWithoutMahasiswaInput = {
     id?: string
     title: string
@@ -22179,6 +23957,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMahasiswaInput = {
@@ -22202,6 +23981,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMahasiswaInput = {
@@ -22823,6 +24603,48 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type StakeholderDocumentCreateWithoutProjectInput = {
+    id?: string
+    stakeholderName: string
+    stakeholderRole?: string | null
+    organization?: string | null
+    type: $Enums.StakeholderDocumentType
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    description?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StakeholderDocumentUncheckedCreateWithoutProjectInput = {
+    id?: string
+    stakeholderName: string
+    stakeholderRole?: string | null
+    organization?: string | null
+    type: $Enums.StakeholderDocumentType
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    description?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type StakeholderDocumentCreateOrConnectWithoutProjectInput = {
+    where: StakeholderDocumentWhereUniqueInput
+    create: XOR<StakeholderDocumentCreateWithoutProjectInput, StakeholderDocumentUncheckedCreateWithoutProjectInput>
+  }
+
+  export type StakeholderDocumentCreateManyProjectInputEnvelope = {
+    data: StakeholderDocumentCreateManyProjectInput | StakeholderDocumentCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -23032,6 +24854,42 @@ export namespace Prisma {
     addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
   }
 
+  export type StakeholderDocumentUpsertWithWhereUniqueWithoutProjectInput = {
+    where: StakeholderDocumentWhereUniqueInput
+    update: XOR<StakeholderDocumentUpdateWithoutProjectInput, StakeholderDocumentUncheckedUpdateWithoutProjectInput>
+    create: XOR<StakeholderDocumentCreateWithoutProjectInput, StakeholderDocumentUncheckedCreateWithoutProjectInput>
+  }
+
+  export type StakeholderDocumentUpdateWithWhereUniqueWithoutProjectInput = {
+    where: StakeholderDocumentWhereUniqueInput
+    data: XOR<StakeholderDocumentUpdateWithoutProjectInput, StakeholderDocumentUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type StakeholderDocumentUpdateManyWithWhereWithoutProjectInput = {
+    where: StakeholderDocumentScalarWhereInput
+    data: XOR<StakeholderDocumentUpdateManyMutationInput, StakeholderDocumentUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type StakeholderDocumentScalarWhereInput = {
+    AND?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
+    OR?: StakeholderDocumentScalarWhereInput[]
+    NOT?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
+    id?: StringFilter<"StakeholderDocument"> | string
+    projectId?: StringFilter<"StakeholderDocument"> | string
+    stakeholderName?: StringFilter<"StakeholderDocument"> | string
+    stakeholderRole?: StringNullableFilter<"StakeholderDocument"> | string | null
+    organization?: StringNullableFilter<"StakeholderDocument"> | string | null
+    type?: EnumStakeholderDocumentTypeFilter<"StakeholderDocument"> | $Enums.StakeholderDocumentType
+    fileName?: StringFilter<"StakeholderDocument"> | string
+    fileKey?: StringFilter<"StakeholderDocument"> | string
+    fileUrl?: StringFilter<"StakeholderDocument"> | string
+    fileSize?: IntFilter<"StakeholderDocument"> | number
+    mimeType?: StringFilter<"StakeholderDocument"> | string
+    description?: StringNullableFilter<"StakeholderDocument"> | string | null
+    uploadedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
+    updatedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
+  }
+
   export type ProjectCreateWithoutMembersInput = {
     id?: string
     title: string
@@ -23053,6 +24911,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -23076,6 +24935,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -23115,6 +24975,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -23138,6 +24999,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutAssignmentsInput = {
@@ -23161,6 +25023,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutAssignmentsInput = {
@@ -23184,6 +25047,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutAssignmentsInput = {
@@ -23270,6 +25134,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutAssignmentsInput = {
@@ -23293,6 +25158,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutAssignedProjectsInput = {
@@ -23369,6 +25235,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDocumentsInput = {
@@ -23392,6 +25259,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDocumentsInput = {
@@ -23431,6 +25299,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDocumentsInput = {
@@ -23454,6 +25323,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutReviewsInput = {
@@ -23477,6 +25347,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutReviewsInput = {
@@ -23500,6 +25371,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutReviewsInput = {
@@ -23640,6 +25512,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutReviewsInput = {
@@ -23663,6 +25536,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutReviewsInput = {
@@ -24138,6 +26012,7 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutRequirementsInput = {
@@ -24161,6 +26036,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutRequirementsInput = {
@@ -24200,6 +26076,7 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutRequirementsInput = {
@@ -24222,6 +26099,119 @@ export namespace Prisma {
     documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectCreateWithoutStakeholderDocumentsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutStakeholderDocumentsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutStakeholderDocumentsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutStakeholderDocumentsInput, ProjectUncheckedCreateWithoutStakeholderDocumentsInput>
+  }
+
+  export type ProjectUpsertWithoutStakeholderDocumentsInput = {
+    update: XOR<ProjectUpdateWithoutStakeholderDocumentsInput, ProjectUncheckedUpdateWithoutStakeholderDocumentsInput>
+    create: XOR<ProjectCreateWithoutStakeholderDocumentsInput, ProjectUncheckedCreateWithoutStakeholderDocumentsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutStakeholderDocumentsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutStakeholderDocumentsInput, ProjectUncheckedUpdateWithoutStakeholderDocumentsInput>
+  }
+
+  export type ProjectUpdateWithoutStakeholderDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutStakeholderDocumentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -24305,6 +26295,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMahasiswaInput = {
@@ -24328,6 +26319,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutMahasiswaInput = {
@@ -24513,6 +26505,22 @@ export namespace Prisma {
     addedAt?: Date | string
   }
 
+  export type StakeholderDocumentCreateManyProjectInput = {
+    id?: string
+    stakeholderName: string
+    stakeholderRole?: string | null
+    organization?: string | null
+    type: $Enums.StakeholderDocumentType
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    description?: string | null
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type DocumentUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     type?: EnumDocumentTypeFieldUpdateOperationsInput | $Enums.DocumentType
@@ -24629,6 +26637,54 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StakeholderDocumentUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    stakeholderName?: StringFieldUpdateOperationsInput | string
+    stakeholderRole?: NullableStringFieldUpdateOperationsInput | string | null
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumStakeholderDocumentTypeFieldUpdateOperationsInput | $Enums.StakeholderDocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StakeholderDocumentUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    stakeholderName?: StringFieldUpdateOperationsInput | string
+    stakeholderRole?: NullableStringFieldUpdateOperationsInput | string | null
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumStakeholderDocumentTypeFieldUpdateOperationsInput | $Enums.StakeholderDocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type StakeholderDocumentUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    stakeholderName?: StringFieldUpdateOperationsInput | string
+    stakeholderRole?: NullableStringFieldUpdateOperationsInput | string | null
+    organization?: NullableStringFieldUpdateOperationsInput | string | null
+    type?: EnumStakeholderDocumentTypeFieldUpdateOperationsInput | $Enums.StakeholderDocumentType
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReviewCommentCreateManyReviewInput = {

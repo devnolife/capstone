@@ -46,6 +46,16 @@ enum ReviewStatus {
   COMPLETED
 }
 
+enum StakeholderDocumentType {
+  SIGNATURE // Tanda tangan stakeholder
+  PHOTO // Foto stakeholder/kegiatan
+  AGREEMENT_LETTER // Surat persetujuan
+  ID_CARD // Kartu identitas
+  SCREENSHOT // Screenshot aplikasi/sistem
+  SUPPORTING_DOCUMENT // Dokumen pelengkap
+  OTHER // Dokumen lainnya
+}
+
 // ==================== MODELS ====================
 
 model User {
@@ -118,13 +128,14 @@ model Project {
   updatedAt     DateTime  @updatedAt
 
   // Relations
-  mahasiswaId  String
-  mahasiswa    User                 @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
-  documents    Document[]
-  reviews      Review[]
-  assignments  ProjectAssignment[]
-  requirements ProjectRequirements?
-  members      ProjectMember[]
+  mahasiswaId          String
+  mahasiswa            User                  @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
+  documents            Document[]
+  reviews              Review[]
+  assignments          ProjectAssignment[]
+  requirements         ProjectRequirements?
+  members              ProjectMember[]
+  stakeholderDocuments StakeholderDocument[]
 
   @@map("projects")
 }
@@ -322,4 +333,34 @@ model ProjectRequirements {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("project_requirements")
+}
+
+// ==================== STAKEHOLDER DOCUMENTS (Dokumen Stakeholder) ====================
+
+model StakeholderDocument {
+  id        String @id @default(cuid())
+  projectId String
+
+  // Stakeholder Info
+  stakeholderName String // Nama stakeholder
+  stakeholderRole String? // Jabatan/peran stakeholder (e.g., "Direktur", "Manager IT")
+  organization    String? // Nama organisasi/perusahaan
+
+  // Document Info
+  type     StakeholderDocumentType
+  fileName String // Original file name
+  fileKey  String // MinIO object key
+  fileUrl  String // Public URL to access file
+  fileSize Int // in bytes
+  mimeType String // e.g., "image/png", "application/pdf"
+
+  // Metadata
+  description String?  @db.Text // Optional description
+  uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("stakeholder_documents")
 }

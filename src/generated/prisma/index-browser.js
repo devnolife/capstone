@@ -293,6 +293,23 @@ exports.Prisma.ProjectRequirementsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.StakeholderDocumentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  stakeholderName: 'stakeholderName',
+  stakeholderRole: 'stakeholderRole',
+  organization: 'organization',
+  type: 'type',
+  fileName: 'fileName',
+  fileKey: 'fileKey',
+  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  description: 'description',
+  uploadedAt: 'uploadedAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -341,6 +358,16 @@ exports.ReviewStatus = exports.$Enums.ReviewStatus = {
   COMPLETED: 'COMPLETED'
 };
 
+exports.StakeholderDocumentType = exports.$Enums.StakeholderDocumentType = {
+  SIGNATURE: 'SIGNATURE',
+  PHOTO: 'PHOTO',
+  AGREEMENT_LETTER: 'AGREEMENT_LETTER',
+  ID_CARD: 'ID_CARD',
+  SCREENSHOT: 'SCREENSHOT',
+  SUPPORTING_DOCUMENT: 'SUPPORTING_DOCUMENT',
+  OTHER: 'OTHER'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Account: 'Account',
@@ -354,7 +381,8 @@ exports.Prisma.ModelName = {
   ReviewScore: 'ReviewScore',
   Notification: 'Notification',
   Semester: 'Semester',
-  ProjectRequirements: 'ProjectRequirements'
+  ProjectRequirements: 'ProjectRequirements',
+  StakeholderDocument: 'StakeholderDocument'
 };
 
 /**

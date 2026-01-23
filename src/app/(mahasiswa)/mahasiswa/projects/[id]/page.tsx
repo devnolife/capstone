@@ -61,6 +61,9 @@ export default async function ProjectDetailPage({
           },
         },
       },
+      stakeholderDocuments: {
+        orderBy: { uploadedAt: 'desc' },
+      },
     },
   });
 

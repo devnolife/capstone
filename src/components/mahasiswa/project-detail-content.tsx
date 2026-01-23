@@ -49,6 +49,7 @@ import {
   getStatusColor,
   getStatusLabel,
 } from '@/lib/utils';
+import StakeholderUpload from './stakeholder-upload';
 
 interface ReviewComment {
   id: string;
@@ -92,6 +93,39 @@ interface Assignment {
   };
 }
 
+interface StakeholderDocument {
+  id: string;
+  projectId: string;
+  stakeholderName: string;
+  stakeholderRole: string | null;
+  organization: string | null;
+  type: "SIGNATURE" | "PHOTO" | "AGREEMENT_LETTER" | "ID_CARD" | "SCREENSHOT" | "SUPPORTING_DOCUMENT" | "OTHER";
+  fileName: string;
+  fileKey: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  description: string | null;
+  uploadedAt: string;
+}
+
+// Interface for documents from database (with Date)
+interface StakeholderDocumentFromDB {
+  id: string;
+  projectId: string;
+  stakeholderName: string;
+  stakeholderRole: string | null;
+  organization: string | null;
+  type: "SIGNATURE" | "PHOTO" | "AGREEMENT_LETTER" | "ID_CARD" | "SCREENSHOT" | "SUPPORTING_DOCUMENT" | "OTHER";
+  fileName: string;
+  fileKey: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  description: string | null;
+  uploadedAt: Date;
+}
+
 interface ProjectRequirements {
   id: string;
   projectId: string;
@@ -129,6 +163,7 @@ interface Project {
   requirements: ProjectRequirements | null;
   reviews: Review[];
   assignments: Assignment[];
+  stakeholderDocuments: StakeholderDocumentFromDB[];
 }
 
 interface ProjectDetailContentProps {
@@ -230,6 +265,15 @@ export function ProjectDetailContent({
 }: ProjectDetailContentProps) {
   // State for code viewer visibility
   const [showCodeViewer, setShowCodeViewer] = useState(false);
+
+  // State for stakeholder documents
+  const [stakeholderDocs, setStakeholderDocs] = useState<StakeholderDocument[]>(
+    // Convert Date to string for the component
+    project.stakeholderDocuments.map(doc => ({
+      ...doc,
+      uploadedAt: doc.uploadedAt.toISOString(),
+    }))
+  );
 
   // Parse GitHub URL to get owner and repo
   const githubInfo = project.githubRepoUrl ? parseGitHubUrl(project.githubRepoUrl) : null;
@@ -658,6 +702,24 @@ export function ProjectDetailContent({
                     {requirementsComplete ? 'Persyaratan Lengkap - Lihat Detail' : 'Lengkapi Persyaratan Sekarang'}
                   </Button>
                 </div>
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Stakeholder Documents Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.22 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <CardBody className="p-5">
+                <StakeholderUpload
+                  projectId={project.id}
+                  documents={stakeholderDocs as Parameters<typeof StakeholderUpload>[0]['documents']}
+                  onDocumentsChange={(docs) => setStakeholderDocs(docs as StakeholderDocument[])}
+                  readOnly={!canEdit}
+                />
               </CardBody>
             </Card>
           </motion.div>

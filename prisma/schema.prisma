@@ -46,30 +46,40 @@ enum ReviewStatus {
   COMPLETED
 }
 
+enum StakeholderDocumentType {
+  SIGNATURE // Tanda tangan stakeholder
+  PHOTO // Foto stakeholder/kegiatan
+  AGREEMENT_LETTER // Surat persetujuan
+  ID_CARD // Kartu identitas
+  SCREENSHOT // Screenshot aplikasi/sistem
+  SUPPORTING_DOCUMENT // Dokumen pelengkap
+  OTHER // Dokumen lainnya
+}
+
 // ==================== MODELS ====================
 
 model User {
   id             String    @id @default(cuid())
-  username       String    @unique  // NIM untuk mahasiswa, NIP untuk dosen, username untuk admin
-  email          String?   @unique  // Email untuk OAuth providers
+  username       String    @unique // NIM untuk mahasiswa, NIP untuk dosen, username untuk admin
+  email          String?   @unique // Email untuk OAuth providers
   emailVerified  DateTime? // Required by NextAuth adapter
   name           String
-  password       String?   // Nullable for OAuth users
+  password       String? // Nullable for OAuth users
   role           Role      @default(MAHASISWA)
-  image          String?   // For NextAuth compatibility (avatar URL)
+  image          String? // For NextAuth compatibility (avatar URL)
   githubId       String?   @unique
   githubUsername String?
-  githubToken    String?   // Encrypted GitHub access token
+  githubToken    String? // Encrypted GitHub access token
   isActive       Boolean   @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
   // Relations
-  projects          Project[]           @relation("ProjectOwner")
-  reviews           Review[]            @relation("Reviewer")
-  notifications     Notification[]
-  assignedProjects  ProjectAssignment[]
-  accounts          Account[]
+  projects         Project[]           @relation("ProjectOwner")
+  reviews          Review[]            @relation("Reviewer")
+  notifications    Notification[]
+  assignedProjects ProjectAssignment[]
+  accounts         Account[]
 
   @@map("users")
 }
@@ -96,35 +106,36 @@ model Account {
 }
 
 model Project {
-  id             String        @id @default(cuid())
-  title          String
-  description    String?       @db.Text
-  status         ProjectStatus @default(DRAFT)
-  
+  id          String        @id @default(cuid())
+  title       String
+  description String?       @db.Text
+  status      ProjectStatus @default(DRAFT)
+
   // GitHub - Repo Mahasiswa
   githubRepoUrl  String?
   githubRepoName String?
-  
+
   // GitHub - Repo di Organization (setelah fork)
-  orgRepoUrl     String?       // URL repo di org setelah fork
-  orgRepoName    String?       // Nama repo di org
-  forkedAt       DateTime?     // Kapan di-fork ke org
-  
-  semester       String        // e.g., "Ganjil 2024/2025"
-  tahunAkademik  String        // e.g., "2024/2025"
-  submittedAt    DateTime?     // When project was submitted for review
-  approvedAt     DateTime?     // When project was approved
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  orgRepoUrl  String? // URL repo di org setelah fork
+  orgRepoName String? // Nama repo di org
+  forkedAt    DateTime? // Kapan di-fork ke org
+
+  semester      String // e.g., "Ganjil 2024/2025"
+  tahunAkademik String // e.g., "2024/2025"
+  submittedAt   DateTime? // When project was submitted for review
+  approvedAt    DateTime? // When project was approved
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   // Relations
-  mahasiswaId  String
-  mahasiswa    User                 @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
-  documents    Document[]
-  reviews      Review[]
-  assignments  ProjectAssignment[]
-  requirements ProjectRequirements?
-  members      ProjectMember[]
+  mahasiswaId          String
+  mahasiswa            User                  @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
+  documents            Document[]
+  reviews              Review[]
+  assignments          ProjectAssignment[]
+  requirements         ProjectRequirements?
+  members              ProjectMember[]
+  stakeholderDocuments StakeholderDocument[]
 
   @@map("projects")
 }
@@ -166,7 +177,7 @@ model Document {
   type       DocumentType
   fileName   String
   filePath   String
-  fileSize   Int          // in bytes
+  fileSize   Int // in bytes
   mimeType   String
   uploadedAt DateTime     @default(now())
   updatedAt  DateTime     @updatedAt
@@ -182,7 +193,7 @@ model Review {
   projectId      String
   reviewerId     String
   status         ReviewStatus @default(PENDING)
-  overallScore   Int?         // 0-100
+  overallScore   Int? // 0-100
   overallComment String?      @db.Text
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
@@ -202,8 +213,8 @@ model ReviewComment {
   id         String   @id @default(cuid())
   reviewId   String
   content    String   @db.Text
-  filePath   String?  // For inline code review (e.g., "src/app/page.tsx")
-  lineNumber Int?     // For inline code review
+  filePath   String? // For inline code review (e.g., "src/app/page.tsx")
+  lineNumber Int? // For inline code review
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -217,8 +228,8 @@ model RubrikPenilaian {
   id          String   @id @default(cuid())
   name        String
   description String?  @db.Text
-  kategori    String   // e.g., "Kualitas Kode", "Dokumentasi", "Presentasi"
-  bobotMax    Int      // Max score for this category (e.g., 20)
+  kategori    String // e.g., "Kualitas Kode", "Dokumentasi", "Presentasi"
+  bobotMax    Int // Max score for this category (e.g., 20)
   urutan      Int      @default(0) // Order of display
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
@@ -234,7 +245,7 @@ model ReviewScore {
   id        String   @id @default(cuid())
   reviewId  String
   rubrikId  String
-  score     Int      // Actual score given
+  score     Int // Actual score given
   feedback  String?  @db.Text
   createdAt DateTime @default(now())
 
@@ -252,8 +263,8 @@ model Notification {
   title     String
   message   String   @db.Text
   isRead    Boolean  @default(false)
-  type      String   // e.g., "review", "submission", "assignment", "system"
-  link      String?  // URL to navigate when clicked
+  type      String // e.g., "review", "submission", "assignment", "system"
+  link      String? // URL to navigate when clicked
   createdAt DateTime @default(now())
 
   // Relations
@@ -266,14 +277,14 @@ model Notification {
 // ==================== SEMESTER CONFIGURATION ====================
 
 model Semester {
-  id          String   @id @default(cuid())
-  name        String   // e.g., "Ganjil 2024/2025"
+  id            String   @id @default(cuid())
+  name          String // e.g., "Ganjil 2024/2025"
   tahunAkademik String // e.g., "2024/2025"
-  startDate   DateTime
-  endDate     DateTime
-  isActive    Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  startDate     DateTime
+  endDate       DateTime
+  isActive      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("semesters")
 }
@@ -281,37 +292,37 @@ model Semester {
 // ==================== PROJECT REQUIREMENTS (Persyaratan Proyek) ====================
 
 model ProjectRequirements {
-  id        String   @id @default(cuid())
-  projectId String   @unique // One requirements per project
+  id        String @id @default(cuid())
+  projectId String @unique // One requirements per project
 
   // ========== INFORMASI DASAR ==========
-  judulProyek          String?   // Text input - Judul proyek
-  targetPengguna       String?   @db.Text // Untuk siapa aplikasi/sistem ini
-  latarBelakangMasalah String?   @db.Text // Mengapa proyek ini perlu dibuat
-  tujuanProyek         String?   @db.Text // Apa yang ingin dicapai
-  manfaatProyek        String?   @db.Text // Keuntungan yang didapat
+  judulProyek          String? // Text input - Judul proyek
+  targetPengguna       String? @db.Text // Untuk siapa aplikasi/sistem ini
+  latarBelakangMasalah String? @db.Text // Mengapa proyek ini perlu dibuat
+  tujuanProyek         String? @db.Text // Apa yang ingin dicapai
+  manfaatProyek        String? @db.Text // Keuntungan yang didapat
 
   // ========== ASPEK AKADEMIK ==========
-  integrasiMatakuliah  String?   @db.Text // Integrasi konsep dari mata kuliah yang relevan
-  metodologi           String?   @db.Text // Metodologi pengembangan (Agile, Waterfall, dll)
-  penulisanLaporan     String?   @db.Text // Rencana format dan struktur laporan
+  integrasiMatakuliah String? @db.Text // Integrasi konsep dari mata kuliah yang relevan
+  metodologi          String? @db.Text // Metodologi pengembangan (Agile, Waterfall, dll)
+  penulisanLaporan    String? @db.Text // Rencana format dan struktur laporan
 
   // ========== TEKNIS & IMPLEMENTASI ==========
-  ruangLingkup         String?   @db.Text // Batasan dan cakupan proyek
-  sumberDayaBatasan    String?   @db.Text // Sumber daya & batasan (waktu, anggaran, akses data)
-  teknologi            String?   @db.Text // Stack/tools yang dipakai
-  fiturUtama           String?   @db.Text // Daftar fitur yang akan dibuat
+  ruangLingkup      String? @db.Text // Batasan dan cakupan proyek
+  sumberDayaBatasan String? @db.Text // Sumber daya & batasan (waktu, anggaran, akses data)
+  teknologi         String? @db.Text // Stack/tools yang dipakai
+  fiturUtama        String? @db.Text // Daftar fitur yang akan dibuat
 
   // ========== ANALISIS & EVALUASI ==========
-  analisisTemuan       String?   @db.Text // Rencana analisis dan temuan yang diharapkan
-  presentasiUjian      String?   @db.Text // Rencana presentasi dan persiapan ujian
-  stakeholder          String?   @db.Text // Keterlibatan stakeholder
-  kepatuhanEtika       String?   @db.Text // Aspek etika dan penanganan data
+  analisisTemuan  String? @db.Text // Rencana analisis dan temuan yang diharapkan
+  presentasiUjian String? @db.Text // Rencana presentasi dan persiapan ujian
+  stakeholder     String? @db.Text // Keterlibatan stakeholder
+  kepatuhanEtika  String? @db.Text // Aspek etika dan penanganan data
 
   // ========== TIMELINE ==========
-  timeline             String?   @db.Text // Deskripsi rencana pengerjaan
-  kerangkaWaktu        String?   @db.Text // Jadwal terstruktur per tahapan
-  deadlineDate         DateTime? // Tanggal deadline proyek
+  timeline      String?   @db.Text // Deskripsi rencana pengerjaan
+  kerangkaWaktu String?   @db.Text // Jadwal terstruktur per tahapan
+  deadlineDate  DateTime? // Tanggal deadline proyek
 
   // Metadata
   completionPercent Int      @default(0) // 0-100
@@ -322,4 +333,34 @@ model ProjectRequirements {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("project_requirements")
+}
+
+// ==================== STAKEHOLDER DOCUMENTS (Dokumen Stakeholder) ====================
+
+model StakeholderDocument {
+  id        String @id @default(cuid())
+  projectId String
+
+  // Stakeholder Info
+  stakeholderName String // Nama stakeholder
+  stakeholderRole String? // Jabatan/peran stakeholder (e.g., "Direktur", "Manager IT")
+  organization    String? // Nama organisasi/perusahaan
+
+  // Document Info
+  type     StakeholderDocumentType
+  fileName String // Original file name
+  fileKey  String // MinIO object key
+  fileUrl  String // Public URL to access file
+  fileSize Int // in bytes
+  mimeType String // e.g., "image/png", "application/pdf"
+
+  // Metadata
+  description String?  @db.Text // Optional description
+  uploadedAt  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("stakeholder_documents")
 }

@@ -114,16 +114,39 @@ export async function POST(request: Request) {
       );
     }
 
+    // Check if project is ready for review (has been submitted)
+    const reviewableStatuses = ['SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 'APPROVED'];
+    if (!reviewableStatuses.includes(project.status)) {
+      return NextResponse.json(
+        { error: 'Project belum siap untuk direview' },
+        { status: 400 },
+      );
+    }
+
+    // For dosen, either they are assigned OR they can review any submitted project
+    // Admin can always review
     const isAssigned = project.assignments.some(
       (a) => a.dosenId === session.user.id,
     );
     const isAdmin = session.user.role === 'ADMIN';
+    const isDosen = session.user.role === 'DOSEN_PENGUJI';
 
-    if (!isAssigned && !isAdmin) {
+    // Allow dosen to review any submitted project (auto-assign if needed)
+    if (!isAssigned && !isAdmin && !isDosen) {
       return NextResponse.json(
-        { error: 'Anda tidak ditugaskan ke project ini' },
+        { error: 'Anda tidak memiliki akses untuk mereview project ini' },
         { status: 403 },
       );
+    }
+
+    // Auto-assign dosen to project if not already assigned
+    if (isDosen && !isAssigned) {
+      await prisma.projectAssignment.create({
+        data: {
+          projectId,
+          dosenId: session.user.id,
+        },
+      });
     }
 
     // Check if review already exists

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardHeader,
@@ -265,8 +265,8 @@ export function GitHubCodeViewer({
           <div
             key={item.path}
             className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${selectedFile === item.path
-                ? 'bg-primary/10 text-primary'
-                : 'hover:bg-default-100'
+              ? 'bg-primary/10 text-primary'
+              : 'hover:bg-default-100'
               }`}
             onClick={() =>
               item.type === 'dir' ? handleDirClick(item) : handleFileClick(item)
@@ -336,9 +336,8 @@ export function GitHubCodeViewer({
                   const hasComment = !!lineComment;
 
                   return (
-                    <>
+                    <React.Fragment key={lineNumber}>
                       <tr
-                        key={lineNumber}
                         className={`${hoveredLine === lineNumber ? 'bg-default-100' : ''
                           } ${hasComment ? 'bg-warning-50' : ''}`}
                         onMouseEnter={() => setHoveredLine(lineNumber)}
@@ -358,7 +357,7 @@ export function GitHubCodeViewer({
                         </td>
                       </tr>
                       {hasComment && (
-                        <tr key={`comment-${lineNumber}`}>
+                        <tr>
                           <td colSpan={2} className="bg-warning-100 px-4 py-2">
                             <div className="text-sm text-warning-700">
                               <strong>Comment:</strong> {lineComment.content}
@@ -366,7 +365,7 @@ export function GitHubCodeViewer({
                           </td>
                         </tr>
                       )}
-                    </>
+                    </React.Fragment>
                   );
                 })}
               </tbody>
