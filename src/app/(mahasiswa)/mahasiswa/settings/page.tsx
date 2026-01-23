@@ -9,5 +9,9 @@ export default async function MahasiswaSettingsPage() {
     redirect('/login');
   }
 
-  return <SettingsContent role="mahasiswa" />;
+  return (
+    <div className="w-full">
+      <SettingsContent role="mahasiswa" />
+    </div>
+  );
 }

@@ -10,6 +10,17 @@ export default async function MahasiswaDashboardPage() {
     redirect('/login');
   }
 
+  // Fetch user data for GitHub status
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: {
+      githubUsername: true,
+      githubToken: true,
+    },
+  });
+
+  const hasGitHubConnected = !!(user?.githubUsername && user?.githubToken);
+
   // Fetch user's projects
   const projects = await prisma.project.findMany({
     where: { mahasiswaId: session.user.id },
@@ -57,6 +68,8 @@ export default async function MahasiswaDashboardPage() {
       userName={session.user.name || 'User'}
       userImage={session.user.image || undefined}
       projects={projects}
+      hasGitHubConnected={hasGitHubConnected}
+      githubUsername={user?.githubUsername || undefined}
       stats={{
         totalProjects,
         submittedProjects,

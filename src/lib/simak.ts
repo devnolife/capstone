@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import type { PrismaClient } from '@/generated/prisma';
 
 const SIMAK_GRAPHQL_URL = process.env.SIMAK_GRAPHQL_URL || 'https://sicekcok.if.unismuh.ac.id/graphql';
+const SIMAK_TIMEOUT_MS = 5000; // 5 second timeout
 
 // GraphQL Queries
 const GET_MAHASISWA_USER = `
@@ -48,10 +49,16 @@ export function hashMD5(password: string): string {
 }
 
 /**
- * Fetch mahasiswa data from SIMAK GraphQL API
+ * Fetch mahasiswa data from SIMAK GraphQL API with timeout
  */
 export async function getMahasiswaFromSimak(nim: string): Promise<SimakMahasiswa | null> {
+  const startTime = Date.now();
+  console.log(`[SIMAK] Fetching data for NIM: ${nim}...`);
+
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), SIMAK_TIMEOUT_MS);
+
     const response = await fetch(SIMAK_GRAPHQL_URL, {
       method: 'POST',
       headers: {
@@ -61,23 +68,33 @@ export async function getMahasiswaFromSimak(nim: string): Promise<SimakMahasiswa
         query: GET_MAHASISWA_USER,
         variables: { nim },
       }),
+      signal: controller.signal,
     });
 
+    clearTimeout(timeoutId);
+    const elapsed = Date.now() - startTime;
+
     if (!response.ok) {
-      console.error('SIMAK API error:', response.status, response.statusText);
+      console.error(`[SIMAK] API error (${elapsed}ms):`, response.status, response.statusText);
       return null;
     }
 
     const result = await response.json();
 
     if (result.errors) {
-      console.error('SIMAK GraphQL errors:', result.errors);
+      console.error(`[SIMAK] GraphQL errors (${elapsed}ms):`, result.errors);
       return null;
     }
 
+    console.log(`[SIMAK] Data fetched successfully (${elapsed}ms)`);
     return result.data?.mahasiswaUser || null;
   } catch (error) {
-    console.error('Error fetching from SIMAK:', error);
+    const elapsed = Date.now() - startTime;
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.error(`[SIMAK] Request timeout after ${elapsed}ms`);
+    } else {
+      console.error(`[SIMAK] Error (${elapsed}ms):`, error);
+    }
     return null;
   }
 }

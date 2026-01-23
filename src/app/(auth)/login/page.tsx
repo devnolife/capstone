@@ -34,6 +34,7 @@ function LoginForm() {
     username: '',
     password: '',
   });
+  const [loginStatus, setLoginStatus] = useState('');
 
   // Check for OAuth errors from callback
   const callbackError = searchParams.get('error');
@@ -42,8 +43,15 @@ function LoginForm() {
     e.preventDefault();
     setIsLoading(true);
     setError('');
+    setLoginStatus('Memverifikasi kredensial...');
 
     try {
+      // Check if NIM pattern (numeric) - will use SIMAK
+      const isStudentNim = /^\d+$/.test(formData.username);
+      if (isStudentNim) {
+        setLoginStatus('Menghubungi server SIMAK...');
+      }
+
       const result = await signIn('credentials', {
         username: formData.username,
         password: formData.password,
@@ -51,6 +59,7 @@ function LoginForm() {
       });
 
       if (result?.error) {
+        setLoginStatus('');
         // Show more descriptive error messages
         if (result.error.includes('SIMAK')) {
           setError(result.error);
@@ -58,10 +67,12 @@ function LoginForm() {
           setError('NIM/NIP atau password salah. Gunakan password SIMAK Anda.');
         }
       } else {
+        setLoginStatus('Login berhasil! Mengalihkan...');
         router.push('/dashboard');
         router.refresh();
       }
     } catch {
+      setLoginStatus('');
       setError('Terjadi kesalahan. Silakan coba lagi.');
     } finally {
       setIsLoading(false);
@@ -190,6 +201,18 @@ function LoginForm() {
             >
               Masuk
             </Button>
+
+            {/* Login Status */}
+            {isLoading && loginStatus && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex items-center justify-center gap-2 text-sm text-primary"
+              >
+                <Spinner size="sm" color="primary" />
+                <span>{loginStatus}</span>
+              </motion.div>
+            )}
           </form>
         </CardBody>
       </Card>

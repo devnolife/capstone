@@ -41,6 +41,8 @@ import {
   Zap,
   Users,
   Crown,
+  Link2,
+  CheckCircle2,
 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
 
@@ -82,6 +84,8 @@ interface MahasiswaDashboardProps {
   userName: string;
   userImage?: string;
   projects: Project[];
+  hasGitHubConnected?: boolean;
+  githubUsername?: string;
   stats: {
     totalProjects: number;
     submittedProjects: number;
@@ -229,6 +233,8 @@ export function MahasiswaDashboardContent({
   userName,
   userImage,
   projects,
+  hasGitHubConnected,
+  githubUsername,
   stats,
 }: MahasiswaDashboardProps) {
   const router = useRouter();
@@ -354,6 +360,75 @@ export function MahasiswaDashboardContent({
           </CardBody>
         </Card>
       </motion.div>
+
+      {/* GitHub Connection Banner */}
+      {!hasGitHubConnected && (
+        <motion.div variants={itemVariants}>
+          <Card className="border-2 border-dashed border-warning-300 dark:border-warning-700 bg-warning-50/50 dark:bg-warning-900/20">
+            <CardBody className="p-4 md:p-5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2.5 rounded-xl bg-warning-100 dark:bg-warning-800/50">
+                    <Github size={24} className="text-warning-600 dark:text-warning-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-warning-700 dark:text-warning-300">
+                      Hubungkan Akun GitHub
+                    </h3>
+                    <p className="text-sm text-warning-600/80 dark:text-warning-400/80 mt-0.5">
+                      Hubungkan akun GitHub Anda untuk memilih repository project capstone
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  as={Link}
+                  href="/mahasiswa/settings"
+                  color="warning"
+                  variant="flat"
+                  startContent={<Link2 size={16} />}
+                  className="shrink-0"
+                >
+                  Hubungkan Sekarang
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* GitHub Connected Success */}
+      {hasGitHubConnected && githubUsername && (
+        <motion.div variants={itemVariants}>
+          <Card className="border border-success-200 dark:border-success-800 bg-success-50/50 dark:bg-success-900/20">
+            <CardBody className="p-3 md:p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-success-100 dark:bg-success-800/50">
+                  <CheckCircle2 size={18} className="text-success-600 dark:text-success-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-success-700 dark:text-success-300">
+                    GitHub Terhubung
+                  </p>
+                  <p className="text-xs text-success-600/80 dark:text-success-400/80">
+                    @{githubUsername}
+                  </p>
+                </div>
+                <Button
+                  as="a"
+                  href={`https://github.com/${githubUsername}`}
+                  target="_blank"
+                  size="sm"
+                  variant="light"
+                  color="success"
+                  startContent={<Github size={14} />}
+                >
+                  Lihat Profil
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Stats Grid */}
       <motion.div variants={itemVariants}>

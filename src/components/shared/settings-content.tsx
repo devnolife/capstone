@@ -141,7 +141,7 @@ export function SettingsContent({ role }: SettingsContentProps) {
 
   return (
     <motion.div
-      className="max-w-3xl mx-auto space-y-4 md:space-y-6"
+      className="w-full space-y-4 md:space-y-6"
       variants={containerVariants}
       initial="hidden"
       animate="visible"

@@ -62,12 +62,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
+        const authStart = Date.now();
+
         if (!credentials?.username || !credentials?.password) {
           throw new Error('NIM/NIP dan password diperlukan');
         }
 
         const username = credentials.username as string;
         const password = credentials.password as string;
+
+        console.log(`[AUTH] Login attempt for: ${username}`);
 
         // Check if user exists locally first
         const existingUser = await prisma.user.findUnique({
@@ -79,10 +83,31 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const isStudentNim = /^\d+$/.test(username);
 
         if (isStudentNim) {
-          // Try SIMAK validation
+          // OPTIMIZATION: If user exists locally, already validated with SIMAK, 
+          // and password matches locally - skip SIMAK call for faster login
+          if (existingUser && existingUser.password && existingUser.simakValidated && existingUser.isActive) {
+            console.log(`[AUTH] User exists with SIMAK validation, trying local password...`);
+            const isLocalPasswordValid = await bcrypt.compare(password, existingUser.password);
+            if (isLocalPasswordValid) {
+              console.log(`[AUTH] Local password valid! Login fast path (${Date.now() - authStart}ms)`);
+              return {
+                id: existingUser.id,
+                username: existingUser.username,
+                name: existingUser.name,
+                role: existingUser.role,
+                image: existingUser.image,
+                githubUsername: existingUser.githubUsername,
+              };
+            }
+            console.log(`[AUTH] Local password invalid, will try SIMAK...`);
+          }
+
+          // Try SIMAK validation (for new users or password changes)
+          console.log(`[AUTH] Calling SIMAK API for validation...`);
           const simakResult = await validateSimakCredentials(username, password);
 
           if (simakResult.success && simakResult.data) {
+            console.log(`[AUTH] SIMAK validation successful, upserting user...`);
             // SIMAK validation succeeded, create/update user
             const bcryptHash = await bcrypt.hash(password, 12);
             const user = await upsertUserFromSimak(
@@ -91,6 +116,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               bcryptHash
             );
 
+            console.log(`[AUTH] Login complete via SIMAK (${Date.now() - authStart}ms)`);
             return {
               id: user.id,
               username: user.username,
@@ -101,11 +127,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             };
           }
 
+          console.log(`[AUTH] SIMAK validation failed: ${simakResult.message}`);
+
           // SIMAK validation failed, try local fallback if user exists
           if (existingUser && existingUser.password) {
+            console.log(`[AUTH] Trying local fallback...`);
             const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
             if (isPasswordValid && existingUser.isActive) {
+              console.log(`[AUTH] Local fallback successful (${Date.now() - authStart}ms)`);
               return {
                 id: existingUser.id,
                 username: existingUser.username,
