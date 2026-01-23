@@ -36,6 +36,7 @@ interface CodeViewerProps {
   owner: string;
   repo: string;
   defaultBranch?: string;
+  projectId?: string; // Optional: used to get GitHub token from project owner
   onFileSelect?: (filePath: string, content: string) => void;
   onAddComment?: (
     filePath: string,
@@ -54,6 +55,7 @@ export function GitHubCodeViewer({
   owner,
   repo,
   defaultBranch = 'main',
+  projectId,
   onFileSelect,
   onAddComment,
   selectedFile: externalSelectedFile,
@@ -86,6 +88,11 @@ export function GitHubCodeViewer({
           ref: defaultBranch,
         });
 
+        // Add projectId if available for token resolution
+        if (projectId) {
+          params.set('projectId', projectId);
+        }
+
         const response = await fetch(`/api/github/files?${params}`);
 
         if (!response.ok) {
@@ -102,7 +109,7 @@ export function GitHubCodeViewer({
         setIsLoading(false);
       }
     },
-    [owner, repo, defaultBranch],
+    [owner, repo, defaultBranch, projectId],
   );
 
   // Fetch file content
@@ -125,6 +132,11 @@ export function GitHubCodeViewer({
           content: 'true',
         });
 
+        // Add projectId if available for token resolution
+        if (projectId) {
+          params.set('projectId', projectId);
+        }
+
         const response = await fetch(`/api/github/files?${params}`);
 
         if (!response.ok) {
@@ -146,7 +158,7 @@ export function GitHubCodeViewer({
         setIsLoadingFile(false);
       }
     },
-    [owner, repo, defaultBranch, onFileSelect],
+    [owner, repo, defaultBranch, projectId, onFileSelect],
   );
 
   // Initial load
@@ -252,11 +264,10 @@ export function GitHubCodeViewer({
         {sortedFiles.map((item) => (
           <div
             key={item.path}
-            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${
-              selectedFile === item.path
+            className={`flex items-center gap-2 px-2 py-1.5 rounded-lg cursor-pointer transition-colors ${selectedFile === item.path
                 ? 'bg-primary/10 text-primary'
                 : 'hover:bg-default-100'
-            }`}
+              }`}
             onClick={() =>
               item.type === 'dir' ? handleDirClick(item) : handleFileClick(item)
             }
@@ -328,9 +339,8 @@ export function GitHubCodeViewer({
                     <>
                       <tr
                         key={lineNumber}
-                        className={`${
-                          hoveredLine === lineNumber ? 'bg-default-100' : ''
-                        } ${hasComment ? 'bg-warning-50' : ''}`}
+                        className={`${hoveredLine === lineNumber ? 'bg-default-100' : ''
+                          } ${hasComment ? 'bg-warning-50' : ''}`}
                         onMouseEnter={() => setHoveredLine(lineNumber)}
                         onMouseLeave={() => setHoveredLine(null)}
                       >

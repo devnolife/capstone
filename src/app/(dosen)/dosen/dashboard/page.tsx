@@ -102,6 +102,7 @@ export default async function DosenDashboardPage() {
   return (
     <DosenDashboardContent
       userName={session.user.name || 'Dosen'}
+      userImage={session.user.image || undefined}
       stats={{
         totalAssigned,
         pendingReview,

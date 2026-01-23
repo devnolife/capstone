@@ -25,6 +25,7 @@ export async function GET(request: Request) {
     const ref = searchParams.get('ref'); // branch/commit reference
     const action = searchParams.get('action') || 'list'; // list, content, tree, commits
     const getContent = searchParams.get('content') === 'true'; // shortcut for content action
+    const projectId = searchParams.get('projectId'); // Optional: to get token from project owner
 
     let owner: string;
     let repo: string;
@@ -51,20 +52,86 @@ export async function GET(request: Request) {
       );
     }
 
-    // Get user's GitHub token
-    const user = await prisma.user.findUnique({
+    // Try to get GitHub token from multiple sources
+    let githubToken: string | null = null;
+
+    // 1. First, try current user's token
+    const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { githubToken: true },
+      select: { githubToken: true, role: true },
     });
 
-    if (!user?.githubToken) {
+    if (currentUser?.githubToken) {
+      githubToken = currentUser.githubToken;
+    }
+
+    // 2. If current user doesn't have token and projectId is provided,
+    //    try to get token from project owner (mahasiswa)
+    if (!githubToken && projectId) {
+      const project = await prisma.project.findUnique({
+        where: { id: projectId },
+        select: {
+          mahasiswa: {
+            select: { githubToken: true },
+          },
+        },
+      });
+
+      if (project?.mahasiswa?.githubToken) {
+        githubToken = project.mahasiswa.githubToken;
+      }
+    }
+
+    // 3. If still no token, try to find project by repo URL and get owner's token
+    if (!githubToken) {
+      const repoFullUrl = `https://github.com/${owner}/${repo}`;
+      const project = await prisma.project.findFirst({
+        where: {
+          OR: [
+            { githubRepoUrl: { contains: `${owner}/${repo}` } },
+            { orgRepoUrl: { contains: `${owner}/${repo}` } },
+          ],
+        },
+        select: {
+          mahasiswa: {
+            select: { githubToken: true },
+          },
+        },
+      });
+
+      if (project?.mahasiswa?.githubToken) {
+        githubToken = project.mahasiswa.githubToken;
+      }
+    }
+
+    // 4. Fallback to organization token (for org repos) or app token
+    if (!githubToken) {
+      // Use org token if repo belongs to the organization
+      const orgName = process.env.GITHUB_ORG_NAME || 'capstone-informatika';
+      if (owner === orgName && process.env.GITHUB_ORG_TOKEN) {
+        githubToken = process.env.GITHUB_ORG_TOKEN;
+      }
+      // Or if it's any repo and we have an org token, use it
+      else if (process.env.GITHUB_ORG_TOKEN) {
+        githubToken = process.env.GITHUB_ORG_TOKEN;
+      }
+      // Final fallback to app token
+      else if (process.env.GITHUB_APP_TOKEN) {
+        githubToken = process.env.GITHUB_APP_TOKEN;
+      }
+    }
+
+    if (!githubToken) {
       return NextResponse.json(
-        { error: 'GitHub tidak terhubung. Silakan login dengan GitHub.' },
+        {
+          error: 'GitHub tidak terhubung. Silakan konfigurasi GITHUB_ORG_TOKEN di environment variables atau pemilik project perlu login dengan GitHub.',
+          code: 'NO_GITHUB_TOKEN'
+        },
         { status: 400 },
       );
     }
 
-    const github = createGitHubClient(user.githubToken);
+    const github = createGitHubClient(githubToken);
 
     // Handle shortcut for getting file content directly
     if (getContent && path) {

@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import {
   Card,
@@ -10,7 +11,7 @@ import {
   Progress,
   Tooltip,
 } from '@heroui/react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   FileText,
@@ -35,7 +36,13 @@ import {
   Rocket,
   Lightbulb,
   Star,
+  Code,
+  ChevronDown,
+  ChevronUp,
+  Eye,
 } from 'lucide-react';
+import { GitHubCodeViewer } from '@/components/github';
+import { parseGitHubUrl } from '@/lib/github';
 import { SubmitProjectButton } from '@/components/projects/submit-button';
 import {
   formatDateTime,
@@ -221,10 +228,16 @@ export function ProjectDetailContent({
   project,
   canEdit,
 }: ProjectDetailContentProps) {
+  // State for code viewer visibility
+  const [showCodeViewer, setShowCodeViewer] = useState(false);
+
+  // Parse GitHub URL to get owner and repo
+  const githubInfo = project.githubRepoUrl ? parseGitHubUrl(project.githubRepoUrl) : null;
+
   // Calculate requirements completion
   const requirementsPercent = project.requirements?.completionPercent ?? 0;
   const requirementsComplete = requirementsPercent === 100;
-  
+
   // Check which requirements are filled
   const getFilledRequirements = () => {
     if (!project.requirements) return {};
@@ -241,7 +254,7 @@ export function ProjectDetailContent({
       kepatuhanEtika: !!req.kepatuhanEtika?.trim(),
     };
   };
-  
+
   const filledRequirements = getFilledRequirements();
   const progressValue = getProgressValue(project.status, project.reviews.length > 0, requirementsPercent);
 
@@ -394,8 +407,8 @@ export function ProjectDetailContent({
             </motion.div>
           )}
 
-          {/* GitHub Repository Card */}
-          {project.githubRepoUrl && (
+          {/* GitHub Repository Card with Code Viewer */}
+          {project.githubRepoUrl && githubInfo && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -403,23 +416,74 @@ export function ProjectDetailContent({
             >
               <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
                 <CardBody className="p-0">
-                  <a
-                    href={project.githubRepoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group"
-                  >
+                  {/* Repository Header */}
+                  <div className="flex items-center gap-4 p-5 border-b border-zinc-100 dark:border-zinc-800">
                     <div className="p-3 rounded-2xl bg-zinc-900 dark:bg-zinc-700 text-white">
                       <Github size={24} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-lg group-hover:text-primary transition-colors">
+                      <p className="font-semibold text-lg">
                         {project.githubRepoName || 'GitHub Repository'}
                       </p>
                       <p className="text-sm text-default-500 truncate">{project.githubRepoUrl}</p>
                     </div>
-                    <ExternalLink size={20} className="text-default-400 group-hover:text-primary transition-colors" />
-                  </a>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="primary"
+                        startContent={showCodeViewer ? <ChevronUp size={16} /> : <Eye size={16} />}
+                        onPress={() => setShowCodeViewer(!showCodeViewer)}
+                      >
+                        {showCodeViewer ? 'Sembunyikan' : 'Lihat Kode'}
+                      </Button>
+                      <Button
+                        as={Link}
+                        href={`/mahasiswa/projects/${project.id}/code`}
+                        size="sm"
+                        variant="flat"
+                        color="secondary"
+                        startContent={<Code size={14} />}
+                      >
+                        Fullscreen
+                      </Button>
+                      <Button
+                        as="a"
+                        href={project.githubRepoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        size="sm"
+                        variant="bordered"
+                        startContent={<ExternalLink size={14} />}
+                      >
+                        GitHub
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Code Viewer Section */}
+                  <AnimatePresence>
+                    {showCodeViewer && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="p-4 bg-zinc-50 dark:bg-zinc-900">
+                          <div className="rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
+                            <GitHubCodeViewer
+                              owner={githubInfo.owner}
+                              repo={githubInfo.repo}
+                              defaultBranch="main"
+                              projectId={project.id}
+                            />
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </CardBody>
               </Card>
             </motion.div>
@@ -474,9 +538,8 @@ export function ProjectDetailContent({
                             strokeLinecap="round"
                             strokeDasharray={113}
                             strokeDashoffset={113 - (113 * requirementsPercent) / 100}
-                            className={`transition-all duration-500 ${
-                              requirementsComplete ? 'text-emerald-500' : 'text-violet-500'
-                            }`}
+                            className={`transition-all duration-500 ${requirementsComplete ? 'text-emerald-500' : 'text-violet-500'
+                              }`}
                           />
                         </svg>
                         <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold">
@@ -515,11 +578,10 @@ export function ProjectDetailContent({
                         {REQUIREMENTS.filter(r => r.category === 'akademik').map((req) => {
                           const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
                           return (
-                            <div key={req.key} className={`flex items-center gap-2 text-xs ${
-                              isFilled 
-                                ? 'text-emerald-600 dark:text-emerald-400' 
-                                : 'text-violet-600 dark:text-violet-400'
-                            }`}>
+                            <div key={req.key} className={`flex items-center gap-2 text-xs ${isFilled
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-violet-600 dark:text-violet-400'
+                              }`}>
                               {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                               <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
                             </div>
@@ -544,11 +606,10 @@ export function ProjectDetailContent({
                         {REQUIREMENTS.filter(r => r.category === 'teknis').map((req) => {
                           const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
                           return (
-                            <div key={req.key} className={`flex items-center gap-2 text-xs ${
-                              isFilled 
-                                ? 'text-emerald-600 dark:text-emerald-400' 
-                                : 'text-orange-600 dark:text-orange-400'
-                            }`}>
+                            <div key={req.key} className={`flex items-center gap-2 text-xs ${isFilled
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-orange-600 dark:text-orange-400'
+                              }`}>
                               {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                               <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
                             </div>
@@ -573,11 +634,10 @@ export function ProjectDetailContent({
                         {REQUIREMENTS.filter(r => r.category === 'analisis').map((req) => {
                           const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
                           return (
-                            <div key={req.key} className={`flex items-center gap-2 text-xs ${
-                              isFilled 
-                                ? 'text-emerald-600 dark:text-emerald-400' 
-                                : 'text-emerald-600/60 dark:text-emerald-400/60'
-                            }`}>
+                            <div key={req.key} className={`flex items-center gap-2 text-xs ${isFilled
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : 'text-emerald-600/60 dark:text-emerald-400/60'
+                              }`}>
                               {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                               <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
                             </div>
@@ -721,15 +781,14 @@ export function ProjectDetailContent({
                         {/* Icon & Line */}
                         <div className="flex flex-col items-center">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                              status === 'completed'
-                                ? 'bg-emerald-500 text-white'
-                                : status === 'current'
-                                  ? 'bg-blue-500 text-white ring-4 ring-blue-100 dark:ring-blue-900'
-                                  : status === 'rejected'
-                                    ? 'bg-red-500 text-white'
-                                    : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400'
-                            }`}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${status === 'completed'
+                              ? 'bg-emerald-500 text-white'
+                              : status === 'current'
+                                ? 'bg-blue-500 text-white ring-4 ring-blue-100 dark:ring-blue-900'
+                                : status === 'rejected'
+                                  ? 'bg-red-500 text-white'
+                                  : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400'
+                              }`}
                           >
                             {status === 'completed' ? (
                               <CheckCircle2 size={16} />
@@ -741,11 +800,10 @@ export function ProjectDetailContent({
                           </div>
                           {!isLast && (
                             <div
-                              className={`w-0.5 h-8 my-1 ${
-                                status === 'completed'
-                                  ? 'bg-emerald-500'
-                                  : 'bg-zinc-200 dark:bg-zinc-700'
-                              }`}
+                              className={`w-0.5 h-8 my-1 ${status === 'completed'
+                                ? 'bg-emerald-500'
+                                : 'bg-zinc-200 dark:bg-zinc-700'
+                                }`}
                             />
                           )}
                         </div>
@@ -753,15 +811,14 @@ export function ProjectDetailContent({
                         {/* Label */}
                         <div className="pt-1">
                           <p
-                            className={`text-sm font-medium ${
-                              status === 'completed'
-                                ? 'text-emerald-600 dark:text-emerald-400'
-                                : status === 'current'
-                                  ? 'text-blue-600 dark:text-blue-400'
-                                  : status === 'rejected'
-                                    ? 'text-red-600 dark:text-red-400'
-                                    : 'text-zinc-400'
-                            }`}
+                            className={`text-sm font-medium ${status === 'completed'
+                              ? 'text-emerald-600 dark:text-emerald-400'
+                              : status === 'current'
+                                ? 'text-blue-600 dark:text-blue-400'
+                                : status === 'rejected'
+                                  ? 'text-red-600 dark:text-red-400'
+                                  : 'text-zinc-400'
+                              }`}
                           >
                             {step.label}
                           </p>
