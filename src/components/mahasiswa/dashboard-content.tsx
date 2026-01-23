@@ -47,11 +47,12 @@ import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
 interface ProjectMember {
   id: string;
   projectId: string;
-  githubUsername: string;
+  githubUsername: string | null;
   githubId: string | null;
   githubAvatarUrl: string | null;
   name: string | null;
   role: string;
+  userId: string | null;
   addedAt: Date;
 }
 
@@ -540,12 +541,12 @@ export function MahasiswaDashboardContent({
                                     >
                                       <Avatar
                                         src={member.githubAvatarUrl || undefined}
-                                        name={member.name || member.githubUsername}
+                                        name={member.name || member.githubUsername || 'Member'}
                                         size="sm"
                                         className="w-5 h-5"
                                       />
                                       <span className="text-xs font-medium truncate max-w-[100px]">
-                                        {member.name || member.githubUsername}
+                                        {member.name || member.githubUsername || 'Member'}
                                       </span>
                                       {member.role === 'leader' && (
                                         <Crown size={10} className="text-amber-500 shrink-0" />

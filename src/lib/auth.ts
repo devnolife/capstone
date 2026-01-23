@@ -3,6 +3,7 @@ import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
+import { validateSimakCredentials, upsertUserFromSimak } from '@/lib/simak';
 import type { Role } from '@/generated/prisma';
 
 declare module 'next-auth' {
@@ -65,34 +66,83 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           throw new Error('NIM/NIP dan password diperlukan');
         }
 
-        const user = await prisma.user.findUnique({
-          where: { username: credentials.username as string },
+        const username = credentials.username as string;
+        const password = credentials.password as string;
+
+        // Check if user exists locally first
+        const existingUser = await prisma.user.findUnique({
+          where: { username },
         });
 
-        if (!user || !user.password) {
+        // For MAHASISWA role, try SIMAK validation first
+        // Determine if this could be a student NIM (numeric pattern)
+        const isStudentNim = /^\d+$/.test(username);
+
+        if (isStudentNim) {
+          // Try SIMAK validation
+          const simakResult = await validateSimakCredentials(username, password);
+
+          if (simakResult.success && simakResult.data) {
+            // SIMAK validation succeeded, create/update user
+            const bcryptHash = await bcrypt.hash(password, 12);
+            const user = await upsertUserFromSimak(
+              prisma,
+              simakResult.data,
+              bcryptHash
+            );
+
+            return {
+              id: user.id,
+              username: user.username,
+              name: user.name,
+              role: user.role as Role,
+              image: null,
+              githubUsername: null,
+            };
+          }
+
+          // SIMAK validation failed, try local fallback if user exists
+          if (existingUser && existingUser.password) {
+            const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+
+            if (isPasswordValid && existingUser.isActive) {
+              return {
+                id: existingUser.id,
+                username: existingUser.username,
+                name: existingUser.name,
+                role: existingUser.role,
+                image: existingUser.image,
+                githubUsername: existingUser.githubUsername,
+              };
+            }
+          }
+
+          // Neither SIMAK nor local validation succeeded
+          throw new Error(simakResult.message || 'NIM atau password salah');
+        }
+
+        // For non-student users (dosen, admin), use local validation only
+        if (!existingUser || !existingUser.password) {
           throw new Error('NIM/NIP atau password salah');
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password as string,
-          user.password,
-        );
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
         if (!isPasswordValid) {
           throw new Error('NIM/NIP atau password salah');
         }
 
-        if (!user.isActive) {
+        if (!existingUser.isActive) {
           throw new Error('Akun tidak aktif');
         }
 
         return {
-          id: user.id,
-          username: user.username,
-          name: user.name,
-          role: user.role,
-          image: user.image,
-          githubUsername: user.githubUsername,
+          id: existingUser.id,
+          username: existingUser.username,
+          name: existingUser.name,
+          role: existingUser.role,
+          image: existingUser.image,
+          githubUsername: existingUser.githubUsername,
         };
       },
     }),

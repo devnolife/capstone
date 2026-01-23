@@ -20,9 +20,18 @@ export async function GET() {
         role: true,
         image: true,
         githubUsername: true,
+        githubId: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,
+        // SIMAK fields
+        nim: true,
+        phone: true,
+        prodi: true,
+        simakPhoto: true,
+        simakValidated: true,
+        simakLastSync: true,
+        email: true,
         _count: {
           select: {
             projects: true,
@@ -77,9 +86,18 @@ export async function PUT(request: Request) {
         role: true,
         image: true,
         githubUsername: true,
+        githubId: true,
         isActive: true,
         createdAt: true,
         updatedAt: true,
+        // SIMAK fields
+        nim: true,
+        phone: true,
+        prodi: true,
+        simakPhoto: true,
+        simakValidated: true,
+        simakLastSync: true,
+        email: true,
         _count: {
           select: {
             projects: true,

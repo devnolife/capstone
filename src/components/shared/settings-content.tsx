@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
 import {
@@ -12,6 +12,8 @@ import {
   SelectItem,
   Button,
   Divider,
+  Chip,
+  Spinner,
 } from '@heroui/react';
 import {
   Settings,
@@ -25,7 +27,12 @@ import {
   Palette,
   Save,
   CheckCircle,
+  Github,
+  Link,
+  Unlink,
+  ExternalLink,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Animation variants
 const containerVariants = {
@@ -49,6 +56,12 @@ interface SettingsContentProps {
   role: 'admin' | 'dosen' | 'mahasiswa';
 }
 
+interface GitHubLinkStatus {
+  linked: boolean;
+  githubUsername: string | null;
+  hasToken: boolean;
+}
+
 export function SettingsContent({ role }: SettingsContentProps) {
   const { theme, setTheme } = useTheme();
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -57,6 +70,68 @@ export function SettingsContent({ role }: SettingsContentProps) {
   const [projectUpdates, setProjectUpdates] = useState(true);
   const [language, setLanguage] = useState('id');
   const [isSaved, setIsSaved] = useState(false);
+
+  // GitHub linking state
+  const [githubStatus, setGithubStatus] = useState<GitHubLinkStatus | null>(null);
+  const [isLoadingGithub, setIsLoadingGithub] = useState(true);
+  const [isUnlinking, setIsUnlinking] = useState(false);
+
+  // Fetch GitHub link status on mount
+  useEffect(() => {
+    const fetchGitHubStatus = async () => {
+      try {
+        const response = await fetch('/api/auth/link-github');
+        if (response.ok) {
+          const data = await response.json();
+          setGithubStatus(data);
+        }
+      } catch (error) {
+        console.error('Error fetching GitHub status:', error);
+      } finally {
+        setIsLoadingGithub(false);
+      }
+    };
+
+    fetchGitHubStatus();
+  }, []);
+
+  const handleGitHubLink = () => {
+    // Redirect to GitHub OAuth with custom callback for linking
+    const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
+    if (!clientId) {
+      toast.error('GitHub Client ID tidak dikonfigurasi');
+      return;
+    }
+    const redirectUri = `${window.location.origin}/link-github/callback`;
+    const scope = 'read:user user:email repo';
+
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
+
+    window.location.href = authUrl;
+  }; const handleGitHubUnlink = async () => {
+    if (!confirm('Apakah Anda yakin ingin memutuskan hubungan dengan akun GitHub? Fitur review code tidak akan tersedia.')) {
+      return;
+    }
+
+    setIsUnlinking(true);
+    try {
+      const response = await fetch('/api/auth/link-github', {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setGithubStatus({ linked: false, githubUsername: null, hasToken: false });
+        toast.success('Akun GitHub berhasil di-unlink');
+      } else {
+        const data = await response.json();
+        toast.error(data.error || 'Gagal memutuskan hubungan dengan GitHub');
+      }
+    } catch {
+      toast.error('Terjadi kesalahan');
+    } finally {
+      setIsUnlinking(false);
+    }
+  };
 
   const handleSave = () => {
     // In a real app, this would save to the backend
@@ -307,6 +382,89 @@ export function SettingsContent({ role }: SettingsContentProps) {
           </CardBody>
         </Card>
       </motion.div>
+
+      {/* GitHub Integration - Only for Mahasiswa */}
+      {role === 'mahasiswa' && (
+        <motion.div variants={itemVariants}>
+          <Card>
+            <CardHeader className="pb-0">
+              <h3 className="font-semibold flex items-center gap-2">
+                <Github size={18} />
+                Integrasi GitHub
+              </h3>
+            </CardHeader>
+            <CardBody className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <p className="font-medium">Akun GitHub</p>
+                  <p className="text-sm text-default-500">
+                    Hubungkan akun GitHub untuk fitur review code dan manajemen repository
+                  </p>
+                </div>
+
+                {isLoadingGithub ? (
+                  <Spinner size="sm" />
+                ) : githubStatus?.linked ? (
+                  <div className="flex items-center gap-3">
+                    <Chip
+                      color="success"
+                      variant="flat"
+                      startContent={<CheckCircle size={14} />}
+                    >
+                      Terhubung
+                    </Chip>
+                    <a
+                      href={`https://github.com/${githubStatus.githubUsername}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary flex items-center gap-1 hover:underline"
+                    >
+                      @{githubStatus.githubUsername}
+                      <ExternalLink size={12} />
+                    </a>
+                  </div>
+                ) : (
+                  <Chip color="warning" variant="flat">
+                    Belum Terhubung
+                  </Chip>
+                )}
+              </div>
+
+              <Divider />
+
+              <div className="flex justify-end gap-2">
+                {githubStatus?.linked ? (
+                  <Button
+                    color="danger"
+                    variant="flat"
+                    startContent={<Unlink size={16} />}
+                    onPress={handleGitHubUnlink}
+                    isLoading={isUnlinking}
+                  >
+                    Putuskan Hubungan
+                  </Button>
+                ) : (
+                  <Button
+                    color="primary"
+                    startContent={<Link size={16} />}
+                    onPress={handleGitHubLink}
+                  >
+                    Hubungkan GitHub
+                  </Button>
+                )}
+              </div>
+
+              {!githubStatus?.linked && (
+                <div className="bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg p-3">
+                  <p className="text-sm text-warning-700 dark:text-warning-300">
+                    <strong>Penting:</strong> Anda perlu menghubungkan akun GitHub untuk dapat membuat project dan menggunakan fitur review code.
+                  </p>
+                </div>
+              )}
+            </CardBody>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Save Button */}
       <motion.div variants={itemVariants} className="flex justify-end pb-4">

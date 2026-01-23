@@ -9,20 +9,18 @@ import {
   CardBody,
   Input,
   Button,
-  Divider,
-  Checkbox,
   Spinner,
 } from '@heroui/react';
-import { 
-  Lock, 
-  Eye, 
-  EyeOff, 
-  Github, 
+import {
+  Lock,
+  Eye,
+  EyeOff,
   GraduationCap,
   ArrowRight,
   Sparkles,
   IdCard,
   Home,
+  BookOpen,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -30,9 +28,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGitHubLoading, setIsGitHubLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
     username: '',
@@ -55,7 +51,12 @@ function LoginForm() {
       });
 
       if (result?.error) {
-        setError('NIM/NIP atau password salah');
+        // Show more descriptive error messages
+        if (result.error.includes('SIMAK')) {
+          setError(result.error);
+        } else {
+          setError('NIM/NIP atau password salah. Gunakan password SIMAK Anda.');
+        }
       } else {
         router.push('/dashboard');
         router.refresh();
@@ -64,18 +65,6 @@ function LoginForm() {
       setError('Terjadi kesalahan. Silakan coba lagi.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleGitHubLogin = async () => {
-    setIsGitHubLoading(true);
-    setError('');
-    
-    try {
-      await signIn('github', { callbackUrl: '/dashboard' });
-    } catch {
-      setError('Terjadi kesalahan saat login dengan GitHub.');
-      setIsGitHubLoading(false);
     }
   };
 
@@ -110,7 +99,7 @@ function LoginForm() {
       <div className="mb-8">
         <h2 className="text-2xl md:text-3xl font-bold mb-2">Selamat Datang!</h2>
         <p className="text-default-500">
-          Masuk dengan NIM/NIP Anda untuk melanjutkan
+          Masuk dengan akun SIMAK Anda untuk melanjutkan
         </p>
       </div>
 
@@ -122,36 +111,30 @@ function LoginForm() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-danger-50 text-danger border border-danger-200 rounded-xl p-4 mb-6 text-sm"
             >
-              {error || (callbackError === 'OAuthAccountNotLinked' 
-                ? 'Akun GitHub ini sudah terhubung dengan akun lain.' 
-                : 'Terjadi kesalahan saat login. Silakan coba lagi.')}
+              {error || 'Terjadi kesalahan saat login. Silakan coba lagi.'}
             </motion.div>
           )}
 
-          {/* GitHub Login Button */}
-          <Button
-            type="button"
-            variant="bordered"
-            size="lg"
-            className="w-full font-semibold mb-4"
-            isLoading={isGitHubLoading}
-            startContent={!isGitHubLoading && <Github size={20} />}
-            onPress={handleGitHubLogin}
-          >
-            Masuk dengan GitHub
-          </Button>
-
-          <div className="flex items-center gap-3 my-5">
-            <Divider className="flex-1" />
-            <span className="text-default-400 text-sm">atau</span>
-            <Divider className="flex-1" />
+          {/* SIMAK Info Banner */}
+          <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-xl p-4 mb-6">
+            <div className="flex items-start gap-3">
+              <BookOpen className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-primary-700 dark:text-primary-300">
+                  Login dengan Akun SIMAK
+                </p>
+                <p className="text-xs text-primary-600/80 dark:text-primary-400/80 mt-1">
+                  Gunakan NIM dan password SIMAK Anda. Data profil akan otomatis tersinkronisasi.
+                </p>
+              </div>
+            </div>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
               label="NIM / NIP"
               type="text"
-              placeholder="Masukkan NIM atau NIP"
+              placeholder="Masukkan NIM SIMAK Anda"
               value={formData.username}
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })
@@ -167,9 +150,9 @@ function LoginForm() {
             />
 
             <Input
-              label="Password"
+              label="Password SIMAK"
               type={showPassword ? 'text' : 'password'}
-              placeholder="Masukkan password"
+              placeholder="Masukkan password SIMAK"
               value={formData.password}
               onChange={(e) =>
                 setFormData({ ...formData, password: e.target.value })
@@ -197,22 +180,6 @@ function LoginForm() {
               autoComplete="current-password"
             />
 
-            <div className="flex items-center justify-between">
-              <Checkbox
-                size="sm"
-                isSelected={rememberMe}
-                onValueChange={setRememberMe}
-              >
-                <span className="text-sm">Ingat saya</span>
-              </Checkbox>
-              <button 
-                type="button"
-                className="text-sm text-primary hover:underline"
-              >
-                Lupa password?
-              </button>
-            </div>
-
             <Button
               type="submit"
               color="primary"
@@ -224,20 +191,11 @@ function LoginForm() {
               Masuk
             </Button>
           </form>
-
-          <Divider className="my-6" />
-
-          <div className="text-center">
-            <p className="text-sm text-default-500">
-              Dengan masuk menggunakan GitHub, akun Anda akan otomatis terhubung 
-              untuk fitur review code.
-            </p>
-          </div>
         </CardBody>
       </Card>
 
       <p className="text-center text-sm text-default-500 mt-6">
-        Hubungi administrator jika Anda memerlukan akun baru
+        Hubungi administrator jika mengalami kendala login
       </p>
     </motion.div>
   );
@@ -262,9 +220,9 @@ export default function LoginPage() {
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white rounded-full blur-3xl" />
         </div>
-        
+
         {/* Floating Elements */}
-        <motion.div 
+        <motion.div
           className="absolute top-32 left-16"
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
@@ -273,8 +231,8 @@ export default function LoginPage() {
             <GraduationCap className="text-white" size={32} />
           </div>
         </motion.div>
-        
-        <motion.div 
+
+        <motion.div
           className="absolute bottom-40 right-24"
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
@@ -297,14 +255,14 @@ export default function LoginPage() {
               </div>
               <span className="text-2xl font-bold">Capstone</span>
             </div>
-            
+
             <h1 className="text-4xl xl:text-5xl font-bold mb-6 leading-tight">
               Sistem Manajemen<br />
               <span className="text-white/90">Project Capstone</span>
             </h1>
-            
+
             <p className="text-lg text-white/80 max-w-md mb-8">
-              Platform terintegrasi untuk mengelola project capstone mahasiswa 
+              Platform terintegrasi untuk mengelola project capstone mahasiswa
               dengan fitur review dan penilaian dari dosen penguji.
             </p>
 

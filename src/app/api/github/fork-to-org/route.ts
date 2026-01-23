@@ -111,7 +111,7 @@ export async function POST(request: NextRequest) {
 
     // Add collaborators if requested
     const collaboratorResults: { username: string; success: boolean; error?: string }[] = [];
-    
+
     if (addCollaborators && forkResult.repoName) {
       // Add project owner (mahasiswa) as collaborator
       if (project.mahasiswa.githubUsername) {
@@ -129,6 +129,7 @@ export async function POST(request: NextRequest) {
 
       // Add team members as collaborators
       for (const member of project.members) {
+        if (!member.githubUsername) continue;
         const result = await orgClient.addCollaborator(
           forkResult.repoName,
           member.githubUsername,

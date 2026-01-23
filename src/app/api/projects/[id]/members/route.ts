@@ -121,7 +121,7 @@ export async function POST(
 
     // Check if member already exists
     const existingMember = project.members.find(
-      (m) => m.githubUsername.toLowerCase() === githubUsername.toLowerCase(),
+      (m) => m.githubUsername?.toLowerCase() === githubUsername.toLowerCase(),
     );
     if (existingMember) {
       return NextResponse.json(
@@ -254,14 +254,19 @@ export async function DELETE(
         },
       });
     } else if (githubUsername) {
-      await prisma.projectMember.delete({
+      // Find member by githubUsername first
+      const memberToDelete = await prisma.projectMember.findFirst({
         where: {
-          projectId_githubUsername: {
-            projectId,
-            githubUsername,
-          },
+          projectId,
+          githubUsername,
         },
       });
+
+      if (memberToDelete) {
+        await prisma.projectMember.delete({
+          where: { id: memberToDelete.id },
+        });
+      }
     }
 
     return NextResponse.json({

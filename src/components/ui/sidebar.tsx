@@ -23,6 +23,7 @@ import {
   GitBranch,
   X,
   Menu,
+  Mail,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -42,6 +43,11 @@ const mahasiswaMenuItems: SidebarItem[] = [
     title: 'Project Saya',
     href: '/mahasiswa/projects',
     icon: <FolderGit2 size={20} />,
+  },
+  {
+    title: 'Undangan Tim',
+    href: '/mahasiswa/invitations',
+    icon: <Mail size={20} />,
   },
   {
     title: 'Persyaratan',

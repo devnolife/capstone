@@ -134,7 +134,13 @@ exports.Prisma.UserScalarFieldEnum = {
   githubToken: 'githubToken',
   isActive: 'isActive',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  nim: 'nim',
+  phone: 'phone',
+  prodi: 'prodi',
+  simakPhoto: 'simakPhoto',
+  simakValidated: 'simakValidated',
+  simakLastSync: 'simakLastSync'
 };
 
 exports.Prisma.AccountScalarFieldEnum = {
@@ -174,12 +180,24 @@ exports.Prisma.ProjectScalarFieldEnum = {
 exports.Prisma.ProjectMemberScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
+  userId: 'userId',
   githubUsername: 'githubUsername',
   githubId: 'githubId',
   githubAvatarUrl: 'githubAvatarUrl',
   name: 'name',
   role: 'role',
   addedAt: 'addedAt'
+};
+
+exports.Prisma.TeamInvitationScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  inviterId: 'inviterId',
+  inviteeId: 'inviteeId',
+  status: 'status',
+  message: 'message',
+  createdAt: 'createdAt',
+  respondedAt: 'respondedAt'
 };
 
 exports.Prisma.ProjectAssignmentScalarFieldEnum = {
@@ -373,6 +391,7 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Project: 'Project',
   ProjectMember: 'ProjectMember',
+  TeamInvitation: 'TeamInvitation',
   ProjectAssignment: 'ProjectAssignment',
   Document: 'Document',
   Review: 'Review',

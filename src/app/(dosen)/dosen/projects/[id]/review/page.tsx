@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -37,6 +37,11 @@ import {
   FolderGit2,
   Plus,
   Trash2,
+  Image as ImageIcon,
+  FileSignature,
+  Camera,
+  IdCard,
+  File,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -109,6 +114,35 @@ interface Rubrik {
   urutan: number;
 }
 
+interface StakeholderDocument {
+  id: string;
+  projectId: string;
+  stakeholderName: string;
+  stakeholderRole: string | null;
+  organization: string | null;
+  type: "SIGNATURE" | "PHOTO" | "AGREEMENT_LETTER" | "ID_CARD" | "SCREENSHOT" | "SUPPORTING_DOCUMENT" | "OTHER";
+  fileName: string;
+  fileKey: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  description: string | null;
+  uploadedAt: string;
+}
+
+const getStakeholderTypeConfig = (type: string) => {
+  const config: Record<string, { color: "success" | "primary" | "warning" | "secondary" | "danger" | "default"; icon: React.ElementType; label: string }> = {
+    SIGNATURE: { color: "success", icon: FileSignature, label: "Tanda Tangan" },
+    PHOTO: { color: "primary", icon: Camera, label: "Foto" },
+    AGREEMENT_LETTER: { color: "warning", icon: FileText, label: "Surat Persetujuan" },
+    ID_CARD: { color: "secondary", icon: IdCard, label: "Kartu Identitas" },
+    SCREENSHOT: { color: "primary", icon: ImageIcon, label: "Screenshot" },
+    SUPPORTING_DOCUMENT: { color: "warning", icon: FileText, label: "Dokumen Pelengkap" },
+    OTHER: { color: "danger", icon: File, label: "Lainnya" },
+  };
+  return config[type] || config.OTHER;
+};
+
 // Animation variants
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -164,6 +198,7 @@ export default function ReviewPage({
   const [comments, setComments] = useState<
     Array<{ content: string; filePath?: string; lineNumber?: number }>
   >([]);
+  const [stakeholderDocs, setStakeholderDocs] = useState<StakeholderDocument[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -234,6 +269,13 @@ export default function ReviewPage({
               ),
             );
           }
+        }
+
+        // Fetch stakeholder documents
+        const stakeholderRes = await fetch(`/api/stakeholder-documents?projectId=${projectId}`);
+        if (stakeholderRes.ok) {
+          const stakeholderData = await stakeholderRes.json();
+          setStakeholderDocs(stakeholderData.data || []);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error loading data');
@@ -792,6 +834,122 @@ export default function ReviewPage({
                           </Button>
                         </motion.div>
                       ))}
+                    </div>
+                  )}
+                </CardBody>
+              </Tab>
+
+              <Tab
+                key="screenshots"
+                title={
+                  <div className="flex items-center gap-2">
+                    <ImageIcon size={16} />
+                    <span>Screenshot & Stakeholder</span>
+                    {stakeholderDocs.length > 0 && (
+                      <Chip size="sm" variant="flat" color="primary">{stakeholderDocs.length}</Chip>
+                    )}
+                  </div>
+                }
+              >
+                <CardBody className="pt-4">
+                  {stakeholderDocs.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                        <ImageIcon size={28} className="text-zinc-400" />
+                      </div>
+                      <p className="text-default-500">
+                        Belum ada screenshot atau dokumen stakeholder
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {stakeholderDocs.map((doc, index) => {
+                        const typeConfig = getStakeholderTypeConfig(doc.type);
+                        const TypeIcon = typeConfig.icon;
+                        const isImage = doc.mimeType.startsWith('image/');
+
+                        return (
+                          <motion.div
+                            key={doc.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:border-primary/50 transition-colors group"
+                          >
+                            {/* Preview Thumbnail */}
+                            {isImage ? (
+                              <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                                <img
+                                  src={doc.fileUrl}
+                                  alt={doc.fileName}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <Button
+                                    as="a"
+                                    href={doc.fileUrl}
+                                    target="_blank"
+                                    size="sm"
+                                    variant="flat"
+                                    className="bg-white/20 backdrop-blur-sm text-white"
+                                    endContent={<ExternalLink size={14} />}
+                                  >
+                                    Lihat Full
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="relative h-40 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center">
+                                <FileText size={48} className="text-zinc-400" />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <Button
+                                    as="a"
+                                    href={doc.fileUrl}
+                                    target="_blank"
+                                    size="sm"
+                                    variant="flat"
+                                    className="bg-white/20 backdrop-blur-sm text-white"
+                                    endContent={<ExternalLink size={14} />}
+                                  >
+                                    Buka File
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Document Info */}
+                            <div className="p-4 space-y-3">
+                              <Chip
+                                size="sm"
+                                color={typeConfig.color}
+                                variant="flat"
+                                startContent={<TypeIcon size={12} />}
+                              >
+                                {typeConfig.label}
+                              </Chip>
+
+                              <div className="space-y-1">
+                                <p className="font-medium text-sm">{doc.stakeholderName}</p>
+                                {doc.stakeholderRole && (
+                                  <p className="text-xs text-default-500">{doc.stakeholderRole}</p>
+                                )}
+                                {doc.organization && (
+                                  <p className="text-xs text-default-400">{doc.organization}</p>
+                                )}
+                              </div>
+
+                              {doc.description && (
+                                <p className="text-xs text-default-500 line-clamp-2">{doc.description}</p>
+                              )}
+
+                              <div className="flex items-center justify-between text-xs text-default-400 pt-2 border-t border-zinc-100 dark:border-zinc-700">
+                                <span className="truncate max-w-[60%]">{doc.fileName}</span>
+                                <span>{formatDate(doc.uploadedAt)}</span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
                     </div>
                   )}
                 </CardBody>

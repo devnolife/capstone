@@ -34,6 +34,11 @@ export type Project = $Result.DefaultSelection<Prisma.$ProjectPayload>
  */
 export type ProjectMember = $Result.DefaultSelection<Prisma.$ProjectMemberPayload>
 /**
+ * Model TeamInvitation
+ * 
+ */
+export type TeamInvitation = $Result.DefaultSelection<Prisma.$TeamInvitationPayload>
+/**
  * Model ProjectAssignment
  * 
  */
@@ -324,6 +329,16 @@ export class PrismaClient<
     * ```
     */
   get projectMember(): Prisma.ProjectMemberDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.teamInvitation`: Exposes CRUD operations for the **TeamInvitation** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more TeamInvitations
+    * const teamInvitations = await prisma.teamInvitation.findMany()
+    * ```
+    */
+  get teamInvitation(): Prisma.TeamInvitationDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.projectAssignment`: Exposes CRUD operations for the **ProjectAssignment** model.
@@ -862,6 +877,7 @@ export namespace Prisma {
     Account: 'Account',
     Project: 'Project',
     ProjectMember: 'ProjectMember',
+    TeamInvitation: 'TeamInvitation',
     ProjectAssignment: 'ProjectAssignment',
     Document: 'Document',
     Review: 'Review',
@@ -887,7 +903,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "project" | "projectMember" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirements" | "stakeholderDocument"
+      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirements" | "stakeholderDocument"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1184,6 +1200,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ProjectMemberCountArgs<ExtArgs>
             result: $Utils.Optional<ProjectMemberCountAggregateOutputType> | number
+          }
+        }
+      }
+      TeamInvitation: {
+        payload: Prisma.$TeamInvitationPayload<ExtArgs>
+        fields: Prisma.TeamInvitationFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.TeamInvitationFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.TeamInvitationFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>
+          }
+          findFirst: {
+            args: Prisma.TeamInvitationFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.TeamInvitationFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>
+          }
+          findMany: {
+            args: Prisma.TeamInvitationFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>[]
+          }
+          create: {
+            args: Prisma.TeamInvitationCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>
+          }
+          createMany: {
+            args: Prisma.TeamInvitationCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.TeamInvitationCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>[]
+          }
+          delete: {
+            args: Prisma.TeamInvitationDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>
+          }
+          update: {
+            args: Prisma.TeamInvitationUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>
+          }
+          deleteMany: {
+            args: Prisma.TeamInvitationDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.TeamInvitationUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.TeamInvitationUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>[]
+          }
+          upsert: {
+            args: Prisma.TeamInvitationUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$TeamInvitationPayload>
+          }
+          aggregate: {
+            args: Prisma.TeamInvitationAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateTeamInvitation>
+          }
+          groupBy: {
+            args: Prisma.TeamInvitationGroupByArgs<ExtArgs>
+            result: $Utils.Optional<TeamInvitationGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.TeamInvitationCountArgs<ExtArgs>
+            result: $Utils.Optional<TeamInvitationCountAggregateOutputType> | number
           }
         }
       }
@@ -2039,6 +2129,7 @@ export namespace Prisma {
     account?: AccountOmit
     project?: ProjectOmit
     projectMember?: ProjectMemberOmit
+    teamInvitation?: TeamInvitationOmit
     projectAssignment?: ProjectAssignmentOmit
     document?: DocumentOmit
     review?: ReviewOmit
@@ -2134,6 +2225,9 @@ export namespace Prisma {
     notifications: number
     assignedProjects: number
     accounts: number
+    teamMemberships: number
+    invitationsSent: number
+    invitationsReceived: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2142,6 +2236,9 @@ export namespace Prisma {
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
     assignedProjects?: boolean | UserCountOutputTypeCountAssignedProjectsArgs
     accounts?: boolean | UserCountOutputTypeCountAccountsArgs
+    teamMemberships?: boolean | UserCountOutputTypeCountTeamMembershipsArgs
+    invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
+    invitationsReceived?: boolean | UserCountOutputTypeCountInvitationsReceivedArgs
   }
 
   // Custom InputTypes
@@ -2190,6 +2287,27 @@ export namespace Prisma {
     where?: AccountWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountTeamMembershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectMemberWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountInvitationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamInvitationWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountInvitationsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamInvitationWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2201,6 +2319,7 @@ export namespace Prisma {
     assignments: number
     members: number
     stakeholderDocuments: number
+    invitations: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2209,6 +2328,7 @@ export namespace Prisma {
     assignments?: boolean | ProjectCountOutputTypeCountAssignmentsArgs
     members?: boolean | ProjectCountOutputTypeCountMembersArgs
     stakeholderDocuments?: boolean | ProjectCountOutputTypeCountStakeholderDocumentsArgs
+    invitations?: boolean | ProjectCountOutputTypeCountInvitationsArgs
   }
 
   // Custom InputTypes
@@ -2255,6 +2375,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountStakeholderDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StakeholderDocumentWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountInvitationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamInvitationWhereInput
   }
 
 
@@ -2358,6 +2485,12 @@ export namespace Prisma {
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    nim: string | null
+    phone: string | null
+    prodi: string | null
+    simakPhoto: string | null
+    simakValidated: boolean | null
+    simakLastSync: Date | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2375,6 +2508,12 @@ export namespace Prisma {
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
+    nim: string | null
+    phone: string | null
+    prodi: string | null
+    simakPhoto: string | null
+    simakValidated: boolean | null
+    simakLastSync: Date | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2392,6 +2531,12 @@ export namespace Prisma {
     isActive: number
     createdAt: number
     updatedAt: number
+    nim: number
+    phone: number
+    prodi: number
+    simakPhoto: number
+    simakValidated: number
+    simakLastSync: number
     _all: number
   }
 
@@ -2411,6 +2556,12 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    nim?: true
+    phone?: true
+    prodi?: true
+    simakPhoto?: true
+    simakValidated?: true
+    simakLastSync?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2428,6 +2579,12 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    nim?: true
+    phone?: true
+    prodi?: true
+    simakPhoto?: true
+    simakValidated?: true
+    simakLastSync?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2445,6 +2602,12 @@ export namespace Prisma {
     isActive?: true
     createdAt?: true
     updatedAt?: true
+    nim?: true
+    phone?: true
+    prodi?: true
+    simakPhoto?: true
+    simakValidated?: true
+    simakLastSync?: true
     _all?: true
   }
 
@@ -2535,6 +2698,12 @@ export namespace Prisma {
     isActive: boolean
     createdAt: Date
     updatedAt: Date
+    nim: string | null
+    phone: string | null
+    prodi: string | null
+    simakPhoto: string | null
+    simakValidated: boolean
+    simakLastSync: Date | null
     _count: UserCountAggregateOutputType | null
     _min: UserMinAggregateOutputType | null
     _max: UserMaxAggregateOutputType | null
@@ -2569,11 +2738,20 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    nim?: boolean
+    phone?: boolean
+    prodi?: boolean
+    simakPhoto?: boolean
+    simakValidated?: boolean
+    simakLastSync?: boolean
     projects?: boolean | User$projectsArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     assignedProjects?: boolean | User$assignedProjectsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    teamMemberships?: boolean | User$teamMembershipsArgs<ExtArgs>
+    invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
+    invitationsReceived?: boolean | User$invitationsReceivedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2592,6 +2770,12 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    nim?: boolean
+    phone?: boolean
+    prodi?: boolean
+    simakPhoto?: boolean
+    simakValidated?: boolean
+    simakLastSync?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2609,6 +2793,12 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    nim?: boolean
+    phone?: boolean
+    prodi?: boolean
+    simakPhoto?: boolean
+    simakValidated?: boolean
+    simakLastSync?: boolean
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectScalar = {
@@ -2626,15 +2816,24 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    nim?: boolean
+    phone?: boolean
+    prodi?: boolean
+    simakPhoto?: boolean
+    simakValidated?: boolean
+    simakLastSync?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "emailVerified" | "name" | "password" | "role" | "image" | "githubId" | "githubUsername" | "githubToken" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "emailVerified" | "name" | "password" | "role" | "image" | "githubId" | "githubUsername" | "githubToken" | "isActive" | "createdAt" | "updatedAt" | "nim" | "phone" | "prodi" | "simakPhoto" | "simakValidated" | "simakLastSync", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     projects?: boolean | User$projectsArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     assignedProjects?: boolean | User$assignedProjectsArgs<ExtArgs>
     accounts?: boolean | User$accountsArgs<ExtArgs>
+    teamMemberships?: boolean | User$teamMembershipsArgs<ExtArgs>
+    invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
+    invitationsReceived?: boolean | User$invitationsReceivedArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2648,6 +2847,9 @@ export namespace Prisma {
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
       assignedProjects: Prisma.$ProjectAssignmentPayload<ExtArgs>[]
       accounts: Prisma.$AccountPayload<ExtArgs>[]
+      teamMemberships: Prisma.$ProjectMemberPayload<ExtArgs>[]
+      invitationsSent: Prisma.$TeamInvitationPayload<ExtArgs>[]
+      invitationsReceived: Prisma.$TeamInvitationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2664,6 +2866,12 @@ export namespace Prisma {
       isActive: boolean
       createdAt: Date
       updatedAt: Date
+      nim: string | null
+      phone: string | null
+      prodi: string | null
+      simakPhoto: string | null
+      simakValidated: boolean
+      simakLastSync: Date | null
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -3063,6 +3271,9 @@ export namespace Prisma {
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignedProjects<T extends User$assignedProjectsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    teamMemberships<T extends User$teamMembershipsArgs<ExtArgs> = {}>(args?: Subset<T, User$teamMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    invitationsSent<T extends User$invitationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    invitationsReceived<T extends User$invitationsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3106,6 +3317,12 @@ export namespace Prisma {
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
+    readonly nim: FieldRef<"User", 'String'>
+    readonly phone: FieldRef<"User", 'String'>
+    readonly prodi: FieldRef<"User", 'String'>
+    readonly simakPhoto: FieldRef<"User", 'String'>
+    readonly simakValidated: FieldRef<"User", 'Boolean'>
+    readonly simakLastSync: FieldRef<"User", 'DateTime'>
   }
     
 
@@ -3611,6 +3828,78 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+  }
+
+  /**
+   * User.teamMemberships
+   */
+  export type User$teamMembershipsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    where?: ProjectMemberWhereInput
+    orderBy?: ProjectMemberOrderByWithRelationInput | ProjectMemberOrderByWithRelationInput[]
+    cursor?: ProjectMemberWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectMemberScalarFieldEnum | ProjectMemberScalarFieldEnum[]
+  }
+
+  /**
+   * User.invitationsSent
+   */
+  export type User$invitationsSentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    where?: TeamInvitationWhereInput
+    orderBy?: TeamInvitationOrderByWithRelationInput | TeamInvitationOrderByWithRelationInput[]
+    cursor?: TeamInvitationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeamInvitationScalarFieldEnum | TeamInvitationScalarFieldEnum[]
+  }
+
+  /**
+   * User.invitationsReceived
+   */
+  export type User$invitationsReceivedArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    where?: TeamInvitationWhereInput
+    orderBy?: TeamInvitationOrderByWithRelationInput | TeamInvitationOrderByWithRelationInput[]
+    cursor?: TeamInvitationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeamInvitationScalarFieldEnum | TeamInvitationScalarFieldEnum[]
   }
 
   /**
@@ -5074,6 +5363,7 @@ export namespace Prisma {
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
     stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
+    invitations?: boolean | Project$invitationsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -5145,6 +5435,7 @@ export namespace Prisma {
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
     stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
+    invitations?: boolean | Project$invitationsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5164,6 +5455,7 @@ export namespace Prisma {
       requirements: Prisma.$ProjectRequirementsPayload<ExtArgs> | null
       members: Prisma.$ProjectMemberPayload<ExtArgs>[]
       stakeholderDocuments: Prisma.$StakeholderDocumentPayload<ExtArgs>[]
+      invitations: Prisma.$TeamInvitationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -5583,6 +5875,7 @@ export namespace Prisma {
     requirements<T extends Project$requirementsArgs<ExtArgs> = {}>(args?: Subset<T, Project$requirementsArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     members<T extends Project$membersArgs<ExtArgs> = {}>(args?: Subset<T, Project$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     stakeholderDocuments<T extends Project$stakeholderDocumentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$stakeholderDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    invitations<T extends Project$invitationsArgs<ExtArgs> = {}>(args?: Subset<T, Project$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6163,6 +6456,30 @@ export namespace Prisma {
   }
 
   /**
+   * Project.invitations
+   */
+  export type Project$invitationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    where?: TeamInvitationWhereInput
+    orderBy?: TeamInvitationOrderByWithRelationInput | TeamInvitationOrderByWithRelationInput[]
+    cursor?: TeamInvitationWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: TeamInvitationScalarFieldEnum | TeamInvitationScalarFieldEnum[]
+  }
+
+  /**
    * Project without action
    */
   export type ProjectDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6194,6 +6511,7 @@ export namespace Prisma {
   export type ProjectMemberMinAggregateOutputType = {
     id: string | null
     projectId: string | null
+    userId: string | null
     githubUsername: string | null
     githubId: string | null
     githubAvatarUrl: string | null
@@ -6205,6 +6523,7 @@ export namespace Prisma {
   export type ProjectMemberMaxAggregateOutputType = {
     id: string | null
     projectId: string | null
+    userId: string | null
     githubUsername: string | null
     githubId: string | null
     githubAvatarUrl: string | null
@@ -6216,6 +6535,7 @@ export namespace Prisma {
   export type ProjectMemberCountAggregateOutputType = {
     id: number
     projectId: number
+    userId: number
     githubUsername: number
     githubId: number
     githubAvatarUrl: number
@@ -6229,6 +6549,7 @@ export namespace Prisma {
   export type ProjectMemberMinAggregateInputType = {
     id?: true
     projectId?: true
+    userId?: true
     githubUsername?: true
     githubId?: true
     githubAvatarUrl?: true
@@ -6240,6 +6561,7 @@ export namespace Prisma {
   export type ProjectMemberMaxAggregateInputType = {
     id?: true
     projectId?: true
+    userId?: true
     githubUsername?: true
     githubId?: true
     githubAvatarUrl?: true
@@ -6251,6 +6573,7 @@ export namespace Prisma {
   export type ProjectMemberCountAggregateInputType = {
     id?: true
     projectId?: true
+    userId?: true
     githubUsername?: true
     githubId?: true
     githubAvatarUrl?: true
@@ -6335,7 +6658,8 @@ export namespace Prisma {
   export type ProjectMemberGroupByOutputType = {
     id: string
     projectId: string
-    githubUsername: string
+    userId: string | null
+    githubUsername: string | null
     githubId: string | null
     githubAvatarUrl: string | null
     name: string | null
@@ -6363,6 +6687,7 @@ export namespace Prisma {
   export type ProjectMemberSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     projectId?: boolean
+    userId?: boolean
     githubUsername?: boolean
     githubId?: boolean
     githubAvatarUrl?: boolean
@@ -6370,11 +6695,13 @@ export namespace Prisma {
     role?: boolean
     addedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | ProjectMember$userArgs<ExtArgs>
   }, ExtArgs["result"]["projectMember"]>
 
   export type ProjectMemberSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     projectId?: boolean
+    userId?: boolean
     githubUsername?: boolean
     githubId?: boolean
     githubAvatarUrl?: boolean
@@ -6382,11 +6709,13 @@ export namespace Prisma {
     role?: boolean
     addedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | ProjectMember$userArgs<ExtArgs>
   }, ExtArgs["result"]["projectMember"]>
 
   export type ProjectMemberSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     projectId?: boolean
+    userId?: boolean
     githubUsername?: boolean
     githubId?: boolean
     githubAvatarUrl?: boolean
@@ -6394,11 +6723,13 @@ export namespace Prisma {
     role?: boolean
     addedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | ProjectMember$userArgs<ExtArgs>
   }, ExtArgs["result"]["projectMember"]>
 
   export type ProjectMemberSelectScalar = {
     id?: boolean
     projectId?: boolean
+    userId?: boolean
     githubUsername?: boolean
     githubId?: boolean
     githubAvatarUrl?: boolean
@@ -6407,26 +6738,31 @@ export namespace Prisma {
     addedAt?: boolean
   }
 
-  export type ProjectMemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "githubUsername" | "githubId" | "githubAvatarUrl" | "name" | "role" | "addedAt", ExtArgs["result"]["projectMember"]>
+  export type ProjectMemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "userId" | "githubUsername" | "githubId" | "githubAvatarUrl" | "name" | "role" | "addedAt", ExtArgs["result"]["projectMember"]>
   export type ProjectMemberInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | ProjectMember$userArgs<ExtArgs>
   }
   export type ProjectMemberIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | ProjectMember$userArgs<ExtArgs>
   }
   export type ProjectMemberIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
+    user?: boolean | ProjectMember$userArgs<ExtArgs>
   }
 
   export type $ProjectMemberPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "ProjectMember"
     objects: {
       project: Prisma.$ProjectPayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       projectId: string
-      githubUsername: string
+      userId: string | null
+      githubUsername: string | null
       githubId: string | null
       githubAvatarUrl: string | null
       name: string | null
@@ -6827,6 +7163,7 @@ export namespace Prisma {
   export interface Prisma__ProjectMemberClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends ProjectMember$userArgs<ExtArgs> = {}>(args?: Subset<T, ProjectMember$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6858,6 +7195,7 @@ export namespace Prisma {
   interface ProjectMemberFieldRefs {
     readonly id: FieldRef<"ProjectMember", 'String'>
     readonly projectId: FieldRef<"ProjectMember", 'String'>
+    readonly userId: FieldRef<"ProjectMember", 'String'>
     readonly githubUsername: FieldRef<"ProjectMember", 'String'>
     readonly githubId: FieldRef<"ProjectMember", 'String'>
     readonly githubAvatarUrl: FieldRef<"ProjectMember", 'String'>
@@ -7260,6 +7598,25 @@ export namespace Prisma {
   }
 
   /**
+   * ProjectMember.user
+   */
+  export type ProjectMember$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
    * ProjectMember without action
    */
   export type ProjectMemberDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7275,6 +7632,1119 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProjectMemberInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model TeamInvitation
+   */
+
+  export type AggregateTeamInvitation = {
+    _count: TeamInvitationCountAggregateOutputType | null
+    _min: TeamInvitationMinAggregateOutputType | null
+    _max: TeamInvitationMaxAggregateOutputType | null
+  }
+
+  export type TeamInvitationMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    inviterId: string | null
+    inviteeId: string | null
+    status: string | null
+    message: string | null
+    createdAt: Date | null
+    respondedAt: Date | null
+  }
+
+  export type TeamInvitationMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    inviterId: string | null
+    inviteeId: string | null
+    status: string | null
+    message: string | null
+    createdAt: Date | null
+    respondedAt: Date | null
+  }
+
+  export type TeamInvitationCountAggregateOutputType = {
+    id: number
+    projectId: number
+    inviterId: number
+    inviteeId: number
+    status: number
+    message: number
+    createdAt: number
+    respondedAt: number
+    _all: number
+  }
+
+
+  export type TeamInvitationMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    inviterId?: true
+    inviteeId?: true
+    status?: true
+    message?: true
+    createdAt?: true
+    respondedAt?: true
+  }
+
+  export type TeamInvitationMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    inviterId?: true
+    inviteeId?: true
+    status?: true
+    message?: true
+    createdAt?: true
+    respondedAt?: true
+  }
+
+  export type TeamInvitationCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    inviterId?: true
+    inviteeId?: true
+    status?: true
+    message?: true
+    createdAt?: true
+    respondedAt?: true
+    _all?: true
+  }
+
+  export type TeamInvitationAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeamInvitation to aggregate.
+     */
+    where?: TeamInvitationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamInvitations to fetch.
+     */
+    orderBy?: TeamInvitationOrderByWithRelationInput | TeamInvitationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: TeamInvitationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamInvitations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamInvitations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned TeamInvitations
+    **/
+    _count?: true | TeamInvitationCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: TeamInvitationMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: TeamInvitationMaxAggregateInputType
+  }
+
+  export type GetTeamInvitationAggregateType<T extends TeamInvitationAggregateArgs> = {
+        [P in keyof T & keyof AggregateTeamInvitation]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateTeamInvitation[P]>
+      : GetScalarType<T[P], AggregateTeamInvitation[P]>
+  }
+
+
+
+
+  export type TeamInvitationGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: TeamInvitationWhereInput
+    orderBy?: TeamInvitationOrderByWithAggregationInput | TeamInvitationOrderByWithAggregationInput[]
+    by: TeamInvitationScalarFieldEnum[] | TeamInvitationScalarFieldEnum
+    having?: TeamInvitationScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: TeamInvitationCountAggregateInputType | true
+    _min?: TeamInvitationMinAggregateInputType
+    _max?: TeamInvitationMaxAggregateInputType
+  }
+
+  export type TeamInvitationGroupByOutputType = {
+    id: string
+    projectId: string
+    inviterId: string
+    inviteeId: string
+    status: string
+    message: string | null
+    createdAt: Date
+    respondedAt: Date | null
+    _count: TeamInvitationCountAggregateOutputType | null
+    _min: TeamInvitationMinAggregateOutputType | null
+    _max: TeamInvitationMaxAggregateOutputType | null
+  }
+
+  type GetTeamInvitationGroupByPayload<T extends TeamInvitationGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<TeamInvitationGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof TeamInvitationGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], TeamInvitationGroupByOutputType[P]>
+            : GetScalarType<T[P], TeamInvitationGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type TeamInvitationSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    inviterId?: boolean
+    inviteeId?: boolean
+    status?: boolean
+    message?: boolean
+    createdAt?: boolean
+    respondedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    inviter?: boolean | UserDefaultArgs<ExtArgs>
+    invitee?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teamInvitation"]>
+
+  export type TeamInvitationSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    inviterId?: boolean
+    inviteeId?: boolean
+    status?: boolean
+    message?: boolean
+    createdAt?: boolean
+    respondedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    inviter?: boolean | UserDefaultArgs<ExtArgs>
+    invitee?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teamInvitation"]>
+
+  export type TeamInvitationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    inviterId?: boolean
+    inviteeId?: boolean
+    status?: boolean
+    message?: boolean
+    createdAt?: boolean
+    respondedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    inviter?: boolean | UserDefaultArgs<ExtArgs>
+    invitee?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["teamInvitation"]>
+
+  export type TeamInvitationSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    inviterId?: boolean
+    inviteeId?: boolean
+    status?: boolean
+    message?: boolean
+    createdAt?: boolean
+    respondedAt?: boolean
+  }
+
+  export type TeamInvitationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "inviterId" | "inviteeId" | "status" | "message" | "createdAt" | "respondedAt", ExtArgs["result"]["teamInvitation"]>
+  export type TeamInvitationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    inviter?: boolean | UserDefaultArgs<ExtArgs>
+    invitee?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TeamInvitationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    inviter?: boolean | UserDefaultArgs<ExtArgs>
+    invitee?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type TeamInvitationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    inviter?: boolean | UserDefaultArgs<ExtArgs>
+    invitee?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $TeamInvitationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "TeamInvitation"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      inviter: Prisma.$UserPayload<ExtArgs>
+      invitee: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      inviterId: string
+      inviteeId: string
+      status: string
+      message: string | null
+      createdAt: Date
+      respondedAt: Date | null
+    }, ExtArgs["result"]["teamInvitation"]>
+    composites: {}
+  }
+
+  type TeamInvitationGetPayload<S extends boolean | null | undefined | TeamInvitationDefaultArgs> = $Result.GetResult<Prisma.$TeamInvitationPayload, S>
+
+  type TeamInvitationCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<TeamInvitationFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: TeamInvitationCountAggregateInputType | true
+    }
+
+  export interface TeamInvitationDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TeamInvitation'], meta: { name: 'TeamInvitation' } }
+    /**
+     * Find zero or one TeamInvitation that matches the filter.
+     * @param {TeamInvitationFindUniqueArgs} args - Arguments to find a TeamInvitation
+     * @example
+     * // Get one TeamInvitation
+     * const teamInvitation = await prisma.teamInvitation.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends TeamInvitationFindUniqueArgs>(args: SelectSubset<T, TeamInvitationFindUniqueArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one TeamInvitation that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {TeamInvitationFindUniqueOrThrowArgs} args - Arguments to find a TeamInvitation
+     * @example
+     * // Get one TeamInvitation
+     * const teamInvitation = await prisma.teamInvitation.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends TeamInvitationFindUniqueOrThrowArgs>(args: SelectSubset<T, TeamInvitationFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeamInvitation that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamInvitationFindFirstArgs} args - Arguments to find a TeamInvitation
+     * @example
+     * // Get one TeamInvitation
+     * const teamInvitation = await prisma.teamInvitation.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends TeamInvitationFindFirstArgs>(args?: SelectSubset<T, TeamInvitationFindFirstArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first TeamInvitation that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamInvitationFindFirstOrThrowArgs} args - Arguments to find a TeamInvitation
+     * @example
+     * // Get one TeamInvitation
+     * const teamInvitation = await prisma.teamInvitation.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends TeamInvitationFindFirstOrThrowArgs>(args?: SelectSubset<T, TeamInvitationFindFirstOrThrowArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more TeamInvitations that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamInvitationFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all TeamInvitations
+     * const teamInvitations = await prisma.teamInvitation.findMany()
+     * 
+     * // Get first 10 TeamInvitations
+     * const teamInvitations = await prisma.teamInvitation.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const teamInvitationWithIdOnly = await prisma.teamInvitation.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends TeamInvitationFindManyArgs>(args?: SelectSubset<T, TeamInvitationFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a TeamInvitation.
+     * @param {TeamInvitationCreateArgs} args - Arguments to create a TeamInvitation.
+     * @example
+     * // Create one TeamInvitation
+     * const TeamInvitation = await prisma.teamInvitation.create({
+     *   data: {
+     *     // ... data to create a TeamInvitation
+     *   }
+     * })
+     * 
+     */
+    create<T extends TeamInvitationCreateArgs>(args: SelectSubset<T, TeamInvitationCreateArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many TeamInvitations.
+     * @param {TeamInvitationCreateManyArgs} args - Arguments to create many TeamInvitations.
+     * @example
+     * // Create many TeamInvitations
+     * const teamInvitation = await prisma.teamInvitation.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends TeamInvitationCreateManyArgs>(args?: SelectSubset<T, TeamInvitationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many TeamInvitations and returns the data saved in the database.
+     * @param {TeamInvitationCreateManyAndReturnArgs} args - Arguments to create many TeamInvitations.
+     * @example
+     * // Create many TeamInvitations
+     * const teamInvitation = await prisma.teamInvitation.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many TeamInvitations and only return the `id`
+     * const teamInvitationWithIdOnly = await prisma.teamInvitation.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends TeamInvitationCreateManyAndReturnArgs>(args?: SelectSubset<T, TeamInvitationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a TeamInvitation.
+     * @param {TeamInvitationDeleteArgs} args - Arguments to delete one TeamInvitation.
+     * @example
+     * // Delete one TeamInvitation
+     * const TeamInvitation = await prisma.teamInvitation.delete({
+     *   where: {
+     *     // ... filter to delete one TeamInvitation
+     *   }
+     * })
+     * 
+     */
+    delete<T extends TeamInvitationDeleteArgs>(args: SelectSubset<T, TeamInvitationDeleteArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one TeamInvitation.
+     * @param {TeamInvitationUpdateArgs} args - Arguments to update one TeamInvitation.
+     * @example
+     * // Update one TeamInvitation
+     * const teamInvitation = await prisma.teamInvitation.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends TeamInvitationUpdateArgs>(args: SelectSubset<T, TeamInvitationUpdateArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more TeamInvitations.
+     * @param {TeamInvitationDeleteManyArgs} args - Arguments to filter TeamInvitations to delete.
+     * @example
+     * // Delete a few TeamInvitations
+     * const { count } = await prisma.teamInvitation.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends TeamInvitationDeleteManyArgs>(args?: SelectSubset<T, TeamInvitationDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeamInvitations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamInvitationUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many TeamInvitations
+     * const teamInvitation = await prisma.teamInvitation.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends TeamInvitationUpdateManyArgs>(args: SelectSubset<T, TeamInvitationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more TeamInvitations and returns the data updated in the database.
+     * @param {TeamInvitationUpdateManyAndReturnArgs} args - Arguments to update many TeamInvitations.
+     * @example
+     * // Update many TeamInvitations
+     * const teamInvitation = await prisma.teamInvitation.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more TeamInvitations and only return the `id`
+     * const teamInvitationWithIdOnly = await prisma.teamInvitation.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends TeamInvitationUpdateManyAndReturnArgs>(args: SelectSubset<T, TeamInvitationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one TeamInvitation.
+     * @param {TeamInvitationUpsertArgs} args - Arguments to update or create a TeamInvitation.
+     * @example
+     * // Update or create a TeamInvitation
+     * const teamInvitation = await prisma.teamInvitation.upsert({
+     *   create: {
+     *     // ... data to create a TeamInvitation
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the TeamInvitation we want to update
+     *   }
+     * })
+     */
+    upsert<T extends TeamInvitationUpsertArgs>(args: SelectSubset<T, TeamInvitationUpsertArgs<ExtArgs>>): Prisma__TeamInvitationClient<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of TeamInvitations.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamInvitationCountArgs} args - Arguments to filter TeamInvitations to count.
+     * @example
+     * // Count the number of TeamInvitations
+     * const count = await prisma.teamInvitation.count({
+     *   where: {
+     *     // ... the filter for the TeamInvitations we want to count
+     *   }
+     * })
+    **/
+    count<T extends TeamInvitationCountArgs>(
+      args?: Subset<T, TeamInvitationCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], TeamInvitationCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a TeamInvitation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamInvitationAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends TeamInvitationAggregateArgs>(args: Subset<T, TeamInvitationAggregateArgs>): Prisma.PrismaPromise<GetTeamInvitationAggregateType<T>>
+
+    /**
+     * Group by TeamInvitation.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {TeamInvitationGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends TeamInvitationGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: TeamInvitationGroupByArgs['orderBy'] }
+        : { orderBy?: TeamInvitationGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, TeamInvitationGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTeamInvitationGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the TeamInvitation model
+   */
+  readonly fields: TeamInvitationFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for TeamInvitation.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__TeamInvitationClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    inviter<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    invitee<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the TeamInvitation model
+   */
+  interface TeamInvitationFieldRefs {
+    readonly id: FieldRef<"TeamInvitation", 'String'>
+    readonly projectId: FieldRef<"TeamInvitation", 'String'>
+    readonly inviterId: FieldRef<"TeamInvitation", 'String'>
+    readonly inviteeId: FieldRef<"TeamInvitation", 'String'>
+    readonly status: FieldRef<"TeamInvitation", 'String'>
+    readonly message: FieldRef<"TeamInvitation", 'String'>
+    readonly createdAt: FieldRef<"TeamInvitation", 'DateTime'>
+    readonly respondedAt: FieldRef<"TeamInvitation", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * TeamInvitation findUnique
+   */
+  export type TeamInvitationFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamInvitation to fetch.
+     */
+    where: TeamInvitationWhereUniqueInput
+  }
+
+  /**
+   * TeamInvitation findUniqueOrThrow
+   */
+  export type TeamInvitationFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamInvitation to fetch.
+     */
+    where: TeamInvitationWhereUniqueInput
+  }
+
+  /**
+   * TeamInvitation findFirst
+   */
+  export type TeamInvitationFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamInvitation to fetch.
+     */
+    where?: TeamInvitationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamInvitations to fetch.
+     */
+    orderBy?: TeamInvitationOrderByWithRelationInput | TeamInvitationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeamInvitations.
+     */
+    cursor?: TeamInvitationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamInvitations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamInvitations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeamInvitations.
+     */
+    distinct?: TeamInvitationScalarFieldEnum | TeamInvitationScalarFieldEnum[]
+  }
+
+  /**
+   * TeamInvitation findFirstOrThrow
+   */
+  export type TeamInvitationFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamInvitation to fetch.
+     */
+    where?: TeamInvitationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamInvitations to fetch.
+     */
+    orderBy?: TeamInvitationOrderByWithRelationInput | TeamInvitationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for TeamInvitations.
+     */
+    cursor?: TeamInvitationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamInvitations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamInvitations.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of TeamInvitations.
+     */
+    distinct?: TeamInvitationScalarFieldEnum | TeamInvitationScalarFieldEnum[]
+  }
+
+  /**
+   * TeamInvitation findMany
+   */
+  export type TeamInvitationFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * Filter, which TeamInvitations to fetch.
+     */
+    where?: TeamInvitationWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of TeamInvitations to fetch.
+     */
+    orderBy?: TeamInvitationOrderByWithRelationInput | TeamInvitationOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing TeamInvitations.
+     */
+    cursor?: TeamInvitationWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` TeamInvitations from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` TeamInvitations.
+     */
+    skip?: number
+    distinct?: TeamInvitationScalarFieldEnum | TeamInvitationScalarFieldEnum[]
+  }
+
+  /**
+   * TeamInvitation create
+   */
+  export type TeamInvitationCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * The data needed to create a TeamInvitation.
+     */
+    data: XOR<TeamInvitationCreateInput, TeamInvitationUncheckedCreateInput>
+  }
+
+  /**
+   * TeamInvitation createMany
+   */
+  export type TeamInvitationCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many TeamInvitations.
+     */
+    data: TeamInvitationCreateManyInput | TeamInvitationCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * TeamInvitation createManyAndReturn
+   */
+  export type TeamInvitationCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * The data used to create many TeamInvitations.
+     */
+    data: TeamInvitationCreateManyInput | TeamInvitationCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeamInvitation update
+   */
+  export type TeamInvitationUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * The data needed to update a TeamInvitation.
+     */
+    data: XOR<TeamInvitationUpdateInput, TeamInvitationUncheckedUpdateInput>
+    /**
+     * Choose, which TeamInvitation to update.
+     */
+    where: TeamInvitationWhereUniqueInput
+  }
+
+  /**
+   * TeamInvitation updateMany
+   */
+  export type TeamInvitationUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update TeamInvitations.
+     */
+    data: XOR<TeamInvitationUpdateManyMutationInput, TeamInvitationUncheckedUpdateManyInput>
+    /**
+     * Filter which TeamInvitations to update
+     */
+    where?: TeamInvitationWhereInput
+    /**
+     * Limit how many TeamInvitations to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeamInvitation updateManyAndReturn
+   */
+  export type TeamInvitationUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * The data used to update TeamInvitations.
+     */
+    data: XOR<TeamInvitationUpdateManyMutationInput, TeamInvitationUncheckedUpdateManyInput>
+    /**
+     * Filter which TeamInvitations to update
+     */
+    where?: TeamInvitationWhereInput
+    /**
+     * Limit how many TeamInvitations to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * TeamInvitation upsert
+   */
+  export type TeamInvitationUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * The filter to search for the TeamInvitation to update in case it exists.
+     */
+    where: TeamInvitationWhereUniqueInput
+    /**
+     * In case the TeamInvitation found by the `where` argument doesn't exist, create a new TeamInvitation with this data.
+     */
+    create: XOR<TeamInvitationCreateInput, TeamInvitationUncheckedCreateInput>
+    /**
+     * In case the TeamInvitation was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<TeamInvitationUpdateInput, TeamInvitationUncheckedUpdateInput>
+  }
+
+  /**
+   * TeamInvitation delete
+   */
+  export type TeamInvitationDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
+    /**
+     * Filter which TeamInvitation to delete.
+     */
+    where: TeamInvitationWhereUniqueInput
+  }
+
+  /**
+   * TeamInvitation deleteMany
+   */
+  export type TeamInvitationDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which TeamInvitations to delete
+     */
+    where?: TeamInvitationWhereInput
+    /**
+     * Limit how many TeamInvitations to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * TeamInvitation without action
+   */
+  export type TeamInvitationDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the TeamInvitation
+     */
+    select?: TeamInvitationSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the TeamInvitation
+     */
+    omit?: TeamInvitationOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TeamInvitationInclude<ExtArgs> | null
   }
 
 
@@ -18783,7 +20253,13 @@ export namespace Prisma {
     githubToken: 'githubToken',
     isActive: 'isActive',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
+    updatedAt: 'updatedAt',
+    nim: 'nim',
+    phone: 'phone',
+    prodi: 'prodi',
+    simakPhoto: 'simakPhoto',
+    simakValidated: 'simakValidated',
+    simakLastSync: 'simakLastSync'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -18832,6 +20308,7 @@ export namespace Prisma {
   export const ProjectMemberScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
+    userId: 'userId',
     githubUsername: 'githubUsername',
     githubId: 'githubId',
     githubAvatarUrl: 'githubAvatarUrl',
@@ -18841,6 +20318,20 @@ export namespace Prisma {
   };
 
   export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
+
+
+  export const TeamInvitationScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    inviterId: 'inviterId',
+    inviteeId: 'inviteeId',
+    status: 'status',
+    message: 'message',
+    createdAt: 'createdAt',
+    respondedAt: 'respondedAt'
+  };
+
+  export type TeamInvitationScalarFieldEnum = (typeof TeamInvitationScalarFieldEnum)[keyof typeof TeamInvitationScalarFieldEnum]
 
 
   export const ProjectAssignmentScalarFieldEnum: {
@@ -19184,11 +20675,20 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    nim?: StringNullableFilter<"User"> | string | null
+    phone?: StringNullableFilter<"User"> | string | null
+    prodi?: StringNullableFilter<"User"> | string | null
+    simakPhoto?: StringNullableFilter<"User"> | string | null
+    simakValidated?: BoolFilter<"User"> | boolean
+    simakLastSync?: DateTimeNullableFilter<"User"> | Date | string | null
     projects?: ProjectListRelationFilter
     reviews?: ReviewListRelationFilter
     notifications?: NotificationListRelationFilter
     assignedProjects?: ProjectAssignmentListRelationFilter
     accounts?: AccountListRelationFilter
+    teamMemberships?: ProjectMemberListRelationFilter
+    invitationsSent?: TeamInvitationListRelationFilter
+    invitationsReceived?: TeamInvitationListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -19206,11 +20706,20 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    nim?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    prodi?: SortOrderInput | SortOrder
+    simakPhoto?: SortOrderInput | SortOrder
+    simakValidated?: SortOrder
+    simakLastSync?: SortOrderInput | SortOrder
     projects?: ProjectOrderByRelationAggregateInput
     reviews?: ReviewOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
     assignedProjects?: ProjectAssignmentOrderByRelationAggregateInput
     accounts?: AccountOrderByRelationAggregateInput
+    teamMemberships?: ProjectMemberOrderByRelationAggregateInput
+    invitationsSent?: TeamInvitationOrderByRelationAggregateInput
+    invitationsReceived?: TeamInvitationOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -19218,6 +20727,7 @@ export namespace Prisma {
     username?: string
     email?: string
     githubId?: string
+    nim?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
@@ -19231,12 +20741,20 @@ export namespace Prisma {
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
+    phone?: StringNullableFilter<"User"> | string | null
+    prodi?: StringNullableFilter<"User"> | string | null
+    simakPhoto?: StringNullableFilter<"User"> | string | null
+    simakValidated?: BoolFilter<"User"> | boolean
+    simakLastSync?: DateTimeNullableFilter<"User"> | Date | string | null
     projects?: ProjectListRelationFilter
     reviews?: ReviewListRelationFilter
     notifications?: NotificationListRelationFilter
     assignedProjects?: ProjectAssignmentListRelationFilter
     accounts?: AccountListRelationFilter
-  }, "id" | "username" | "email" | "githubId">
+    teamMemberships?: ProjectMemberListRelationFilter
+    invitationsSent?: TeamInvitationListRelationFilter
+    invitationsReceived?: TeamInvitationListRelationFilter
+  }, "id" | "username" | "email" | "githubId" | "nim">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -19253,6 +20771,12 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    nim?: SortOrderInput | SortOrder
+    phone?: SortOrderInput | SortOrder
+    prodi?: SortOrderInput | SortOrder
+    simakPhoto?: SortOrderInput | SortOrder
+    simakValidated?: SortOrder
+    simakLastSync?: SortOrderInput | SortOrder
     _count?: UserCountOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
     _min?: UserMinOrderByAggregateInput
@@ -19276,6 +20800,12 @@ export namespace Prisma {
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+    nim?: StringNullableWithAggregatesFilter<"User"> | string | null
+    phone?: StringNullableWithAggregatesFilter<"User"> | string | null
+    prodi?: StringNullableWithAggregatesFilter<"User"> | string | null
+    simakPhoto?: StringNullableWithAggregatesFilter<"User"> | string | null
+    simakValidated?: BoolWithAggregatesFilter<"User"> | boolean
+    simakLastSync?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   }
 
   export type AccountWhereInput = {
@@ -19398,6 +20928,7 @@ export namespace Prisma {
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     members?: ProjectMemberListRelationFilter
     stakeholderDocuments?: StakeholderDocumentListRelationFilter
+    invitations?: TeamInvitationListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -19424,6 +20955,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsOrderByWithRelationInput
     members?: ProjectMemberOrderByRelationAggregateInput
     stakeholderDocuments?: StakeholderDocumentOrderByRelationAggregateInput
+    invitations?: TeamInvitationOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -19453,6 +20985,7 @@ export namespace Prisma {
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     members?: ProjectMemberListRelationFilter
     stakeholderDocuments?: StakeholderDocumentListRelationFilter
+    invitations?: TeamInvitationListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -19505,47 +21038,54 @@ export namespace Prisma {
     NOT?: ProjectMemberWhereInput | ProjectMemberWhereInput[]
     id?: StringFilter<"ProjectMember"> | string
     projectId?: StringFilter<"ProjectMember"> | string
-    githubUsername?: StringFilter<"ProjectMember"> | string
+    userId?: StringNullableFilter<"ProjectMember"> | string | null
+    githubUsername?: StringNullableFilter<"ProjectMember"> | string | null
     githubId?: StringNullableFilter<"ProjectMember"> | string | null
     githubAvatarUrl?: StringNullableFilter<"ProjectMember"> | string | null
     name?: StringNullableFilter<"ProjectMember"> | string | null
     role?: StringFilter<"ProjectMember"> | string
     addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
 
   export type ProjectMemberOrderByWithRelationInput = {
     id?: SortOrder
     projectId?: SortOrder
-    githubUsername?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    githubUsername?: SortOrderInput | SortOrder
     githubId?: SortOrderInput | SortOrder
     githubAvatarUrl?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
     role?: SortOrder
     addedAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
   }
 
   export type ProjectMemberWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    projectId_githubUsername?: ProjectMemberProjectIdGithubUsernameCompoundUniqueInput
+    projectId_userId?: ProjectMemberProjectIdUserIdCompoundUniqueInput
     AND?: ProjectMemberWhereInput | ProjectMemberWhereInput[]
     OR?: ProjectMemberWhereInput[]
     NOT?: ProjectMemberWhereInput | ProjectMemberWhereInput[]
     projectId?: StringFilter<"ProjectMember"> | string
-    githubUsername?: StringFilter<"ProjectMember"> | string
+    userId?: StringNullableFilter<"ProjectMember"> | string | null
+    githubUsername?: StringNullableFilter<"ProjectMember"> | string | null
     githubId?: StringNullableFilter<"ProjectMember"> | string | null
     githubAvatarUrl?: StringNullableFilter<"ProjectMember"> | string | null
     name?: StringNullableFilter<"ProjectMember"> | string | null
     role?: StringFilter<"ProjectMember"> | string
     addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-  }, "id" | "projectId_githubUsername">
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "projectId_userId">
 
   export type ProjectMemberOrderByWithAggregationInput = {
     id?: SortOrder
     projectId?: SortOrder
-    githubUsername?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    githubUsername?: SortOrderInput | SortOrder
     githubId?: SortOrderInput | SortOrder
     githubAvatarUrl?: SortOrderInput | SortOrder
     name?: SortOrderInput | SortOrder
@@ -19562,12 +21102,90 @@ export namespace Prisma {
     NOT?: ProjectMemberScalarWhereWithAggregatesInput | ProjectMemberScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"ProjectMember"> | string
     projectId?: StringWithAggregatesFilter<"ProjectMember"> | string
-    githubUsername?: StringWithAggregatesFilter<"ProjectMember"> | string
+    userId?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
+    githubUsername?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
     githubId?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
     githubAvatarUrl?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
     name?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
     role?: StringWithAggregatesFilter<"ProjectMember"> | string
     addedAt?: DateTimeWithAggregatesFilter<"ProjectMember"> | Date | string
+  }
+
+  export type TeamInvitationWhereInput = {
+    AND?: TeamInvitationWhereInput | TeamInvitationWhereInput[]
+    OR?: TeamInvitationWhereInput[]
+    NOT?: TeamInvitationWhereInput | TeamInvitationWhereInput[]
+    id?: StringFilter<"TeamInvitation"> | string
+    projectId?: StringFilter<"TeamInvitation"> | string
+    inviterId?: StringFilter<"TeamInvitation"> | string
+    inviteeId?: StringFilter<"TeamInvitation"> | string
+    status?: StringFilter<"TeamInvitation"> | string
+    message?: StringNullableFilter<"TeamInvitation"> | string | null
+    createdAt?: DateTimeFilter<"TeamInvitation"> | Date | string
+    respondedAt?: DateTimeNullableFilter<"TeamInvitation"> | Date | string | null
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    inviter?: XOR<UserScalarRelationFilter, UserWhereInput>
+    invitee?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type TeamInvitationOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    inviterId?: SortOrder
+    inviteeId?: SortOrder
+    status?: SortOrder
+    message?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    respondedAt?: SortOrderInput | SortOrder
+    project?: ProjectOrderByWithRelationInput
+    inviter?: UserOrderByWithRelationInput
+    invitee?: UserOrderByWithRelationInput
+  }
+
+  export type TeamInvitationWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    projectId_inviteeId?: TeamInvitationProjectIdInviteeIdCompoundUniqueInput
+    AND?: TeamInvitationWhereInput | TeamInvitationWhereInput[]
+    OR?: TeamInvitationWhereInput[]
+    NOT?: TeamInvitationWhereInput | TeamInvitationWhereInput[]
+    projectId?: StringFilter<"TeamInvitation"> | string
+    inviterId?: StringFilter<"TeamInvitation"> | string
+    inviteeId?: StringFilter<"TeamInvitation"> | string
+    status?: StringFilter<"TeamInvitation"> | string
+    message?: StringNullableFilter<"TeamInvitation"> | string | null
+    createdAt?: DateTimeFilter<"TeamInvitation"> | Date | string
+    respondedAt?: DateTimeNullableFilter<"TeamInvitation"> | Date | string | null
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    inviter?: XOR<UserScalarRelationFilter, UserWhereInput>
+    invitee?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "projectId_inviteeId">
+
+  export type TeamInvitationOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    inviterId?: SortOrder
+    inviteeId?: SortOrder
+    status?: SortOrder
+    message?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    respondedAt?: SortOrderInput | SortOrder
+    _count?: TeamInvitationCountOrderByAggregateInput
+    _max?: TeamInvitationMaxOrderByAggregateInput
+    _min?: TeamInvitationMinOrderByAggregateInput
+  }
+
+  export type TeamInvitationScalarWhereWithAggregatesInput = {
+    AND?: TeamInvitationScalarWhereWithAggregatesInput | TeamInvitationScalarWhereWithAggregatesInput[]
+    OR?: TeamInvitationScalarWhereWithAggregatesInput[]
+    NOT?: TeamInvitationScalarWhereWithAggregatesInput | TeamInvitationScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"TeamInvitation"> | string
+    projectId?: StringWithAggregatesFilter<"TeamInvitation"> | string
+    inviterId?: StringWithAggregatesFilter<"TeamInvitation"> | string
+    inviteeId?: StringWithAggregatesFilter<"TeamInvitation"> | string
+    status?: StringWithAggregatesFilter<"TeamInvitation"> | string
+    message?: StringNullableWithAggregatesFilter<"TeamInvitation"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"TeamInvitation"> | Date | string
+    respondedAt?: DateTimeNullableWithAggregatesFilter<"TeamInvitation"> | Date | string | null
   }
 
   export type ProjectAssignmentWhereInput = {
@@ -20404,11 +22022,20 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -20426,11 +22053,20 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
   }
 
   export type UserUpdateInput = {
@@ -20448,11 +22084,20 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -20470,11 +22115,20 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -20492,6 +22146,12 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
   }
 
   export type UserUpdateManyMutationInput = {
@@ -20509,6 +22169,12 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -20526,6 +22192,12 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type AccountCreateInput = {
@@ -20655,6 +22327,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -20680,6 +22353,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -20705,6 +22379,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -20730,6 +22405,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -20790,19 +22466,21 @@ export namespace Prisma {
 
   export type ProjectMemberCreateInput = {
     id?: string
-    githubUsername: string
+    githubUsername?: string | null
     githubId?: string | null
     githubAvatarUrl?: string | null
     name?: string | null
     role?: string
     addedAt?: Date | string
     project: ProjectCreateNestedOneWithoutMembersInput
+    user?: UserCreateNestedOneWithoutTeamMembershipsInput
   }
 
   export type ProjectMemberUncheckedCreateInput = {
     id?: string
     projectId: string
-    githubUsername: string
+    userId?: string | null
+    githubUsername?: string | null
     githubId?: string | null
     githubAvatarUrl?: string | null
     name?: string | null
@@ -20812,19 +22490,21 @@ export namespace Prisma {
 
   export type ProjectMemberUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutMembersNestedInput
+    user?: UserUpdateOneWithoutTeamMembershipsNestedInput
   }
 
   export type ProjectMemberUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    githubUsername?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20835,7 +22515,8 @@ export namespace Prisma {
   export type ProjectMemberCreateManyInput = {
     id?: string
     projectId: string
-    githubUsername: string
+    userId?: string | null
+    githubUsername?: string | null
     githubId?: string | null
     githubAvatarUrl?: string | null
     name?: string | null
@@ -20845,7 +22526,7 @@ export namespace Prisma {
 
   export type ProjectMemberUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
@@ -20856,12 +22537,87 @@ export namespace Prisma {
   export type ProjectMemberUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    githubUsername?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamInvitationCreateInput = {
+    id?: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+    project: ProjectCreateNestedOneWithoutInvitationsInput
+    inviter: UserCreateNestedOneWithoutInvitationsSentInput
+    invitee: UserCreateNestedOneWithoutInvitationsReceivedInput
+  }
+
+  export type TeamInvitationUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    inviterId: string
+    inviteeId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+  }
+
+  export type TeamInvitationUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    project?: ProjectUpdateOneRequiredWithoutInvitationsNestedInput
+    inviter?: UserUpdateOneRequiredWithoutInvitationsSentNestedInput
+    invitee?: UserUpdateOneRequiredWithoutInvitationsReceivedNestedInput
+  }
+
+  export type TeamInvitationUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    inviterId?: StringFieldUpdateOperationsInput | string
+    inviteeId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TeamInvitationCreateManyInput = {
+    id?: string
+    projectId: string
+    inviterId: string
+    inviteeId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+  }
+
+  export type TeamInvitationUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TeamInvitationUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    inviterId?: StringFieldUpdateOperationsInput | string
+    inviteeId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ProjectAssignmentCreateInput = {
@@ -21855,6 +23611,18 @@ export namespace Prisma {
     none?: AccountWhereInput
   }
 
+  export type ProjectMemberListRelationFilter = {
+    every?: ProjectMemberWhereInput
+    some?: ProjectMemberWhereInput
+    none?: ProjectMemberWhereInput
+  }
+
+  export type TeamInvitationListRelationFilter = {
+    every?: TeamInvitationWhereInput
+    some?: TeamInvitationWhereInput
+    none?: TeamInvitationWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -21880,6 +23648,14 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type ProjectMemberOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type TeamInvitationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
@@ -21895,6 +23671,12 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    nim?: SortOrder
+    phone?: SortOrder
+    prodi?: SortOrder
+    simakPhoto?: SortOrder
+    simakValidated?: SortOrder
+    simakLastSync?: SortOrder
   }
 
   export type UserMaxOrderByAggregateInput = {
@@ -21912,6 +23694,12 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    nim?: SortOrder
+    phone?: SortOrder
+    prodi?: SortOrder
+    simakPhoto?: SortOrder
+    simakValidated?: SortOrder
+    simakLastSync?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -21929,6 +23717,12 @@ export namespace Prisma {
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    nim?: SortOrder
+    phone?: SortOrder
+    prodi?: SortOrder
+    simakPhoto?: SortOrder
+    simakValidated?: SortOrder
+    simakLastSync?: SortOrder
   }
 
   export type StringWithAggregatesFilter<$PrismaModel = never> = {
@@ -22121,12 +23915,6 @@ export namespace Prisma {
     isNot?: ProjectRequirementsWhereInput | null
   }
 
-  export type ProjectMemberListRelationFilter = {
-    every?: ProjectMemberWhereInput
-    some?: ProjectMemberWhereInput
-    none?: ProjectMemberWhereInput
-  }
-
   export type StakeholderDocumentListRelationFilter = {
     every?: StakeholderDocumentWhereInput
     some?: StakeholderDocumentWhereInput
@@ -22134,10 +23922,6 @@ export namespace Prisma {
   }
 
   export type DocumentOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type ProjectMemberOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -22217,14 +24001,20 @@ export namespace Prisma {
     isNot?: ProjectWhereInput
   }
 
-  export type ProjectMemberProjectIdGithubUsernameCompoundUniqueInput = {
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type ProjectMemberProjectIdUserIdCompoundUniqueInput = {
     projectId: string
-    githubUsername: string
+    userId: string
   }
 
   export type ProjectMemberCountOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
+    userId?: SortOrder
     githubUsername?: SortOrder
     githubId?: SortOrder
     githubAvatarUrl?: SortOrder
@@ -22236,6 +24026,7 @@ export namespace Prisma {
   export type ProjectMemberMaxOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
+    userId?: SortOrder
     githubUsername?: SortOrder
     githubId?: SortOrder
     githubAvatarUrl?: SortOrder
@@ -22247,12 +24038,51 @@ export namespace Prisma {
   export type ProjectMemberMinOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
+    userId?: SortOrder
     githubUsername?: SortOrder
     githubId?: SortOrder
     githubAvatarUrl?: SortOrder
     name?: SortOrder
     role?: SortOrder
     addedAt?: SortOrder
+  }
+
+  export type TeamInvitationProjectIdInviteeIdCompoundUniqueInput = {
+    projectId: string
+    inviteeId: string
+  }
+
+  export type TeamInvitationCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    inviterId?: SortOrder
+    inviteeId?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    respondedAt?: SortOrder
+  }
+
+  export type TeamInvitationMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    inviterId?: SortOrder
+    inviteeId?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    respondedAt?: SortOrder
+  }
+
+  export type TeamInvitationMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    inviterId?: SortOrder
+    inviteeId?: SortOrder
+    status?: SortOrder
+    message?: SortOrder
+    createdAt?: SortOrder
+    respondedAt?: SortOrder
   }
 
   export type ProjectAssignmentProjectIdDosenIdCompoundUniqueInput = {
@@ -22855,6 +24685,27 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
   }
 
+  export type ProjectMemberCreateNestedManyWithoutUserInput = {
+    create?: XOR<ProjectMemberCreateWithoutUserInput, ProjectMemberUncheckedCreateWithoutUserInput> | ProjectMemberCreateWithoutUserInput[] | ProjectMemberUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutUserInput | ProjectMemberCreateOrConnectWithoutUserInput[]
+    createMany?: ProjectMemberCreateManyUserInputEnvelope
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+  }
+
+  export type TeamInvitationCreateNestedManyWithoutInviterInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviterInput, TeamInvitationUncheckedCreateWithoutInviterInput> | TeamInvitationCreateWithoutInviterInput[] | TeamInvitationUncheckedCreateWithoutInviterInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviterInput | TeamInvitationCreateOrConnectWithoutInviterInput[]
+    createMany?: TeamInvitationCreateManyInviterInputEnvelope
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+  }
+
+  export type TeamInvitationCreateNestedManyWithoutInviteeInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviteeInput, TeamInvitationUncheckedCreateWithoutInviteeInput> | TeamInvitationCreateWithoutInviteeInput[] | TeamInvitationUncheckedCreateWithoutInviteeInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviteeInput | TeamInvitationCreateOrConnectWithoutInviteeInput[]
+    createMany?: TeamInvitationCreateManyInviteeInputEnvelope
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+  }
+
   export type ProjectUncheckedCreateNestedManyWithoutMahasiswaInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -22888,6 +24739,27 @@ export namespace Prisma {
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
     createMany?: AccountCreateManyUserInputEnvelope
     connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+  }
+
+  export type ProjectMemberUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ProjectMemberCreateWithoutUserInput, ProjectMemberUncheckedCreateWithoutUserInput> | ProjectMemberCreateWithoutUserInput[] | ProjectMemberUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutUserInput | ProjectMemberCreateOrConnectWithoutUserInput[]
+    createMany?: ProjectMemberCreateManyUserInputEnvelope
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+  }
+
+  export type TeamInvitationUncheckedCreateNestedManyWithoutInviterInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviterInput, TeamInvitationUncheckedCreateWithoutInviterInput> | TeamInvitationCreateWithoutInviterInput[] | TeamInvitationUncheckedCreateWithoutInviterInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviterInput | TeamInvitationCreateOrConnectWithoutInviterInput[]
+    createMany?: TeamInvitationCreateManyInviterInputEnvelope
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+  }
+
+  export type TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviteeInput, TeamInvitationUncheckedCreateWithoutInviteeInput> | TeamInvitationCreateWithoutInviteeInput[] | TeamInvitationUncheckedCreateWithoutInviteeInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviteeInput | TeamInvitationCreateOrConnectWithoutInviteeInput[]
+    createMany?: TeamInvitationCreateManyInviteeInputEnvelope
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -22984,6 +24856,48 @@ export namespace Prisma {
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
   }
 
+  export type ProjectMemberUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ProjectMemberCreateWithoutUserInput, ProjectMemberUncheckedCreateWithoutUserInput> | ProjectMemberCreateWithoutUserInput[] | ProjectMemberUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutUserInput | ProjectMemberCreateOrConnectWithoutUserInput[]
+    upsert?: ProjectMemberUpsertWithWhereUniqueWithoutUserInput | ProjectMemberUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ProjectMemberCreateManyUserInputEnvelope
+    set?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    disconnect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    delete?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    update?: ProjectMemberUpdateWithWhereUniqueWithoutUserInput | ProjectMemberUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ProjectMemberUpdateManyWithWhereWithoutUserInput | ProjectMemberUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+  }
+
+  export type TeamInvitationUpdateManyWithoutInviterNestedInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviterInput, TeamInvitationUncheckedCreateWithoutInviterInput> | TeamInvitationCreateWithoutInviterInput[] | TeamInvitationUncheckedCreateWithoutInviterInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviterInput | TeamInvitationCreateOrConnectWithoutInviterInput[]
+    upsert?: TeamInvitationUpsertWithWhereUniqueWithoutInviterInput | TeamInvitationUpsertWithWhereUniqueWithoutInviterInput[]
+    createMany?: TeamInvitationCreateManyInviterInputEnvelope
+    set?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    disconnect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    delete?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    update?: TeamInvitationUpdateWithWhereUniqueWithoutInviterInput | TeamInvitationUpdateWithWhereUniqueWithoutInviterInput[]
+    updateMany?: TeamInvitationUpdateManyWithWhereWithoutInviterInput | TeamInvitationUpdateManyWithWhereWithoutInviterInput[]
+    deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
+  }
+
+  export type TeamInvitationUpdateManyWithoutInviteeNestedInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviteeInput, TeamInvitationUncheckedCreateWithoutInviteeInput> | TeamInvitationCreateWithoutInviteeInput[] | TeamInvitationUncheckedCreateWithoutInviteeInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviteeInput | TeamInvitationCreateOrConnectWithoutInviteeInput[]
+    upsert?: TeamInvitationUpsertWithWhereUniqueWithoutInviteeInput | TeamInvitationUpsertWithWhereUniqueWithoutInviteeInput[]
+    createMany?: TeamInvitationCreateManyInviteeInputEnvelope
+    set?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    disconnect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    delete?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    update?: TeamInvitationUpdateWithWhereUniqueWithoutInviteeInput | TeamInvitationUpdateWithWhereUniqueWithoutInviteeInput[]
+    updateMany?: TeamInvitationUpdateManyWithWhereWithoutInviteeInput | TeamInvitationUpdateManyWithWhereWithoutInviteeInput[]
+    deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
+  }
+
   export type ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -23052,6 +24966,48 @@ export namespace Prisma {
     update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  }
+
+  export type ProjectMemberUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ProjectMemberCreateWithoutUserInput, ProjectMemberUncheckedCreateWithoutUserInput> | ProjectMemberCreateWithoutUserInput[] | ProjectMemberUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutUserInput | ProjectMemberCreateOrConnectWithoutUserInput[]
+    upsert?: ProjectMemberUpsertWithWhereUniqueWithoutUserInput | ProjectMemberUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ProjectMemberCreateManyUserInputEnvelope
+    set?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    disconnect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    delete?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    update?: ProjectMemberUpdateWithWhereUniqueWithoutUserInput | ProjectMemberUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ProjectMemberUpdateManyWithWhereWithoutUserInput | ProjectMemberUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+  }
+
+  export type TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviterInput, TeamInvitationUncheckedCreateWithoutInviterInput> | TeamInvitationCreateWithoutInviterInput[] | TeamInvitationUncheckedCreateWithoutInviterInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviterInput | TeamInvitationCreateOrConnectWithoutInviterInput[]
+    upsert?: TeamInvitationUpsertWithWhereUniqueWithoutInviterInput | TeamInvitationUpsertWithWhereUniqueWithoutInviterInput[]
+    createMany?: TeamInvitationCreateManyInviterInputEnvelope
+    set?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    disconnect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    delete?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    update?: TeamInvitationUpdateWithWhereUniqueWithoutInviterInput | TeamInvitationUpdateWithWhereUniqueWithoutInviterInput[]
+    updateMany?: TeamInvitationUpdateManyWithWhereWithoutInviterInput | TeamInvitationUpdateManyWithWhereWithoutInviterInput[]
+    deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
+  }
+
+  export type TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput = {
+    create?: XOR<TeamInvitationCreateWithoutInviteeInput, TeamInvitationUncheckedCreateWithoutInviteeInput> | TeamInvitationCreateWithoutInviteeInput[] | TeamInvitationUncheckedCreateWithoutInviteeInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviteeInput | TeamInvitationCreateOrConnectWithoutInviteeInput[]
+    upsert?: TeamInvitationUpsertWithWhereUniqueWithoutInviteeInput | TeamInvitationUpsertWithWhereUniqueWithoutInviteeInput[]
+    createMany?: TeamInvitationCreateManyInviteeInputEnvelope
+    set?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    disconnect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    delete?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    update?: TeamInvitationUpdateWithWhereUniqueWithoutInviteeInput | TeamInvitationUpdateWithWhereUniqueWithoutInviteeInput[]
+    updateMany?: TeamInvitationUpdateManyWithWhereWithoutInviteeInput | TeamInvitationUpdateManyWithWhereWithoutInviteeInput[]
+    deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutAccountsInput = {
@@ -23123,6 +25079,13 @@ export namespace Prisma {
     connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
   }
 
+  export type TeamInvitationCreateNestedManyWithoutProjectInput = {
+    create?: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput> | TeamInvitationCreateWithoutProjectInput[] | TeamInvitationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutProjectInput | TeamInvitationCreateOrConnectWithoutProjectInput[]
+    createMany?: TeamInvitationCreateManyProjectInputEnvelope
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+  }
+
   export type DocumentUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -23162,6 +25125,13 @@ export namespace Prisma {
     connectOrCreate?: StakeholderDocumentCreateOrConnectWithoutProjectInput | StakeholderDocumentCreateOrConnectWithoutProjectInput[]
     createMany?: StakeholderDocumentCreateManyProjectInputEnvelope
     connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+  }
+
+  export type TeamInvitationUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput> | TeamInvitationCreateWithoutProjectInput[] | TeamInvitationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutProjectInput | TeamInvitationCreateOrConnectWithoutProjectInput[]
+    createMany?: TeamInvitationCreateManyProjectInputEnvelope
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
   }
 
   export type EnumProjectStatusFieldUpdateOperationsInput = {
@@ -23256,6 +25226,20 @@ export namespace Prisma {
     deleteMany?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
   }
 
+  export type TeamInvitationUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput> | TeamInvitationCreateWithoutProjectInput[] | TeamInvitationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutProjectInput | TeamInvitationCreateOrConnectWithoutProjectInput[]
+    upsert?: TeamInvitationUpsertWithWhereUniqueWithoutProjectInput | TeamInvitationUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: TeamInvitationCreateManyProjectInputEnvelope
+    set?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    disconnect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    delete?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    update?: TeamInvitationUpdateWithWhereUniqueWithoutProjectInput | TeamInvitationUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: TeamInvitationUpdateManyWithWhereWithoutProjectInput | TeamInvitationUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
+  }
+
   export type DocumentUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -23336,10 +25320,30 @@ export namespace Prisma {
     deleteMany?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
   }
 
+  export type TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput> | TeamInvitationCreateWithoutProjectInput[] | TeamInvitationUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: TeamInvitationCreateOrConnectWithoutProjectInput | TeamInvitationCreateOrConnectWithoutProjectInput[]
+    upsert?: TeamInvitationUpsertWithWhereUniqueWithoutProjectInput | TeamInvitationUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: TeamInvitationCreateManyProjectInputEnvelope
+    set?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    disconnect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    delete?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+    update?: TeamInvitationUpdateWithWhereUniqueWithoutProjectInput | TeamInvitationUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: TeamInvitationUpdateManyWithWhereWithoutProjectInput | TeamInvitationUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
+  }
+
   export type ProjectCreateNestedOneWithoutMembersInput = {
     create?: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutMembersInput
     connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutTeamMembershipsInput = {
+    create?: XOR<UserCreateWithoutTeamMembershipsInput, UserUncheckedCreateWithoutTeamMembershipsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTeamMembershipsInput
+    connect?: UserWhereUniqueInput
   }
 
   export type ProjectUpdateOneRequiredWithoutMembersNestedInput = {
@@ -23348,6 +25352,58 @@ export namespace Prisma {
     upsert?: ProjectUpsertWithoutMembersInput
     connect?: ProjectWhereUniqueInput
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutMembersInput, ProjectUpdateWithoutMembersInput>, ProjectUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type UserUpdateOneWithoutTeamMembershipsNestedInput = {
+    create?: XOR<UserCreateWithoutTeamMembershipsInput, UserUncheckedCreateWithoutTeamMembershipsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutTeamMembershipsInput
+    upsert?: UserUpsertWithoutTeamMembershipsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTeamMembershipsInput, UserUpdateWithoutTeamMembershipsInput>, UserUncheckedUpdateWithoutTeamMembershipsInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutInvitationsInput = {
+    create?: XOR<ProjectCreateWithoutInvitationsInput, ProjectUncheckedCreateWithoutInvitationsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutInvitationsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutInvitationsSentInput = {
+    create?: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvitationsSentInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutInvitationsReceivedInput = {
+    create?: XOR<UserCreateWithoutInvitationsReceivedInput, UserUncheckedCreateWithoutInvitationsReceivedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvitationsReceivedInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutInvitationsNestedInput = {
+    create?: XOR<ProjectCreateWithoutInvitationsInput, ProjectUncheckedCreateWithoutInvitationsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutInvitationsInput
+    upsert?: ProjectUpsertWithoutInvitationsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutInvitationsInput, ProjectUpdateWithoutInvitationsInput>, ProjectUncheckedUpdateWithoutInvitationsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutInvitationsSentNestedInput = {
+    create?: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvitationsSentInput
+    upsert?: UserUpsertWithoutInvitationsSentInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInvitationsSentInput, UserUpdateWithoutInvitationsSentInput>, UserUncheckedUpdateWithoutInvitationsSentInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutInvitationsReceivedNestedInput = {
+    create?: XOR<UserCreateWithoutInvitationsReceivedInput, UserUncheckedCreateWithoutInvitationsReceivedInput>
+    connectOrCreate?: UserCreateOrConnectWithoutInvitationsReceivedInput
+    upsert?: UserUpsertWithoutInvitationsReceivedInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutInvitationsReceivedInput, UserUpdateWithoutInvitationsReceivedInput>, UserUncheckedUpdateWithoutInvitationsReceivedInput>
   }
 
   export type ProjectCreateNestedOneWithoutAssignmentsInput = {
@@ -23958,6 +26014,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMahasiswaInput = {
@@ -23982,6 +26039,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMahasiswaInput = {
@@ -24117,6 +26175,98 @@ export namespace Prisma {
 
   export type AccountCreateManyUserInputEnvelope = {
     data: AccountCreateManyUserInput | AccountCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectMemberCreateWithoutUserInput = {
+    id?: string
+    githubUsername?: string | null
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutMembersInput
+  }
+
+  export type ProjectMemberUncheckedCreateWithoutUserInput = {
+    id?: string
+    projectId: string
+    githubUsername?: string | null
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+  }
+
+  export type ProjectMemberCreateOrConnectWithoutUserInput = {
+    where: ProjectMemberWhereUniqueInput
+    create: XOR<ProjectMemberCreateWithoutUserInput, ProjectMemberUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProjectMemberCreateManyUserInputEnvelope = {
+    data: ProjectMemberCreateManyUserInput | ProjectMemberCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeamInvitationCreateWithoutInviterInput = {
+    id?: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+    project: ProjectCreateNestedOneWithoutInvitationsInput
+    invitee: UserCreateNestedOneWithoutInvitationsReceivedInput
+  }
+
+  export type TeamInvitationUncheckedCreateWithoutInviterInput = {
+    id?: string
+    projectId: string
+    inviteeId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+  }
+
+  export type TeamInvitationCreateOrConnectWithoutInviterInput = {
+    where: TeamInvitationWhereUniqueInput
+    create: XOR<TeamInvitationCreateWithoutInviterInput, TeamInvitationUncheckedCreateWithoutInviterInput>
+  }
+
+  export type TeamInvitationCreateManyInviterInputEnvelope = {
+    data: TeamInvitationCreateManyInviterInput | TeamInvitationCreateManyInviterInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type TeamInvitationCreateWithoutInviteeInput = {
+    id?: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+    project: ProjectCreateNestedOneWithoutInvitationsInput
+    inviter: UserCreateNestedOneWithoutInvitationsSentInput
+  }
+
+  export type TeamInvitationUncheckedCreateWithoutInviteeInput = {
+    id?: string
+    projectId: string
+    inviterId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+  }
+
+  export type TeamInvitationCreateOrConnectWithoutInviteeInput = {
+    where: TeamInvitationWhereUniqueInput
+    create: XOR<TeamInvitationCreateWithoutInviteeInput, TeamInvitationUncheckedCreateWithoutInviteeInput>
+  }
+
+  export type TeamInvitationCreateManyInviteeInputEnvelope = {
+    data: TeamInvitationCreateManyInviteeInput | TeamInvitationCreateManyInviteeInput[]
     skipDuplicates?: boolean
   }
 
@@ -24279,6 +26429,83 @@ export namespace Prisma {
     session_state?: StringNullableFilter<"Account"> | string | null
   }
 
+  export type ProjectMemberUpsertWithWhereUniqueWithoutUserInput = {
+    where: ProjectMemberWhereUniqueInput
+    update: XOR<ProjectMemberUpdateWithoutUserInput, ProjectMemberUncheckedUpdateWithoutUserInput>
+    create: XOR<ProjectMemberCreateWithoutUserInput, ProjectMemberUncheckedCreateWithoutUserInput>
+  }
+
+  export type ProjectMemberUpdateWithWhereUniqueWithoutUserInput = {
+    where: ProjectMemberWhereUniqueInput
+    data: XOR<ProjectMemberUpdateWithoutUserInput, ProjectMemberUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ProjectMemberUpdateManyWithWhereWithoutUserInput = {
+    where: ProjectMemberScalarWhereInput
+    data: XOR<ProjectMemberUpdateManyMutationInput, ProjectMemberUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ProjectMemberScalarWhereInput = {
+    AND?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+    OR?: ProjectMemberScalarWhereInput[]
+    NOT?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+    id?: StringFilter<"ProjectMember"> | string
+    projectId?: StringFilter<"ProjectMember"> | string
+    userId?: StringNullableFilter<"ProjectMember"> | string | null
+    githubUsername?: StringNullableFilter<"ProjectMember"> | string | null
+    githubId?: StringNullableFilter<"ProjectMember"> | string | null
+    githubAvatarUrl?: StringNullableFilter<"ProjectMember"> | string | null
+    name?: StringNullableFilter<"ProjectMember"> | string | null
+    role?: StringFilter<"ProjectMember"> | string
+    addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
+  }
+
+  export type TeamInvitationUpsertWithWhereUniqueWithoutInviterInput = {
+    where: TeamInvitationWhereUniqueInput
+    update: XOR<TeamInvitationUpdateWithoutInviterInput, TeamInvitationUncheckedUpdateWithoutInviterInput>
+    create: XOR<TeamInvitationCreateWithoutInviterInput, TeamInvitationUncheckedCreateWithoutInviterInput>
+  }
+
+  export type TeamInvitationUpdateWithWhereUniqueWithoutInviterInput = {
+    where: TeamInvitationWhereUniqueInput
+    data: XOR<TeamInvitationUpdateWithoutInviterInput, TeamInvitationUncheckedUpdateWithoutInviterInput>
+  }
+
+  export type TeamInvitationUpdateManyWithWhereWithoutInviterInput = {
+    where: TeamInvitationScalarWhereInput
+    data: XOR<TeamInvitationUpdateManyMutationInput, TeamInvitationUncheckedUpdateManyWithoutInviterInput>
+  }
+
+  export type TeamInvitationScalarWhereInput = {
+    AND?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
+    OR?: TeamInvitationScalarWhereInput[]
+    NOT?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
+    id?: StringFilter<"TeamInvitation"> | string
+    projectId?: StringFilter<"TeamInvitation"> | string
+    inviterId?: StringFilter<"TeamInvitation"> | string
+    inviteeId?: StringFilter<"TeamInvitation"> | string
+    status?: StringFilter<"TeamInvitation"> | string
+    message?: StringNullableFilter<"TeamInvitation"> | string | null
+    createdAt?: DateTimeFilter<"TeamInvitation"> | Date | string
+    respondedAt?: DateTimeNullableFilter<"TeamInvitation"> | Date | string | null
+  }
+
+  export type TeamInvitationUpsertWithWhereUniqueWithoutInviteeInput = {
+    where: TeamInvitationWhereUniqueInput
+    update: XOR<TeamInvitationUpdateWithoutInviteeInput, TeamInvitationUncheckedUpdateWithoutInviteeInput>
+    create: XOR<TeamInvitationCreateWithoutInviteeInput, TeamInvitationUncheckedCreateWithoutInviteeInput>
+  }
+
+  export type TeamInvitationUpdateWithWhereUniqueWithoutInviteeInput = {
+    where: TeamInvitationWhereUniqueInput
+    data: XOR<TeamInvitationUpdateWithoutInviteeInput, TeamInvitationUncheckedUpdateWithoutInviteeInput>
+  }
+
+  export type TeamInvitationUpdateManyWithWhereWithoutInviteeInput = {
+    where: TeamInvitationScalarWhereInput
+    data: XOR<TeamInvitationUpdateManyMutationInput, TeamInvitationUncheckedUpdateManyWithoutInviteeInput>
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     username: string
@@ -24294,10 +26521,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -24315,10 +26551,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -24352,10 +26597,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -24373,10 +26627,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -24394,10 +26657,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -24415,10 +26687,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -24575,17 +26856,19 @@ export namespace Prisma {
 
   export type ProjectMemberCreateWithoutProjectInput = {
     id?: string
-    githubUsername: string
+    githubUsername?: string | null
     githubId?: string | null
     githubAvatarUrl?: string | null
     name?: string | null
     role?: string
     addedAt?: Date | string
+    user?: UserCreateNestedOneWithoutTeamMembershipsInput
   }
 
   export type ProjectMemberUncheckedCreateWithoutProjectInput = {
     id?: string
-    githubUsername: string
+    userId?: string | null
+    githubUsername?: string | null
     githubId?: string | null
     githubAvatarUrl?: string | null
     name?: string | null
@@ -24645,6 +26928,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type TeamInvitationCreateWithoutProjectInput = {
+    id?: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+    inviter: UserCreateNestedOneWithoutInvitationsSentInput
+    invitee: UserCreateNestedOneWithoutInvitationsReceivedInput
+  }
+
+  export type TeamInvitationUncheckedCreateWithoutProjectInput = {
+    id?: string
+    inviterId: string
+    inviteeId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+  }
+
+  export type TeamInvitationCreateOrConnectWithoutProjectInput = {
+    where: TeamInvitationWhereUniqueInput
+    create: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput>
+  }
+
+  export type TeamInvitationCreateManyProjectInputEnvelope = {
+    data: TeamInvitationCreateManyProjectInput | TeamInvitationCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -24671,10 +26984,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -24692,10 +27014,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutProjectInput = {
@@ -24840,20 +27171,6 @@ export namespace Prisma {
     data: XOR<ProjectMemberUpdateManyMutationInput, ProjectMemberUncheckedUpdateManyWithoutProjectInput>
   }
 
-  export type ProjectMemberScalarWhereInput = {
-    AND?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
-    OR?: ProjectMemberScalarWhereInput[]
-    NOT?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
-    id?: StringFilter<"ProjectMember"> | string
-    projectId?: StringFilter<"ProjectMember"> | string
-    githubUsername?: StringFilter<"ProjectMember"> | string
-    githubId?: StringNullableFilter<"ProjectMember"> | string | null
-    githubAvatarUrl?: StringNullableFilter<"ProjectMember"> | string | null
-    name?: StringNullableFilter<"ProjectMember"> | string | null
-    role?: StringFilter<"ProjectMember"> | string
-    addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
-  }
-
   export type StakeholderDocumentUpsertWithWhereUniqueWithoutProjectInput = {
     where: StakeholderDocumentWhereUniqueInput
     update: XOR<StakeholderDocumentUpdateWithoutProjectInput, StakeholderDocumentUncheckedUpdateWithoutProjectInput>
@@ -24890,6 +27207,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
   }
 
+  export type TeamInvitationUpsertWithWhereUniqueWithoutProjectInput = {
+    where: TeamInvitationWhereUniqueInput
+    update: XOR<TeamInvitationUpdateWithoutProjectInput, TeamInvitationUncheckedUpdateWithoutProjectInput>
+    create: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput>
+  }
+
+  export type TeamInvitationUpdateWithWhereUniqueWithoutProjectInput = {
+    where: TeamInvitationWhereUniqueInput
+    data: XOR<TeamInvitationUpdateWithoutProjectInput, TeamInvitationUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type TeamInvitationUpdateManyWithWhereWithoutProjectInput = {
+    where: TeamInvitationScalarWhereInput
+    data: XOR<TeamInvitationUpdateManyMutationInput, TeamInvitationUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutMembersInput = {
     id?: string
     title: string
@@ -24912,6 +27245,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -24936,11 +27270,77 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
     where: ProjectWhereUniqueInput
     create: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
+  }
+
+  export type UserCreateWithoutTeamMembershipsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+  }
+
+  export type UserUncheckedCreateWithoutTeamMembershipsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+  }
+
+  export type UserCreateOrConnectWithoutTeamMembershipsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutTeamMembershipsInput, UserUncheckedCreateWithoutTeamMembershipsInput>
   }
 
   export type ProjectUpsertWithoutMembersInput = {
@@ -24976,6 +27376,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -25000,6 +27401,466 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutTeamMembershipsInput = {
+    update: XOR<UserUpdateWithoutTeamMembershipsInput, UserUncheckedUpdateWithoutTeamMembershipsInput>
+    create: XOR<UserCreateWithoutTeamMembershipsInput, UserUncheckedCreateWithoutTeamMembershipsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutTeamMembershipsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutTeamMembershipsInput, UserUncheckedUpdateWithoutTeamMembershipsInput>
+  }
+
+  export type UserUpdateWithoutTeamMembershipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutTeamMembershipsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  }
+
+  export type ProjectCreateWithoutInvitationsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutInvitationsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutInvitationsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutInvitationsInput, ProjectUncheckedCreateWithoutInvitationsInput>
+  }
+
+  export type UserCreateWithoutInvitationsSentInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+  }
+
+  export type UserUncheckedCreateWithoutInvitationsSentInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+  }
+
+  export type UserCreateOrConnectWithoutInvitationsSentInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
+  }
+
+  export type UserCreateWithoutInvitationsReceivedInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+  }
+
+  export type UserUncheckedCreateWithoutInvitationsReceivedInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+  }
+
+  export type UserCreateOrConnectWithoutInvitationsReceivedInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutInvitationsReceivedInput, UserUncheckedCreateWithoutInvitationsReceivedInput>
+  }
+
+  export type ProjectUpsertWithoutInvitationsInput = {
+    update: XOR<ProjectUpdateWithoutInvitationsInput, ProjectUncheckedUpdateWithoutInvitationsInput>
+    create: XOR<ProjectCreateWithoutInvitationsInput, ProjectUncheckedCreateWithoutInvitationsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutInvitationsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutInvitationsInput, ProjectUncheckedUpdateWithoutInvitationsInput>
+  }
+
+  export type ProjectUpdateWithoutInvitationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutInvitationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutInvitationsSentInput = {
+    update: XOR<UserUpdateWithoutInvitationsSentInput, UserUncheckedUpdateWithoutInvitationsSentInput>
+    create: XOR<UserCreateWithoutInvitationsSentInput, UserUncheckedCreateWithoutInvitationsSentInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutInvitationsSentInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutInvitationsSentInput, UserUncheckedUpdateWithoutInvitationsSentInput>
+  }
+
+  export type UserUpdateWithoutInvitationsSentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutInvitationsSentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  }
+
+  export type UserUpsertWithoutInvitationsReceivedInput = {
+    update: XOR<UserUpdateWithoutInvitationsReceivedInput, UserUncheckedUpdateWithoutInvitationsReceivedInput>
+    create: XOR<UserCreateWithoutInvitationsReceivedInput, UserUncheckedCreateWithoutInvitationsReceivedInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutInvitationsReceivedInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutInvitationsReceivedInput, UserUncheckedUpdateWithoutInvitationsReceivedInput>
+  }
+
+  export type UserUpdateWithoutInvitationsReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutInvitationsReceivedInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
   }
 
   export type ProjectCreateWithoutAssignmentsInput = {
@@ -25024,6 +27885,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutAssignmentsInput = {
@@ -25048,6 +27910,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutAssignmentsInput = {
@@ -25070,10 +27933,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProjectsInput = {
@@ -25091,10 +27963,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProjectsInput = {
@@ -25135,6 +28016,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutAssignmentsInput = {
@@ -25159,6 +28041,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutAssignedProjectsInput = {
@@ -25187,10 +28070,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProjectsInput = {
@@ -25208,10 +28100,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
   }
 
   export type ProjectCreateWithoutDocumentsInput = {
@@ -25236,6 +28137,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDocumentsInput = {
@@ -25260,6 +28162,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDocumentsInput = {
@@ -25300,6 +28203,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDocumentsInput = {
@@ -25324,6 +28228,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutReviewsInput = {
@@ -25348,6 +28253,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutReviewsInput = {
@@ -25372,6 +28278,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutReviewsInput = {
@@ -25394,10 +28301,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
@@ -25415,10 +28331,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
   }
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -25513,6 +28438,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutReviewsInput = {
@@ -25537,6 +28463,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutReviewsInput = {
@@ -25565,10 +28492,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -25586,10 +28522,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
   }
 
   export type ReviewCommentUpsertWithWhereUniqueWithoutReviewInput = {
@@ -25906,10 +28851,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
     accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -25927,10 +28881,19 @@ export namespace Prisma {
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    nim?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -25964,10 +28927,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
     accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -25985,10 +28957,19 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
   }
 
   export type ProjectCreateWithoutRequirementsInput = {
@@ -26013,6 +28994,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutRequirementsInput = {
@@ -26037,6 +29019,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutRequirementsInput = {
@@ -26077,6 +29060,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutRequirementsInput = {
@@ -26101,6 +29085,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutStakeholderDocumentsInput = {
@@ -26125,6 +29110,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutStakeholderDocumentsInput = {
@@ -26149,6 +29135,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutStakeholderDocumentsInput = {
@@ -26189,6 +29176,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutStakeholderDocumentsInput = {
@@ -26213,6 +29201,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyMahasiswaInput = {
@@ -26274,6 +29263,37 @@ export namespace Prisma {
     session_state?: string | null
   }
 
+  export type ProjectMemberCreateManyUserInput = {
+    id?: string
+    projectId: string
+    githubUsername?: string | null
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+  }
+
+  export type TeamInvitationCreateManyInviterInput = {
+    id?: string
+    projectId: string
+    inviteeId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+  }
+
+  export type TeamInvitationCreateManyInviteeInput = {
+    id?: string
+    projectId: string
+    inviterId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
+  }
+
   export type ProjectUpdateWithoutMahasiswaInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -26296,6 +29316,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMahasiswaInput = {
@@ -26320,6 +29341,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutMahasiswaInput = {
@@ -26467,6 +29489,99 @@ export namespace Prisma {
     session_state?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
+  export type ProjectMemberUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutMembersNestedInput
+  }
+
+  export type ProjectMemberUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectMemberUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamInvitationUpdateWithoutInviterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    project?: ProjectUpdateOneRequiredWithoutInvitationsNestedInput
+    invitee?: UserUpdateOneRequiredWithoutInvitationsReceivedNestedInput
+  }
+
+  export type TeamInvitationUncheckedUpdateWithoutInviterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    inviteeId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TeamInvitationUncheckedUpdateManyWithoutInviterInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    inviteeId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TeamInvitationUpdateWithoutInviteeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    project?: ProjectUpdateOneRequiredWithoutInvitationsNestedInput
+    inviter?: UserUpdateOneRequiredWithoutInvitationsSentNestedInput
+  }
+
+  export type TeamInvitationUncheckedUpdateWithoutInviteeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    inviterId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TeamInvitationUncheckedUpdateManyWithoutInviteeInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    inviterId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
   export type DocumentCreateManyProjectInput = {
     id?: string
     type: $Enums.DocumentType
@@ -26497,7 +29612,8 @@ export namespace Prisma {
 
   export type ProjectMemberCreateManyProjectInput = {
     id?: string
-    githubUsername: string
+    userId?: string | null
+    githubUsername?: string | null
     githubId?: string | null
     githubAvatarUrl?: string | null
     name?: string | null
@@ -26519,6 +29635,16 @@ export namespace Prisma {
     description?: string | null
     uploadedAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type TeamInvitationCreateManyProjectInput = {
+    id?: string
+    inviterId: string
+    inviteeId: string
+    status?: string
+    message?: string | null
+    createdAt?: Date | string
+    respondedAt?: Date | string | null
   }
 
   export type DocumentUpdateWithoutProjectInput = {
@@ -26611,17 +29737,19 @@ export namespace Prisma {
 
   export type ProjectMemberUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutTeamMembershipsNestedInput
   }
 
   export type ProjectMemberUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    githubUsername?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26631,7 +29759,8 @@ export namespace Prisma {
 
   export type ProjectMemberUncheckedUpdateManyWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    githubUsername?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
     name?: NullableStringFieldUpdateOperationsInput | string | null
@@ -26685,6 +29814,36 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type TeamInvitationUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    inviter?: UserUpdateOneRequiredWithoutInvitationsSentNestedInput
+    invitee?: UserUpdateOneRequiredWithoutInvitationsReceivedNestedInput
+  }
+
+  export type TeamInvitationUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    inviterId?: StringFieldUpdateOperationsInput | string
+    inviteeId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type TeamInvitationUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    inviterId?: StringFieldUpdateOperationsInput | string
+    inviteeId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    message?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type ReviewCommentCreateManyReviewInput = {
