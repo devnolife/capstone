@@ -30,7 +30,7 @@ export async function GET(
         name: true,
         username: true,
         role: true,
-        avatarUrl: true,
+        image: true,
         githubUsername: true,
         isActive: true,
         createdAt: true,

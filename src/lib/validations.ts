@@ -25,6 +25,7 @@ export const projectSchema = z.object({
   title: z.string().min(5, 'Judul minimal 5 karakter'),
   description: z.string().optional(),
   githubRepoUrl: z.string().url('URL tidak valid').optional().or(z.literal('')),
+  githubRepoName: z.string().optional(),
   semester: z.string().min(1, 'Semester wajib dipilih'),
   tahunAkademik: z.string().min(1, 'Tahun akademik wajib dipilih'),
 });

@@ -123,16 +123,33 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   username: 'username',
+  email: 'email',
+  emailVerified: 'emailVerified',
   name: 'name',
   password: 'password',
   role: 'role',
-  avatarUrl: 'avatarUrl',
+  image: 'image',
   githubId: 'githubId',
   githubUsername: 'githubUsername',
   githubToken: 'githubToken',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.AccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  provider: 'provider',
+  providerAccountId: 'providerAccountId',
+  refresh_token: 'refresh_token',
+  access_token: 'access_token',
+  expires_at: 'expires_at',
+  token_type: 'token_type',
+  scope: 'scope',
+  id_token: 'id_token',
+  session_state: 'session_state'
 };
 
 exports.Prisma.ProjectScalarFieldEnum = {
@@ -142,12 +159,27 @@ exports.Prisma.ProjectScalarFieldEnum = {
   status: 'status',
   githubRepoUrl: 'githubRepoUrl',
   githubRepoName: 'githubRepoName',
+  orgRepoUrl: 'orgRepoUrl',
+  orgRepoName: 'orgRepoName',
+  forkedAt: 'forkedAt',
   semester: 'semester',
   tahunAkademik: 'tahunAkademik',
   submittedAt: 'submittedAt',
+  approvedAt: 'approvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   mahasiswaId: 'mahasiswaId'
+};
+
+exports.Prisma.ProjectMemberScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  githubUsername: 'githubUsername',
+  githubId: 'githubId',
+  githubAvatarUrl: 'githubAvatarUrl',
+  name: 'name',
+  role: 'role',
+  addedAt: 'addedAt'
 };
 
 exports.Prisma.ProjectAssignmentScalarFieldEnum = {
@@ -234,12 +266,29 @@ exports.Prisma.SemesterScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.ProjectRequirementScalarFieldEnum = {
+exports.Prisma.ProjectRequirementsScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
-  category: 'category',
-  content: 'content',
-  isCompleted: 'isCompleted',
+  judulProyek: 'judulProyek',
+  targetPengguna: 'targetPengguna',
+  latarBelakangMasalah: 'latarBelakangMasalah',
+  tujuanProyek: 'tujuanProyek',
+  manfaatProyek: 'manfaatProyek',
+  integrasiMatakuliah: 'integrasiMatakuliah',
+  metodologi: 'metodologi',
+  penulisanLaporan: 'penulisanLaporan',
+  ruangLingkup: 'ruangLingkup',
+  sumberDayaBatasan: 'sumberDayaBatasan',
+  teknologi: 'teknologi',
+  fiturUtama: 'fiturUtama',
+  analisisTemuan: 'analisisTemuan',
+  presentasiUjian: 'presentasiUjian',
+  stakeholder: 'stakeholder',
+  kepatuhanEtika: 'kepatuhanEtika',
+  timeline: 'timeline',
+  kerangkaWaktu: 'kerangkaWaktu',
+  deadlineDate: 'deadlineDate',
+  completionPercent: 'completionPercent',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -294,7 +343,9 @@ exports.ReviewStatus = exports.$Enums.ReviewStatus = {
 
 exports.Prisma.ModelName = {
   User: 'User',
+  Account: 'Account',
   Project: 'Project',
+  ProjectMember: 'ProjectMember',
   ProjectAssignment: 'ProjectAssignment',
   Document: 'Document',
   Review: 'Review',
@@ -303,7 +354,7 @@ exports.Prisma.ModelName = {
   ReviewScore: 'ReviewScore',
   Notification: 'Notification',
   Semester: 'Semester',
-  ProjectRequirement: 'ProjectRequirement'
+  ProjectRequirements: 'ProjectRequirements'
 };
 
 /**

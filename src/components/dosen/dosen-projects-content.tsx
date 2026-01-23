@@ -38,7 +38,7 @@ interface Project {
     id: string;
     name: string;
     username: string;
-    avatarUrl: string | null;
+    image: string | null;
   };
   reviews: Review[];
   _count: {
@@ -94,7 +94,7 @@ function MobileProjectCard({
             <div className="flex items-center gap-3">
               <Avatar
                 name={project.mahasiswa.name}
-                src={project.mahasiswa.avatarUrl || undefined}
+                src={project.mahasiswa.image || undefined}
                 size="sm"
                 className="ring-2 ring-default-200"
               />
@@ -292,7 +292,7 @@ export function DosenProjectsContent({
                               <div className="flex items-center gap-3">
                                 <Avatar
                                   name={project.mahasiswa.name}
-                                  src={project.mahasiswa.avatarUrl || undefined}
+                                  src={project.mahasiswa.image || undefined}
                                   size="sm"
                                 />
                                 <div>

@@ -12,7 +12,11 @@ const config = {
     extend: {},
   },
   darkMode: 'class',
-  plugins: [heroui()],
+  plugins: [
+    heroui({
+      addCommonColors: true,
+    }),
+  ],
 };
 
 export default config;

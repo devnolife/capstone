@@ -14,37 +14,35 @@ export default async function DosenProjectsPage() {
     redirect('/');
   }
 
-  // Fetch assigned projects
-  const assignedProjects = await prisma.projectAssignment.findMany({
-    where: { dosenId: session.user.id },
+  // Fetch all submitted projects (dosen can see all projects that need review)
+  const projects = await prisma.project.findMany({
+    where: {
+      status: {
+        in: ['SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REVISION_NEEDED'],
+      },
+    },
     include: {
-      project: {
-        include: {
-          mahasiswa: {
-            select: {
-              id: true,
-              name: true,
-              username: true,
-              avatarUrl: true,
-            },
-          },
+      mahasiswa: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          image: true,
+        },
+      },
+      documents: true,
+      reviews: {
+        where: { reviewerId: session.user.id },
+      },
+      _count: {
+        select: {
           documents: true,
-          reviews: {
-            where: { reviewerId: session.user.id },
-          },
-          _count: {
-            select: {
-              documents: true,
-              reviews: true,
-            },
-          },
+          reviews: true,
         },
       },
     },
-    orderBy: { assignedAt: 'desc' },
+    orderBy: { submittedAt: 'desc' },
   });
-
-  const projects = assignedProjects.map((a) => a.project);
 
   return (
     <DosenProjectsContent 

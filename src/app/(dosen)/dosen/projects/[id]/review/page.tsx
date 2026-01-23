@@ -47,9 +47,9 @@ interface Project {
   mahasiswa: {
     id: string;
     name: string;
-    email: string;
-    nim: string | null;
-    avatarUrl: string | null;
+    email: string | null;
+    username: string; // username is NIM for mahasiswa
+    image: string | null;
   };
   documents: Array<{
     id: string;
@@ -340,12 +340,12 @@ export default function ReviewPage({
           <div className="flex items-center gap-4">
             <Avatar
               name={project.mahasiswa.name}
-              src={project.mahasiswa.avatarUrl || undefined}
+              src={project.mahasiswa.image || undefined}
               size="lg"
             />
             <div>
               <p className="font-semibold text-lg">{project.mahasiswa.name}</p>
-              <p className="text-default-500">{project.mahasiswa.nim}</p>
+              <p className="text-default-500">{project.mahasiswa.username}</p>
               <p className="text-sm text-default-400">
                 {project.mahasiswa.email}
               </p>

@@ -19,10 +19,20 @@ export type PrismaPromise<T> = $Public.PrismaPromise<T>
  */
 export type User = $Result.DefaultSelection<Prisma.$UserPayload>
 /**
+ * Model Account
+ * 
+ */
+export type Account = $Result.DefaultSelection<Prisma.$AccountPayload>
+/**
  * Model Project
  * 
  */
 export type Project = $Result.DefaultSelection<Prisma.$ProjectPayload>
+/**
+ * Model ProjectMember
+ * 
+ */
+export type ProjectMember = $Result.DefaultSelection<Prisma.$ProjectMemberPayload>
 /**
  * Model ProjectAssignment
  * 
@@ -64,10 +74,10 @@ export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
  */
 export type Semester = $Result.DefaultSelection<Prisma.$SemesterPayload>
 /**
- * Model ProjectRequirement
+ * Model ProjectRequirements
  * 
  */
-export type ProjectRequirement = $Result.DefaultSelection<Prisma.$ProjectRequirementPayload>
+export type ProjectRequirements = $Result.DefaultSelection<Prisma.$ProjectRequirementsPayload>
 
 /**
  * Enums
@@ -264,6 +274,16 @@ export class PrismaClient<
   get user(): Prisma.UserDelegate<ExtArgs, ClientOptions>;
 
   /**
+   * `prisma.account`: Exposes CRUD operations for the **Account** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Accounts
+    * const accounts = await prisma.account.findMany()
+    * ```
+    */
+  get account(): Prisma.AccountDelegate<ExtArgs, ClientOptions>;
+
+  /**
    * `prisma.project`: Exposes CRUD operations for the **Project** model.
     * Example usage:
     * ```ts
@@ -272,6 +292,16 @@ export class PrismaClient<
     * ```
     */
   get project(): Prisma.ProjectDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.projectMember`: Exposes CRUD operations for the **ProjectMember** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProjectMembers
+    * const projectMembers = await prisma.projectMember.findMany()
+    * ```
+    */
+  get projectMember(): Prisma.ProjectMemberDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.projectAssignment`: Exposes CRUD operations for the **ProjectAssignment** model.
@@ -354,14 +384,14 @@ export class PrismaClient<
   get semester(): Prisma.SemesterDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.projectRequirement`: Exposes CRUD operations for the **ProjectRequirement** model.
+   * `prisma.projectRequirements`: Exposes CRUD operations for the **ProjectRequirements** model.
     * Example usage:
     * ```ts
     * // Fetch zero or more ProjectRequirements
-    * const projectRequirements = await prisma.projectRequirement.findMany()
+    * const projectRequirements = await prisma.projectRequirements.findMany()
     * ```
     */
-  get projectRequirement(): Prisma.ProjectRequirementDelegate<ExtArgs, ClientOptions>;
+  get projectRequirements(): Prisma.ProjectRequirementsDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -797,7 +827,9 @@ export namespace Prisma {
 
   export const ModelName: {
     User: 'User',
+    Account: 'Account',
     Project: 'Project',
+    ProjectMember: 'ProjectMember',
     ProjectAssignment: 'ProjectAssignment',
     Document: 'Document',
     Review: 'Review',
@@ -806,7 +838,7 @@ export namespace Prisma {
     ReviewScore: 'ReviewScore',
     Notification: 'Notification',
     Semester: 'Semester',
-    ProjectRequirement: 'ProjectRequirement'
+    ProjectRequirements: 'ProjectRequirements'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -822,7 +854,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "project" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirement"
+      modelProps: "user" | "account" | "project" | "projectMember" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirements"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -900,6 +932,80 @@ export namespace Prisma {
           }
         }
       }
+      Account: {
+        payload: Prisma.$AccountPayload<ExtArgs>
+        fields: Prisma.AccountFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AccountFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AccountFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+          }
+          findFirst: {
+            args: Prisma.AccountFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AccountFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+          }
+          findMany: {
+            args: Prisma.AccountFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>[]
+          }
+          create: {
+            args: Prisma.AccountCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+          }
+          createMany: {
+            args: Prisma.AccountCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AccountCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>[]
+          }
+          delete: {
+            args: Prisma.AccountDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+          }
+          update: {
+            args: Prisma.AccountUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+          }
+          deleteMany: {
+            args: Prisma.AccountDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AccountUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AccountUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>[]
+          }
+          upsert: {
+            args: Prisma.AccountUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AccountPayload>
+          }
+          aggregate: {
+            args: Prisma.AccountAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAccount>
+          }
+          groupBy: {
+            args: Prisma.AccountGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AccountGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AccountCountArgs<ExtArgs>
+            result: $Utils.Optional<AccountCountAggregateOutputType> | number
+          }
+        }
+      }
       Project: {
         payload: Prisma.$ProjectPayload<ExtArgs>
         fields: Prisma.ProjectFieldRefs
@@ -971,6 +1077,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ProjectCountArgs<ExtArgs>
             result: $Utils.Optional<ProjectCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProjectMember: {
+        payload: Prisma.$ProjectMemberPayload<ExtArgs>
+        fields: Prisma.ProjectMemberFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProjectMemberFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProjectMemberFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>
+          }
+          findFirst: {
+            args: Prisma.ProjectMemberFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProjectMemberFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>
+          }
+          findMany: {
+            args: Prisma.ProjectMemberFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>[]
+          }
+          create: {
+            args: Prisma.ProjectMemberCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>
+          }
+          createMany: {
+            args: Prisma.ProjectMemberCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProjectMemberCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>[]
+          }
+          delete: {
+            args: Prisma.ProjectMemberDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>
+          }
+          update: {
+            args: Prisma.ProjectMemberUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProjectMemberDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProjectMemberUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProjectMemberUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProjectMemberUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectMemberPayload>
+          }
+          aggregate: {
+            args: Prisma.ProjectMemberAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectMember>
+          }
+          groupBy: {
+            args: Prisma.ProjectMemberGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectMemberGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProjectMemberCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectMemberCountAggregateOutputType> | number
           }
         }
       }
@@ -1566,77 +1746,77 @@ export namespace Prisma {
           }
         }
       }
-      ProjectRequirement: {
-        payload: Prisma.$ProjectRequirementPayload<ExtArgs>
-        fields: Prisma.ProjectRequirementFieldRefs
+      ProjectRequirements: {
+        payload: Prisma.$ProjectRequirementsPayload<ExtArgs>
+        fields: Prisma.ProjectRequirementsFieldRefs
         operations: {
           findUnique: {
-            args: Prisma.ProjectRequirementFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload> | null
+            args: Prisma.ProjectRequirementsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload> | null
           }
           findUniqueOrThrow: {
-            args: Prisma.ProjectRequirementFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>
+            args: Prisma.ProjectRequirementsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>
           }
           findFirst: {
-            args: Prisma.ProjectRequirementFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload> | null
+            args: Prisma.ProjectRequirementsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload> | null
           }
           findFirstOrThrow: {
-            args: Prisma.ProjectRequirementFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>
+            args: Prisma.ProjectRequirementsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>
           }
           findMany: {
-            args: Prisma.ProjectRequirementFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>[]
+            args: Prisma.ProjectRequirementsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>[]
           }
           create: {
-            args: Prisma.ProjectRequirementCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>
+            args: Prisma.ProjectRequirementsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>
           }
           createMany: {
-            args: Prisma.ProjectRequirementCreateManyArgs<ExtArgs>
+            args: Prisma.ProjectRequirementsCreateManyArgs<ExtArgs>
             result: BatchPayload
           }
           createManyAndReturn: {
-            args: Prisma.ProjectRequirementCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>[]
+            args: Prisma.ProjectRequirementsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>[]
           }
           delete: {
-            args: Prisma.ProjectRequirementDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>
+            args: Prisma.ProjectRequirementsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>
           }
           update: {
-            args: Prisma.ProjectRequirementUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>
+            args: Prisma.ProjectRequirementsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>
           }
           deleteMany: {
-            args: Prisma.ProjectRequirementDeleteManyArgs<ExtArgs>
+            args: Prisma.ProjectRequirementsDeleteManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateMany: {
-            args: Prisma.ProjectRequirementUpdateManyArgs<ExtArgs>
+            args: Prisma.ProjectRequirementsUpdateManyArgs<ExtArgs>
             result: BatchPayload
           }
           updateManyAndReturn: {
-            args: Prisma.ProjectRequirementUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>[]
+            args: Prisma.ProjectRequirementsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>[]
           }
           upsert: {
-            args: Prisma.ProjectRequirementUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementPayload>
+            args: Prisma.ProjectRequirementsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectRequirementsPayload>
           }
           aggregate: {
-            args: Prisma.ProjectRequirementAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateProjectRequirement>
+            args: Prisma.ProjectRequirementsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectRequirements>
           }
           groupBy: {
-            args: Prisma.ProjectRequirementGroupByArgs<ExtArgs>
-            result: $Utils.Optional<ProjectRequirementGroupByOutputType>[]
+            args: Prisma.ProjectRequirementsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectRequirementsGroupByOutputType>[]
           }
           count: {
-            args: Prisma.ProjectRequirementCountArgs<ExtArgs>
-            result: $Utils.Optional<ProjectRequirementCountAggregateOutputType> | number
+            args: Prisma.ProjectRequirementsCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectRequirementsCountAggregateOutputType> | number
           }
         }
       }
@@ -1749,7 +1929,9 @@ export namespace Prisma {
   }
   export type GlobalOmitConfig = {
     user?: UserOmit
+    account?: AccountOmit
     project?: ProjectOmit
+    projectMember?: ProjectMemberOmit
     projectAssignment?: ProjectAssignmentOmit
     document?: DocumentOmit
     review?: ReviewOmit
@@ -1758,7 +1940,7 @@ export namespace Prisma {
     reviewScore?: ReviewScoreOmit
     notification?: NotificationOmit
     semester?: SemesterOmit
-    projectRequirement?: ProjectRequirementOmit
+    projectRequirements?: ProjectRequirementsOmit
   }
 
   /* Types for Logging */
@@ -1843,6 +2025,7 @@ export namespace Prisma {
     reviews: number
     notifications: number
     assignedProjects: number
+    accounts: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -1850,6 +2033,7 @@ export namespace Prisma {
     reviews?: boolean | UserCountOutputTypeCountReviewsArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
     assignedProjects?: boolean | UserCountOutputTypeCountAssignedProjectsArgs
+    accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   }
 
   // Custom InputTypes
@@ -1891,6 +2075,13 @@ export namespace Prisma {
     where?: ProjectAssignmentWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountAccountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AccountWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -1900,14 +2091,14 @@ export namespace Prisma {
     documents: number
     reviews: number
     assignments: number
-    requirements: number
+    members: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     documents?: boolean | ProjectCountOutputTypeCountDocumentsArgs
     reviews?: boolean | ProjectCountOutputTypeCountReviewsArgs
     assignments?: boolean | ProjectCountOutputTypeCountAssignmentsArgs
-    requirements?: boolean | ProjectCountOutputTypeCountRequirementsArgs
+    members?: boolean | ProjectCountOutputTypeCountMembersArgs
   }
 
   // Custom InputTypes
@@ -1945,8 +2136,8 @@ export namespace Prisma {
   /**
    * ProjectCountOutputType without action
    */
-  export type ProjectCountOutputTypeCountRequirementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ProjectRequirementWhereInput
+  export type ProjectCountOutputTypeCountMembersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectMemberWhereInput
   }
 
 
@@ -2038,10 +2229,12 @@ export namespace Prisma {
   export type UserMinAggregateOutputType = {
     id: string | null
     username: string | null
+    email: string | null
+    emailVerified: Date | null
     name: string | null
     password: string | null
     role: $Enums.Role | null
-    avatarUrl: string | null
+    image: string | null
     githubId: string | null
     githubUsername: string | null
     githubToken: string | null
@@ -2053,10 +2246,12 @@ export namespace Prisma {
   export type UserMaxAggregateOutputType = {
     id: string | null
     username: string | null
+    email: string | null
+    emailVerified: Date | null
     name: string | null
     password: string | null
     role: $Enums.Role | null
-    avatarUrl: string | null
+    image: string | null
     githubId: string | null
     githubUsername: string | null
     githubToken: string | null
@@ -2068,10 +2263,12 @@ export namespace Prisma {
   export type UserCountAggregateOutputType = {
     id: number
     username: number
+    email: number
+    emailVerified: number
     name: number
     password: number
     role: number
-    avatarUrl: number
+    image: number
     githubId: number
     githubUsername: number
     githubToken: number
@@ -2085,10 +2282,12 @@ export namespace Prisma {
   export type UserMinAggregateInputType = {
     id?: true
     username?: true
+    email?: true
+    emailVerified?: true
     name?: true
     password?: true
     role?: true
-    avatarUrl?: true
+    image?: true
     githubId?: true
     githubUsername?: true
     githubToken?: true
@@ -2100,10 +2299,12 @@ export namespace Prisma {
   export type UserMaxAggregateInputType = {
     id?: true
     username?: true
+    email?: true
+    emailVerified?: true
     name?: true
     password?: true
     role?: true
-    avatarUrl?: true
+    image?: true
     githubId?: true
     githubUsername?: true
     githubToken?: true
@@ -2115,10 +2316,12 @@ export namespace Prisma {
   export type UserCountAggregateInputType = {
     id?: true
     username?: true
+    email?: true
+    emailVerified?: true
     name?: true
     password?: true
     role?: true
-    avatarUrl?: true
+    image?: true
     githubId?: true
     githubUsername?: true
     githubToken?: true
@@ -2203,10 +2406,12 @@ export namespace Prisma {
   export type UserGroupByOutputType = {
     id: string
     username: string
+    email: string | null
+    emailVerified: Date | null
     name: string
-    password: string
+    password: string | null
     role: $Enums.Role
-    avatarUrl: string | null
+    image: string | null
     githubId: string | null
     githubUsername: string | null
     githubToken: string | null
@@ -2235,10 +2440,12 @@ export namespace Prisma {
   export type UserSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    email?: boolean
+    emailVerified?: boolean
     name?: boolean
     password?: boolean
     role?: boolean
-    avatarUrl?: boolean
+    image?: boolean
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
@@ -2249,16 +2456,19 @@ export namespace Prisma {
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     assignedProjects?: boolean | User$assignedProjectsArgs<ExtArgs>
+    accounts?: boolean | User$accountsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
   export type UserSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    email?: boolean
+    emailVerified?: boolean
     name?: boolean
     password?: boolean
     role?: boolean
-    avatarUrl?: boolean
+    image?: boolean
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
@@ -2270,10 +2480,12 @@ export namespace Prisma {
   export type UserSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     username?: boolean
+    email?: boolean
+    emailVerified?: boolean
     name?: boolean
     password?: boolean
     role?: boolean
-    avatarUrl?: boolean
+    image?: boolean
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
@@ -2285,10 +2497,12 @@ export namespace Prisma {
   export type UserSelectScalar = {
     id?: boolean
     username?: boolean
+    email?: boolean
+    emailVerified?: boolean
     name?: boolean
     password?: boolean
     role?: boolean
-    avatarUrl?: boolean
+    image?: boolean
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
@@ -2297,12 +2511,13 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "name" | "password" | "role" | "avatarUrl" | "githubId" | "githubUsername" | "githubToken" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "emailVerified" | "name" | "password" | "role" | "image" | "githubId" | "githubUsername" | "githubToken" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     projects?: boolean | User$projectsArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     assignedProjects?: boolean | User$assignedProjectsArgs<ExtArgs>
+    accounts?: boolean | User$accountsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2315,14 +2530,17 @@ export namespace Prisma {
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
       assignedProjects: Prisma.$ProjectAssignmentPayload<ExtArgs>[]
+      accounts: Prisma.$AccountPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       username: string
+      email: string | null
+      emailVerified: Date | null
       name: string
-      password: string
+      password: string | null
       role: $Enums.Role
-      avatarUrl: string | null
+      image: string | null
       githubId: string | null
       githubUsername: string | null
       githubToken: string | null
@@ -2727,6 +2945,7 @@ export namespace Prisma {
     reviews<T extends User$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignedProjects<T extends User$assignedProjectsArgs<ExtArgs> = {}>(args?: Subset<T, User$assignedProjectsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    accounts<T extends User$accountsArgs<ExtArgs> = {}>(args?: Subset<T, User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2758,10 +2977,12 @@ export namespace Prisma {
   interface UserFieldRefs {
     readonly id: FieldRef<"User", 'String'>
     readonly username: FieldRef<"User", 'String'>
+    readonly email: FieldRef<"User", 'String'>
+    readonly emailVerified: FieldRef<"User", 'DateTime'>
     readonly name: FieldRef<"User", 'String'>
     readonly password: FieldRef<"User", 'String'>
     readonly role: FieldRef<"User", 'Role'>
-    readonly avatarUrl: FieldRef<"User", 'String'>
+    readonly image: FieldRef<"User", 'String'>
     readonly githubId: FieldRef<"User", 'String'>
     readonly githubUsername: FieldRef<"User", 'String'>
     readonly githubToken: FieldRef<"User", 'String'>
@@ -3252,6 +3473,30 @@ export namespace Prisma {
   }
 
   /**
+   * User.accounts
+   */
+  export type User$accountsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    where?: AccountWhereInput
+    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
+    cursor?: AccountWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+  }
+
+  /**
    * User without action
    */
   export type UserDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3267,6 +3512,1189 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: UserInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Account
+   */
+
+  export type AggregateAccount = {
+    _count: AccountCountAggregateOutputType | null
+    _avg: AccountAvgAggregateOutputType | null
+    _sum: AccountSumAggregateOutputType | null
+    _min: AccountMinAggregateOutputType | null
+    _max: AccountMaxAggregateOutputType | null
+  }
+
+  export type AccountAvgAggregateOutputType = {
+    expires_at: number | null
+  }
+
+  export type AccountSumAggregateOutputType = {
+    expires_at: number | null
+  }
+
+  export type AccountMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: string | null
+    provider: string | null
+    providerAccountId: string | null
+    refresh_token: string | null
+    access_token: string | null
+    expires_at: number | null
+    token_type: string | null
+    scope: string | null
+    id_token: string | null
+    session_state: string | null
+  }
+
+  export type AccountMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    type: string | null
+    provider: string | null
+    providerAccountId: string | null
+    refresh_token: string | null
+    access_token: string | null
+    expires_at: number | null
+    token_type: string | null
+    scope: string | null
+    id_token: string | null
+    session_state: string | null
+  }
+
+  export type AccountCountAggregateOutputType = {
+    id: number
+    userId: number
+    type: number
+    provider: number
+    providerAccountId: number
+    refresh_token: number
+    access_token: number
+    expires_at: number
+    token_type: number
+    scope: number
+    id_token: number
+    session_state: number
+    _all: number
+  }
+
+
+  export type AccountAvgAggregateInputType = {
+    expires_at?: true
+  }
+
+  export type AccountSumAggregateInputType = {
+    expires_at?: true
+  }
+
+  export type AccountMinAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    provider?: true
+    providerAccountId?: true
+    refresh_token?: true
+    access_token?: true
+    expires_at?: true
+    token_type?: true
+    scope?: true
+    id_token?: true
+    session_state?: true
+  }
+
+  export type AccountMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    provider?: true
+    providerAccountId?: true
+    refresh_token?: true
+    access_token?: true
+    expires_at?: true
+    token_type?: true
+    scope?: true
+    id_token?: true
+    session_state?: true
+  }
+
+  export type AccountCountAggregateInputType = {
+    id?: true
+    userId?: true
+    type?: true
+    provider?: true
+    providerAccountId?: true
+    refresh_token?: true
+    access_token?: true
+    expires_at?: true
+    token_type?: true
+    scope?: true
+    id_token?: true
+    session_state?: true
+    _all?: true
+  }
+
+  export type AccountAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Account to aggregate.
+     */
+    where?: AccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Accounts to fetch.
+     */
+    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Accounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Accounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Accounts
+    **/
+    _count?: true | AccountCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: AccountAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: AccountSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AccountMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AccountMaxAggregateInputType
+  }
+
+  export type GetAccountAggregateType<T extends AccountAggregateArgs> = {
+        [P in keyof T & keyof AggregateAccount]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAccount[P]>
+      : GetScalarType<T[P], AggregateAccount[P]>
+  }
+
+
+
+
+  export type AccountGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AccountWhereInput
+    orderBy?: AccountOrderByWithAggregationInput | AccountOrderByWithAggregationInput[]
+    by: AccountScalarFieldEnum[] | AccountScalarFieldEnum
+    having?: AccountScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AccountCountAggregateInputType | true
+    _avg?: AccountAvgAggregateInputType
+    _sum?: AccountSumAggregateInputType
+    _min?: AccountMinAggregateInputType
+    _max?: AccountMaxAggregateInputType
+  }
+
+  export type AccountGroupByOutputType = {
+    id: string
+    userId: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token: string | null
+    access_token: string | null
+    expires_at: number | null
+    token_type: string | null
+    scope: string | null
+    id_token: string | null
+    session_state: string | null
+    _count: AccountCountAggregateOutputType | null
+    _avg: AccountAvgAggregateOutputType | null
+    _sum: AccountSumAggregateOutputType | null
+    _min: AccountMinAggregateOutputType | null
+    _max: AccountMaxAggregateOutputType | null
+  }
+
+  type GetAccountGroupByPayload<T extends AccountGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AccountGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AccountGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AccountGroupByOutputType[P]>
+            : GetScalarType<T[P], AccountGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AccountSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    provider?: boolean
+    providerAccountId?: boolean
+    refresh_token?: boolean
+    access_token?: boolean
+    expires_at?: boolean
+    token_type?: boolean
+    scope?: boolean
+    id_token?: boolean
+    session_state?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["account"]>
+
+  export type AccountSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    provider?: boolean
+    providerAccountId?: boolean
+    refresh_token?: boolean
+    access_token?: boolean
+    expires_at?: boolean
+    token_type?: boolean
+    scope?: boolean
+    id_token?: boolean
+    session_state?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["account"]>
+
+  export type AccountSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    provider?: boolean
+    providerAccountId?: boolean
+    refresh_token?: boolean
+    access_token?: boolean
+    expires_at?: boolean
+    token_type?: boolean
+    scope?: boolean
+    id_token?: boolean
+    session_state?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["account"]>
+
+  export type AccountSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    type?: boolean
+    provider?: boolean
+    providerAccountId?: boolean
+    refresh_token?: boolean
+    access_token?: boolean
+    expires_at?: boolean
+    token_type?: boolean
+    scope?: boolean
+    id_token?: boolean
+    session_state?: boolean
+  }
+
+  export type AccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "type" | "provider" | "providerAccountId" | "refresh_token" | "access_token" | "expires_at" | "token_type" | "scope" | "id_token" | "session_state", ExtArgs["result"]["account"]>
+  export type AccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AccountIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type AccountIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $AccountPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Account"
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      type: string
+      provider: string
+      providerAccountId: string
+      refresh_token: string | null
+      access_token: string | null
+      expires_at: number | null
+      token_type: string | null
+      scope: string | null
+      id_token: string | null
+      session_state: string | null
+    }, ExtArgs["result"]["account"]>
+    composites: {}
+  }
+
+  type AccountGetPayload<S extends boolean | null | undefined | AccountDefaultArgs> = $Result.GetResult<Prisma.$AccountPayload, S>
+
+  type AccountCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AccountFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AccountCountAggregateInputType | true
+    }
+
+  export interface AccountDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Account'], meta: { name: 'Account' } }
+    /**
+     * Find zero or one Account that matches the filter.
+     * @param {AccountFindUniqueArgs} args - Arguments to find a Account
+     * @example
+     * // Get one Account
+     * const account = await prisma.account.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AccountFindUniqueArgs>(args: SelectSubset<T, AccountFindUniqueArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Account that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AccountFindUniqueOrThrowArgs} args - Arguments to find a Account
+     * @example
+     * // Get one Account
+     * const account = await prisma.account.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AccountFindUniqueOrThrowArgs>(args: SelectSubset<T, AccountFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Account that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountFindFirstArgs} args - Arguments to find a Account
+     * @example
+     * // Get one Account
+     * const account = await prisma.account.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AccountFindFirstArgs>(args?: SelectSubset<T, AccountFindFirstArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Account that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountFindFirstOrThrowArgs} args - Arguments to find a Account
+     * @example
+     * // Get one Account
+     * const account = await prisma.account.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AccountFindFirstOrThrowArgs>(args?: SelectSubset<T, AccountFindFirstOrThrowArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Accounts that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Accounts
+     * const accounts = await prisma.account.findMany()
+     * 
+     * // Get first 10 Accounts
+     * const accounts = await prisma.account.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const accountWithIdOnly = await prisma.account.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends AccountFindManyArgs>(args?: SelectSubset<T, AccountFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Account.
+     * @param {AccountCreateArgs} args - Arguments to create a Account.
+     * @example
+     * // Create one Account
+     * const Account = await prisma.account.create({
+     *   data: {
+     *     // ... data to create a Account
+     *   }
+     * })
+     * 
+     */
+    create<T extends AccountCreateArgs>(args: SelectSubset<T, AccountCreateArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Accounts.
+     * @param {AccountCreateManyArgs} args - Arguments to create many Accounts.
+     * @example
+     * // Create many Accounts
+     * const account = await prisma.account.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AccountCreateManyArgs>(args?: SelectSubset<T, AccountCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Accounts and returns the data saved in the database.
+     * @param {AccountCreateManyAndReturnArgs} args - Arguments to create many Accounts.
+     * @example
+     * // Create many Accounts
+     * const account = await prisma.account.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Accounts and only return the `id`
+     * const accountWithIdOnly = await prisma.account.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AccountCreateManyAndReturnArgs>(args?: SelectSubset<T, AccountCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Account.
+     * @param {AccountDeleteArgs} args - Arguments to delete one Account.
+     * @example
+     * // Delete one Account
+     * const Account = await prisma.account.delete({
+     *   where: {
+     *     // ... filter to delete one Account
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AccountDeleteArgs>(args: SelectSubset<T, AccountDeleteArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Account.
+     * @param {AccountUpdateArgs} args - Arguments to update one Account.
+     * @example
+     * // Update one Account
+     * const account = await prisma.account.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AccountUpdateArgs>(args: SelectSubset<T, AccountUpdateArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Accounts.
+     * @param {AccountDeleteManyArgs} args - Arguments to filter Accounts to delete.
+     * @example
+     * // Delete a few Accounts
+     * const { count } = await prisma.account.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AccountDeleteManyArgs>(args?: SelectSubset<T, AccountDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Accounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Accounts
+     * const account = await prisma.account.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AccountUpdateManyArgs>(args: SelectSubset<T, AccountUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Accounts and returns the data updated in the database.
+     * @param {AccountUpdateManyAndReturnArgs} args - Arguments to update many Accounts.
+     * @example
+     * // Update many Accounts
+     * const account = await prisma.account.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Accounts and only return the `id`
+     * const accountWithIdOnly = await prisma.account.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AccountUpdateManyAndReturnArgs>(args: SelectSubset<T, AccountUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Account.
+     * @param {AccountUpsertArgs} args - Arguments to update or create a Account.
+     * @example
+     * // Update or create a Account
+     * const account = await prisma.account.upsert({
+     *   create: {
+     *     // ... data to create a Account
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Account we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AccountUpsertArgs>(args: SelectSubset<T, AccountUpsertArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Accounts.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountCountArgs} args - Arguments to filter Accounts to count.
+     * @example
+     * // Count the number of Accounts
+     * const count = await prisma.account.count({
+     *   where: {
+     *     // ... the filter for the Accounts we want to count
+     *   }
+     * })
+    **/
+    count<T extends AccountCountArgs>(
+      args?: Subset<T, AccountCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AccountCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Account.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AccountAggregateArgs>(args: Subset<T, AccountAggregateArgs>): Prisma.PrismaPromise<GetAccountAggregateType<T>>
+
+    /**
+     * Group by Account.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AccountGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AccountGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AccountGroupByArgs['orderBy'] }
+        : { orderBy?: AccountGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AccountGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAccountGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Account model
+   */
+  readonly fields: AccountFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Account.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AccountClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Account model
+   */
+  interface AccountFieldRefs {
+    readonly id: FieldRef<"Account", 'String'>
+    readonly userId: FieldRef<"Account", 'String'>
+    readonly type: FieldRef<"Account", 'String'>
+    readonly provider: FieldRef<"Account", 'String'>
+    readonly providerAccountId: FieldRef<"Account", 'String'>
+    readonly refresh_token: FieldRef<"Account", 'String'>
+    readonly access_token: FieldRef<"Account", 'String'>
+    readonly expires_at: FieldRef<"Account", 'Int'>
+    readonly token_type: FieldRef<"Account", 'String'>
+    readonly scope: FieldRef<"Account", 'String'>
+    readonly id_token: FieldRef<"Account", 'String'>
+    readonly session_state: FieldRef<"Account", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Account findUnique
+   */
+  export type AccountFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * Filter, which Account to fetch.
+     */
+    where: AccountWhereUniqueInput
+  }
+
+  /**
+   * Account findUniqueOrThrow
+   */
+  export type AccountFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * Filter, which Account to fetch.
+     */
+    where: AccountWhereUniqueInput
+  }
+
+  /**
+   * Account findFirst
+   */
+  export type AccountFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * Filter, which Account to fetch.
+     */
+    where?: AccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Accounts to fetch.
+     */
+    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Accounts.
+     */
+    cursor?: AccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Accounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Accounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Accounts.
+     */
+    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+  }
+
+  /**
+   * Account findFirstOrThrow
+   */
+  export type AccountFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * Filter, which Account to fetch.
+     */
+    where?: AccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Accounts to fetch.
+     */
+    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Accounts.
+     */
+    cursor?: AccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Accounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Accounts.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Accounts.
+     */
+    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+  }
+
+  /**
+   * Account findMany
+   */
+  export type AccountFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * Filter, which Accounts to fetch.
+     */
+    where?: AccountWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Accounts to fetch.
+     */
+    orderBy?: AccountOrderByWithRelationInput | AccountOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Accounts.
+     */
+    cursor?: AccountWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Accounts from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Accounts.
+     */
+    skip?: number
+    distinct?: AccountScalarFieldEnum | AccountScalarFieldEnum[]
+  }
+
+  /**
+   * Account create
+   */
+  export type AccountCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Account.
+     */
+    data: XOR<AccountCreateInput, AccountUncheckedCreateInput>
+  }
+
+  /**
+   * Account createMany
+   */
+  export type AccountCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Accounts.
+     */
+    data: AccountCreateManyInput | AccountCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Account createManyAndReturn
+   */
+  export type AccountCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * The data used to create many Accounts.
+     */
+    data: AccountCreateManyInput | AccountCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Account update
+   */
+  export type AccountUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Account.
+     */
+    data: XOR<AccountUpdateInput, AccountUncheckedUpdateInput>
+    /**
+     * Choose, which Account to update.
+     */
+    where: AccountWhereUniqueInput
+  }
+
+  /**
+   * Account updateMany
+   */
+  export type AccountUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Accounts.
+     */
+    data: XOR<AccountUpdateManyMutationInput, AccountUncheckedUpdateManyInput>
+    /**
+     * Filter which Accounts to update
+     */
+    where?: AccountWhereInput
+    /**
+     * Limit how many Accounts to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Account updateManyAndReturn
+   */
+  export type AccountUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * The data used to update Accounts.
+     */
+    data: XOR<AccountUpdateManyMutationInput, AccountUncheckedUpdateManyInput>
+    /**
+     * Filter which Accounts to update
+     */
+    where?: AccountWhereInput
+    /**
+     * Limit how many Accounts to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Account upsert
+   */
+  export type AccountUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Account to update in case it exists.
+     */
+    where: AccountWhereUniqueInput
+    /**
+     * In case the Account found by the `where` argument doesn't exist, create a new Account with this data.
+     */
+    create: XOR<AccountCreateInput, AccountUncheckedCreateInput>
+    /**
+     * In case the Account was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AccountUpdateInput, AccountUncheckedUpdateInput>
+  }
+
+  /**
+   * Account delete
+   */
+  export type AccountDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
+    /**
+     * Filter which Account to delete.
+     */
+    where: AccountWhereUniqueInput
+  }
+
+  /**
+   * Account deleteMany
+   */
+  export type AccountDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Accounts to delete
+     */
+    where?: AccountWhereInput
+    /**
+     * Limit how many Accounts to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Account without action
+   */
+  export type AccountDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Account
+     */
+    select?: AccountSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Account
+     */
+    omit?: AccountOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AccountInclude<ExtArgs> | null
   }
 
 
@@ -3287,9 +4715,13 @@ export namespace Prisma {
     status: $Enums.ProjectStatus | null
     githubRepoUrl: string | null
     githubRepoName: string | null
+    orgRepoUrl: string | null
+    orgRepoName: string | null
+    forkedAt: Date | null
     semester: string | null
     tahunAkademik: string | null
     submittedAt: Date | null
+    approvedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     mahasiswaId: string | null
@@ -3302,9 +4734,13 @@ export namespace Prisma {
     status: $Enums.ProjectStatus | null
     githubRepoUrl: string | null
     githubRepoName: string | null
+    orgRepoUrl: string | null
+    orgRepoName: string | null
+    forkedAt: Date | null
     semester: string | null
     tahunAkademik: string | null
     submittedAt: Date | null
+    approvedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
     mahasiswaId: string | null
@@ -3317,9 +4753,13 @@ export namespace Prisma {
     status: number
     githubRepoUrl: number
     githubRepoName: number
+    orgRepoUrl: number
+    orgRepoName: number
+    forkedAt: number
     semester: number
     tahunAkademik: number
     submittedAt: number
+    approvedAt: number
     createdAt: number
     updatedAt: number
     mahasiswaId: number
@@ -3334,9 +4774,13 @@ export namespace Prisma {
     status?: true
     githubRepoUrl?: true
     githubRepoName?: true
+    orgRepoUrl?: true
+    orgRepoName?: true
+    forkedAt?: true
     semester?: true
     tahunAkademik?: true
     submittedAt?: true
+    approvedAt?: true
     createdAt?: true
     updatedAt?: true
     mahasiswaId?: true
@@ -3349,9 +4793,13 @@ export namespace Prisma {
     status?: true
     githubRepoUrl?: true
     githubRepoName?: true
+    orgRepoUrl?: true
+    orgRepoName?: true
+    forkedAt?: true
     semester?: true
     tahunAkademik?: true
     submittedAt?: true
+    approvedAt?: true
     createdAt?: true
     updatedAt?: true
     mahasiswaId?: true
@@ -3364,9 +4812,13 @@ export namespace Prisma {
     status?: true
     githubRepoUrl?: true
     githubRepoName?: true
+    orgRepoUrl?: true
+    orgRepoName?: true
+    forkedAt?: true
     semester?: true
     tahunAkademik?: true
     submittedAt?: true
+    approvedAt?: true
     createdAt?: true
     updatedAt?: true
     mahasiswaId?: true
@@ -3452,9 +4904,13 @@ export namespace Prisma {
     status: $Enums.ProjectStatus
     githubRepoUrl: string | null
     githubRepoName: string | null
+    orgRepoUrl: string | null
+    orgRepoName: string | null
+    forkedAt: Date | null
     semester: string
     tahunAkademik: string
     submittedAt: Date | null
+    approvedAt: Date | null
     createdAt: Date
     updatedAt: Date
     mahasiswaId: string
@@ -3484,9 +4940,13 @@ export namespace Prisma {
     status?: boolean
     githubRepoUrl?: boolean
     githubRepoName?: boolean
+    orgRepoUrl?: boolean
+    orgRepoName?: boolean
+    forkedAt?: boolean
     semester?: boolean
     tahunAkademik?: boolean
     submittedAt?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     mahasiswaId?: boolean
@@ -3495,6 +4955,7 @@ export namespace Prisma {
     reviews?: boolean | Project$reviewsArgs<ExtArgs>
     assignments?: boolean | Project$assignmentsArgs<ExtArgs>
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
+    members?: boolean | Project$membersArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -3505,9 +4966,13 @@ export namespace Prisma {
     status?: boolean
     githubRepoUrl?: boolean
     githubRepoName?: boolean
+    orgRepoUrl?: boolean
+    orgRepoName?: boolean
+    forkedAt?: boolean
     semester?: boolean
     tahunAkademik?: boolean
     submittedAt?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     mahasiswaId?: boolean
@@ -3521,9 +4986,13 @@ export namespace Prisma {
     status?: boolean
     githubRepoUrl?: boolean
     githubRepoName?: boolean
+    orgRepoUrl?: boolean
+    orgRepoName?: boolean
+    forkedAt?: boolean
     semester?: boolean
     tahunAkademik?: boolean
     submittedAt?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     mahasiswaId?: boolean
@@ -3537,21 +5006,26 @@ export namespace Prisma {
     status?: boolean
     githubRepoUrl?: boolean
     githubRepoName?: boolean
+    orgRepoUrl?: boolean
+    orgRepoName?: boolean
+    forkedAt?: boolean
     semester?: boolean
     tahunAkademik?: boolean
     submittedAt?: boolean
+    approvedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     mahasiswaId?: boolean
   }
 
-  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "status" | "githubRepoUrl" | "githubRepoName" | "semester" | "tahunAkademik" | "submittedAt" | "createdAt" | "updatedAt" | "mahasiswaId", ExtArgs["result"]["project"]>
+  export type ProjectOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "status" | "githubRepoUrl" | "githubRepoName" | "orgRepoUrl" | "orgRepoName" | "forkedAt" | "semester" | "tahunAkademik" | "submittedAt" | "approvedAt" | "createdAt" | "updatedAt" | "mahasiswaId", ExtArgs["result"]["project"]>
   export type ProjectInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     mahasiswa?: boolean | UserDefaultArgs<ExtArgs>
     documents?: boolean | Project$documentsArgs<ExtArgs>
     reviews?: boolean | Project$reviewsArgs<ExtArgs>
     assignments?: boolean | Project$assignmentsArgs<ExtArgs>
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
+    members?: boolean | Project$membersArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3568,7 +5042,8 @@ export namespace Prisma {
       documents: Prisma.$DocumentPayload<ExtArgs>[]
       reviews: Prisma.$ReviewPayload<ExtArgs>[]
       assignments: Prisma.$ProjectAssignmentPayload<ExtArgs>[]
-      requirements: Prisma.$ProjectRequirementPayload<ExtArgs>[]
+      requirements: Prisma.$ProjectRequirementsPayload<ExtArgs> | null
+      members: Prisma.$ProjectMemberPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3577,9 +5052,13 @@ export namespace Prisma {
       status: $Enums.ProjectStatus
       githubRepoUrl: string | null
       githubRepoName: string | null
+      orgRepoUrl: string | null
+      orgRepoName: string | null
+      forkedAt: Date | null
       semester: string
       tahunAkademik: string
       submittedAt: Date | null
+      approvedAt: Date | null
       createdAt: Date
       updatedAt: Date
       mahasiswaId: string
@@ -3981,7 +5460,8 @@ export namespace Prisma {
     documents<T extends Project$documentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$documentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reviews<T extends Project$reviewsArgs<ExtArgs> = {}>(args?: Subset<T, Project$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     assignments<T extends Project$assignmentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$assignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    requirements<T extends Project$requirementsArgs<ExtArgs> = {}>(args?: Subset<T, Project$requirementsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    requirements<T extends Project$requirementsArgs<ExtArgs> = {}>(args?: Subset<T, Project$requirementsArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    members<T extends Project$membersArgs<ExtArgs> = {}>(args?: Subset<T, Project$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4017,9 +5497,13 @@ export namespace Prisma {
     readonly status: FieldRef<"Project", 'ProjectStatus'>
     readonly githubRepoUrl: FieldRef<"Project", 'String'>
     readonly githubRepoName: FieldRef<"Project", 'String'>
+    readonly orgRepoUrl: FieldRef<"Project", 'String'>
+    readonly orgRepoName: FieldRef<"Project", 'String'>
+    readonly forkedAt: FieldRef<"Project", 'DateTime'>
     readonly semester: FieldRef<"Project", 'String'>
     readonly tahunAkademik: FieldRef<"Project", 'String'>
     readonly submittedAt: FieldRef<"Project", 'DateTime'>
+    readonly approvedAt: FieldRef<"Project", 'DateTime'>
     readonly createdAt: FieldRef<"Project", 'DateTime'>
     readonly updatedAt: FieldRef<"Project", 'DateTime'>
     readonly mahasiswaId: FieldRef<"Project", 'String'>
@@ -4495,23 +5979,42 @@ export namespace Prisma {
    */
   export type Project$requirementsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelect<ExtArgs> | null
+    select?: ProjectRequirementsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementInclude<ExtArgs> | null
-    where?: ProjectRequirementWhereInput
-    orderBy?: ProjectRequirementOrderByWithRelationInput | ProjectRequirementOrderByWithRelationInput[]
-    cursor?: ProjectRequirementWhereUniqueInput
+    include?: ProjectRequirementsInclude<ExtArgs> | null
+    where?: ProjectRequirementsWhereInput
+  }
+
+  /**
+   * Project.members
+   */
+  export type Project$membersArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    where?: ProjectMemberWhereInput
+    orderBy?: ProjectMemberOrderByWithRelationInput | ProjectMemberOrderByWithRelationInput[]
+    cursor?: ProjectMemberWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: ProjectRequirementScalarFieldEnum | ProjectRequirementScalarFieldEnum[]
+    distinct?: ProjectMemberScalarFieldEnum | ProjectMemberScalarFieldEnum[]
   }
 
   /**
@@ -4530,6 +6033,1103 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProjectInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProjectMember
+   */
+
+  export type AggregateProjectMember = {
+    _count: ProjectMemberCountAggregateOutputType | null
+    _min: ProjectMemberMinAggregateOutputType | null
+    _max: ProjectMemberMaxAggregateOutputType | null
+  }
+
+  export type ProjectMemberMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    githubUsername: string | null
+    githubId: string | null
+    githubAvatarUrl: string | null
+    name: string | null
+    role: string | null
+    addedAt: Date | null
+  }
+
+  export type ProjectMemberMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    githubUsername: string | null
+    githubId: string | null
+    githubAvatarUrl: string | null
+    name: string | null
+    role: string | null
+    addedAt: Date | null
+  }
+
+  export type ProjectMemberCountAggregateOutputType = {
+    id: number
+    projectId: number
+    githubUsername: number
+    githubId: number
+    githubAvatarUrl: number
+    name: number
+    role: number
+    addedAt: number
+    _all: number
+  }
+
+
+  export type ProjectMemberMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    githubUsername?: true
+    githubId?: true
+    githubAvatarUrl?: true
+    name?: true
+    role?: true
+    addedAt?: true
+  }
+
+  export type ProjectMemberMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    githubUsername?: true
+    githubId?: true
+    githubAvatarUrl?: true
+    name?: true
+    role?: true
+    addedAt?: true
+  }
+
+  export type ProjectMemberCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    githubUsername?: true
+    githubId?: true
+    githubAvatarUrl?: true
+    name?: true
+    role?: true
+    addedAt?: true
+    _all?: true
+  }
+
+  export type ProjectMemberAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectMember to aggregate.
+     */
+    where?: ProjectMemberWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectMembers to fetch.
+     */
+    orderBy?: ProjectMemberOrderByWithRelationInput | ProjectMemberOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProjectMemberWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectMembers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectMembers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProjectMembers
+    **/
+    _count?: true | ProjectMemberCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProjectMemberMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProjectMemberMaxAggregateInputType
+  }
+
+  export type GetProjectMemberAggregateType<T extends ProjectMemberAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectMember]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProjectMember[P]>
+      : GetScalarType<T[P], AggregateProjectMember[P]>
+  }
+
+
+
+
+  export type ProjectMemberGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectMemberWhereInput
+    orderBy?: ProjectMemberOrderByWithAggregationInput | ProjectMemberOrderByWithAggregationInput[]
+    by: ProjectMemberScalarFieldEnum[] | ProjectMemberScalarFieldEnum
+    having?: ProjectMemberScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProjectMemberCountAggregateInputType | true
+    _min?: ProjectMemberMinAggregateInputType
+    _max?: ProjectMemberMaxAggregateInputType
+  }
+
+  export type ProjectMemberGroupByOutputType = {
+    id: string
+    projectId: string
+    githubUsername: string
+    githubId: string | null
+    githubAvatarUrl: string | null
+    name: string | null
+    role: string
+    addedAt: Date
+    _count: ProjectMemberCountAggregateOutputType | null
+    _min: ProjectMemberMinAggregateOutputType | null
+    _max: ProjectMemberMaxAggregateOutputType | null
+  }
+
+  type GetProjectMemberGroupByPayload<T extends ProjectMemberGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProjectMemberGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProjectMemberGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProjectMemberGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectMemberGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProjectMemberSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    githubUsername?: boolean
+    githubId?: boolean
+    githubAvatarUrl?: boolean
+    name?: boolean
+    role?: boolean
+    addedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectMember"]>
+
+  export type ProjectMemberSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    githubUsername?: boolean
+    githubId?: boolean
+    githubAvatarUrl?: boolean
+    name?: boolean
+    role?: boolean
+    addedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectMember"]>
+
+  export type ProjectMemberSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    githubUsername?: boolean
+    githubId?: boolean
+    githubAvatarUrl?: boolean
+    name?: boolean
+    role?: boolean
+    addedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectMember"]>
+
+  export type ProjectMemberSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    githubUsername?: boolean
+    githubId?: boolean
+    githubAvatarUrl?: boolean
+    name?: boolean
+    role?: boolean
+    addedAt?: boolean
+  }
+
+  export type ProjectMemberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "githubUsername" | "githubId" | "githubAvatarUrl" | "name" | "role" | "addedAt", ExtArgs["result"]["projectMember"]>
+  export type ProjectMemberInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type ProjectMemberIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type ProjectMemberIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+
+  export type $ProjectMemberPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectMember"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      githubUsername: string
+      githubId: string | null
+      githubAvatarUrl: string | null
+      name: string | null
+      role: string
+      addedAt: Date
+    }, ExtArgs["result"]["projectMember"]>
+    composites: {}
+  }
+
+  type ProjectMemberGetPayload<S extends boolean | null | undefined | ProjectMemberDefaultArgs> = $Result.GetResult<Prisma.$ProjectMemberPayload, S>
+
+  type ProjectMemberCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectMemberFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectMemberCountAggregateInputType | true
+    }
+
+  export interface ProjectMemberDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectMember'], meta: { name: 'ProjectMember' } }
+    /**
+     * Find zero or one ProjectMember that matches the filter.
+     * @param {ProjectMemberFindUniqueArgs} args - Arguments to find a ProjectMember
+     * @example
+     * // Get one ProjectMember
+     * const projectMember = await prisma.projectMember.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProjectMemberFindUniqueArgs>(args: SelectSubset<T, ProjectMemberFindUniqueArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProjectMember that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProjectMemberFindUniqueOrThrowArgs} args - Arguments to find a ProjectMember
+     * @example
+     * // Get one ProjectMember
+     * const projectMember = await prisma.projectMember.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProjectMemberFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectMemberFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectMember that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectMemberFindFirstArgs} args - Arguments to find a ProjectMember
+     * @example
+     * // Get one ProjectMember
+     * const projectMember = await prisma.projectMember.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProjectMemberFindFirstArgs>(args?: SelectSubset<T, ProjectMemberFindFirstArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectMember that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectMemberFindFirstOrThrowArgs} args - Arguments to find a ProjectMember
+     * @example
+     * // Get one ProjectMember
+     * const projectMember = await prisma.projectMember.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProjectMemberFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectMemberFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProjectMembers that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectMemberFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProjectMembers
+     * const projectMembers = await prisma.projectMember.findMany()
+     * 
+     * // Get first 10 ProjectMembers
+     * const projectMembers = await prisma.projectMember.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const projectMemberWithIdOnly = await prisma.projectMember.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProjectMemberFindManyArgs>(args?: SelectSubset<T, ProjectMemberFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProjectMember.
+     * @param {ProjectMemberCreateArgs} args - Arguments to create a ProjectMember.
+     * @example
+     * // Create one ProjectMember
+     * const ProjectMember = await prisma.projectMember.create({
+     *   data: {
+     *     // ... data to create a ProjectMember
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProjectMemberCreateArgs>(args: SelectSubset<T, ProjectMemberCreateArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProjectMembers.
+     * @param {ProjectMemberCreateManyArgs} args - Arguments to create many ProjectMembers.
+     * @example
+     * // Create many ProjectMembers
+     * const projectMember = await prisma.projectMember.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProjectMemberCreateManyArgs>(args?: SelectSubset<T, ProjectMemberCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProjectMembers and returns the data saved in the database.
+     * @param {ProjectMemberCreateManyAndReturnArgs} args - Arguments to create many ProjectMembers.
+     * @example
+     * // Create many ProjectMembers
+     * const projectMember = await prisma.projectMember.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProjectMembers and only return the `id`
+     * const projectMemberWithIdOnly = await prisma.projectMember.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProjectMemberCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectMemberCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProjectMember.
+     * @param {ProjectMemberDeleteArgs} args - Arguments to delete one ProjectMember.
+     * @example
+     * // Delete one ProjectMember
+     * const ProjectMember = await prisma.projectMember.delete({
+     *   where: {
+     *     // ... filter to delete one ProjectMember
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProjectMemberDeleteArgs>(args: SelectSubset<T, ProjectMemberDeleteArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProjectMember.
+     * @param {ProjectMemberUpdateArgs} args - Arguments to update one ProjectMember.
+     * @example
+     * // Update one ProjectMember
+     * const projectMember = await prisma.projectMember.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProjectMemberUpdateArgs>(args: SelectSubset<T, ProjectMemberUpdateArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProjectMembers.
+     * @param {ProjectMemberDeleteManyArgs} args - Arguments to filter ProjectMembers to delete.
+     * @example
+     * // Delete a few ProjectMembers
+     * const { count } = await prisma.projectMember.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProjectMemberDeleteManyArgs>(args?: SelectSubset<T, ProjectMemberDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectMembers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectMemberUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProjectMembers
+     * const projectMember = await prisma.projectMember.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProjectMemberUpdateManyArgs>(args: SelectSubset<T, ProjectMemberUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectMembers and returns the data updated in the database.
+     * @param {ProjectMemberUpdateManyAndReturnArgs} args - Arguments to update many ProjectMembers.
+     * @example
+     * // Update many ProjectMembers
+     * const projectMember = await prisma.projectMember.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProjectMembers and only return the `id`
+     * const projectMemberWithIdOnly = await prisma.projectMember.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProjectMemberUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectMemberUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProjectMember.
+     * @param {ProjectMemberUpsertArgs} args - Arguments to update or create a ProjectMember.
+     * @example
+     * // Update or create a ProjectMember
+     * const projectMember = await prisma.projectMember.upsert({
+     *   create: {
+     *     // ... data to create a ProjectMember
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProjectMember we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProjectMemberUpsertArgs>(args: SelectSubset<T, ProjectMemberUpsertArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProjectMembers.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectMemberCountArgs} args - Arguments to filter ProjectMembers to count.
+     * @example
+     * // Count the number of ProjectMembers
+     * const count = await prisma.projectMember.count({
+     *   where: {
+     *     // ... the filter for the ProjectMembers we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProjectMemberCountArgs>(
+      args?: Subset<T, ProjectMemberCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProjectMemberCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProjectMember.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectMemberAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProjectMemberAggregateArgs>(args: Subset<T, ProjectMemberAggregateArgs>): Prisma.PrismaPromise<GetProjectMemberAggregateType<T>>
+
+    /**
+     * Group by ProjectMember.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectMemberGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProjectMemberGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProjectMemberGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectMemberGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProjectMemberGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectMemberGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProjectMember model
+   */
+  readonly fields: ProjectMemberFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProjectMember.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProjectMemberClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProjectMember model
+   */
+  interface ProjectMemberFieldRefs {
+    readonly id: FieldRef<"ProjectMember", 'String'>
+    readonly projectId: FieldRef<"ProjectMember", 'String'>
+    readonly githubUsername: FieldRef<"ProjectMember", 'String'>
+    readonly githubId: FieldRef<"ProjectMember", 'String'>
+    readonly githubAvatarUrl: FieldRef<"ProjectMember", 'String'>
+    readonly name: FieldRef<"ProjectMember", 'String'>
+    readonly role: FieldRef<"ProjectMember", 'String'>
+    readonly addedAt: FieldRef<"ProjectMember", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProjectMember findUnique
+   */
+  export type ProjectMemberFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectMember to fetch.
+     */
+    where: ProjectMemberWhereUniqueInput
+  }
+
+  /**
+   * ProjectMember findUniqueOrThrow
+   */
+  export type ProjectMemberFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectMember to fetch.
+     */
+    where: ProjectMemberWhereUniqueInput
+  }
+
+  /**
+   * ProjectMember findFirst
+   */
+  export type ProjectMemberFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectMember to fetch.
+     */
+    where?: ProjectMemberWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectMembers to fetch.
+     */
+    orderBy?: ProjectMemberOrderByWithRelationInput | ProjectMemberOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectMembers.
+     */
+    cursor?: ProjectMemberWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectMembers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectMembers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectMembers.
+     */
+    distinct?: ProjectMemberScalarFieldEnum | ProjectMemberScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectMember findFirstOrThrow
+   */
+  export type ProjectMemberFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectMember to fetch.
+     */
+    where?: ProjectMemberWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectMembers to fetch.
+     */
+    orderBy?: ProjectMemberOrderByWithRelationInput | ProjectMemberOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectMembers.
+     */
+    cursor?: ProjectMemberWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectMembers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectMembers.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectMembers.
+     */
+    distinct?: ProjectMemberScalarFieldEnum | ProjectMemberScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectMember findMany
+   */
+  export type ProjectMemberFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectMembers to fetch.
+     */
+    where?: ProjectMemberWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectMembers to fetch.
+     */
+    orderBy?: ProjectMemberOrderByWithRelationInput | ProjectMemberOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProjectMembers.
+     */
+    cursor?: ProjectMemberWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectMembers from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectMembers.
+     */
+    skip?: number
+    distinct?: ProjectMemberScalarFieldEnum | ProjectMemberScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectMember create
+   */
+  export type ProjectMemberCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProjectMember.
+     */
+    data: XOR<ProjectMemberCreateInput, ProjectMemberUncheckedCreateInput>
+  }
+
+  /**
+   * ProjectMember createMany
+   */
+  export type ProjectMemberCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProjectMembers.
+     */
+    data: ProjectMemberCreateManyInput | ProjectMemberCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProjectMember createManyAndReturn
+   */
+  export type ProjectMemberCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProjectMembers.
+     */
+    data: ProjectMemberCreateManyInput | ProjectMemberCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectMember update
+   */
+  export type ProjectMemberUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProjectMember.
+     */
+    data: XOR<ProjectMemberUpdateInput, ProjectMemberUncheckedUpdateInput>
+    /**
+     * Choose, which ProjectMember to update.
+     */
+    where: ProjectMemberWhereUniqueInput
+  }
+
+  /**
+   * ProjectMember updateMany
+   */
+  export type ProjectMemberUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProjectMembers.
+     */
+    data: XOR<ProjectMemberUpdateManyMutationInput, ProjectMemberUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectMembers to update
+     */
+    where?: ProjectMemberWhereInput
+    /**
+     * Limit how many ProjectMembers to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectMember updateManyAndReturn
+   */
+  export type ProjectMemberUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * The data used to update ProjectMembers.
+     */
+    data: XOR<ProjectMemberUpdateManyMutationInput, ProjectMemberUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectMembers to update
+     */
+    where?: ProjectMemberWhereInput
+    /**
+     * Limit how many ProjectMembers to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectMember upsert
+   */
+  export type ProjectMemberUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProjectMember to update in case it exists.
+     */
+    where: ProjectMemberWhereUniqueInput
+    /**
+     * In case the ProjectMember found by the `where` argument doesn't exist, create a new ProjectMember with this data.
+     */
+    create: XOR<ProjectMemberCreateInput, ProjectMemberUncheckedCreateInput>
+    /**
+     * In case the ProjectMember was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProjectMemberUpdateInput, ProjectMemberUncheckedUpdateInput>
+  }
+
+  /**
+   * ProjectMember delete
+   */
+  export type ProjectMemberDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
+    /**
+     * Filter which ProjectMember to delete.
+     */
+    where: ProjectMemberWhereUniqueInput
+  }
+
+  /**
+   * ProjectMember deleteMany
+   */
+  export type ProjectMemberDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectMembers to delete
+     */
+    where?: ProjectMemberWhereInput
+    /**
+     * Limit how many ProjectMembers to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectMember without action
+   */
+  export type ProjectMemberDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMember
+     */
+    select?: ProjectMemberSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectMember
+     */
+    omit?: ProjectMemberOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectMemberInclude<ExtArgs> | null
   }
 
 
@@ -13463,95 +16063,215 @@ export namespace Prisma {
 
 
   /**
-   * Model ProjectRequirement
+   * Model ProjectRequirements
    */
 
-  export type AggregateProjectRequirement = {
-    _count: ProjectRequirementCountAggregateOutputType | null
-    _min: ProjectRequirementMinAggregateOutputType | null
-    _max: ProjectRequirementMaxAggregateOutputType | null
+  export type AggregateProjectRequirements = {
+    _count: ProjectRequirementsCountAggregateOutputType | null
+    _avg: ProjectRequirementsAvgAggregateOutputType | null
+    _sum: ProjectRequirementsSumAggregateOutputType | null
+    _min: ProjectRequirementsMinAggregateOutputType | null
+    _max: ProjectRequirementsMaxAggregateOutputType | null
   }
 
-  export type ProjectRequirementMinAggregateOutputType = {
+  export type ProjectRequirementsAvgAggregateOutputType = {
+    completionPercent: number | null
+  }
+
+  export type ProjectRequirementsSumAggregateOutputType = {
+    completionPercent: number | null
+  }
+
+  export type ProjectRequirementsMinAggregateOutputType = {
     id: string | null
     projectId: string | null
-    category: string | null
-    content: string | null
-    isCompleted: boolean | null
+    judulProyek: string | null
+    targetPengguna: string | null
+    latarBelakangMasalah: string | null
+    tujuanProyek: string | null
+    manfaatProyek: string | null
+    integrasiMatakuliah: string | null
+    metodologi: string | null
+    penulisanLaporan: string | null
+    ruangLingkup: string | null
+    sumberDayaBatasan: string | null
+    teknologi: string | null
+    fiturUtama: string | null
+    analisisTemuan: string | null
+    presentasiUjian: string | null
+    stakeholder: string | null
+    kepatuhanEtika: string | null
+    timeline: string | null
+    kerangkaWaktu: string | null
+    deadlineDate: Date | null
+    completionPercent: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
-  export type ProjectRequirementMaxAggregateOutputType = {
+  export type ProjectRequirementsMaxAggregateOutputType = {
     id: string | null
     projectId: string | null
-    category: string | null
-    content: string | null
-    isCompleted: boolean | null
+    judulProyek: string | null
+    targetPengguna: string | null
+    latarBelakangMasalah: string | null
+    tujuanProyek: string | null
+    manfaatProyek: string | null
+    integrasiMatakuliah: string | null
+    metodologi: string | null
+    penulisanLaporan: string | null
+    ruangLingkup: string | null
+    sumberDayaBatasan: string | null
+    teknologi: string | null
+    fiturUtama: string | null
+    analisisTemuan: string | null
+    presentasiUjian: string | null
+    stakeholder: string | null
+    kepatuhanEtika: string | null
+    timeline: string | null
+    kerangkaWaktu: string | null
+    deadlineDate: Date | null
+    completionPercent: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
 
-  export type ProjectRequirementCountAggregateOutputType = {
+  export type ProjectRequirementsCountAggregateOutputType = {
     id: number
     projectId: number
-    category: number
-    content: number
-    isCompleted: number
+    judulProyek: number
+    targetPengguna: number
+    latarBelakangMasalah: number
+    tujuanProyek: number
+    manfaatProyek: number
+    integrasiMatakuliah: number
+    metodologi: number
+    penulisanLaporan: number
+    ruangLingkup: number
+    sumberDayaBatasan: number
+    teknologi: number
+    fiturUtama: number
+    analisisTemuan: number
+    presentasiUjian: number
+    stakeholder: number
+    kepatuhanEtika: number
+    timeline: number
+    kerangkaWaktu: number
+    deadlineDate: number
+    completionPercent: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
 
-  export type ProjectRequirementMinAggregateInputType = {
+  export type ProjectRequirementsAvgAggregateInputType = {
+    completionPercent?: true
+  }
+
+  export type ProjectRequirementsSumAggregateInputType = {
+    completionPercent?: true
+  }
+
+  export type ProjectRequirementsMinAggregateInputType = {
     id?: true
     projectId?: true
-    category?: true
-    content?: true
-    isCompleted?: true
+    judulProyek?: true
+    targetPengguna?: true
+    latarBelakangMasalah?: true
+    tujuanProyek?: true
+    manfaatProyek?: true
+    integrasiMatakuliah?: true
+    metodologi?: true
+    penulisanLaporan?: true
+    ruangLingkup?: true
+    sumberDayaBatasan?: true
+    teknologi?: true
+    fiturUtama?: true
+    analisisTemuan?: true
+    presentasiUjian?: true
+    stakeholder?: true
+    kepatuhanEtika?: true
+    timeline?: true
+    kerangkaWaktu?: true
+    deadlineDate?: true
+    completionPercent?: true
     createdAt?: true
     updatedAt?: true
   }
 
-  export type ProjectRequirementMaxAggregateInputType = {
+  export type ProjectRequirementsMaxAggregateInputType = {
     id?: true
     projectId?: true
-    category?: true
-    content?: true
-    isCompleted?: true
+    judulProyek?: true
+    targetPengguna?: true
+    latarBelakangMasalah?: true
+    tujuanProyek?: true
+    manfaatProyek?: true
+    integrasiMatakuliah?: true
+    metodologi?: true
+    penulisanLaporan?: true
+    ruangLingkup?: true
+    sumberDayaBatasan?: true
+    teknologi?: true
+    fiturUtama?: true
+    analisisTemuan?: true
+    presentasiUjian?: true
+    stakeholder?: true
+    kepatuhanEtika?: true
+    timeline?: true
+    kerangkaWaktu?: true
+    deadlineDate?: true
+    completionPercent?: true
     createdAt?: true
     updatedAt?: true
   }
 
-  export type ProjectRequirementCountAggregateInputType = {
+  export type ProjectRequirementsCountAggregateInputType = {
     id?: true
     projectId?: true
-    category?: true
-    content?: true
-    isCompleted?: true
+    judulProyek?: true
+    targetPengguna?: true
+    latarBelakangMasalah?: true
+    tujuanProyek?: true
+    manfaatProyek?: true
+    integrasiMatakuliah?: true
+    metodologi?: true
+    penulisanLaporan?: true
+    ruangLingkup?: true
+    sumberDayaBatasan?: true
+    teknologi?: true
+    fiturUtama?: true
+    analisisTemuan?: true
+    presentasiUjian?: true
+    stakeholder?: true
+    kepatuhanEtika?: true
+    timeline?: true
+    kerangkaWaktu?: true
+    deadlineDate?: true
+    completionPercent?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
   }
 
-  export type ProjectRequirementAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Filter which ProjectRequirement to aggregate.
+     * Filter which ProjectRequirements to aggregate.
      */
-    where?: ProjectRequirementWhereInput
+    where?: ProjectRequirementsWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of ProjectRequirements to fetch.
      */
-    orderBy?: ProjectRequirementOrderByWithRelationInput | ProjectRequirementOrderByWithRelationInput[]
+    orderBy?: ProjectRequirementsOrderByWithRelationInput | ProjectRequirementsOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the start position
      */
-    cursor?: ProjectRequirementWhereUniqueInput
+    cursor?: ProjectRequirementsWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
@@ -13569,268 +16289,386 @@ export namespace Prisma {
      * 
      * Count returned ProjectRequirements
     **/
-    _count?: true | ProjectRequirementCountAggregateInputType
+    _count?: true | ProjectRequirementsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProjectRequirementsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProjectRequirementsSumAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the minimum value
     **/
-    _min?: ProjectRequirementMinAggregateInputType
+    _min?: ProjectRequirementsMinAggregateInputType
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
      * Select which fields to find the maximum value
     **/
-    _max?: ProjectRequirementMaxAggregateInputType
+    _max?: ProjectRequirementsMaxAggregateInputType
   }
 
-  export type GetProjectRequirementAggregateType<T extends ProjectRequirementAggregateArgs> = {
-        [P in keyof T & keyof AggregateProjectRequirement]: P extends '_count' | 'count'
+  export type GetProjectRequirementsAggregateType<T extends ProjectRequirementsAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectRequirements]: P extends '_count' | 'count'
       ? T[P] extends true
         ? number
-        : GetScalarType<T[P], AggregateProjectRequirement[P]>
-      : GetScalarType<T[P], AggregateProjectRequirement[P]>
+        : GetScalarType<T[P], AggregateProjectRequirements[P]>
+      : GetScalarType<T[P], AggregateProjectRequirements[P]>
   }
 
 
 
 
-  export type ProjectRequirementGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: ProjectRequirementWhereInput
-    orderBy?: ProjectRequirementOrderByWithAggregationInput | ProjectRequirementOrderByWithAggregationInput[]
-    by: ProjectRequirementScalarFieldEnum[] | ProjectRequirementScalarFieldEnum
-    having?: ProjectRequirementScalarWhereWithAggregatesInput
+  export type ProjectRequirementsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectRequirementsWhereInput
+    orderBy?: ProjectRequirementsOrderByWithAggregationInput | ProjectRequirementsOrderByWithAggregationInput[]
+    by: ProjectRequirementsScalarFieldEnum[] | ProjectRequirementsScalarFieldEnum
+    having?: ProjectRequirementsScalarWhereWithAggregatesInput
     take?: number
     skip?: number
-    _count?: ProjectRequirementCountAggregateInputType | true
-    _min?: ProjectRequirementMinAggregateInputType
-    _max?: ProjectRequirementMaxAggregateInputType
+    _count?: ProjectRequirementsCountAggregateInputType | true
+    _avg?: ProjectRequirementsAvgAggregateInputType
+    _sum?: ProjectRequirementsSumAggregateInputType
+    _min?: ProjectRequirementsMinAggregateInputType
+    _max?: ProjectRequirementsMaxAggregateInputType
   }
 
-  export type ProjectRequirementGroupByOutputType = {
+  export type ProjectRequirementsGroupByOutputType = {
     id: string
     projectId: string
-    category: string
-    content: string
-    isCompleted: boolean
+    judulProyek: string | null
+    targetPengguna: string | null
+    latarBelakangMasalah: string | null
+    tujuanProyek: string | null
+    manfaatProyek: string | null
+    integrasiMatakuliah: string | null
+    metodologi: string | null
+    penulisanLaporan: string | null
+    ruangLingkup: string | null
+    sumberDayaBatasan: string | null
+    teknologi: string | null
+    fiturUtama: string | null
+    analisisTemuan: string | null
+    presentasiUjian: string | null
+    stakeholder: string | null
+    kepatuhanEtika: string | null
+    timeline: string | null
+    kerangkaWaktu: string | null
+    deadlineDate: Date | null
+    completionPercent: number
     createdAt: Date
     updatedAt: Date
-    _count: ProjectRequirementCountAggregateOutputType | null
-    _min: ProjectRequirementMinAggregateOutputType | null
-    _max: ProjectRequirementMaxAggregateOutputType | null
+    _count: ProjectRequirementsCountAggregateOutputType | null
+    _avg: ProjectRequirementsAvgAggregateOutputType | null
+    _sum: ProjectRequirementsSumAggregateOutputType | null
+    _min: ProjectRequirementsMinAggregateOutputType | null
+    _max: ProjectRequirementsMaxAggregateOutputType | null
   }
 
-  type GetProjectRequirementGroupByPayload<T extends ProjectRequirementGroupByArgs> = Prisma.PrismaPromise<
+  type GetProjectRequirementsGroupByPayload<T extends ProjectRequirementsGroupByArgs> = Prisma.PrismaPromise<
     Array<
-      PickEnumerable<ProjectRequirementGroupByOutputType, T['by']> &
+      PickEnumerable<ProjectRequirementsGroupByOutputType, T['by']> &
         {
-          [P in ((keyof T) & (keyof ProjectRequirementGroupByOutputType))]: P extends '_count'
+          [P in ((keyof T) & (keyof ProjectRequirementsGroupByOutputType))]: P extends '_count'
             ? T[P] extends boolean
               ? number
-              : GetScalarType<T[P], ProjectRequirementGroupByOutputType[P]>
-            : GetScalarType<T[P], ProjectRequirementGroupByOutputType[P]>
+              : GetScalarType<T[P], ProjectRequirementsGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectRequirementsGroupByOutputType[P]>
         }
       >
     >
 
 
-  export type ProjectRequirementSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ProjectRequirementsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     projectId?: boolean
-    category?: boolean
-    content?: boolean
-    isCompleted?: boolean
+    judulProyek?: boolean
+    targetPengguna?: boolean
+    latarBelakangMasalah?: boolean
+    tujuanProyek?: boolean
+    manfaatProyek?: boolean
+    integrasiMatakuliah?: boolean
+    metodologi?: boolean
+    penulisanLaporan?: boolean
+    ruangLingkup?: boolean
+    sumberDayaBatasan?: boolean
+    teknologi?: boolean
+    fiturUtama?: boolean
+    analisisTemuan?: boolean
+    presentasiUjian?: boolean
+    stakeholder?: boolean
+    kepatuhanEtika?: boolean
+    timeline?: boolean
+    kerangkaWaktu?: boolean
+    deadlineDate?: boolean
+    completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["projectRequirement"]>
+  }, ExtArgs["result"]["projectRequirements"]>
 
-  export type ProjectRequirementSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ProjectRequirementsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     projectId?: boolean
-    category?: boolean
-    content?: boolean
-    isCompleted?: boolean
+    judulProyek?: boolean
+    targetPengguna?: boolean
+    latarBelakangMasalah?: boolean
+    tujuanProyek?: boolean
+    manfaatProyek?: boolean
+    integrasiMatakuliah?: boolean
+    metodologi?: boolean
+    penulisanLaporan?: boolean
+    ruangLingkup?: boolean
+    sumberDayaBatasan?: boolean
+    teknologi?: boolean
+    fiturUtama?: boolean
+    analisisTemuan?: boolean
+    presentasiUjian?: boolean
+    stakeholder?: boolean
+    kepatuhanEtika?: boolean
+    timeline?: boolean
+    kerangkaWaktu?: boolean
+    deadlineDate?: boolean
+    completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["projectRequirement"]>
+  }, ExtArgs["result"]["projectRequirements"]>
 
-  export type ProjectRequirementSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+  export type ProjectRequirementsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     projectId?: boolean
-    category?: boolean
-    content?: boolean
-    isCompleted?: boolean
+    judulProyek?: boolean
+    targetPengguna?: boolean
+    latarBelakangMasalah?: boolean
+    tujuanProyek?: boolean
+    manfaatProyek?: boolean
+    integrasiMatakuliah?: boolean
+    metodologi?: boolean
+    penulisanLaporan?: boolean
+    ruangLingkup?: boolean
+    sumberDayaBatasan?: boolean
+    teknologi?: boolean
+    fiturUtama?: boolean
+    analisisTemuan?: boolean
+    presentasiUjian?: boolean
+    stakeholder?: boolean
+    kepatuhanEtika?: boolean
+    timeline?: boolean
+    kerangkaWaktu?: boolean
+    deadlineDate?: boolean
+    completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["projectRequirement"]>
+  }, ExtArgs["result"]["projectRequirements"]>
 
-  export type ProjectRequirementSelectScalar = {
+  export type ProjectRequirementsSelectScalar = {
     id?: boolean
     projectId?: boolean
-    category?: boolean
-    content?: boolean
-    isCompleted?: boolean
+    judulProyek?: boolean
+    targetPengguna?: boolean
+    latarBelakangMasalah?: boolean
+    tujuanProyek?: boolean
+    manfaatProyek?: boolean
+    integrasiMatakuliah?: boolean
+    metodologi?: boolean
+    penulisanLaporan?: boolean
+    ruangLingkup?: boolean
+    sumberDayaBatasan?: boolean
+    teknologi?: boolean
+    fiturUtama?: boolean
+    analisisTemuan?: boolean
+    presentasiUjian?: boolean
+    stakeholder?: boolean
+    kepatuhanEtika?: boolean
+    timeline?: boolean
+    kerangkaWaktu?: boolean
+    deadlineDate?: boolean
+    completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProjectRequirementOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "category" | "content" | "isCompleted" | "createdAt" | "updatedAt", ExtArgs["result"]["projectRequirement"]>
-  export type ProjectRequirementInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "judulProyek" | "targetPengguna" | "latarBelakangMasalah" | "tujuanProyek" | "manfaatProyek" | "integrasiMatakuliah" | "metodologi" | "penulisanLaporan" | "ruangLingkup" | "sumberDayaBatasan" | "teknologi" | "fiturUtama" | "analisisTemuan" | "presentasiUjian" | "stakeholder" | "kepatuhanEtika" | "timeline" | "kerangkaWaktu" | "deadlineDate" | "completionPercent" | "createdAt" | "updatedAt", ExtArgs["result"]["projectRequirements"]>
+  export type ProjectRequirementsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }
-  export type ProjectRequirementIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }
-  export type ProjectRequirementIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }
 
-  export type $ProjectRequirementPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "ProjectRequirement"
+  export type $ProjectRequirementsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectRequirements"
     objects: {
       project: Prisma.$ProjectPayload<ExtArgs>
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       projectId: string
-      category: string
-      content: string
-      isCompleted: boolean
+      judulProyek: string | null
+      targetPengguna: string | null
+      latarBelakangMasalah: string | null
+      tujuanProyek: string | null
+      manfaatProyek: string | null
+      integrasiMatakuliah: string | null
+      metodologi: string | null
+      penulisanLaporan: string | null
+      ruangLingkup: string | null
+      sumberDayaBatasan: string | null
+      teknologi: string | null
+      fiturUtama: string | null
+      analisisTemuan: string | null
+      presentasiUjian: string | null
+      stakeholder: string | null
+      kepatuhanEtika: string | null
+      timeline: string | null
+      kerangkaWaktu: string | null
+      deadlineDate: Date | null
+      completionPercent: number
       createdAt: Date
       updatedAt: Date
-    }, ExtArgs["result"]["projectRequirement"]>
+    }, ExtArgs["result"]["projectRequirements"]>
     composites: {}
   }
 
-  type ProjectRequirementGetPayload<S extends boolean | null | undefined | ProjectRequirementDefaultArgs> = $Result.GetResult<Prisma.$ProjectRequirementPayload, S>
+  type ProjectRequirementsGetPayload<S extends boolean | null | undefined | ProjectRequirementsDefaultArgs> = $Result.GetResult<Prisma.$ProjectRequirementsPayload, S>
 
-  type ProjectRequirementCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<ProjectRequirementFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: ProjectRequirementCountAggregateInputType | true
+  type ProjectRequirementsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectRequirementsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectRequirementsCountAggregateInputType | true
     }
 
-  export interface ProjectRequirementDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectRequirement'], meta: { name: 'ProjectRequirement' } }
+  export interface ProjectRequirementsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectRequirements'], meta: { name: 'ProjectRequirements' } }
     /**
-     * Find zero or one ProjectRequirement that matches the filter.
-     * @param {ProjectRequirementFindUniqueArgs} args - Arguments to find a ProjectRequirement
+     * Find zero or one ProjectRequirements that matches the filter.
+     * @param {ProjectRequirementsFindUniqueArgs} args - Arguments to find a ProjectRequirements
      * @example
-     * // Get one ProjectRequirement
-     * const projectRequirement = await prisma.projectRequirement.findUnique({
+     * // Get one ProjectRequirements
+     * const projectRequirements = await prisma.projectRequirements.findUnique({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUnique<T extends ProjectRequirementFindUniqueArgs>(args: SelectSubset<T, ProjectRequirementFindUniqueArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findUnique<T extends ProjectRequirementsFindUniqueArgs>(args: SelectSubset<T, ProjectRequirementsFindUniqueArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find one ProjectRequirement that matches the filter or throw an error with `error.code='P2025'`
+     * Find one ProjectRequirements that matches the filter or throw an error with `error.code='P2025'`
      * if no matches were found.
-     * @param {ProjectRequirementFindUniqueOrThrowArgs} args - Arguments to find a ProjectRequirement
+     * @param {ProjectRequirementsFindUniqueOrThrowArgs} args - Arguments to find a ProjectRequirements
      * @example
-     * // Get one ProjectRequirement
-     * const projectRequirement = await prisma.projectRequirement.findUniqueOrThrow({
+     * // Get one ProjectRequirements
+     * const projectRequirements = await prisma.projectRequirements.findUniqueOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findUniqueOrThrow<T extends ProjectRequirementFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectRequirementFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findUniqueOrThrow<T extends ProjectRequirementsFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectRequirementsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first ProjectRequirement that matches the filter.
+     * Find the first ProjectRequirements that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectRequirementFindFirstArgs} args - Arguments to find a ProjectRequirement
+     * @param {ProjectRequirementsFindFirstArgs} args - Arguments to find a ProjectRequirements
      * @example
-     * // Get one ProjectRequirement
-     * const projectRequirement = await prisma.projectRequirement.findFirst({
+     * // Get one ProjectRequirements
+     * const projectRequirements = await prisma.projectRequirements.findFirst({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirst<T extends ProjectRequirementFindFirstArgs>(args?: SelectSubset<T, ProjectRequirementFindFirstArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    findFirst<T extends ProjectRequirementsFindFirstArgs>(args?: SelectSubset<T, ProjectRequirementsFindFirstArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Find the first ProjectRequirement that matches the filter or
+     * Find the first ProjectRequirements that matches the filter or
      * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectRequirementFindFirstOrThrowArgs} args - Arguments to find a ProjectRequirement
+     * @param {ProjectRequirementsFindFirstOrThrowArgs} args - Arguments to find a ProjectRequirements
      * @example
-     * // Get one ProjectRequirement
-     * const projectRequirement = await prisma.projectRequirement.findFirstOrThrow({
+     * // Get one ProjectRequirements
+     * const projectRequirements = await prisma.projectRequirements.findFirstOrThrow({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      */
-    findFirstOrThrow<T extends ProjectRequirementFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectRequirementFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    findFirstOrThrow<T extends ProjectRequirementsFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectRequirementsFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Find zero or more ProjectRequirements that matches the filter.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectRequirementFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @param {ProjectRequirementsFindManyArgs} args - Arguments to filter and select certain fields only.
      * @example
      * // Get all ProjectRequirements
-     * const projectRequirements = await prisma.projectRequirement.findMany()
+     * const projectRequirements = await prisma.projectRequirements.findMany()
      * 
      * // Get first 10 ProjectRequirements
-     * const projectRequirements = await prisma.projectRequirement.findMany({ take: 10 })
+     * const projectRequirements = await prisma.projectRequirements.findMany({ take: 10 })
      * 
      * // Only select the `id`
-     * const projectRequirementWithIdOnly = await prisma.projectRequirement.findMany({ select: { id: true } })
+     * const projectRequirementsWithIdOnly = await prisma.projectRequirements.findMany({ select: { id: true } })
      * 
      */
-    findMany<T extends ProjectRequirementFindManyArgs>(args?: SelectSubset<T, ProjectRequirementFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+    findMany<T extends ProjectRequirementsFindManyArgs>(args?: SelectSubset<T, ProjectRequirementsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
 
     /**
-     * Create a ProjectRequirement.
-     * @param {ProjectRequirementCreateArgs} args - Arguments to create a ProjectRequirement.
+     * Create a ProjectRequirements.
+     * @param {ProjectRequirementsCreateArgs} args - Arguments to create a ProjectRequirements.
      * @example
-     * // Create one ProjectRequirement
-     * const ProjectRequirement = await prisma.projectRequirement.create({
+     * // Create one ProjectRequirements
+     * const ProjectRequirements = await prisma.projectRequirements.create({
      *   data: {
-     *     // ... data to create a ProjectRequirement
+     *     // ... data to create a ProjectRequirements
      *   }
      * })
      * 
      */
-    create<T extends ProjectRequirementCreateArgs>(args: SelectSubset<T, ProjectRequirementCreateArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    create<T extends ProjectRequirementsCreateArgs>(args: SelectSubset<T, ProjectRequirementsCreateArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Create many ProjectRequirements.
-     * @param {ProjectRequirementCreateManyArgs} args - Arguments to create many ProjectRequirements.
+     * @param {ProjectRequirementsCreateManyArgs} args - Arguments to create many ProjectRequirements.
      * @example
      * // Create many ProjectRequirements
-     * const projectRequirement = await prisma.projectRequirement.createMany({
+     * const projectRequirements = await prisma.projectRequirements.createMany({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      *     
      */
-    createMany<T extends ProjectRequirementCreateManyArgs>(args?: SelectSubset<T, ProjectRequirementCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    createMany<T extends ProjectRequirementsCreateManyArgs>(args?: SelectSubset<T, ProjectRequirementsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Create many ProjectRequirements and returns the data saved in the database.
-     * @param {ProjectRequirementCreateManyAndReturnArgs} args - Arguments to create many ProjectRequirements.
+     * @param {ProjectRequirementsCreateManyAndReturnArgs} args - Arguments to create many ProjectRequirements.
      * @example
      * // Create many ProjectRequirements
-     * const projectRequirement = await prisma.projectRequirement.createManyAndReturn({
+     * const projectRequirements = await prisma.projectRequirements.createManyAndReturn({
      *   data: [
      *     // ... provide data here
      *   ]
      * })
      * 
      * // Create many ProjectRequirements and only return the `id`
-     * const projectRequirementWithIdOnly = await prisma.projectRequirement.createManyAndReturn({
+     * const projectRequirementsWithIdOnly = await prisma.projectRequirements.createManyAndReturn({
      *   select: { id: true },
      *   data: [
      *     // ... provide data here
@@ -13840,28 +16678,28 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    createManyAndReturn<T extends ProjectRequirementCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectRequirementCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+    createManyAndReturn<T extends ProjectRequirementsCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectRequirementsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Delete a ProjectRequirement.
-     * @param {ProjectRequirementDeleteArgs} args - Arguments to delete one ProjectRequirement.
+     * Delete a ProjectRequirements.
+     * @param {ProjectRequirementsDeleteArgs} args - Arguments to delete one ProjectRequirements.
      * @example
-     * // Delete one ProjectRequirement
-     * const ProjectRequirement = await prisma.projectRequirement.delete({
+     * // Delete one ProjectRequirements
+     * const ProjectRequirements = await prisma.projectRequirements.delete({
      *   where: {
-     *     // ... filter to delete one ProjectRequirement
+     *     // ... filter to delete one ProjectRequirements
      *   }
      * })
      * 
      */
-    delete<T extends ProjectRequirementDeleteArgs>(args: SelectSubset<T, ProjectRequirementDeleteArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    delete<T extends ProjectRequirementsDeleteArgs>(args: SelectSubset<T, ProjectRequirementsDeleteArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
-     * Update one ProjectRequirement.
-     * @param {ProjectRequirementUpdateArgs} args - Arguments to update one ProjectRequirement.
+     * Update one ProjectRequirements.
+     * @param {ProjectRequirementsUpdateArgs} args - Arguments to update one ProjectRequirements.
      * @example
-     * // Update one ProjectRequirement
-     * const projectRequirement = await prisma.projectRequirement.update({
+     * // Update one ProjectRequirements
+     * const projectRequirements = await prisma.projectRequirements.update({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -13871,30 +16709,30 @@ export namespace Prisma {
      * })
      * 
      */
-    update<T extends ProjectRequirementUpdateArgs>(args: SelectSubset<T, ProjectRequirementUpdateArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    update<T extends ProjectRequirementsUpdateArgs>(args: SelectSubset<T, ProjectRequirementsUpdateArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
     /**
      * Delete zero or more ProjectRequirements.
-     * @param {ProjectRequirementDeleteManyArgs} args - Arguments to filter ProjectRequirements to delete.
+     * @param {ProjectRequirementsDeleteManyArgs} args - Arguments to filter ProjectRequirements to delete.
      * @example
      * // Delete a few ProjectRequirements
-     * const { count } = await prisma.projectRequirement.deleteMany({
+     * const { count } = await prisma.projectRequirements.deleteMany({
      *   where: {
      *     // ... provide filter here
      *   }
      * })
      * 
      */
-    deleteMany<T extends ProjectRequirementDeleteManyArgs>(args?: SelectSubset<T, ProjectRequirementDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    deleteMany<T extends ProjectRequirementsDeleteManyArgs>(args?: SelectSubset<T, ProjectRequirementsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more ProjectRequirements.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectRequirementUpdateManyArgs} args - Arguments to update one or more rows.
+     * @param {ProjectRequirementsUpdateManyArgs} args - Arguments to update one or more rows.
      * @example
      * // Update many ProjectRequirements
-     * const projectRequirement = await prisma.projectRequirement.updateMany({
+     * const projectRequirements = await prisma.projectRequirements.updateMany({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -13904,14 +16742,14 @@ export namespace Prisma {
      * })
      * 
      */
-    updateMany<T extends ProjectRequirementUpdateManyArgs>(args: SelectSubset<T, ProjectRequirementUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+    updateMany<T extends ProjectRequirementsUpdateManyArgs>(args: SelectSubset<T, ProjectRequirementsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
 
     /**
      * Update zero or more ProjectRequirements and returns the data updated in the database.
-     * @param {ProjectRequirementUpdateManyAndReturnArgs} args - Arguments to update many ProjectRequirements.
+     * @param {ProjectRequirementsUpdateManyAndReturnArgs} args - Arguments to update many ProjectRequirements.
      * @example
      * // Update many ProjectRequirements
-     * const projectRequirement = await prisma.projectRequirement.updateManyAndReturn({
+     * const projectRequirements = await prisma.projectRequirements.updateManyAndReturn({
      *   where: {
      *     // ... provide filter here
      *   },
@@ -13921,7 +16759,7 @@ export namespace Prisma {
      * })
      * 
      * // Update zero or more ProjectRequirements and only return the `id`
-     * const projectRequirementWithIdOnly = await prisma.projectRequirement.updateManyAndReturn({
+     * const projectRequirementsWithIdOnly = await prisma.projectRequirements.updateManyAndReturn({
      *   select: { id: true },
      *   where: {
      *     // ... provide filter here
@@ -13934,56 +16772,56 @@ export namespace Prisma {
      * Read more here: https://pris.ly/d/null-undefined
      * 
      */
-    updateManyAndReturn<T extends ProjectRequirementUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectRequirementUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+    updateManyAndReturn<T extends ProjectRequirementsUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectRequirementsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
     /**
-     * Create or update one ProjectRequirement.
-     * @param {ProjectRequirementUpsertArgs} args - Arguments to update or create a ProjectRequirement.
+     * Create or update one ProjectRequirements.
+     * @param {ProjectRequirementsUpsertArgs} args - Arguments to update or create a ProjectRequirements.
      * @example
-     * // Update or create a ProjectRequirement
-     * const projectRequirement = await prisma.projectRequirement.upsert({
+     * // Update or create a ProjectRequirements
+     * const projectRequirements = await prisma.projectRequirements.upsert({
      *   create: {
-     *     // ... data to create a ProjectRequirement
+     *     // ... data to create a ProjectRequirements
      *   },
      *   update: {
      *     // ... in case it already exists, update
      *   },
      *   where: {
-     *     // ... the filter for the ProjectRequirement we want to update
+     *     // ... the filter for the ProjectRequirements we want to update
      *   }
      * })
      */
-    upsert<T extends ProjectRequirementUpsertArgs>(args: SelectSubset<T, ProjectRequirementUpsertArgs<ExtArgs>>): Prisma__ProjectRequirementClient<$Result.GetResult<Prisma.$ProjectRequirementPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+    upsert<T extends ProjectRequirementsUpsertArgs>(args: SelectSubset<T, ProjectRequirementsUpsertArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
 
 
     /**
      * Count the number of ProjectRequirements.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectRequirementCountArgs} args - Arguments to filter ProjectRequirements to count.
+     * @param {ProjectRequirementsCountArgs} args - Arguments to filter ProjectRequirements to count.
      * @example
      * // Count the number of ProjectRequirements
-     * const count = await prisma.projectRequirement.count({
+     * const count = await prisma.projectRequirements.count({
      *   where: {
      *     // ... the filter for the ProjectRequirements we want to count
      *   }
      * })
     **/
-    count<T extends ProjectRequirementCountArgs>(
-      args?: Subset<T, ProjectRequirementCountArgs>,
+    count<T extends ProjectRequirementsCountArgs>(
+      args?: Subset<T, ProjectRequirementsCountArgs>,
     ): Prisma.PrismaPromise<
       T extends $Utils.Record<'select', any>
         ? T['select'] extends true
           ? number
-          : GetScalarType<T['select'], ProjectRequirementCountAggregateOutputType>
+          : GetScalarType<T['select'], ProjectRequirementsCountAggregateOutputType>
         : number
     >
 
     /**
-     * Allows you to perform aggregations operations on a ProjectRequirement.
+     * Allows you to perform aggregations operations on a ProjectRequirements.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectRequirementAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @param {ProjectRequirementsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
      * @example
      * // Ordered by age ascending
      * // Where email contains prisma.io
@@ -14003,13 +16841,13 @@ export namespace Prisma {
      *   take: 10,
      * })
     **/
-    aggregate<T extends ProjectRequirementAggregateArgs>(args: Subset<T, ProjectRequirementAggregateArgs>): Prisma.PrismaPromise<GetProjectRequirementAggregateType<T>>
+    aggregate<T extends ProjectRequirementsAggregateArgs>(args: Subset<T, ProjectRequirementsAggregateArgs>): Prisma.PrismaPromise<GetProjectRequirementsAggregateType<T>>
 
     /**
-     * Group by ProjectRequirement.
+     * Group by ProjectRequirements.
      * Note, that providing `undefined` is treated as the value not being there.
      * Read more here: https://pris.ly/d/null-undefined
-     * @param {ProjectRequirementGroupByArgs} args - Group by arguments.
+     * @param {ProjectRequirementsGroupByArgs} args - Group by arguments.
      * @example
      * // Group by city, order by createdAt, get count
      * const result = await prisma.user.groupBy({
@@ -14024,14 +16862,14 @@ export namespace Prisma {
      * 
     **/
     groupBy<
-      T extends ProjectRequirementGroupByArgs,
+      T extends ProjectRequirementsGroupByArgs,
       HasSelectOrTake extends Or<
         Extends<'skip', Keys<T>>,
         Extends<'take', Keys<T>>
       >,
       OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: ProjectRequirementGroupByArgs['orderBy'] }
-        : { orderBy?: ProjectRequirementGroupByArgs['orderBy'] },
+        ? { orderBy: ProjectRequirementsGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectRequirementsGroupByArgs['orderBy'] },
       OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
       ByFields extends MaybeTupleToUnion<T['by']>,
       ByValid extends Has<ByFields, OrderFields>,
@@ -14080,20 +16918,20 @@ export namespace Prisma {
             ? never
             : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
         }[OrderFields]
-    >(args: SubsetIntersection<T, ProjectRequirementGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectRequirementGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+    >(args: SubsetIntersection<T, ProjectRequirementsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectRequirementsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
   /**
-   * Fields of the ProjectRequirement model
+   * Fields of the ProjectRequirements model
    */
-  readonly fields: ProjectRequirementFieldRefs;
+  readonly fields: ProjectRequirementsFieldRefs;
   }
 
   /**
-   * The delegate class that acts as a "Promise-like" for ProjectRequirement.
+   * The delegate class that acts as a "Promise-like" for ProjectRequirements.
    * Why is this prefixed with `Prisma__`?
    * Because we want to prevent naming conflicts as mentioned in
    * https://github.com/prisma/prisma-client-js/issues/707
    */
-  export interface Prisma__ProjectRequirementClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+  export interface Prisma__ProjectRequirementsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
@@ -14122,200 +16960,217 @@ export namespace Prisma {
 
 
   /**
-   * Fields of the ProjectRequirement model
+   * Fields of the ProjectRequirements model
    */
-  interface ProjectRequirementFieldRefs {
-    readonly id: FieldRef<"ProjectRequirement", 'String'>
-    readonly projectId: FieldRef<"ProjectRequirement", 'String'>
-    readonly category: FieldRef<"ProjectRequirement", 'String'>
-    readonly content: FieldRef<"ProjectRequirement", 'String'>
-    readonly isCompleted: FieldRef<"ProjectRequirement", 'Boolean'>
-    readonly createdAt: FieldRef<"ProjectRequirement", 'DateTime'>
-    readonly updatedAt: FieldRef<"ProjectRequirement", 'DateTime'>
+  interface ProjectRequirementsFieldRefs {
+    readonly id: FieldRef<"ProjectRequirements", 'String'>
+    readonly projectId: FieldRef<"ProjectRequirements", 'String'>
+    readonly judulProyek: FieldRef<"ProjectRequirements", 'String'>
+    readonly targetPengguna: FieldRef<"ProjectRequirements", 'String'>
+    readonly latarBelakangMasalah: FieldRef<"ProjectRequirements", 'String'>
+    readonly tujuanProyek: FieldRef<"ProjectRequirements", 'String'>
+    readonly manfaatProyek: FieldRef<"ProjectRequirements", 'String'>
+    readonly integrasiMatakuliah: FieldRef<"ProjectRequirements", 'String'>
+    readonly metodologi: FieldRef<"ProjectRequirements", 'String'>
+    readonly penulisanLaporan: FieldRef<"ProjectRequirements", 'String'>
+    readonly ruangLingkup: FieldRef<"ProjectRequirements", 'String'>
+    readonly sumberDayaBatasan: FieldRef<"ProjectRequirements", 'String'>
+    readonly teknologi: FieldRef<"ProjectRequirements", 'String'>
+    readonly fiturUtama: FieldRef<"ProjectRequirements", 'String'>
+    readonly analisisTemuan: FieldRef<"ProjectRequirements", 'String'>
+    readonly presentasiUjian: FieldRef<"ProjectRequirements", 'String'>
+    readonly stakeholder: FieldRef<"ProjectRequirements", 'String'>
+    readonly kepatuhanEtika: FieldRef<"ProjectRequirements", 'String'>
+    readonly timeline: FieldRef<"ProjectRequirements", 'String'>
+    readonly kerangkaWaktu: FieldRef<"ProjectRequirements", 'String'>
+    readonly deadlineDate: FieldRef<"ProjectRequirements", 'DateTime'>
+    readonly completionPercent: FieldRef<"ProjectRequirements", 'Int'>
+    readonly createdAt: FieldRef<"ProjectRequirements", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProjectRequirements", 'DateTime'>
   }
     
 
   // Custom InputTypes
   /**
-   * ProjectRequirement findUnique
+   * ProjectRequirements findUnique
    */
-  export type ProjectRequirementFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelect<ExtArgs> | null
+    select?: ProjectRequirementsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementInclude<ExtArgs> | null
-    /**
-     * Filter, which ProjectRequirement to fetch.
-     */
-    where: ProjectRequirementWhereUniqueInput
-  }
-
-  /**
-   * ProjectRequirement findUniqueOrThrow
-   */
-  export type ProjectRequirementFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ProjectRequirement
-     */
-    select?: ProjectRequirementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ProjectRequirement
-     */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectRequirementInclude<ExtArgs> | null
-    /**
-     * Filter, which ProjectRequirement to fetch.
-     */
-    where: ProjectRequirementWhereUniqueInput
-  }
-
-  /**
-   * ProjectRequirement findFirst
-   */
-  export type ProjectRequirementFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ProjectRequirement
-     */
-    select?: ProjectRequirementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ProjectRequirement
-     */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectRequirementInclude<ExtArgs> | null
-    /**
-     * Filter, which ProjectRequirement to fetch.
-     */
-    where?: ProjectRequirementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ProjectRequirements to fetch.
-     */
-    orderBy?: ProjectRequirementOrderByWithRelationInput | ProjectRequirementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for ProjectRequirements.
-     */
-    cursor?: ProjectRequirementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ProjectRequirements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ProjectRequirements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of ProjectRequirements.
-     */
-    distinct?: ProjectRequirementScalarFieldEnum | ProjectRequirementScalarFieldEnum[]
-  }
-
-  /**
-   * ProjectRequirement findFirstOrThrow
-   */
-  export type ProjectRequirementFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ProjectRequirement
-     */
-    select?: ProjectRequirementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ProjectRequirement
-     */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectRequirementInclude<ExtArgs> | null
-    /**
-     * Filter, which ProjectRequirement to fetch.
-     */
-    where?: ProjectRequirementWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of ProjectRequirements to fetch.
-     */
-    orderBy?: ProjectRequirementOrderByWithRelationInput | ProjectRequirementOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for ProjectRequirements.
-     */
-    cursor?: ProjectRequirementWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` ProjectRequirements from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` ProjectRequirements.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of ProjectRequirements.
-     */
-    distinct?: ProjectRequirementScalarFieldEnum | ProjectRequirementScalarFieldEnum[]
-  }
-
-  /**
-   * ProjectRequirement findMany
-   */
-  export type ProjectRequirementFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the ProjectRequirement
-     */
-    select?: ProjectRequirementSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the ProjectRequirement
-     */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ProjectRequirementInclude<ExtArgs> | null
+    include?: ProjectRequirementsInclude<ExtArgs> | null
     /**
      * Filter, which ProjectRequirements to fetch.
      */
-    where?: ProjectRequirementWhereInput
+    where: ProjectRequirementsWhereUniqueInput
+  }
+
+  /**
+   * ProjectRequirements findUniqueOrThrow
+   */
+  export type ProjectRequirementsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectRequirements
+     */
+    select?: ProjectRequirementsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectRequirements
+     */
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectRequirementsInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectRequirements to fetch.
+     */
+    where: ProjectRequirementsWhereUniqueInput
+  }
+
+  /**
+   * ProjectRequirements findFirst
+   */
+  export type ProjectRequirementsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectRequirements
+     */
+    select?: ProjectRequirementsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectRequirements
+     */
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectRequirementsInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectRequirements to fetch.
+     */
+    where?: ProjectRequirementsWhereInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
      * 
      * Determine the order of ProjectRequirements to fetch.
      */
-    orderBy?: ProjectRequirementOrderByWithRelationInput | ProjectRequirementOrderByWithRelationInput[]
+    orderBy?: ProjectRequirementsOrderByWithRelationInput | ProjectRequirementsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectRequirements.
+     */
+    cursor?: ProjectRequirementsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectRequirements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectRequirements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectRequirements.
+     */
+    distinct?: ProjectRequirementsScalarFieldEnum | ProjectRequirementsScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectRequirements findFirstOrThrow
+   */
+  export type ProjectRequirementsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectRequirements
+     */
+    select?: ProjectRequirementsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectRequirements
+     */
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectRequirementsInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectRequirements to fetch.
+     */
+    where?: ProjectRequirementsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectRequirements to fetch.
+     */
+    orderBy?: ProjectRequirementsOrderByWithRelationInput | ProjectRequirementsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectRequirements.
+     */
+    cursor?: ProjectRequirementsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectRequirements from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectRequirements.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectRequirements.
+     */
+    distinct?: ProjectRequirementsScalarFieldEnum | ProjectRequirementsScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectRequirements findMany
+   */
+  export type ProjectRequirementsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectRequirements
+     */
+    select?: ProjectRequirementsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectRequirements
+     */
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectRequirementsInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectRequirements to fetch.
+     */
+    where?: ProjectRequirementsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectRequirements to fetch.
+     */
+    orderBy?: ProjectRequirementsOrderByWithRelationInput | ProjectRequirementsOrderByWithRelationInput[]
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
      * 
      * Sets the position for listing ProjectRequirements.
      */
-    cursor?: ProjectRequirementWhereUniqueInput
+    cursor?: ProjectRequirementsWhereUniqueInput
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
      * 
@@ -14328,103 +17183,103 @@ export namespace Prisma {
      * Skip the first `n` ProjectRequirements.
      */
     skip?: number
-    distinct?: ProjectRequirementScalarFieldEnum | ProjectRequirementScalarFieldEnum[]
+    distinct?: ProjectRequirementsScalarFieldEnum | ProjectRequirementsScalarFieldEnum[]
   }
 
   /**
-   * ProjectRequirement create
+   * ProjectRequirements create
    */
-  export type ProjectRequirementCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelect<ExtArgs> | null
+    select?: ProjectRequirementsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementInclude<ExtArgs> | null
+    include?: ProjectRequirementsInclude<ExtArgs> | null
     /**
-     * The data needed to create a ProjectRequirement.
+     * The data needed to create a ProjectRequirements.
      */
-    data: XOR<ProjectRequirementCreateInput, ProjectRequirementUncheckedCreateInput>
+    data: XOR<ProjectRequirementsCreateInput, ProjectRequirementsUncheckedCreateInput>
   }
 
   /**
-   * ProjectRequirement createMany
+   * ProjectRequirements createMany
    */
-  export type ProjectRequirementCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * The data used to create many ProjectRequirements.
      */
-    data: ProjectRequirementCreateManyInput | ProjectRequirementCreateManyInput[]
+    data: ProjectRequirementsCreateManyInput | ProjectRequirementsCreateManyInput[]
     skipDuplicates?: boolean
   }
 
   /**
-   * ProjectRequirement createManyAndReturn
+   * ProjectRequirements createManyAndReturn
    */
-  export type ProjectRequirementCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelectCreateManyAndReturn<ExtArgs> | null
+    select?: ProjectRequirementsSelectCreateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * The data used to create many ProjectRequirements.
      */
-    data: ProjectRequirementCreateManyInput | ProjectRequirementCreateManyInput[]
+    data: ProjectRequirementsCreateManyInput | ProjectRequirementsCreateManyInput[]
     skipDuplicates?: boolean
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementIncludeCreateManyAndReturn<ExtArgs> | null
+    include?: ProjectRequirementsIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * ProjectRequirement update
+   * ProjectRequirements update
    */
-  export type ProjectRequirementUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelect<ExtArgs> | null
+    select?: ProjectRequirementsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementInclude<ExtArgs> | null
+    include?: ProjectRequirementsInclude<ExtArgs> | null
     /**
-     * The data needed to update a ProjectRequirement.
+     * The data needed to update a ProjectRequirements.
      */
-    data: XOR<ProjectRequirementUpdateInput, ProjectRequirementUncheckedUpdateInput>
+    data: XOR<ProjectRequirementsUpdateInput, ProjectRequirementsUncheckedUpdateInput>
     /**
-     * Choose, which ProjectRequirement to update.
+     * Choose, which ProjectRequirements to update.
      */
-    where: ProjectRequirementWhereUniqueInput
+    where: ProjectRequirementsWhereUniqueInput
   }
 
   /**
-   * ProjectRequirement updateMany
+   * ProjectRequirements updateMany
    */
-  export type ProjectRequirementUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * The data used to update ProjectRequirements.
      */
-    data: XOR<ProjectRequirementUpdateManyMutationInput, ProjectRequirementUncheckedUpdateManyInput>
+    data: XOR<ProjectRequirementsUpdateManyMutationInput, ProjectRequirementsUncheckedUpdateManyInput>
     /**
      * Filter which ProjectRequirements to update
      */
-    where?: ProjectRequirementWhereInput
+    where?: ProjectRequirementsWhereInput
     /**
      * Limit how many ProjectRequirements to update.
      */
@@ -14432,25 +17287,25 @@ export namespace Prisma {
   }
 
   /**
-   * ProjectRequirement updateManyAndReturn
+   * ProjectRequirements updateManyAndReturn
    */
-  export type ProjectRequirementUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelectUpdateManyAndReturn<ExtArgs> | null
+    select?: ProjectRequirementsSelectUpdateManyAndReturn<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * The data used to update ProjectRequirements.
      */
-    data: XOR<ProjectRequirementUpdateManyMutationInput, ProjectRequirementUncheckedUpdateManyInput>
+    data: XOR<ProjectRequirementsUpdateManyMutationInput, ProjectRequirementsUncheckedUpdateManyInput>
     /**
      * Filter which ProjectRequirements to update
      */
-    where?: ProjectRequirementWhereInput
+    where?: ProjectRequirementsWhereInput
     /**
      * Limit how many ProjectRequirements to update.
      */
@@ -14458,69 +17313,69 @@ export namespace Prisma {
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementIncludeUpdateManyAndReturn<ExtArgs> | null
+    include?: ProjectRequirementsIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
-   * ProjectRequirement upsert
+   * ProjectRequirements upsert
    */
-  export type ProjectRequirementUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelect<ExtArgs> | null
+    select?: ProjectRequirementsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementInclude<ExtArgs> | null
+    include?: ProjectRequirementsInclude<ExtArgs> | null
     /**
-     * The filter to search for the ProjectRequirement to update in case it exists.
+     * The filter to search for the ProjectRequirements to update in case it exists.
      */
-    where: ProjectRequirementWhereUniqueInput
+    where: ProjectRequirementsWhereUniqueInput
     /**
-     * In case the ProjectRequirement found by the `where` argument doesn't exist, create a new ProjectRequirement with this data.
+     * In case the ProjectRequirements found by the `where` argument doesn't exist, create a new ProjectRequirements with this data.
      */
-    create: XOR<ProjectRequirementCreateInput, ProjectRequirementUncheckedCreateInput>
+    create: XOR<ProjectRequirementsCreateInput, ProjectRequirementsUncheckedCreateInput>
     /**
-     * In case the ProjectRequirement was found with the provided `where` argument, update it with this data.
+     * In case the ProjectRequirements was found with the provided `where` argument, update it with this data.
      */
-    update: XOR<ProjectRequirementUpdateInput, ProjectRequirementUncheckedUpdateInput>
+    update: XOR<ProjectRequirementsUpdateInput, ProjectRequirementsUncheckedUpdateInput>
   }
 
   /**
-   * ProjectRequirement delete
+   * ProjectRequirements delete
    */
-  export type ProjectRequirementDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelect<ExtArgs> | null
+    select?: ProjectRequirementsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementInclude<ExtArgs> | null
+    include?: ProjectRequirementsInclude<ExtArgs> | null
     /**
-     * Filter which ProjectRequirement to delete.
+     * Filter which ProjectRequirements to delete.
      */
-    where: ProjectRequirementWhereUniqueInput
+    where: ProjectRequirementsWhereUniqueInput
   }
 
   /**
-   * ProjectRequirement deleteMany
+   * ProjectRequirements deleteMany
    */
-  export type ProjectRequirementDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Filter which ProjectRequirements to delete
      */
-    where?: ProjectRequirementWhereInput
+    where?: ProjectRequirementsWhereInput
     /**
      * Limit how many ProjectRequirements to delete.
      */
@@ -14528,21 +17383,21 @@ export namespace Prisma {
   }
 
   /**
-   * ProjectRequirement without action
+   * ProjectRequirements without action
    */
-  export type ProjectRequirementDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type ProjectRequirementsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the ProjectRequirement
+     * Select specific fields to fetch from the ProjectRequirements
      */
-    select?: ProjectRequirementSelect<ExtArgs> | null
+    select?: ProjectRequirementsSelect<ExtArgs> | null
     /**
-     * Omit specific fields from the ProjectRequirement
+     * Omit specific fields from the ProjectRequirements
      */
-    omit?: ProjectRequirementOmit<ExtArgs> | null
+    omit?: ProjectRequirementsOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: ProjectRequirementInclude<ExtArgs> | null
+    include?: ProjectRequirementsInclude<ExtArgs> | null
   }
 
 
@@ -14563,10 +17418,12 @@ export namespace Prisma {
   export const UserScalarFieldEnum: {
     id: 'id',
     username: 'username',
+    email: 'email',
+    emailVerified: 'emailVerified',
     name: 'name',
     password: 'password',
     role: 'role',
-    avatarUrl: 'avatarUrl',
+    image: 'image',
     githubId: 'githubId',
     githubUsername: 'githubUsername',
     githubToken: 'githubToken',
@@ -14578,6 +17435,24 @@ export namespace Prisma {
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+  export const AccountScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    type: 'type',
+    provider: 'provider',
+    providerAccountId: 'providerAccountId',
+    refresh_token: 'refresh_token',
+    access_token: 'access_token',
+    expires_at: 'expires_at',
+    token_type: 'token_type',
+    scope: 'scope',
+    id_token: 'id_token',
+    session_state: 'session_state'
+  };
+
+  export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
+
+
   export const ProjectScalarFieldEnum: {
     id: 'id',
     title: 'title',
@@ -14585,15 +17460,33 @@ export namespace Prisma {
     status: 'status',
     githubRepoUrl: 'githubRepoUrl',
     githubRepoName: 'githubRepoName',
+    orgRepoUrl: 'orgRepoUrl',
+    orgRepoName: 'orgRepoName',
+    forkedAt: 'forkedAt',
     semester: 'semester',
     tahunAkademik: 'tahunAkademik',
     submittedAt: 'submittedAt',
+    approvedAt: 'approvedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     mahasiswaId: 'mahasiswaId'
   };
 
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+  export const ProjectMemberScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    githubUsername: 'githubUsername',
+    githubId: 'githubId',
+    githubAvatarUrl: 'githubAvatarUrl',
+    name: 'name',
+    role: 'role',
+    addedAt: 'addedAt'
+  };
+
+  export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
 
 
   export const ProjectAssignmentScalarFieldEnum: {
@@ -14704,17 +17597,34 @@ export namespace Prisma {
   export type SemesterScalarFieldEnum = (typeof SemesterScalarFieldEnum)[keyof typeof SemesterScalarFieldEnum]
 
 
-  export const ProjectRequirementScalarFieldEnum: {
+  export const ProjectRequirementsScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
-    category: 'category',
-    content: 'content',
-    isCompleted: 'isCompleted',
+    judulProyek: 'judulProyek',
+    targetPengguna: 'targetPengguna',
+    latarBelakangMasalah: 'latarBelakangMasalah',
+    tujuanProyek: 'tujuanProyek',
+    manfaatProyek: 'manfaatProyek',
+    integrasiMatakuliah: 'integrasiMatakuliah',
+    metodologi: 'metodologi',
+    penulisanLaporan: 'penulisanLaporan',
+    ruangLingkup: 'ruangLingkup',
+    sumberDayaBatasan: 'sumberDayaBatasan',
+    teknologi: 'teknologi',
+    fiturUtama: 'fiturUtama',
+    analisisTemuan: 'analisisTemuan',
+    presentasiUjian: 'presentasiUjian',
+    stakeholder: 'stakeholder',
+    kepatuhanEtika: 'kepatuhanEtika',
+    timeline: 'timeline',
+    kerangkaWaktu: 'kerangkaWaktu',
+    deadlineDate: 'deadlineDate',
+    completionPercent: 'completionPercent',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
-  export type ProjectRequirementScalarFieldEnum = (typeof ProjectRequirementScalarFieldEnum)[keyof typeof ProjectRequirementScalarFieldEnum]
+  export type ProjectRequirementsScalarFieldEnum = (typeof ProjectRequirementsScalarFieldEnum)[keyof typeof ProjectRequirementsScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -14761,6 +17671,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'DateTime'
+   */
+  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+  /**
+   * Reference to a field of type 'DateTime[]'
+   */
+  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Role'
    */
   export type EnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Role'>
@@ -14782,16 +17706,16 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'DateTime'
+   * Reference to a field of type 'Int'
    */
-  export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
   /**
-   * Reference to a field of type 'DateTime[]'
+   * Reference to a field of type 'Int[]'
    */
-  export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -14820,20 +17744,6 @@ export namespace Prisma {
    * Reference to a field of type 'DocumentType[]'
    */
   export type ListEnumDocumentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DocumentType[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int'
-   */
-  export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-  /**
-   * Reference to a field of type 'Int[]'
-   */
-  export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
     
 
 
@@ -14874,10 +17784,12 @@ export namespace Prisma {
     NOT?: UserWhereInput | UserWhereInput[]
     id?: StringFilter<"User"> | string
     username?: StringFilter<"User"> | string
+    email?: StringNullableFilter<"User"> | string | null
+    emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     name?: StringFilter<"User"> | string
-    password?: StringFilter<"User"> | string
+    password?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    avatarUrl?: StringNullableFilter<"User"> | string | null
+    image?: StringNullableFilter<"User"> | string | null
     githubId?: StringNullableFilter<"User"> | string | null
     githubUsername?: StringNullableFilter<"User"> | string | null
     githubToken?: StringNullableFilter<"User"> | string | null
@@ -14888,15 +17800,18 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     notifications?: NotificationListRelationFilter
     assignedProjects?: ProjectAssignmentListRelationFilter
+    accounts?: AccountListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
     id?: SortOrder
     username?: SortOrder
+    email?: SortOrderInput | SortOrder
+    emailVerified?: SortOrderInput | SortOrder
     name?: SortOrder
-    password?: SortOrder
+    password?: SortOrderInput | SortOrder
     role?: SortOrder
-    avatarUrl?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     githubId?: SortOrderInput | SortOrder
     githubUsername?: SortOrderInput | SortOrder
     githubToken?: SortOrderInput | SortOrder
@@ -14907,19 +17822,22 @@ export namespace Prisma {
     reviews?: ReviewOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
     assignedProjects?: ProjectAssignmentOrderByRelationAggregateInput
+    accounts?: AccountOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     username?: string
+    email?: string
     githubId?: string
     AND?: UserWhereInput | UserWhereInput[]
     OR?: UserWhereInput[]
     NOT?: UserWhereInput | UserWhereInput[]
+    emailVerified?: DateTimeNullableFilter<"User"> | Date | string | null
     name?: StringFilter<"User"> | string
-    password?: StringFilter<"User"> | string
+    password?: StringNullableFilter<"User"> | string | null
     role?: EnumRoleFilter<"User"> | $Enums.Role
-    avatarUrl?: StringNullableFilter<"User"> | string | null
+    image?: StringNullableFilter<"User"> | string | null
     githubUsername?: StringNullableFilter<"User"> | string | null
     githubToken?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
@@ -14929,15 +17847,18 @@ export namespace Prisma {
     reviews?: ReviewListRelationFilter
     notifications?: NotificationListRelationFilter
     assignedProjects?: ProjectAssignmentListRelationFilter
-  }, "id" | "username" | "githubId">
+    accounts?: AccountListRelationFilter
+  }, "id" | "username" | "email" | "githubId">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
     username?: SortOrder
+    email?: SortOrderInput | SortOrder
+    emailVerified?: SortOrderInput | SortOrder
     name?: SortOrder
-    password?: SortOrder
+    password?: SortOrderInput | SortOrder
     role?: SortOrder
-    avatarUrl?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     githubId?: SortOrderInput | SortOrder
     githubUsername?: SortOrderInput | SortOrder
     githubToken?: SortOrderInput | SortOrder
@@ -14955,16 +17876,111 @@ export namespace Prisma {
     NOT?: UserScalarWhereWithAggregatesInput | UserScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"User"> | string
     username?: StringWithAggregatesFilter<"User"> | string
+    email?: StringNullableWithAggregatesFilter<"User"> | string | null
+    emailVerified?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     name?: StringWithAggregatesFilter<"User"> | string
-    password?: StringWithAggregatesFilter<"User"> | string
+    password?: StringNullableWithAggregatesFilter<"User"> | string | null
     role?: EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
-    avatarUrl?: StringNullableWithAggregatesFilter<"User"> | string | null
+    image?: StringNullableWithAggregatesFilter<"User"> | string | null
     githubId?: StringNullableWithAggregatesFilter<"User"> | string | null
     githubUsername?: StringNullableWithAggregatesFilter<"User"> | string | null
     githubToken?: StringNullableWithAggregatesFilter<"User"> | string | null
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
+  }
+
+  export type AccountWhereInput = {
+    AND?: AccountWhereInput | AccountWhereInput[]
+    OR?: AccountWhereInput[]
+    NOT?: AccountWhereInput | AccountWhereInput[]
+    id?: StringFilter<"Account"> | string
+    userId?: StringFilter<"Account"> | string
+    type?: StringFilter<"Account"> | string
+    provider?: StringFilter<"Account"> | string
+    providerAccountId?: StringFilter<"Account"> | string
+    refresh_token?: StringNullableFilter<"Account"> | string | null
+    access_token?: StringNullableFilter<"Account"> | string | null
+    expires_at?: IntNullableFilter<"Account"> | number | null
+    token_type?: StringNullableFilter<"Account"> | string | null
+    scope?: StringNullableFilter<"Account"> | string | null
+    id_token?: StringNullableFilter<"Account"> | string | null
+    session_state?: StringNullableFilter<"Account"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type AccountOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refresh_token?: SortOrderInput | SortOrder
+    access_token?: SortOrderInput | SortOrder
+    expires_at?: SortOrderInput | SortOrder
+    token_type?: SortOrderInput | SortOrder
+    scope?: SortOrderInput | SortOrder
+    id_token?: SortOrderInput | SortOrder
+    session_state?: SortOrderInput | SortOrder
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type AccountWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    provider_providerAccountId?: AccountProviderProviderAccountIdCompoundUniqueInput
+    AND?: AccountWhereInput | AccountWhereInput[]
+    OR?: AccountWhereInput[]
+    NOT?: AccountWhereInput | AccountWhereInput[]
+    userId?: StringFilter<"Account"> | string
+    type?: StringFilter<"Account"> | string
+    provider?: StringFilter<"Account"> | string
+    providerAccountId?: StringFilter<"Account"> | string
+    refresh_token?: StringNullableFilter<"Account"> | string | null
+    access_token?: StringNullableFilter<"Account"> | string | null
+    expires_at?: IntNullableFilter<"Account"> | number | null
+    token_type?: StringNullableFilter<"Account"> | string | null
+    scope?: StringNullableFilter<"Account"> | string | null
+    id_token?: StringNullableFilter<"Account"> | string | null
+    session_state?: StringNullableFilter<"Account"> | string | null
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "provider_providerAccountId">
+
+  export type AccountOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refresh_token?: SortOrderInput | SortOrder
+    access_token?: SortOrderInput | SortOrder
+    expires_at?: SortOrderInput | SortOrder
+    token_type?: SortOrderInput | SortOrder
+    scope?: SortOrderInput | SortOrder
+    id_token?: SortOrderInput | SortOrder
+    session_state?: SortOrderInput | SortOrder
+    _count?: AccountCountOrderByAggregateInput
+    _avg?: AccountAvgOrderByAggregateInput
+    _max?: AccountMaxOrderByAggregateInput
+    _min?: AccountMinOrderByAggregateInput
+    _sum?: AccountSumOrderByAggregateInput
+  }
+
+  export type AccountScalarWhereWithAggregatesInput = {
+    AND?: AccountScalarWhereWithAggregatesInput | AccountScalarWhereWithAggregatesInput[]
+    OR?: AccountScalarWhereWithAggregatesInput[]
+    NOT?: AccountScalarWhereWithAggregatesInput | AccountScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Account"> | string
+    userId?: StringWithAggregatesFilter<"Account"> | string
+    type?: StringWithAggregatesFilter<"Account"> | string
+    provider?: StringWithAggregatesFilter<"Account"> | string
+    providerAccountId?: StringWithAggregatesFilter<"Account"> | string
+    refresh_token?: StringNullableWithAggregatesFilter<"Account"> | string | null
+    access_token?: StringNullableWithAggregatesFilter<"Account"> | string | null
+    expires_at?: IntNullableWithAggregatesFilter<"Account"> | number | null
+    token_type?: StringNullableWithAggregatesFilter<"Account"> | string | null
+    scope?: StringNullableWithAggregatesFilter<"Account"> | string | null
+    id_token?: StringNullableWithAggregatesFilter<"Account"> | string | null
+    session_state?: StringNullableWithAggregatesFilter<"Account"> | string | null
   }
 
   export type ProjectWhereInput = {
@@ -14977,9 +17993,13 @@ export namespace Prisma {
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     githubRepoUrl?: StringNullableFilter<"Project"> | string | null
     githubRepoName?: StringNullableFilter<"Project"> | string | null
+    orgRepoUrl?: StringNullableFilter<"Project"> | string | null
+    orgRepoName?: StringNullableFilter<"Project"> | string | null
+    forkedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     semester?: StringFilter<"Project"> | string
     tahunAkademik?: StringFilter<"Project"> | string
     submittedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
+    approvedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     mahasiswaId?: StringFilter<"Project"> | string
@@ -14987,7 +18007,8 @@ export namespace Prisma {
     documents?: DocumentListRelationFilter
     reviews?: ReviewListRelationFilter
     assignments?: ProjectAssignmentListRelationFilter
-    requirements?: ProjectRequirementListRelationFilter
+    requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
+    members?: ProjectMemberListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -14997,9 +18018,13 @@ export namespace Prisma {
     status?: SortOrder
     githubRepoUrl?: SortOrderInput | SortOrder
     githubRepoName?: SortOrderInput | SortOrder
+    orgRepoUrl?: SortOrderInput | SortOrder
+    orgRepoName?: SortOrderInput | SortOrder
+    forkedAt?: SortOrderInput | SortOrder
     semester?: SortOrder
     tahunAkademik?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     mahasiswaId?: SortOrder
@@ -15007,7 +18032,8 @@ export namespace Prisma {
     documents?: DocumentOrderByRelationAggregateInput
     reviews?: ReviewOrderByRelationAggregateInput
     assignments?: ProjectAssignmentOrderByRelationAggregateInput
-    requirements?: ProjectRequirementOrderByRelationAggregateInput
+    requirements?: ProjectRequirementsOrderByWithRelationInput
+    members?: ProjectMemberOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -15020,9 +18046,13 @@ export namespace Prisma {
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     githubRepoUrl?: StringNullableFilter<"Project"> | string | null
     githubRepoName?: StringNullableFilter<"Project"> | string | null
+    orgRepoUrl?: StringNullableFilter<"Project"> | string | null
+    orgRepoName?: StringNullableFilter<"Project"> | string | null
+    forkedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     semester?: StringFilter<"Project"> | string
     tahunAkademik?: StringFilter<"Project"> | string
     submittedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
+    approvedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     mahasiswaId?: StringFilter<"Project"> | string
@@ -15030,7 +18060,8 @@ export namespace Prisma {
     documents?: DocumentListRelationFilter
     reviews?: ReviewListRelationFilter
     assignments?: ProjectAssignmentListRelationFilter
-    requirements?: ProjectRequirementListRelationFilter
+    requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
+    members?: ProjectMemberListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -15040,9 +18071,13 @@ export namespace Prisma {
     status?: SortOrder
     githubRepoUrl?: SortOrderInput | SortOrder
     githubRepoName?: SortOrderInput | SortOrder
+    orgRepoUrl?: SortOrderInput | SortOrder
+    orgRepoName?: SortOrderInput | SortOrder
+    forkedAt?: SortOrderInput | SortOrder
     semester?: SortOrder
     tahunAkademik?: SortOrder
     submittedAt?: SortOrderInput | SortOrder
+    approvedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     mahasiswaId?: SortOrder
@@ -15061,12 +18096,87 @@ export namespace Prisma {
     status?: EnumProjectStatusWithAggregatesFilter<"Project"> | $Enums.ProjectStatus
     githubRepoUrl?: StringNullableWithAggregatesFilter<"Project"> | string | null
     githubRepoName?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    orgRepoUrl?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    orgRepoName?: StringNullableWithAggregatesFilter<"Project"> | string | null
+    forkedAt?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
     semester?: StringWithAggregatesFilter<"Project"> | string
     tahunAkademik?: StringWithAggregatesFilter<"Project"> | string
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
+    approvedAt?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     mahasiswaId?: StringWithAggregatesFilter<"Project"> | string
+  }
+
+  export type ProjectMemberWhereInput = {
+    AND?: ProjectMemberWhereInput | ProjectMemberWhereInput[]
+    OR?: ProjectMemberWhereInput[]
+    NOT?: ProjectMemberWhereInput | ProjectMemberWhereInput[]
+    id?: StringFilter<"ProjectMember"> | string
+    projectId?: StringFilter<"ProjectMember"> | string
+    githubUsername?: StringFilter<"ProjectMember"> | string
+    githubId?: StringNullableFilter<"ProjectMember"> | string | null
+    githubAvatarUrl?: StringNullableFilter<"ProjectMember"> | string | null
+    name?: StringNullableFilter<"ProjectMember"> | string | null
+    role?: StringFilter<"ProjectMember"> | string
+    addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }
+
+  export type ProjectMemberOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    githubUsername?: SortOrder
+    githubId?: SortOrderInput | SortOrder
+    githubAvatarUrl?: SortOrderInput | SortOrder
+    name?: SortOrderInput | SortOrder
+    role?: SortOrder
+    addedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+  }
+
+  export type ProjectMemberWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    projectId_githubUsername?: ProjectMemberProjectIdGithubUsernameCompoundUniqueInput
+    AND?: ProjectMemberWhereInput | ProjectMemberWhereInput[]
+    OR?: ProjectMemberWhereInput[]
+    NOT?: ProjectMemberWhereInput | ProjectMemberWhereInput[]
+    projectId?: StringFilter<"ProjectMember"> | string
+    githubUsername?: StringFilter<"ProjectMember"> | string
+    githubId?: StringNullableFilter<"ProjectMember"> | string | null
+    githubAvatarUrl?: StringNullableFilter<"ProjectMember"> | string | null
+    name?: StringNullableFilter<"ProjectMember"> | string | null
+    role?: StringFilter<"ProjectMember"> | string
+    addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }, "id" | "projectId_githubUsername">
+
+  export type ProjectMemberOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    githubUsername?: SortOrder
+    githubId?: SortOrderInput | SortOrder
+    githubAvatarUrl?: SortOrderInput | SortOrder
+    name?: SortOrderInput | SortOrder
+    role?: SortOrder
+    addedAt?: SortOrder
+    _count?: ProjectMemberCountOrderByAggregateInput
+    _max?: ProjectMemberMaxOrderByAggregateInput
+    _min?: ProjectMemberMinOrderByAggregateInput
+  }
+
+  export type ProjectMemberScalarWhereWithAggregatesInput = {
+    AND?: ProjectMemberScalarWhereWithAggregatesInput | ProjectMemberScalarWhereWithAggregatesInput[]
+    OR?: ProjectMemberScalarWhereWithAggregatesInput[]
+    NOT?: ProjectMemberScalarWhereWithAggregatesInput | ProjectMemberScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectMember"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectMember"> | string
+    githubUsername?: StringWithAggregatesFilter<"ProjectMember"> | string
+    githubId?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
+    githubAvatarUrl?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
+    name?: StringNullableWithAggregatesFilter<"ProjectMember"> | string | null
+    role?: StringWithAggregatesFilter<"ProjectMember"> | string
+    addedAt?: DateTimeWithAggregatesFilter<"ProjectMember"> | Date | string
   }
 
   export type ProjectAssignmentWhereInput = {
@@ -15634,78 +18744,167 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Semester"> | Date | string
   }
 
-  export type ProjectRequirementWhereInput = {
-    AND?: ProjectRequirementWhereInput | ProjectRequirementWhereInput[]
-    OR?: ProjectRequirementWhereInput[]
-    NOT?: ProjectRequirementWhereInput | ProjectRequirementWhereInput[]
-    id?: StringFilter<"ProjectRequirement"> | string
-    projectId?: StringFilter<"ProjectRequirement"> | string
-    category?: StringFilter<"ProjectRequirement"> | string
-    content?: StringFilter<"ProjectRequirement"> | string
-    isCompleted?: BoolFilter<"ProjectRequirement"> | boolean
-    createdAt?: DateTimeFilter<"ProjectRequirement"> | Date | string
-    updatedAt?: DateTimeFilter<"ProjectRequirement"> | Date | string
+  export type ProjectRequirementsWhereInput = {
+    AND?: ProjectRequirementsWhereInput | ProjectRequirementsWhereInput[]
+    OR?: ProjectRequirementsWhereInput[]
+    NOT?: ProjectRequirementsWhereInput | ProjectRequirementsWhereInput[]
+    id?: StringFilter<"ProjectRequirements"> | string
+    projectId?: StringFilter<"ProjectRequirements"> | string
+    judulProyek?: StringNullableFilter<"ProjectRequirements"> | string | null
+    targetPengguna?: StringNullableFilter<"ProjectRequirements"> | string | null
+    latarBelakangMasalah?: StringNullableFilter<"ProjectRequirements"> | string | null
+    tujuanProyek?: StringNullableFilter<"ProjectRequirements"> | string | null
+    manfaatProyek?: StringNullableFilter<"ProjectRequirements"> | string | null
+    integrasiMatakuliah?: StringNullableFilter<"ProjectRequirements"> | string | null
+    metodologi?: StringNullableFilter<"ProjectRequirements"> | string | null
+    penulisanLaporan?: StringNullableFilter<"ProjectRequirements"> | string | null
+    ruangLingkup?: StringNullableFilter<"ProjectRequirements"> | string | null
+    sumberDayaBatasan?: StringNullableFilter<"ProjectRequirements"> | string | null
+    teknologi?: StringNullableFilter<"ProjectRequirements"> | string | null
+    fiturUtama?: StringNullableFilter<"ProjectRequirements"> | string | null
+    analisisTemuan?: StringNullableFilter<"ProjectRequirements"> | string | null
+    presentasiUjian?: StringNullableFilter<"ProjectRequirements"> | string | null
+    stakeholder?: StringNullableFilter<"ProjectRequirements"> | string | null
+    kepatuhanEtika?: StringNullableFilter<"ProjectRequirements"> | string | null
+    timeline?: StringNullableFilter<"ProjectRequirements"> | string | null
+    kerangkaWaktu?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deadlineDate?: DateTimeNullableFilter<"ProjectRequirements"> | Date | string | null
+    completionPercent?: IntFilter<"ProjectRequirements"> | number
+    createdAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
   }
 
-  export type ProjectRequirementOrderByWithRelationInput = {
+  export type ProjectRequirementsOrderByWithRelationInput = {
     id?: SortOrder
     projectId?: SortOrder
-    category?: SortOrder
-    content?: SortOrder
-    isCompleted?: SortOrder
+    judulProyek?: SortOrderInput | SortOrder
+    targetPengguna?: SortOrderInput | SortOrder
+    latarBelakangMasalah?: SortOrderInput | SortOrder
+    tujuanProyek?: SortOrderInput | SortOrder
+    manfaatProyek?: SortOrderInput | SortOrder
+    integrasiMatakuliah?: SortOrderInput | SortOrder
+    metodologi?: SortOrderInput | SortOrder
+    penulisanLaporan?: SortOrderInput | SortOrder
+    ruangLingkup?: SortOrderInput | SortOrder
+    sumberDayaBatasan?: SortOrderInput | SortOrder
+    teknologi?: SortOrderInput | SortOrder
+    fiturUtama?: SortOrderInput | SortOrder
+    analisisTemuan?: SortOrderInput | SortOrder
+    presentasiUjian?: SortOrderInput | SortOrder
+    stakeholder?: SortOrderInput | SortOrder
+    kepatuhanEtika?: SortOrderInput | SortOrder
+    timeline?: SortOrderInput | SortOrder
+    kerangkaWaktu?: SortOrderInput | SortOrder
+    deadlineDate?: SortOrderInput | SortOrder
+    completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
   }
 
-  export type ProjectRequirementWhereUniqueInput = Prisma.AtLeast<{
+  export type ProjectRequirementsWhereUniqueInput = Prisma.AtLeast<{
     id?: string
-    AND?: ProjectRequirementWhereInput | ProjectRequirementWhereInput[]
-    OR?: ProjectRequirementWhereInput[]
-    NOT?: ProjectRequirementWhereInput | ProjectRequirementWhereInput[]
-    projectId?: StringFilter<"ProjectRequirement"> | string
-    category?: StringFilter<"ProjectRequirement"> | string
-    content?: StringFilter<"ProjectRequirement"> | string
-    isCompleted?: BoolFilter<"ProjectRequirement"> | boolean
-    createdAt?: DateTimeFilter<"ProjectRequirement"> | Date | string
-    updatedAt?: DateTimeFilter<"ProjectRequirement"> | Date | string
+    projectId?: string
+    AND?: ProjectRequirementsWhereInput | ProjectRequirementsWhereInput[]
+    OR?: ProjectRequirementsWhereInput[]
+    NOT?: ProjectRequirementsWhereInput | ProjectRequirementsWhereInput[]
+    judulProyek?: StringNullableFilter<"ProjectRequirements"> | string | null
+    targetPengguna?: StringNullableFilter<"ProjectRequirements"> | string | null
+    latarBelakangMasalah?: StringNullableFilter<"ProjectRequirements"> | string | null
+    tujuanProyek?: StringNullableFilter<"ProjectRequirements"> | string | null
+    manfaatProyek?: StringNullableFilter<"ProjectRequirements"> | string | null
+    integrasiMatakuliah?: StringNullableFilter<"ProjectRequirements"> | string | null
+    metodologi?: StringNullableFilter<"ProjectRequirements"> | string | null
+    penulisanLaporan?: StringNullableFilter<"ProjectRequirements"> | string | null
+    ruangLingkup?: StringNullableFilter<"ProjectRequirements"> | string | null
+    sumberDayaBatasan?: StringNullableFilter<"ProjectRequirements"> | string | null
+    teknologi?: StringNullableFilter<"ProjectRequirements"> | string | null
+    fiturUtama?: StringNullableFilter<"ProjectRequirements"> | string | null
+    analisisTemuan?: StringNullableFilter<"ProjectRequirements"> | string | null
+    presentasiUjian?: StringNullableFilter<"ProjectRequirements"> | string | null
+    stakeholder?: StringNullableFilter<"ProjectRequirements"> | string | null
+    kepatuhanEtika?: StringNullableFilter<"ProjectRequirements"> | string | null
+    timeline?: StringNullableFilter<"ProjectRequirements"> | string | null
+    kerangkaWaktu?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deadlineDate?: DateTimeNullableFilter<"ProjectRequirements"> | Date | string | null
+    completionPercent?: IntFilter<"ProjectRequirements"> | number
+    createdAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-  }, "id">
+  }, "id" | "projectId">
 
-  export type ProjectRequirementOrderByWithAggregationInput = {
+  export type ProjectRequirementsOrderByWithAggregationInput = {
     id?: SortOrder
     projectId?: SortOrder
-    category?: SortOrder
-    content?: SortOrder
-    isCompleted?: SortOrder
+    judulProyek?: SortOrderInput | SortOrder
+    targetPengguna?: SortOrderInput | SortOrder
+    latarBelakangMasalah?: SortOrderInput | SortOrder
+    tujuanProyek?: SortOrderInput | SortOrder
+    manfaatProyek?: SortOrderInput | SortOrder
+    integrasiMatakuliah?: SortOrderInput | SortOrder
+    metodologi?: SortOrderInput | SortOrder
+    penulisanLaporan?: SortOrderInput | SortOrder
+    ruangLingkup?: SortOrderInput | SortOrder
+    sumberDayaBatasan?: SortOrderInput | SortOrder
+    teknologi?: SortOrderInput | SortOrder
+    fiturUtama?: SortOrderInput | SortOrder
+    analisisTemuan?: SortOrderInput | SortOrder
+    presentasiUjian?: SortOrderInput | SortOrder
+    stakeholder?: SortOrderInput | SortOrder
+    kepatuhanEtika?: SortOrderInput | SortOrder
+    timeline?: SortOrderInput | SortOrder
+    kerangkaWaktu?: SortOrderInput | SortOrder
+    deadlineDate?: SortOrderInput | SortOrder
+    completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    _count?: ProjectRequirementCountOrderByAggregateInput
-    _max?: ProjectRequirementMaxOrderByAggregateInput
-    _min?: ProjectRequirementMinOrderByAggregateInput
+    _count?: ProjectRequirementsCountOrderByAggregateInput
+    _avg?: ProjectRequirementsAvgOrderByAggregateInput
+    _max?: ProjectRequirementsMaxOrderByAggregateInput
+    _min?: ProjectRequirementsMinOrderByAggregateInput
+    _sum?: ProjectRequirementsSumOrderByAggregateInput
   }
 
-  export type ProjectRequirementScalarWhereWithAggregatesInput = {
-    AND?: ProjectRequirementScalarWhereWithAggregatesInput | ProjectRequirementScalarWhereWithAggregatesInput[]
-    OR?: ProjectRequirementScalarWhereWithAggregatesInput[]
-    NOT?: ProjectRequirementScalarWhereWithAggregatesInput | ProjectRequirementScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"ProjectRequirement"> | string
-    projectId?: StringWithAggregatesFilter<"ProjectRequirement"> | string
-    category?: StringWithAggregatesFilter<"ProjectRequirement"> | string
-    content?: StringWithAggregatesFilter<"ProjectRequirement"> | string
-    isCompleted?: BoolWithAggregatesFilter<"ProjectRequirement"> | boolean
-    createdAt?: DateTimeWithAggregatesFilter<"ProjectRequirement"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"ProjectRequirement"> | Date | string
+  export type ProjectRequirementsScalarWhereWithAggregatesInput = {
+    AND?: ProjectRequirementsScalarWhereWithAggregatesInput | ProjectRequirementsScalarWhereWithAggregatesInput[]
+    OR?: ProjectRequirementsScalarWhereWithAggregatesInput[]
+    NOT?: ProjectRequirementsScalarWhereWithAggregatesInput | ProjectRequirementsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectRequirements"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectRequirements"> | string
+    judulProyek?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    targetPengguna?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    latarBelakangMasalah?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    tujuanProyek?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    manfaatProyek?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    integrasiMatakuliah?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    metodologi?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    penulisanLaporan?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    ruangLingkup?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    sumberDayaBatasan?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    teknologi?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    fiturUtama?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    analisisTemuan?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    presentasiUjian?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    stakeholder?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    kepatuhanEtika?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    timeline?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    kerangkaWaktu?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    deadlineDate?: DateTimeNullableWithAggregatesFilter<"ProjectRequirements"> | Date | string | null
+    completionPercent?: IntWithAggregatesFilter<"ProjectRequirements"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"ProjectRequirements"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProjectRequirements"> | Date | string
   }
 
   export type UserCreateInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -15716,15 +18915,18 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -15735,15 +18937,18 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15754,15 +18959,18 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15773,15 +18981,18 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -15793,10 +19004,12 @@ export namespace Prisma {
   export type UserUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -15808,16 +19021,122 @@ export namespace Prisma {
   export type UserUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AccountCreateInput = {
+    id?: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token?: string | null
+    access_token?: string | null
+    expires_at?: number | null
+    token_type?: string | null
+    scope?: string | null
+    id_token?: string | null
+    session_state?: string | null
+    user: UserCreateNestedOneWithoutAccountsInput
+  }
+
+  export type AccountUncheckedCreateInput = {
+    id?: string
+    userId: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token?: string | null
+    access_token?: string | null
+    expires_at?: number | null
+    token_type?: string | null
+    scope?: string | null
+    id_token?: string | null
+    session_state?: string | null
+  }
+
+  export type AccountUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expires_at?: NullableIntFieldUpdateOperationsInput | number | null
+    token_type?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    id_token?: NullableStringFieldUpdateOperationsInput | string | null
+    session_state?: NullableStringFieldUpdateOperationsInput | string | null
+    user?: UserUpdateOneRequiredWithoutAccountsNestedInput
+  }
+
+  export type AccountUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expires_at?: NullableIntFieldUpdateOperationsInput | number | null
+    token_type?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    id_token?: NullableStringFieldUpdateOperationsInput | string | null
+    session_state?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AccountCreateManyInput = {
+    id?: string
+    userId: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token?: string | null
+    access_token?: string | null
+    expires_at?: number | null
+    token_type?: string | null
+    scope?: string | null
+    id_token?: string | null
+    session_state?: string | null
+  }
+
+  export type AccountUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expires_at?: NullableIntFieldUpdateOperationsInput | number | null
+    token_type?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    id_token?: NullableStringFieldUpdateOperationsInput | string | null
+    session_state?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AccountUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expires_at?: NullableIntFieldUpdateOperationsInput | number | null
+    token_type?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    id_token?: NullableStringFieldUpdateOperationsInput | string | null
+    session_state?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProjectCreateInput = {
@@ -15827,16 +19146,21 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswa: UserCreateNestedOneWithoutProjectsInput
     documents?: DocumentCreateNestedManyWithoutProjectInput
     reviews?: ReviewCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -15846,16 +19170,21 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswaId: string
     documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -15865,16 +19194,21 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
     documents?: DocumentUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -15884,16 +19218,21 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswaId?: StringFieldUpdateOperationsInput | string
     documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -15903,9 +19242,13 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswaId: string
@@ -15918,9 +19261,13 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -15932,12 +19279,92 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswaId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ProjectMemberCreateInput = {
+    id?: string
+    githubUsername: string
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutMembersInput
+  }
+
+  export type ProjectMemberUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    githubUsername: string
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+  }
+
+  export type ProjectMemberUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutMembersNestedInput
+  }
+
+  export type ProjectMemberUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectMemberCreateManyInput = {
+    id?: string
+    projectId: string
+    githubUsername: string
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+  }
+
+  export type ProjectMemberUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectMemberUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProjectAssignmentCreateInput = {
@@ -16531,71 +19958,190 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectRequirementCreateInput = {
+  export type ProjectRequirementsCreateInput = {
     id?: string
-    category: string
-    content: string
-    isCompleted?: boolean
+    judulProyek?: string | null
+    targetPengguna?: string | null
+    latarBelakangMasalah?: string | null
+    tujuanProyek?: string | null
+    manfaatProyek?: string | null
+    integrasiMatakuliah?: string | null
+    metodologi?: string | null
+    penulisanLaporan?: string | null
+    ruangLingkup?: string | null
+    sumberDayaBatasan?: string | null
+    teknologi?: string | null
+    fiturUtama?: string | null
+    analisisTemuan?: string | null
+    presentasiUjian?: string | null
+    stakeholder?: string | null
+    kepatuhanEtika?: string | null
+    timeline?: string | null
+    kerangkaWaktu?: string | null
+    deadlineDate?: Date | string | null
+    completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutRequirementsInput
   }
 
-  export type ProjectRequirementUncheckedCreateInput = {
+  export type ProjectRequirementsUncheckedCreateInput = {
     id?: string
     projectId: string
-    category: string
-    content: string
-    isCompleted?: boolean
+    judulProyek?: string | null
+    targetPengguna?: string | null
+    latarBelakangMasalah?: string | null
+    tujuanProyek?: string | null
+    manfaatProyek?: string | null
+    integrasiMatakuliah?: string | null
+    metodologi?: string | null
+    penulisanLaporan?: string | null
+    ruangLingkup?: string | null
+    sumberDayaBatasan?: string | null
+    teknologi?: string | null
+    fiturUtama?: string | null
+    analisisTemuan?: string | null
+    presentasiUjian?: string | null
+    stakeholder?: string | null
+    kepatuhanEtika?: string | null
+    timeline?: string | null
+    kerangkaWaktu?: string | null
+    deadlineDate?: Date | string | null
+    completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type ProjectRequirementUpdateInput = {
+  export type ProjectRequirementsUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    judulProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    targetPengguna?: NullableStringFieldUpdateOperationsInput | string | null
+    latarBelakangMasalah?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    manfaatProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    integrasiMatakuliah?: NullableStringFieldUpdateOperationsInput | string | null
+    metodologi?: NullableStringFieldUpdateOperationsInput | string | null
+    penulisanLaporan?: NullableStringFieldUpdateOperationsInput | string | null
+    ruangLingkup?: NullableStringFieldUpdateOperationsInput | string | null
+    sumberDayaBatasan?: NullableStringFieldUpdateOperationsInput | string | null
+    teknologi?: NullableStringFieldUpdateOperationsInput | string | null
+    fiturUtama?: NullableStringFieldUpdateOperationsInput | string | null
+    analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
+    presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
+    stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    kepatuhanEtika?: NullableStringFieldUpdateOperationsInput | string | null
+    timeline?: NullableStringFieldUpdateOperationsInput | string | null
+    kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
+    deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutRequirementsNestedInput
   }
 
-  export type ProjectRequirementUncheckedUpdateInput = {
+  export type ProjectRequirementsUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    judulProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    targetPengguna?: NullableStringFieldUpdateOperationsInput | string | null
+    latarBelakangMasalah?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    manfaatProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    integrasiMatakuliah?: NullableStringFieldUpdateOperationsInput | string | null
+    metodologi?: NullableStringFieldUpdateOperationsInput | string | null
+    penulisanLaporan?: NullableStringFieldUpdateOperationsInput | string | null
+    ruangLingkup?: NullableStringFieldUpdateOperationsInput | string | null
+    sumberDayaBatasan?: NullableStringFieldUpdateOperationsInput | string | null
+    teknologi?: NullableStringFieldUpdateOperationsInput | string | null
+    fiturUtama?: NullableStringFieldUpdateOperationsInput | string | null
+    analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
+    presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
+    stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    kepatuhanEtika?: NullableStringFieldUpdateOperationsInput | string | null
+    timeline?: NullableStringFieldUpdateOperationsInput | string | null
+    kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
+    deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectRequirementCreateManyInput = {
+  export type ProjectRequirementsCreateManyInput = {
     id?: string
     projectId: string
-    category: string
-    content: string
-    isCompleted?: boolean
+    judulProyek?: string | null
+    targetPengguna?: string | null
+    latarBelakangMasalah?: string | null
+    tujuanProyek?: string | null
+    manfaatProyek?: string | null
+    integrasiMatakuliah?: string | null
+    metodologi?: string | null
+    penulisanLaporan?: string | null
+    ruangLingkup?: string | null
+    sumberDayaBatasan?: string | null
+    teknologi?: string | null
+    fiturUtama?: string | null
+    analisisTemuan?: string | null
+    presentasiUjian?: string | null
+    stakeholder?: string | null
+    kepatuhanEtika?: string | null
+    timeline?: string | null
+    kerangkaWaktu?: string | null
+    deadlineDate?: Date | string | null
+    completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type ProjectRequirementUpdateManyMutationInput = {
+  export type ProjectRequirementsUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    judulProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    targetPengguna?: NullableStringFieldUpdateOperationsInput | string | null
+    latarBelakangMasalah?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    manfaatProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    integrasiMatakuliah?: NullableStringFieldUpdateOperationsInput | string | null
+    metodologi?: NullableStringFieldUpdateOperationsInput | string | null
+    penulisanLaporan?: NullableStringFieldUpdateOperationsInput | string | null
+    ruangLingkup?: NullableStringFieldUpdateOperationsInput | string | null
+    sumberDayaBatasan?: NullableStringFieldUpdateOperationsInput | string | null
+    teknologi?: NullableStringFieldUpdateOperationsInput | string | null
+    fiturUtama?: NullableStringFieldUpdateOperationsInput | string | null
+    analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
+    presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
+    stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    kepatuhanEtika?: NullableStringFieldUpdateOperationsInput | string | null
+    timeline?: NullableStringFieldUpdateOperationsInput | string | null
+    kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
+    deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectRequirementUncheckedUpdateManyInput = {
+  export type ProjectRequirementsUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     projectId?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isCompleted?: BoolFieldUpdateOperationsInput | boolean
+    judulProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    targetPengguna?: NullableStringFieldUpdateOperationsInput | string | null
+    latarBelakangMasalah?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    manfaatProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    integrasiMatakuliah?: NullableStringFieldUpdateOperationsInput | string | null
+    metodologi?: NullableStringFieldUpdateOperationsInput | string | null
+    penulisanLaporan?: NullableStringFieldUpdateOperationsInput | string | null
+    ruangLingkup?: NullableStringFieldUpdateOperationsInput | string | null
+    sumberDayaBatasan?: NullableStringFieldUpdateOperationsInput | string | null
+    teknologi?: NullableStringFieldUpdateOperationsInput | string | null
+    fiturUtama?: NullableStringFieldUpdateOperationsInput | string | null
+    analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
+    presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
+    stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    kepatuhanEtika?: NullableStringFieldUpdateOperationsInput | string | null
+    timeline?: NullableStringFieldUpdateOperationsInput | string | null
+    kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
+    deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -16615,13 +20161,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type EnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
   export type StringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -16635,6 +20174,24 @@ export namespace Prisma {
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     mode?: QueryMode
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type DateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type EnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
   export type BoolFilter<$PrismaModel = never> = {
@@ -16677,6 +20234,12 @@ export namespace Prisma {
     none?: ProjectAssignmentWhereInput
   }
 
+  export type AccountListRelationFilter = {
+    every?: AccountWhereInput
+    some?: AccountWhereInput
+    none?: AccountWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -16698,13 +20261,19 @@ export namespace Prisma {
     _count?: SortOrder
   }
 
+  export type AccountOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type UserCountOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    emailVerified?: SortOrder
     name?: SortOrder
     password?: SortOrder
     role?: SortOrder
-    avatarUrl?: SortOrder
+    image?: SortOrder
     githubId?: SortOrder
     githubUsername?: SortOrder
     githubToken?: SortOrder
@@ -16716,10 +20285,12 @@ export namespace Prisma {
   export type UserMaxOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    emailVerified?: SortOrder
     name?: SortOrder
     password?: SortOrder
     role?: SortOrder
-    avatarUrl?: SortOrder
+    image?: SortOrder
     githubId?: SortOrder
     githubUsername?: SortOrder
     githubToken?: SortOrder
@@ -16731,10 +20302,12 @@ export namespace Prisma {
   export type UserMinOrderByAggregateInput = {
     id?: SortOrder
     username?: SortOrder
+    email?: SortOrder
+    emailVerified?: SortOrder
     name?: SortOrder
     password?: SortOrder
     role?: SortOrder
-    avatarUrl?: SortOrder
+    image?: SortOrder
     githubId?: SortOrder
     githubUsername?: SortOrder
     githubToken?: SortOrder
@@ -16761,16 +20334,6 @@ export namespace Prisma {
     _max?: NestedStringFilter<$PrismaModel>
   }
 
-  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
   export type StringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -16787,6 +20350,30 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedStringNullableFilter<$PrismaModel>
     _max?: NestedStringNullableFilter<$PrismaModel>
+  }
+
+  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type EnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
   }
 
   export type BoolWithAggregatesFilter<$PrismaModel = never> = {
@@ -16811,27 +20398,101 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
-  export type EnumProjectStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
-  }
-
-  export type DateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
   export type UserScalarRelationFilter = {
     is?: UserWhereInput
     isNot?: UserWhereInput
+  }
+
+  export type AccountProviderProviderAccountIdCompoundUniqueInput = {
+    provider: string
+    providerAccountId: string
+  }
+
+  export type AccountCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refresh_token?: SortOrder
+    access_token?: SortOrder
+    expires_at?: SortOrder
+    token_type?: SortOrder
+    scope?: SortOrder
+    id_token?: SortOrder
+    session_state?: SortOrder
+  }
+
+  export type AccountAvgOrderByAggregateInput = {
+    expires_at?: SortOrder
+  }
+
+  export type AccountMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refresh_token?: SortOrder
+    access_token?: SortOrder
+    expires_at?: SortOrder
+    token_type?: SortOrder
+    scope?: SortOrder
+    id_token?: SortOrder
+    session_state?: SortOrder
+  }
+
+  export type AccountMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    type?: SortOrder
+    provider?: SortOrder
+    providerAccountId?: SortOrder
+    refresh_token?: SortOrder
+    access_token?: SortOrder
+    expires_at?: SortOrder
+    token_type?: SortOrder
+    scope?: SortOrder
+    id_token?: SortOrder
+    session_state?: SortOrder
+  }
+
+  export type AccountSumOrderByAggregateInput = {
+    expires_at?: SortOrder
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type EnumProjectStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
   }
 
   export type DocumentListRelationFilter = {
@@ -16840,17 +20501,22 @@ export namespace Prisma {
     none?: DocumentWhereInput
   }
 
-  export type ProjectRequirementListRelationFilter = {
-    every?: ProjectRequirementWhereInput
-    some?: ProjectRequirementWhereInput
-    none?: ProjectRequirementWhereInput
+  export type ProjectRequirementsNullableScalarRelationFilter = {
+    is?: ProjectRequirementsWhereInput | null
+    isNot?: ProjectRequirementsWhereInput | null
+  }
+
+  export type ProjectMemberListRelationFilter = {
+    every?: ProjectMemberWhereInput
+    some?: ProjectMemberWhereInput
+    none?: ProjectMemberWhereInput
   }
 
   export type DocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
-  export type ProjectRequirementOrderByRelationAggregateInput = {
+  export type ProjectMemberOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16861,9 +20527,13 @@ export namespace Prisma {
     status?: SortOrder
     githubRepoUrl?: SortOrder
     githubRepoName?: SortOrder
+    orgRepoUrl?: SortOrder
+    orgRepoName?: SortOrder
+    forkedAt?: SortOrder
     semester?: SortOrder
     tahunAkademik?: SortOrder
     submittedAt?: SortOrder
+    approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     mahasiswaId?: SortOrder
@@ -16876,9 +20546,13 @@ export namespace Prisma {
     status?: SortOrder
     githubRepoUrl?: SortOrder
     githubRepoName?: SortOrder
+    orgRepoUrl?: SortOrder
+    orgRepoName?: SortOrder
+    forkedAt?: SortOrder
     semester?: SortOrder
     tahunAkademik?: SortOrder
     submittedAt?: SortOrder
+    approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     mahasiswaId?: SortOrder
@@ -16891,9 +20565,13 @@ export namespace Prisma {
     status?: SortOrder
     githubRepoUrl?: SortOrder
     githubRepoName?: SortOrder
+    orgRepoUrl?: SortOrder
+    orgRepoName?: SortOrder
+    forkedAt?: SortOrder
     semester?: SortOrder
     tahunAkademik?: SortOrder
     submittedAt?: SortOrder
+    approvedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     mahasiswaId?: SortOrder
@@ -16909,23 +20587,47 @@ export namespace Prisma {
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
   }
 
-  export type DateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
-  }
-
   export type ProjectScalarRelationFilter = {
     is?: ProjectWhereInput
     isNot?: ProjectWhereInput
+  }
+
+  export type ProjectMemberProjectIdGithubUsernameCompoundUniqueInput = {
+    projectId: string
+    githubUsername: string
+  }
+
+  export type ProjectMemberCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    githubUsername?: SortOrder
+    githubId?: SortOrder
+    githubAvatarUrl?: SortOrder
+    name?: SortOrder
+    role?: SortOrder
+    addedAt?: SortOrder
+  }
+
+  export type ProjectMemberMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    githubUsername?: SortOrder
+    githubId?: SortOrder
+    githubAvatarUrl?: SortOrder
+    name?: SortOrder
+    role?: SortOrder
+    addedAt?: SortOrder
+  }
+
+  export type ProjectMemberMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    githubUsername?: SortOrder
+    githubId?: SortOrder
+    githubAvatarUrl?: SortOrder
+    name?: SortOrder
+    role?: SortOrder
+    addedAt?: SortOrder
   }
 
   export type ProjectAssignmentProjectIdDosenIdCompoundUniqueInput = {
@@ -17049,17 +20751,6 @@ export namespace Prisma {
     not?: NestedEnumReviewStatusFilter<$PrismaModel> | $Enums.ReviewStatus
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type ReviewCommentListRelationFilter = {
     every?: ReviewCommentWhereInput
     some?: ReviewCommentWhereInput
@@ -17137,22 +20828,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumReviewStatusFilter<$PrismaModel>
     _max?: NestedEnumReviewStatusFilter<$PrismaModel>
-  }
-
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
   }
 
   export type ReviewScalarRelationFilter = {
@@ -17355,34 +21030,93 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type ProjectRequirementCountOrderByAggregateInput = {
+  export type ProjectRequirementsCountOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
-    category?: SortOrder
-    content?: SortOrder
-    isCompleted?: SortOrder
+    judulProyek?: SortOrder
+    targetPengguna?: SortOrder
+    latarBelakangMasalah?: SortOrder
+    tujuanProyek?: SortOrder
+    manfaatProyek?: SortOrder
+    integrasiMatakuliah?: SortOrder
+    metodologi?: SortOrder
+    penulisanLaporan?: SortOrder
+    ruangLingkup?: SortOrder
+    sumberDayaBatasan?: SortOrder
+    teknologi?: SortOrder
+    fiturUtama?: SortOrder
+    analisisTemuan?: SortOrder
+    presentasiUjian?: SortOrder
+    stakeholder?: SortOrder
+    kepatuhanEtika?: SortOrder
+    timeline?: SortOrder
+    kerangkaWaktu?: SortOrder
+    deadlineDate?: SortOrder
+    completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type ProjectRequirementMaxOrderByAggregateInput = {
+  export type ProjectRequirementsAvgOrderByAggregateInput = {
+    completionPercent?: SortOrder
+  }
+
+  export type ProjectRequirementsMaxOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
-    category?: SortOrder
-    content?: SortOrder
-    isCompleted?: SortOrder
+    judulProyek?: SortOrder
+    targetPengguna?: SortOrder
+    latarBelakangMasalah?: SortOrder
+    tujuanProyek?: SortOrder
+    manfaatProyek?: SortOrder
+    integrasiMatakuliah?: SortOrder
+    metodologi?: SortOrder
+    penulisanLaporan?: SortOrder
+    ruangLingkup?: SortOrder
+    sumberDayaBatasan?: SortOrder
+    teknologi?: SortOrder
+    fiturUtama?: SortOrder
+    analisisTemuan?: SortOrder
+    presentasiUjian?: SortOrder
+    stakeholder?: SortOrder
+    kepatuhanEtika?: SortOrder
+    timeline?: SortOrder
+    kerangkaWaktu?: SortOrder
+    deadlineDate?: SortOrder
+    completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
-  export type ProjectRequirementMinOrderByAggregateInput = {
+  export type ProjectRequirementsMinOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
-    category?: SortOrder
-    content?: SortOrder
-    isCompleted?: SortOrder
+    judulProyek?: SortOrder
+    targetPengguna?: SortOrder
+    latarBelakangMasalah?: SortOrder
+    tujuanProyek?: SortOrder
+    manfaatProyek?: SortOrder
+    integrasiMatakuliah?: SortOrder
+    metodologi?: SortOrder
+    penulisanLaporan?: SortOrder
+    ruangLingkup?: SortOrder
+    sumberDayaBatasan?: SortOrder
+    teknologi?: SortOrder
+    fiturUtama?: SortOrder
+    analisisTemuan?: SortOrder
+    presentasiUjian?: SortOrder
+    stakeholder?: SortOrder
+    kepatuhanEtika?: SortOrder
+    timeline?: SortOrder
+    kerangkaWaktu?: SortOrder
+    deadlineDate?: SortOrder
+    completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ProjectRequirementsSumOrderByAggregateInput = {
+    completionPercent?: SortOrder
   }
 
   export type ProjectCreateNestedManyWithoutMahasiswaInput = {
@@ -17413,6 +21147,13 @@ export namespace Prisma {
     connect?: ProjectAssignmentWhereUniqueInput | ProjectAssignmentWhereUniqueInput[]
   }
 
+  export type AccountCreateNestedManyWithoutUserInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+  }
+
   export type ProjectUncheckedCreateNestedManyWithoutMahasiswaInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -17441,16 +21182,27 @@ export namespace Prisma {
     connect?: ProjectAssignmentWhereUniqueInput | ProjectAssignmentWhereUniqueInput[]
   }
 
+  export type AccountUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+  }
+
   export type StringFieldUpdateOperationsInput = {
     set?: string
   }
 
-  export type EnumRoleFieldUpdateOperationsInput = {
-    set?: $Enums.Role
-  }
-
   export type NullableStringFieldUpdateOperationsInput = {
     set?: string | null
+  }
+
+  export type NullableDateTimeFieldUpdateOperationsInput = {
+    set?: Date | string | null
+  }
+
+  export type EnumRoleFieldUpdateOperationsInput = {
+    set?: $Enums.Role
   }
 
   export type BoolFieldUpdateOperationsInput = {
@@ -17517,6 +21269,20 @@ export namespace Prisma {
     deleteMany?: ProjectAssignmentScalarWhereInput | ProjectAssignmentScalarWhereInput[]
   }
 
+  export type AccountUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  }
+
   export type ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -17573,6 +21339,42 @@ export namespace Prisma {
     deleteMany?: ProjectAssignmentScalarWhereInput | ProjectAssignmentScalarWhereInput[]
   }
 
+  export type AccountUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
+    upsert?: AccountUpsertWithWhereUniqueWithoutUserInput | AccountUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: AccountCreateManyUserInputEnvelope
+    set?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    disconnect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    delete?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    connect?: AccountWhereUniqueInput | AccountWhereUniqueInput[]
+    update?: AccountUpdateWithWhereUniqueWithoutUserInput | AccountUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: AccountUpdateManyWithWhereWithoutUserInput | AccountUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: AccountScalarWhereInput | AccountScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutAccountsInput = {
+    create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type UserUpdateOneRequiredWithoutAccountsNestedInput = {
+    create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
+    upsert?: UserUpsertWithoutAccountsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAccountsInput, UserUpdateWithoutAccountsInput>, UserUncheckedUpdateWithoutAccountsInput>
+  }
+
   export type UserCreateNestedOneWithoutProjectsInput = {
     create?: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
     connectOrCreate?: UserCreateOrConnectWithoutProjectsInput
@@ -17600,11 +21402,17 @@ export namespace Prisma {
     connect?: ProjectAssignmentWhereUniqueInput | ProjectAssignmentWhereUniqueInput[]
   }
 
-  export type ProjectRequirementCreateNestedManyWithoutProjectInput = {
-    create?: XOR<ProjectRequirementCreateWithoutProjectInput, ProjectRequirementUncheckedCreateWithoutProjectInput> | ProjectRequirementCreateWithoutProjectInput[] | ProjectRequirementUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: ProjectRequirementCreateOrConnectWithoutProjectInput | ProjectRequirementCreateOrConnectWithoutProjectInput[]
-    createMany?: ProjectRequirementCreateManyProjectInputEnvelope
-    connect?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
+  export type ProjectRequirementsCreateNestedOneWithoutProjectInput = {
+    create?: XOR<ProjectRequirementsCreateWithoutProjectInput, ProjectRequirementsUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: ProjectRequirementsCreateOrConnectWithoutProjectInput
+    connect?: ProjectRequirementsWhereUniqueInput
+  }
+
+  export type ProjectMemberCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectMemberCreateManyProjectInputEnvelope
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
   }
 
   export type DocumentUncheckedCreateNestedManyWithoutProjectInput = {
@@ -17628,19 +21436,21 @@ export namespace Prisma {
     connect?: ProjectAssignmentWhereUniqueInput | ProjectAssignmentWhereUniqueInput[]
   }
 
-  export type ProjectRequirementUncheckedCreateNestedManyWithoutProjectInput = {
-    create?: XOR<ProjectRequirementCreateWithoutProjectInput, ProjectRequirementUncheckedCreateWithoutProjectInput> | ProjectRequirementCreateWithoutProjectInput[] | ProjectRequirementUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: ProjectRequirementCreateOrConnectWithoutProjectInput | ProjectRequirementCreateOrConnectWithoutProjectInput[]
-    createMany?: ProjectRequirementCreateManyProjectInputEnvelope
-    connect?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
+  export type ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput = {
+    create?: XOR<ProjectRequirementsCreateWithoutProjectInput, ProjectRequirementsUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: ProjectRequirementsCreateOrConnectWithoutProjectInput
+    connect?: ProjectRequirementsWhereUniqueInput
+  }
+
+  export type ProjectMemberUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectMemberCreateManyProjectInputEnvelope
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
   }
 
   export type EnumProjectStatusFieldUpdateOperationsInput = {
     set?: $Enums.ProjectStatus
-  }
-
-  export type NullableDateTimeFieldUpdateOperationsInput = {
-    set?: Date | string | null
   }
 
   export type UserUpdateOneRequiredWithoutProjectsNestedInput = {
@@ -17693,18 +21503,28 @@ export namespace Prisma {
     deleteMany?: ProjectAssignmentScalarWhereInput | ProjectAssignmentScalarWhereInput[]
   }
 
-  export type ProjectRequirementUpdateManyWithoutProjectNestedInput = {
-    create?: XOR<ProjectRequirementCreateWithoutProjectInput, ProjectRequirementUncheckedCreateWithoutProjectInput> | ProjectRequirementCreateWithoutProjectInput[] | ProjectRequirementUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: ProjectRequirementCreateOrConnectWithoutProjectInput | ProjectRequirementCreateOrConnectWithoutProjectInput[]
-    upsert?: ProjectRequirementUpsertWithWhereUniqueWithoutProjectInput | ProjectRequirementUpsertWithWhereUniqueWithoutProjectInput[]
-    createMany?: ProjectRequirementCreateManyProjectInputEnvelope
-    set?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    disconnect?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    delete?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    connect?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    update?: ProjectRequirementUpdateWithWhereUniqueWithoutProjectInput | ProjectRequirementUpdateWithWhereUniqueWithoutProjectInput[]
-    updateMany?: ProjectRequirementUpdateManyWithWhereWithoutProjectInput | ProjectRequirementUpdateManyWithWhereWithoutProjectInput[]
-    deleteMany?: ProjectRequirementScalarWhereInput | ProjectRequirementScalarWhereInput[]
+  export type ProjectRequirementsUpdateOneWithoutProjectNestedInput = {
+    create?: XOR<ProjectRequirementsCreateWithoutProjectInput, ProjectRequirementsUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: ProjectRequirementsCreateOrConnectWithoutProjectInput
+    upsert?: ProjectRequirementsUpsertWithoutProjectInput
+    disconnect?: ProjectRequirementsWhereInput | boolean
+    delete?: ProjectRequirementsWhereInput | boolean
+    connect?: ProjectRequirementsWhereUniqueInput
+    update?: XOR<XOR<ProjectRequirementsUpdateToOneWithWhereWithoutProjectInput, ProjectRequirementsUpdateWithoutProjectInput>, ProjectRequirementsUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectMemberUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectMemberUpsertWithWhereUniqueWithoutProjectInput | ProjectMemberUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectMemberCreateManyProjectInputEnvelope
+    set?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    disconnect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    delete?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    update?: ProjectMemberUpdateWithWhereUniqueWithoutProjectInput | ProjectMemberUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectMemberUpdateManyWithWhereWithoutProjectInput | ProjectMemberUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
   }
 
   export type DocumentUncheckedUpdateManyWithoutProjectNestedInput = {
@@ -17749,18 +21569,42 @@ export namespace Prisma {
     deleteMany?: ProjectAssignmentScalarWhereInput | ProjectAssignmentScalarWhereInput[]
   }
 
-  export type ProjectRequirementUncheckedUpdateManyWithoutProjectNestedInput = {
-    create?: XOR<ProjectRequirementCreateWithoutProjectInput, ProjectRequirementUncheckedCreateWithoutProjectInput> | ProjectRequirementCreateWithoutProjectInput[] | ProjectRequirementUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: ProjectRequirementCreateOrConnectWithoutProjectInput | ProjectRequirementCreateOrConnectWithoutProjectInput[]
-    upsert?: ProjectRequirementUpsertWithWhereUniqueWithoutProjectInput | ProjectRequirementUpsertWithWhereUniqueWithoutProjectInput[]
-    createMany?: ProjectRequirementCreateManyProjectInputEnvelope
-    set?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    disconnect?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    delete?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    connect?: ProjectRequirementWhereUniqueInput | ProjectRequirementWhereUniqueInput[]
-    update?: ProjectRequirementUpdateWithWhereUniqueWithoutProjectInput | ProjectRequirementUpdateWithWhereUniqueWithoutProjectInput[]
-    updateMany?: ProjectRequirementUpdateManyWithWhereWithoutProjectInput | ProjectRequirementUpdateManyWithWhereWithoutProjectInput[]
-    deleteMany?: ProjectRequirementScalarWhereInput | ProjectRequirementScalarWhereInput[]
+  export type ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput = {
+    create?: XOR<ProjectRequirementsCreateWithoutProjectInput, ProjectRequirementsUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: ProjectRequirementsCreateOrConnectWithoutProjectInput
+    upsert?: ProjectRequirementsUpsertWithoutProjectInput
+    disconnect?: ProjectRequirementsWhereInput | boolean
+    delete?: ProjectRequirementsWhereInput | boolean
+    connect?: ProjectRequirementsWhereUniqueInput
+    update?: XOR<XOR<ProjectRequirementsUpdateToOneWithWhereWithoutProjectInput, ProjectRequirementsUpdateWithoutProjectInput>, ProjectRequirementsUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectMemberUpsertWithWhereUniqueWithoutProjectInput | ProjectMemberUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectMemberCreateManyProjectInputEnvelope
+    set?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    disconnect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    delete?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    connect?: ProjectMemberWhereUniqueInput | ProjectMemberWhereUniqueInput[]
+    update?: ProjectMemberUpdateWithWhereUniqueWithoutProjectInput | ProjectMemberUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectMemberUpdateManyWithWhereWithoutProjectInput | ProjectMemberUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+  }
+
+  export type ProjectCreateNestedOneWithoutMembersInput = {
+    create?: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutMembersInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutMembersNestedInput = {
+    create?: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutMembersInput
+    upsert?: ProjectUpsertWithoutMembersInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutMembersInput, ProjectUpdateWithoutMembersInput>, ProjectUncheckedUpdateWithoutMembersInput>
   }
 
   export type ProjectCreateNestedOneWithoutAssignmentsInput = {
@@ -17859,14 +21703,6 @@ export namespace Prisma {
 
   export type EnumReviewStatusFieldUpdateOperationsInput = {
     set?: $Enums.ReviewStatus
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ProjectUpdateOneRequiredWithoutReviewsNestedInput = {
@@ -18067,13 +21903,6 @@ export namespace Prisma {
     not?: NestedStringFilter<$PrismaModel> | string
   }
 
-  export type NestedEnumRoleFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
-  }
-
   export type NestedStringNullableFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -18086,6 +21915,24 @@ export namespace Prisma {
     startsWith?: string | StringFieldRefInput<$PrismaModel>
     endsWith?: string | StringFieldRefInput<$PrismaModel>
     not?: NestedStringNullableFilter<$PrismaModel> | string | null
+  }
+
+  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
+  }
+
+  export type NestedEnumRoleFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleFilter<$PrismaModel> | $Enums.Role
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -18132,16 +21979,6 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
-  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
-    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
-    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumRoleFilter<$PrismaModel>
-    _max?: NestedEnumRoleFilter<$PrismaModel>
-  }
-
   export type NestedStringNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel> | null
     in?: string[] | ListStringFieldRefInput<$PrismaModel> | null
@@ -18170,6 +22007,30 @@ export namespace Prisma {
     not?: NestedIntNullableFilter<$PrismaModel> | number | null
   }
 
+  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
+    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
+    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
+    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedDateTimeNullableFilter<$PrismaModel>
+    _max?: NestedDateTimeNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumRoleWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.Role | EnumRoleFieldRefInput<$PrismaModel>
+    in?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    notIn?: $Enums.Role[] | ListEnumRoleFieldRefInput<$PrismaModel>
+    not?: NestedEnumRoleWithAggregatesFilter<$PrismaModel> | $Enums.Role
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRoleFilter<$PrismaModel>
+    _max?: NestedEnumRoleFilter<$PrismaModel>
+  }
+
   export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
     equals?: boolean | BooleanFieldRefInput<$PrismaModel>
     not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
@@ -18192,22 +22053,38 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedEnumProjectStatusFilter<$PrismaModel = never> = {
     equals?: $Enums.ProjectStatus | EnumProjectStatusFieldRefInput<$PrismaModel>
     in?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
     notIn?: $Enums.ProjectStatus[] | ListEnumProjectStatusFieldRefInput<$PrismaModel>
     not?: NestedEnumProjectStatusFilter<$PrismaModel> | $Enums.ProjectStatus
-  }
-
-  export type NestedDateTimeNullableFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableFilter<$PrismaModel> | Date | string | null
   }
 
   export type NestedEnumProjectStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -18218,20 +22095,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumProjectStatusFilter<$PrismaModel>
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
-  }
-
-  export type NestedDateTimeNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: Date | string | DateTimeFieldRefInput<$PrismaModel> | null
-    in?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    notIn?: Date[] | string[] | ListDateTimeFieldRefInput<$PrismaModel> | null
-    lt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    lte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gt?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    gte?: Date | string | DateTimeFieldRefInput<$PrismaModel>
-    not?: NestedDateTimeNullableWithAggregatesFilter<$PrismaModel> | Date | string | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedDateTimeNullableFilter<$PrismaModel>
-    _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
   export type NestedEnumDocumentTypeFilter<$PrismaModel = never> = {
@@ -18295,33 +22158,6 @@ export namespace Prisma {
     _max?: NestedEnumReviewStatusFilter<$PrismaModel>
   }
 
-  export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-
-  export type NestedFloatNullableFilter<$PrismaModel = never> = {
-    equals?: number | FloatFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
-    lt?: number | FloatFieldRefInput<$PrismaModel>
-    lte?: number | FloatFieldRefInput<$PrismaModel>
-    gt?: number | FloatFieldRefInput<$PrismaModel>
-    gte?: number | FloatFieldRefInput<$PrismaModel>
-    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
-  }
-
   export type ProjectCreateWithoutMahasiswaInput = {
     id?: string
     title: string
@@ -18329,15 +22165,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentCreateNestedManyWithoutProjectInput
     reviews?: ReviewCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMahasiswaInput = {
@@ -18347,15 +22188,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMahasiswaInput = {
@@ -18456,6 +22302,44 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type AccountCreateWithoutUserInput = {
+    id?: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token?: string | null
+    access_token?: string | null
+    expires_at?: number | null
+    token_type?: string | null
+    scope?: string | null
+    id_token?: string | null
+    session_state?: string | null
+  }
+
+  export type AccountUncheckedCreateWithoutUserInput = {
+    id?: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token?: string | null
+    access_token?: string | null
+    expires_at?: number | null
+    token_type?: string | null
+    scope?: string | null
+    id_token?: string | null
+    session_state?: string | null
+  }
+
+  export type AccountCreateOrConnectWithoutUserInput = {
+    where: AccountWhereUniqueInput
+    create: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput>
+  }
+
+  export type AccountCreateManyUserInputEnvelope = {
+    data: AccountCreateManyUserInput | AccountCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProjectUpsertWithWhereUniqueWithoutMahasiswaInput = {
     where: ProjectWhereUniqueInput
     update: XOR<ProjectUpdateWithoutMahasiswaInput, ProjectUncheckedUpdateWithoutMahasiswaInput>
@@ -18482,9 +22366,13 @@ export namespace Prisma {
     status?: EnumProjectStatusFilter<"Project"> | $Enums.ProjectStatus
     githubRepoUrl?: StringNullableFilter<"Project"> | string | null
     githubRepoName?: StringNullableFilter<"Project"> | string | null
+    orgRepoUrl?: StringNullableFilter<"Project"> | string | null
+    orgRepoName?: StringNullableFilter<"Project"> | string | null
+    forkedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     semester?: StringFilter<"Project"> | string
     tahunAkademik?: StringFilter<"Project"> | string
     submittedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
+    approvedAt?: DateTimeNullableFilter<"Project"> | Date | string | null
     createdAt?: DateTimeFilter<"Project"> | Date | string
     updatedAt?: DateTimeFilter<"Project"> | Date | string
     mahasiswaId?: StringFilter<"Project"> | string
@@ -18577,13 +22465,149 @@ export namespace Prisma {
     assignedAt?: DateTimeFilter<"ProjectAssignment"> | Date | string
   }
 
+  export type AccountUpsertWithWhereUniqueWithoutUserInput = {
+    where: AccountWhereUniqueInput
+    update: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
+    create: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput>
+  }
+
+  export type AccountUpdateWithWhereUniqueWithoutUserInput = {
+    where: AccountWhereUniqueInput
+    data: XOR<AccountUpdateWithoutUserInput, AccountUncheckedUpdateWithoutUserInput>
+  }
+
+  export type AccountUpdateManyWithWhereWithoutUserInput = {
+    where: AccountScalarWhereInput
+    data: XOR<AccountUpdateManyMutationInput, AccountUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type AccountScalarWhereInput = {
+    AND?: AccountScalarWhereInput | AccountScalarWhereInput[]
+    OR?: AccountScalarWhereInput[]
+    NOT?: AccountScalarWhereInput | AccountScalarWhereInput[]
+    id?: StringFilter<"Account"> | string
+    userId?: StringFilter<"Account"> | string
+    type?: StringFilter<"Account"> | string
+    provider?: StringFilter<"Account"> | string
+    providerAccountId?: StringFilter<"Account"> | string
+    refresh_token?: StringNullableFilter<"Account"> | string | null
+    access_token?: StringNullableFilter<"Account"> | string | null
+    expires_at?: IntNullableFilter<"Account"> | number | null
+    token_type?: StringNullableFilter<"Account"> | string | null
+    scope?: StringNullableFilter<"Account"> | string | null
+    id_token?: StringNullableFilter<"Account"> | string | null
+    session_state?: StringNullableFilter<"Account"> | string | null
+  }
+
+  export type UserCreateWithoutAccountsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+  }
+
+  export type UserUncheckedCreateWithoutAccountsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+  }
+
+  export type UserCreateOrConnectWithoutAccountsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
+  }
+
+  export type UserUpsertWithoutAccountsInput = {
+    update: XOR<UserUpdateWithoutAccountsInput, UserUncheckedUpdateWithoutAccountsInput>
+    create: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutAccountsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutAccountsInput, UserUncheckedUpdateWithoutAccountsInput>
+  }
+
+  export type UserUpdateWithoutAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutAccountsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+  }
+
   export type UserCreateWithoutProjectsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -18593,15 +22617,18 @@ export namespace Prisma {
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -18611,6 +22638,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -18708,31 +22736,90 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type ProjectRequirementCreateWithoutProjectInput = {
+  export type ProjectRequirementsCreateWithoutProjectInput = {
     id?: string
-    category: string
-    content: string
-    isCompleted?: boolean
+    judulProyek?: string | null
+    targetPengguna?: string | null
+    latarBelakangMasalah?: string | null
+    tujuanProyek?: string | null
+    manfaatProyek?: string | null
+    integrasiMatakuliah?: string | null
+    metodologi?: string | null
+    penulisanLaporan?: string | null
+    ruangLingkup?: string | null
+    sumberDayaBatasan?: string | null
+    teknologi?: string | null
+    fiturUtama?: string | null
+    analisisTemuan?: string | null
+    presentasiUjian?: string | null
+    stakeholder?: string | null
+    kepatuhanEtika?: string | null
+    timeline?: string | null
+    kerangkaWaktu?: string | null
+    deadlineDate?: Date | string | null
+    completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type ProjectRequirementUncheckedCreateWithoutProjectInput = {
+  export type ProjectRequirementsUncheckedCreateWithoutProjectInput = {
     id?: string
-    category: string
-    content: string
-    isCompleted?: boolean
+    judulProyek?: string | null
+    targetPengguna?: string | null
+    latarBelakangMasalah?: string | null
+    tujuanProyek?: string | null
+    manfaatProyek?: string | null
+    integrasiMatakuliah?: string | null
+    metodologi?: string | null
+    penulisanLaporan?: string | null
+    ruangLingkup?: string | null
+    sumberDayaBatasan?: string | null
+    teknologi?: string | null
+    fiturUtama?: string | null
+    analisisTemuan?: string | null
+    presentasiUjian?: string | null
+    stakeholder?: string | null
+    kepatuhanEtika?: string | null
+    timeline?: string | null
+    kerangkaWaktu?: string | null
+    deadlineDate?: Date | string | null
+    completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type ProjectRequirementCreateOrConnectWithoutProjectInput = {
-    where: ProjectRequirementWhereUniqueInput
-    create: XOR<ProjectRequirementCreateWithoutProjectInput, ProjectRequirementUncheckedCreateWithoutProjectInput>
+  export type ProjectRequirementsCreateOrConnectWithoutProjectInput = {
+    where: ProjectRequirementsWhereUniqueInput
+    create: XOR<ProjectRequirementsCreateWithoutProjectInput, ProjectRequirementsUncheckedCreateWithoutProjectInput>
   }
 
-  export type ProjectRequirementCreateManyProjectInputEnvelope = {
-    data: ProjectRequirementCreateManyProjectInput | ProjectRequirementCreateManyProjectInput[]
+  export type ProjectMemberCreateWithoutProjectInput = {
+    id?: string
+    githubUsername: string
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+  }
+
+  export type ProjectMemberUncheckedCreateWithoutProjectInput = {
+    id?: string
+    githubUsername: string
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
+  }
+
+  export type ProjectMemberCreateOrConnectWithoutProjectInput = {
+    where: ProjectMemberWhereUniqueInput
+    create: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectMemberCreateManyProjectInputEnvelope = {
+    data: ProjectMemberCreateManyProjectInput | ProjectMemberCreateManyProjectInput[]
     skipDuplicates?: boolean
   }
 
@@ -18750,10 +22837,12 @@ export namespace Prisma {
   export type UserUpdateWithoutProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18763,15 +22852,18 @@ export namespace Prisma {
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -18781,6 +22873,7 @@ export namespace Prisma {
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutProjectInput = {
@@ -18846,33 +22939,205 @@ export namespace Prisma {
     data: XOR<ProjectAssignmentUpdateManyMutationInput, ProjectAssignmentUncheckedUpdateManyWithoutProjectInput>
   }
 
-  export type ProjectRequirementUpsertWithWhereUniqueWithoutProjectInput = {
-    where: ProjectRequirementWhereUniqueInput
-    update: XOR<ProjectRequirementUpdateWithoutProjectInput, ProjectRequirementUncheckedUpdateWithoutProjectInput>
-    create: XOR<ProjectRequirementCreateWithoutProjectInput, ProjectRequirementUncheckedCreateWithoutProjectInput>
+  export type ProjectRequirementsUpsertWithoutProjectInput = {
+    update: XOR<ProjectRequirementsUpdateWithoutProjectInput, ProjectRequirementsUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectRequirementsCreateWithoutProjectInput, ProjectRequirementsUncheckedCreateWithoutProjectInput>
+    where?: ProjectRequirementsWhereInput
   }
 
-  export type ProjectRequirementUpdateWithWhereUniqueWithoutProjectInput = {
-    where: ProjectRequirementWhereUniqueInput
-    data: XOR<ProjectRequirementUpdateWithoutProjectInput, ProjectRequirementUncheckedUpdateWithoutProjectInput>
+  export type ProjectRequirementsUpdateToOneWithWhereWithoutProjectInput = {
+    where?: ProjectRequirementsWhereInput
+    data: XOR<ProjectRequirementsUpdateWithoutProjectInput, ProjectRequirementsUncheckedUpdateWithoutProjectInput>
   }
 
-  export type ProjectRequirementUpdateManyWithWhereWithoutProjectInput = {
-    where: ProjectRequirementScalarWhereInput
-    data: XOR<ProjectRequirementUpdateManyMutationInput, ProjectRequirementUncheckedUpdateManyWithoutProjectInput>
+  export type ProjectRequirementsUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    judulProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    targetPengguna?: NullableStringFieldUpdateOperationsInput | string | null
+    latarBelakangMasalah?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    manfaatProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    integrasiMatakuliah?: NullableStringFieldUpdateOperationsInput | string | null
+    metodologi?: NullableStringFieldUpdateOperationsInput | string | null
+    penulisanLaporan?: NullableStringFieldUpdateOperationsInput | string | null
+    ruangLingkup?: NullableStringFieldUpdateOperationsInput | string | null
+    sumberDayaBatasan?: NullableStringFieldUpdateOperationsInput | string | null
+    teknologi?: NullableStringFieldUpdateOperationsInput | string | null
+    fiturUtama?: NullableStringFieldUpdateOperationsInput | string | null
+    analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
+    presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
+    stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    kepatuhanEtika?: NullableStringFieldUpdateOperationsInput | string | null
+    timeline?: NullableStringFieldUpdateOperationsInput | string | null
+    kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
+    deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completionPercent?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectRequirementScalarWhereInput = {
-    AND?: ProjectRequirementScalarWhereInput | ProjectRequirementScalarWhereInput[]
-    OR?: ProjectRequirementScalarWhereInput[]
-    NOT?: ProjectRequirementScalarWhereInput | ProjectRequirementScalarWhereInput[]
-    id?: StringFilter<"ProjectRequirement"> | string
-    projectId?: StringFilter<"ProjectRequirement"> | string
-    category?: StringFilter<"ProjectRequirement"> | string
-    content?: StringFilter<"ProjectRequirement"> | string
-    isCompleted?: BoolFilter<"ProjectRequirement"> | boolean
-    createdAt?: DateTimeFilter<"ProjectRequirement"> | Date | string
-    updatedAt?: DateTimeFilter<"ProjectRequirement"> | Date | string
+  export type ProjectRequirementsUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    judulProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    targetPengguna?: NullableStringFieldUpdateOperationsInput | string | null
+    latarBelakangMasalah?: NullableStringFieldUpdateOperationsInput | string | null
+    tujuanProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    manfaatProyek?: NullableStringFieldUpdateOperationsInput | string | null
+    integrasiMatakuliah?: NullableStringFieldUpdateOperationsInput | string | null
+    metodologi?: NullableStringFieldUpdateOperationsInput | string | null
+    penulisanLaporan?: NullableStringFieldUpdateOperationsInput | string | null
+    ruangLingkup?: NullableStringFieldUpdateOperationsInput | string | null
+    sumberDayaBatasan?: NullableStringFieldUpdateOperationsInput | string | null
+    teknologi?: NullableStringFieldUpdateOperationsInput | string | null
+    fiturUtama?: NullableStringFieldUpdateOperationsInput | string | null
+    analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
+    presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
+    stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
+    kepatuhanEtika?: NullableStringFieldUpdateOperationsInput | string | null
+    timeline?: NullableStringFieldUpdateOperationsInput | string | null
+    kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
+    deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    completionPercent?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectMemberUpsertWithWhereUniqueWithoutProjectInput = {
+    where: ProjectMemberWhereUniqueInput
+    update: XOR<ProjectMemberUpdateWithoutProjectInput, ProjectMemberUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectMemberUpdateWithWhereUniqueWithoutProjectInput = {
+    where: ProjectMemberWhereUniqueInput
+    data: XOR<ProjectMemberUpdateWithoutProjectInput, ProjectMemberUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectMemberUpdateManyWithWhereWithoutProjectInput = {
+    where: ProjectMemberScalarWhereInput
+    data: XOR<ProjectMemberUpdateManyMutationInput, ProjectMemberUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type ProjectMemberScalarWhereInput = {
+    AND?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+    OR?: ProjectMemberScalarWhereInput[]
+    NOT?: ProjectMemberScalarWhereInput | ProjectMemberScalarWhereInput[]
+    id?: StringFilter<"ProjectMember"> | string
+    projectId?: StringFilter<"ProjectMember"> | string
+    githubUsername?: StringFilter<"ProjectMember"> | string
+    githubId?: StringNullableFilter<"ProjectMember"> | string | null
+    githubAvatarUrl?: StringNullableFilter<"ProjectMember"> | string | null
+    name?: StringNullableFilter<"ProjectMember"> | string | null
+    role?: StringFilter<"ProjectMember"> | string
+    addedAt?: DateTimeFilter<"ProjectMember"> | Date | string
+  }
+
+  export type ProjectCreateWithoutMembersInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutMembersInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutMembersInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
+  }
+
+  export type ProjectUpsertWithoutMembersInput = {
+    update: XOR<ProjectUpdateWithoutMembersInput, ProjectUncheckedUpdateWithoutMembersInput>
+    create: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutMembersInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutMembersInput, ProjectUncheckedUpdateWithoutMembersInput>
+  }
+
+  export type ProjectUpdateWithoutMembersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutMembersInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutAssignmentsInput = {
@@ -18882,15 +23147,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswa: UserCreateNestedOneWithoutProjectsInput
     documents?: DocumentCreateNestedManyWithoutProjectInput
     reviews?: ReviewCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutAssignmentsInput = {
@@ -18900,15 +23170,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswaId: string
     documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutAssignmentsInput = {
@@ -18919,10 +23194,12 @@ export namespace Prisma {
   export type UserCreateWithoutAssignedProjectsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -18932,15 +23209,18 @@ export namespace Prisma {
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProjectsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -18950,6 +23230,7 @@ export namespace Prisma {
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProjectsInput = {
@@ -18975,15 +23256,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
     documents?: DocumentUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutAssignmentsInput = {
@@ -18993,15 +23279,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswaId?: StringFieldUpdateOperationsInput | string
     documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutAssignedProjectsInput = {
@@ -19018,10 +23309,12 @@ export namespace Prisma {
   export type UserUpdateWithoutAssignedProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19031,15 +23324,18 @@ export namespace Prisma {
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProjectsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19049,6 +23345,7 @@ export namespace Prisma {
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProjectCreateWithoutDocumentsInput = {
@@ -19058,15 +23355,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswa: UserCreateNestedOneWithoutProjectsInput
     reviews?: ReviewCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDocumentsInput = {
@@ -19076,15 +23378,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswaId: string
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDocumentsInput = {
@@ -19110,15 +23417,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDocumentsInput = {
@@ -19128,15 +23440,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswaId?: StringFieldUpdateOperationsInput | string
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutReviewsInput = {
@@ -19146,15 +23463,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswa: UserCreateNestedOneWithoutProjectsInput
     documents?: DocumentCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutReviewsInput = {
@@ -19164,15 +23486,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswaId: string
     documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
-    requirements?: ProjectRequirementUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutReviewsInput = {
@@ -19183,10 +23510,12 @@ export namespace Prisma {
   export type UserCreateWithoutReviewsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -19196,15 +23525,18 @@ export namespace Prisma {
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -19214,6 +23546,7 @@ export namespace Prisma {
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -19293,15 +23626,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
     documents?: DocumentUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutReviewsInput = {
@@ -19311,15 +23649,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswaId?: StringFieldUpdateOperationsInput | string
     documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutReviewsInput = {
@@ -19336,10 +23679,12 @@ export namespace Prisma {
   export type UserUpdateWithoutReviewsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19349,15 +23694,18 @@ export namespace Prisma {
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19367,6 +23715,7 @@ export namespace Prisma {
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ReviewCommentUpsertWithWhereUniqueWithoutReviewInput = {
@@ -19671,10 +24020,12 @@ export namespace Prisma {
   export type UserCreateWithoutNotificationsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -19684,15 +24035,18 @@ export namespace Prisma {
     projects?: ProjectCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewCreateNestedManyWithoutReviewerInput
     assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
     id?: string
     username: string
+    email?: string | null
+    emailVerified?: Date | string | null
     name: string
-    password: string
+    password?: string | null
     role?: $Enums.Role
-    avatarUrl?: string | null
+    image?: string | null
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
@@ -19702,6 +24056,7 @@ export namespace Prisma {
     projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
     assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -19723,10 +24078,12 @@ export namespace Prisma {
   export type UserUpdateWithoutNotificationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19736,15 +24093,18 @@ export namespace Prisma {
     projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUpdateManyWithoutReviewerNestedInput
     assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
     id?: StringFieldUpdateOperationsInput | string
     username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     name?: StringFieldUpdateOperationsInput | string
-    password?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
     role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
-    avatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
@@ -19754,6 +24114,7 @@ export namespace Prisma {
     projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
     assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type ProjectCreateWithoutRequirementsInput = {
@@ -19763,15 +24124,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswa: UserCreateNestedOneWithoutProjectsInput
     documents?: DocumentCreateNestedManyWithoutProjectInput
     reviews?: ReviewCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutRequirementsInput = {
@@ -19781,15 +24147,20 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     mahasiswaId: string
     documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
     reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutRequirementsInput = {
@@ -19815,15 +24186,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
     documents?: DocumentUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutRequirementsInput = {
@@ -19833,15 +24209,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     mahasiswaId?: StringFieldUpdateOperationsInput | string
     documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyMahasiswaInput = {
@@ -19851,9 +24232,13 @@ export namespace Prisma {
     status?: $Enums.ProjectStatus
     githubRepoUrl?: string | null
     githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
     semester: string
     tahunAkademik: string
     submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19885,6 +24270,20 @@ export namespace Prisma {
     assignedAt?: Date | string
   }
 
+  export type AccountCreateManyUserInput = {
+    id?: string
+    type: string
+    provider: string
+    providerAccountId: string
+    refresh_token?: string | null
+    access_token?: string | null
+    expires_at?: number | null
+    token_type?: string | null
+    scope?: string | null
+    id_token?: string | null
+    session_state?: string | null
+  }
+
   export type ProjectUpdateWithoutMahasiswaInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -19892,15 +24291,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMahasiswaInput = {
@@ -19910,15 +24314,20 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
     reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
-    requirements?: ProjectRequirementUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutMahasiswaInput = {
@@ -19928,9 +24337,13 @@ export namespace Prisma {
     status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
     githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     semester?: StringFieldUpdateOperationsInput | string
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20020,6 +24433,48 @@ export namespace Prisma {
     assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type AccountUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expires_at?: NullableIntFieldUpdateOperationsInput | number | null
+    token_type?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    id_token?: NullableStringFieldUpdateOperationsInput | string | null
+    session_state?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AccountUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expires_at?: NullableIntFieldUpdateOperationsInput | number | null
+    token_type?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    id_token?: NullableStringFieldUpdateOperationsInput | string | null
+    session_state?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type AccountUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    provider?: StringFieldUpdateOperationsInput | string
+    providerAccountId?: StringFieldUpdateOperationsInput | string
+    refresh_token?: NullableStringFieldUpdateOperationsInput | string | null
+    access_token?: NullableStringFieldUpdateOperationsInput | string | null
+    expires_at?: NullableIntFieldUpdateOperationsInput | number | null
+    token_type?: NullableStringFieldUpdateOperationsInput | string | null
+    scope?: NullableStringFieldUpdateOperationsInput | string | null
+    id_token?: NullableStringFieldUpdateOperationsInput | string | null
+    session_state?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type DocumentCreateManyProjectInput = {
     id?: string
     type: $Enums.DocumentType
@@ -20048,13 +24503,14 @@ export namespace Prisma {
     assignedAt?: Date | string
   }
 
-  export type ProjectRequirementCreateManyProjectInput = {
+  export type ProjectMemberCreateManyProjectInput = {
     id?: string
-    category: string
-    content: string
-    isCompleted?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
+    githubUsername: string
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    addedAt?: Date | string
   }
 
   export type DocumentUpdateWithoutProjectInput = {
@@ -20145,31 +24601,34 @@ export namespace Prisma {
     assignedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectRequirementUpdateWithoutProjectInput = {
+  export type ProjectMemberUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isCompleted?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectRequirementUncheckedUpdateWithoutProjectInput = {
+  export type ProjectMemberUncheckedUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isCompleted?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type ProjectRequirementUncheckedUpdateManyWithoutProjectInput = {
+  export type ProjectMemberUncheckedUpdateManyWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
-    category?: StringFieldUpdateOperationsInput | string
-    content?: StringFieldUpdateOperationsInput | string
-    isCompleted?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    githubUsername?: StringFieldUpdateOperationsInput | string
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    addedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ReviewCommentCreateManyReviewInput = {

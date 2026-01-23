@@ -1,10 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
-  Card,
-  CardBody,
-  CardHeader,
   Button,
   Chip,
   Avatar,
@@ -25,8 +23,81 @@ import {
   useDisclosure,
   Spinner,
 } from '@heroui/react';
-import { Search, UserPlus, Trash2, UserCog, FolderGit2 } from 'lucide-react';
+import { Search, UserPlus, Trash2, UserCog, FolderGit2, Users, ClipboardCheck, Link2 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
+// Mobile Assignment Card
+function MobileAssignmentCard({
+  assignment,
+  onDelete,
+}: {
+  assignment: Assignment;
+  onDelete: (id: string) => void;
+}) {
+  return (
+    <motion.div variants={itemVariants}>
+      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 mb-3">
+        <div className="space-y-3">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white shrink-0">
+              <FolderGit2 size={16} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm line-clamp-2">{assignment.project.title}</p>
+              <Chip size="sm" color={getStatusColor(assignment.project.status)} variant="flat" className="h-5 text-[10px] mt-1">
+                {getStatusLabel(assignment.project.status)}
+              </Chip>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+              <p className="text-[10px] text-blue-600 dark:text-blue-400 mb-1">Mahasiswa</p>
+              <div className="flex items-center gap-2">
+                <Avatar name={assignment.project.mahasiswa.name} size="sm" className="w-5 h-5" />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium truncate">{assignment.project.mahasiswa.name}</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/20">
+              <p className="text-[10px] text-violet-600 dark:text-violet-400 mb-1">Dosen</p>
+              <div className="flex items-center gap-2">
+                <Avatar name={assignment.dosen.name} size="sm" className="w-5 h-5" />
+                <div className="min-w-0">
+                  <p className="text-xs font-medium truncate">{assignment.dosen.name}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-zinc-500">Ditugaskan: {formatDate(assignment.assignedAt)}</span>
+            <Button size="sm" variant="flat" color="danger" startContent={<Trash2 size={14} />} onPress={() => onDelete(assignment.id)}>
+              Hapus
+            </Button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 interface Assignment {
   id: string;
@@ -37,30 +108,16 @@ interface Assignment {
     id: string;
     title: string;
     status: string;
-    mahasiswa: {
-      id: string;
-      name: string;
-      email: string;
-      nim: string | null;
-    };
+    mahasiswa: { id: string; name: string; email: string; nim: string | null; };
   };
-  dosen: {
-    id: string;
-    name: string;
-    email: string;
-    nip: string | null;
-  };
+  dosen: { id: string; name: string; email: string; nip: string | null; };
 }
 
 interface Project {
   id: string;
   title: string;
   status: string;
-  mahasiswa: {
-    id: string;
-    name: string;
-    nim: string | null;
-  };
+  mahasiswa: { id: string; name: string; nim: string | null; };
 }
 
 interface Dosen {
@@ -198,8 +255,13 @@ export default function AdminAssignmentsPage() {
     );
   });
 
-  // Get projects that don't have any assignment yet (or allow multiple assignments)
   const availableProjects = projects.filter((p) => p.status !== 'DRAFT');
+
+  const stats = {
+    total: assignments.length,
+    projects: new Set(assignments.map(a => a.projectId)).size,
+    dosen: new Set(assignments.map(a => a.dosenId)).size,
+  };
 
   if (isLoading) {
     return (
@@ -210,193 +272,223 @@ export default function AdminAssignmentsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Penugasan Dosen</h1>
-          <p className="text-default-500">
-            Kelola penugasan dosen penguji ke project mahasiswa
-          </p>
+    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
+      {/* Hero Header */}
+      <motion.div variants={itemVariants}>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-6 md:p-8 text-white">
+          <div className="absolute inset-0 opacity-10">
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <pattern id="assignments-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#assignments-grid)" />
+            </svg>
+          </div>
+          <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
+                <Link2 className="w-8 h-8" />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold">Penugasan Dosen</h1>
+                <p className="text-white/70 text-sm mt-1">Kelola penugasan dosen penguji ke project mahasiswa</p>
+              </div>
+            </div>
+            <Button color="default" className="bg-white text-orange-600 font-medium" startContent={<UserPlus size={18} />} onPress={onOpen}>
+              Tambah Penugasan
+            </Button>
+          </div>
         </div>
-        <Button
-          color="primary"
-          startContent={<UserPlus size={18} />}
-          onPress={onOpen}
-        >
-          Tambah Penugasan
-        </Button>
-      </div>
+      </motion.div>
+
+      {/* Stats Grid */}
+      <motion.div variants={itemVariants}>
+        <div className="grid grid-cols-3 gap-4">
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                <ClipboardCheck size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{stats.total}</p>
+                <p className="text-xs text-zinc-500">Total Penugasan</p>
+              </div>
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-500" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                <FolderGit2 size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{stats.projects}</p>
+                <p className="text-xs text-zinc-500">Project Ter-assign</p>
+              </div>
+            </div>
+          </div>
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                <Users size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{stats.dosen}</p>
+                <p className="text-xs text-zinc-500">Dosen Aktif</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
       {/* Search */}
-      <Card>
-        <CardBody>
-          <Input
-            placeholder="Cari project, mahasiswa, atau dosen..."
-            startContent={<Search size={18} className="text-default-400" />}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </CardBody>
-      </Card>
-
-      {/* Assignments Table */}
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold">
-            Daftar Penugasan ({filteredAssignments.length})
-          </h2>
-        </CardHeader>
-        <CardBody>
-          {filteredAssignments.length === 0 ? (
-            <div className="text-center py-12">
-              <UserCog size={64} className="mx-auto text-default-300 mb-4" />
-              <p className="text-default-500">Tidak ada penugasan ditemukan</p>
+      <motion.div variants={itemVariants}>
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+              <Search size={14} />
             </div>
-          ) : (
-            <Table aria-label="Assignments table" removeWrapper>
-              <TableHeader>
-                <TableColumn>PROJECT</TableColumn>
-                <TableColumn>MAHASISWA</TableColumn>
-                <TableColumn>DOSEN PENGUJI</TableColumn>
-                <TableColumn>STATUS PROJECT</TableColumn>
-                <TableColumn>TANGGAL PENUGASAN</TableColumn>
-                <TableColumn>AKSI</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {filteredAssignments.map((assignment) => (
-                  <TableRow key={assignment.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-primary-100">
-                          <FolderGit2 size={18} className="text-primary-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-sm">
-                            {assignment.project.title}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Avatar
-                          name={assignment.project.mahasiswa.name}
-                          size="sm"
-                        />
-                        <div>
-                          <p className="text-sm font-medium">
-                            {assignment.project.mahasiswa.name}
-                          </p>
-                          <p className="text-xs text-default-500">
-                            {assignment.project.mahasiswa.nim || '-'}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Avatar name={assignment.dosen.name} size="sm" />
-                        <div>
-                          <p className="text-sm font-medium">
-                            {assignment.dosen.name}
-                          </p>
-                          <p className="text-xs text-default-500">
-                            {assignment.dosen.nip || '-'}
-                          </p>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        size="sm"
-                        color={getStatusColor(assignment.project.status)}
-                        variant="flat"
-                      >
-                        {getStatusLabel(assignment.project.status)}
-                      </Chip>
-                    </TableCell>
-                    <TableCell>{formatDate(assignment.assignedAt)}</TableCell>
-                    <TableCell>
-                      <Button
-                        isIconOnly
-                        size="sm"
-                        variant="flat"
-                        color="danger"
-                        onPress={() => handleDeleteAssignment(assignment.id)}
-                      >
-                        <Trash2 size={16} />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardBody>
-      </Card>
+            <h3 className="font-semibold text-sm">Pencarian</h3>
+          </div>
+          <Input placeholder="Cari project, mahasiswa, atau dosen..." startContent={<Search size={18} className="text-zinc-400" />} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} classNames={{ inputWrapper: 'border-zinc-200 dark:border-zinc-700' }} />
+        </div>
+      </motion.div>
+
+      {/* Assignments List */}
+      <motion.div variants={itemVariants}>
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
+          <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                <Link2 size={14} />
+              </div>
+              <h2 className="font-semibold">Daftar Penugasan ({filteredAssignments.length})</h2>
+            </div>
+          </div>
+          <div className="p-4">
+            {filteredAssignments.length === 0 ? (
+              <div className="text-center py-12">
+                <div className="inline-flex p-4 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">
+                  <UserCog size={48} className="text-zinc-400" />
+                </div>
+                <p className="text-zinc-500">Tidak ada penugasan ditemukan</p>
+              </div>
+            ) : (
+              <>
+                <div className="md:hidden">
+                  <motion.div variants={containerVariants}>
+                    {filteredAssignments.map((assignment) => (
+                      <MobileAssignmentCard key={assignment.id} assignment={assignment} onDelete={handleDeleteAssignment} />
+                    ))}
+                  </motion.div>
+                </div>
+                <div className="hidden md:block">
+                  <Table aria-label="Assignments table" removeWrapper>
+                    <TableHeader>
+                      <TableColumn>PROJECT</TableColumn>
+                      <TableColumn>MAHASISWA</TableColumn>
+                      <TableColumn>DOSEN PENGUJI</TableColumn>
+                      <TableColumn>STATUS PROJECT</TableColumn>
+                      <TableColumn>TANGGAL PENUGASAN</TableColumn>
+                      <TableColumn>AKSI</TableColumn>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredAssignments.map((assignment) => (
+                        <TableRow key={assignment.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-3">
+                              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                                <FolderGit2 size={16} />
+                              </div>
+                              <p className="font-medium text-sm">{assignment.project.title}</p>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Avatar name={assignment.project.mahasiswa.name} size="sm" />
+                              <div>
+                                <p className="text-sm font-medium">{assignment.project.mahasiswa.name}</p>
+                                <p className="text-xs text-zinc-500">{assignment.project.mahasiswa.nim || '-'}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Avatar name={assignment.dosen.name} size="sm" />
+                              <div>
+                                <p className="text-sm font-medium">{assignment.dosen.name}</p>
+                                <p className="text-xs text-zinc-500">{assignment.dosen.nip || '-'}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Chip size="sm" color={getStatusColor(assignment.project.status)} variant="flat">
+                              {getStatusLabel(assignment.project.status)}
+                            </Chip>
+                          </TableCell>
+                          <TableCell className="text-zinc-500 text-sm">{formatDate(assignment.assignedAt)}</TableCell>
+                          <TableCell>
+                            <Button isIconOnly size="sm" variant="flat" color="danger" onPress={() => handleDeleteAssignment(assignment.id)}>
+                              <Trash2 size={16} />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </motion.div>
 
       {/* Create Assignment Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalContent>
-          <ModalHeader>Tambah Penugasan Baru</ModalHeader>
+          <ModalHeader className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+              <UserPlus size={18} />
+            </div>
+            <span>Tambah Penugasan Baru</span>
+          </ModalHeader>
           <ModalBody className="space-y-4">
             {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
-                {error}
-              </div>
+              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">{error}</div>
             )}
-            <Select
-              label="Pilih Project"
-              placeholder="Pilih project mahasiswa"
-              selectedKeys={selectedProject ? [selectedProject] : []}
-              onChange={(e) => setSelectedProject(e.target.value)}
-              isRequired
-            >
+            <Select label="Pilih Project" placeholder="Pilih project mahasiswa" selectedKeys={selectedProject ? [selectedProject] : []} onChange={(e) => setSelectedProject(e.target.value)} isRequired>
               {availableProjects.map((project) => (
                 <SelectItem key={project.id} textValue={project.title}>
                   <div>
                     <p className="font-medium">{project.title}</p>
-                    <p className="text-xs text-default-500">
-                      {project.mahasiswa.name} ({project.mahasiswa.nim || '-'})
-                    </p>
+                    <p className="text-xs text-zinc-500">{project.mahasiswa.name} ({project.mahasiswa.nim || '-'})</p>
                   </div>
                 </SelectItem>
               ))}
             </Select>
-            <Select
-              label="Pilih Dosen Penguji"
-              placeholder="Pilih dosen penguji"
-              selectedKeys={selectedDosen ? [selectedDosen] : []}
-              onChange={(e) => setSelectedDosen(e.target.value)}
-              isRequired
-            >
+            <Select label="Pilih Dosen Penguji" placeholder="Pilih dosen penguji" selectedKeys={selectedDosen ? [selectedDosen] : []} onChange={(e) => setSelectedDosen(e.target.value)} isRequired>
               {dosenList.map((dosen) => (
                 <SelectItem key={dosen.id} textValue={dosen.name}>
                   <div>
                     <p className="font-medium">{dosen.name}</p>
-                    <p className="text-xs text-default-500">
-                      {dosen.nip || dosen.email}
-                    </p>
+                    <p className="text-xs text-zinc-500">{dosen.nip || dosen.email}</p>
                   </div>
                 </SelectItem>
               ))}
             </Select>
           </ModalBody>
           <ModalFooter>
-            <Button variant="flat" onPress={onClose}>
-              Batal
-            </Button>
-            <Button
-              color="primary"
-              onPress={handleCreateAssignment}
-              isLoading={isSubmitting}
-            >
-              Simpan
-            </Button>
+            <Button variant="flat" onPress={onClose}>Batal</Button>
+            <Button color="primary" onPress={handleCreateAssignment} isLoading={isSubmitting}>Simpan</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </motion.div>
   );
 }

@@ -29,7 +29,7 @@ interface Project {
   mahasiswa: {
     name: string;
     username: string;
-    avatarUrl: string | null;
+    image: string | null;
   };
   _count: {
     documents: number;

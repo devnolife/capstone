@@ -24,12 +24,10 @@ export default async function ProjectDetailPage({
           id: true,
           name: true,
           username: true,
-          avatarUrl: true,
+          image: true,
         },
       },
-      documents: {
-        orderBy: { uploadedAt: 'desc' },
-      },
+      requirements: true,
       reviews: {
         include: {
           reviewer: {
@@ -37,7 +35,7 @@ export default async function ProjectDetailPage({
               id: true,
               name: true,
               username: true,
-              avatarUrl: true,
+              image: true,
             },
           },
           comments: {
@@ -58,7 +56,7 @@ export default async function ProjectDetailPage({
               id: true,
               name: true,
               username: true,
-              avatarUrl: true,
+              image: true,
             },
           },
         },
@@ -80,13 +78,11 @@ export default async function ProjectDetailPage({
 
   const canEdit =
     project.status === 'DRAFT' || project.status === 'REVISION_NEEDED';
-  const canSubmit = project.status === 'DRAFT' && project.documents.length > 0;
 
   return (
     <ProjectDetailContent
       project={project}
       canEdit={canEdit}
-      canSubmit={canSubmit}
     />
   );
 }

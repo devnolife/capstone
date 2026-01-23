@@ -27,7 +27,7 @@ interface Project {
   mahasiswa: {
     name: string;
     username: string;
-    avatarUrl: string | null;
+    image: string | null;
   };
   _count: {
     documents: number;
@@ -73,7 +73,7 @@ function MobileProjectCard({ project }: { project: Project }) {
             <div className="flex items-center gap-3">
               <Avatar
                 name={project.mahasiswa.name}
-                src={project.mahasiswa.avatarUrl || undefined}
+                src={project.mahasiswa.image || undefined}
                 size="sm"
                 className="ring-2 ring-default-200"
               />
@@ -190,7 +190,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                         <div className="flex items-center gap-3">
                           <Avatar
                             name={project.mahasiswa.name}
-                            src={project.mahasiswa.avatarUrl || undefined}
+                            src={project.mahasiswa.image || undefined}
                             size="sm"
                           />
                           <div>

@@ -23,11 +23,13 @@ import {
   ClipboardCheck,
   UserPlus,
   ChevronRight,
-  TrendingUp,
   Calendar,
+  Shield,
+  TrendingUp,
+  Activity,
+  BookOpen,
+  Settings,
 } from 'lucide-react';
-import { StatsCard } from '@/components/dashboard/stats-card';
-import { RecentActivity } from '@/components/dashboard/recent-activity';
 import {
   formatDate,
   getStatusColor,
@@ -40,7 +42,7 @@ interface User {
   name: string;
   username: string;
   role: string;
-  avatarUrl: string | null;
+  image: string | null;
   createdAt: Date;
 }
 
@@ -92,56 +94,63 @@ const itemVariants = {
   },
 };
 
+// Get greeting based on time
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Selamat Pagi';
+  if (hour < 15) return 'Selamat Siang';
+  if (hour < 18) return 'Selamat Sore';
+  return 'Selamat Malam';
+}
+
 // Mobile User Card Component
 function MobileUserCard({ user }: { user: User }) {
   return (
     <motion.div variants={itemVariants}>
-      <Card className="mb-3">
-        <CardBody className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar
-                name={user.name}
-                src={user.avatarUrl || undefined}
-                size="md"
-                className="ring-2 ring-default-200"
-              />
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold text-sm truncate">{user.name}</p>
-                <p className="text-xs text-default-500 truncate">{user.username}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Chip
-                    size="sm"
-                    color={
-                      user.role === 'ADMIN'
-                        ? 'danger'
-                        : user.role === 'DOSEN_PENGUJI'
-                          ? 'secondary'
-                          : 'primary'
-                    }
-                    variant="flat"
-                    className="h-5 text-[10px]"
-                  >
-                    {getRoleLabel(user.role)}
-                  </Chip>
-                  <span className="text-[10px] text-default-400">
-                    {formatDate(user.createdAt)}
-                  </span>
-                </div>
+      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 mb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Avatar
+              name={user.name}
+              src={user.image || undefined}
+              size="md"
+              className="ring-2 ring-zinc-200 dark:ring-zinc-700"
+            />
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm truncate">{user.name}</p>
+              <p className="text-xs text-zinc-500 truncate">{user.username}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Chip
+                  size="sm"
+                  color={
+                    user.role === 'ADMIN'
+                      ? 'danger'
+                      : user.role === 'DOSEN_PENGUJI'
+                        ? 'secondary'
+                        : 'primary'
+                  }
+                  variant="flat"
+                  className="h-5 text-[10px]"
+                >
+                  {getRoleLabel(user.role)}
+                </Chip>
+                <span className="text-[10px] text-zinc-400">
+                  {formatDate(user.createdAt)}
+                </span>
               </div>
             </div>
-            <Button
-              as={Link}
-              href={`/admin/users?id=${user.id}`}
-              isIconOnly
-              size="sm"
-              variant="light"
-            >
-              <ChevronRight size={18} />
-            </Button>
           </div>
-        </CardBody>
-      </Card>
+          <Button
+            as={Link}
+            href={`/admin/users?id=${user.id}`}
+            isIconOnly
+            size="sm"
+            variant="light"
+          >
+            <ChevronRight size={18} />
+          </Button>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -150,65 +159,63 @@ function MobileUserCard({ user }: { user: User }) {
 function MobileProjectCard({ project }: { project: Project }) {
   return (
     <motion.div variants={itemVariants}>
-      <Card className="mb-3">
-        <CardBody className="p-4">
-          <div className="space-y-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1 min-w-0 pr-2">
-                <p className="font-semibold text-sm line-clamp-2">{project.title}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Avatar
-                    name={project.mahasiswa.name}
-                    size="sm"
-                    className="w-5 h-5"
-                  />
-                  <span className="text-xs text-default-500 truncate">
-                    {project.mahasiswa.name}
-                  </span>
-                </div>
+      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 mb-3">
+        <div className="space-y-3">
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0 pr-2">
+              <p className="font-semibold text-sm line-clamp-2">{project.title}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <Avatar
+                  name={project.mahasiswa.name}
+                  size="sm"
+                  className="w-5 h-5"
+                />
+                <span className="text-xs text-zinc-500 truncate">
+                  {project.mahasiswa.name}
+                </span>
               </div>
-              <Chip
-                size="sm"
-                color={getStatusColor(project.status)}
-                variant="flat"
-                className="h-6 text-[10px] shrink-0"
-              >
-                {getStatusLabel(project.status)}
-              </Chip>
             </div>
-            
-            <div className="flex items-center justify-between text-xs text-default-400">
-              <div className="flex items-center gap-1">
-                <Calendar size={12} />
-                <span>{project.semester}</span>
-              </div>
-              <span>{formatDate(project.createdAt)}</span>
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                as={Link}
-                href={`/admin/projects?id=${project.id}`}
-                size="sm"
-                variant="flat"
-                className="flex-1 h-8"
-              >
-                Detail
-              </Button>
-              <Button
-                as={Link}
-                href={`/admin/assignments?projectId=${project.id}`}
-                size="sm"
-                color="primary"
-                variant="flat"
-                className="flex-1 h-8"
-              >
-                Assign
-              </Button>
-            </div>
+            <Chip
+              size="sm"
+              color={getStatusColor(project.status)}
+              variant="flat"
+              className="h-6 text-[10px] shrink-0"
+            >
+              {getStatusLabel(project.status)}
+            </Chip>
           </div>
-        </CardBody>
-      </Card>
+          
+          <div className="flex items-center justify-between text-xs text-zinc-400">
+            <div className="flex items-center gap-1">
+              <Calendar size={12} />
+              <span>{project.semester}</span>
+            </div>
+            <span>{formatDate(project.createdAt)}</span>
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              as={Link}
+              href={`/admin/projects?id=${project.id}`}
+              size="sm"
+              variant="flat"
+              className="flex-1 h-8"
+            >
+              Detail
+            </Button>
+            <Button
+              as={Link}
+              href={`/admin/assignments?projectId=${project.id}`}
+              size="sm"
+              color="primary"
+              variant="flat"
+              className="flex-1 h-8"
+            >
+              Assign
+            </Button>
+          </div>
+        </div>
+      </div>
     </motion.div>
   );
 }
@@ -218,125 +225,188 @@ export function AdminDashboardContent({
   recentUsers,
   recentProjects,
 }: AdminDashboardProps) {
-  const activities = recentProjects.map((project) => ({
-    id: project.id,
-    type: 'submission' as const,
-    title: project.title,
-    description: `oleh ${project.mahasiswa.name}`,
-    user: {
-      name: project.mahasiswa.name,
-    },
-    timestamp: project.createdAt,
-    status: project.status,
-  }));
-
   return (
     <motion.div 
-      className="space-y-4 md:space-y-6"
+      className="space-y-6"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Welcome Section */}
+      {/* Hero Welcome Card */}
       <motion.div variants={itemVariants}>
-        <h1 className="text-xl md:text-2xl font-bold">Dashboard Admin</h1>
-        <p className="text-sm md:text-base text-default-500">Kelola sistem capstone project</p>
-      </motion.div>
-
-      {/* Stats Grid - Scrollable on mobile */}
-      <motion.div 
-        variants={itemVariants}
-        className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible"
-      >
-        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 min-w-max md:min-w-0">
-          <div className="w-[160px] md:w-auto shrink-0">
-            <StatsCard
-              title="Total User"
-              value={stats.totalUsers}
-              icon={Users}
-              color="primary"
-              description={`${stats.totalMahasiswa} mhs, ${stats.totalDosen} dsn`}
-            />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-500 via-pink-500 to-purple-600 p-6 md:p-8 text-white">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <defs>
+                <pattern id="admin-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#admin-grid)" />
+            </svg>
           </div>
-          <div className="w-[160px] md:w-auto shrink-0">
-            <StatsCard
-              title="Total Project"
-              value={stats.totalProjects}
-              icon={FolderGit2}
-              color="secondary"
-              description={`${stats.submittedProjects} disubmit`}
-            />
-          </div>
-          <div className="w-[160px] md:w-auto shrink-0">
-            <StatsCard
-              title="Mahasiswa"
-              value={stats.totalMahasiswa}
-              icon={GraduationCap}
-              color="success"
-              description="Terdaftar"
-            />
-          </div>
-          <div className="w-[160px] md:w-auto shrink-0">
-            <StatsCard
-              title="Review"
-              value={stats.completedReviews}
-              icon={ClipboardCheck}
-              color="warning"
-              description="Selesai"
-            />
+          
+          {/* Decorative circles */}
+          <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+          
+          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
+                <Shield className="w-8 h-8" />
+              </div>
+              <div>
+                <p className="text-white/80 text-sm">{getGreeting()}</p>
+                <h1 className="text-2xl md:text-3xl font-bold">Admin Dashboard</h1>
+                <p className="text-white/70 text-sm mt-1">Kelola sistem capstone project</p>
+              </div>
+            </div>
+            
+            {/* Quick Stats */}
+            <div className="flex gap-4 md:gap-6">
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-bold">{stats.totalUsers}</p>
+                <p className="text-white/70 text-xs">Total User</p>
+              </div>
+              <div className="w-px bg-white/20" />
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-bold">{stats.totalProjects}</p>
+                <p className="text-white/70 text-xs">Total Project</p>
+              </div>
+              <div className="w-px bg-white/20" />
+              <div className="text-center">
+                <p className="text-3xl md:text-4xl font-bold">{stats.completedReviews}</p>
+                <p className="text-white/70 text-xs">Review Selesai</p>
+              </div>
+            </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Quick Actions - Mobile Grid */}
-      <motion.div variants={itemVariants} className="md:hidden">
-        <Card>
-          <CardHeader className="pb-2">
-            <h3 className="font-semibold text-sm">Aksi Cepat</h3>
-          </CardHeader>
-          <CardBody className="pt-0">
-            <div className="grid grid-cols-3 gap-2">
-              <Button
-                as={Link}
-                href="/admin/users?action=add"
-                variant="flat"
-                className="h-auto py-3 flex-col gap-1"
-              >
-                <UserPlus size={20} />
-                <span className="text-[10px]">User Baru</span>
-              </Button>
-              <Button
-                as={Link}
-                href="/admin/assignments"
-                variant="flat"
-                color="primary"
-                className="h-auto py-3 flex-col gap-1"
-              >
-                <ClipboardCheck size={20} />
-                <span className="text-[10px]">Assign</span>
-              </Button>
-              <Button
-                as={Link}
-                href="/admin/rubrik"
-                variant="flat"
-                color="secondary"
-                className="h-auto py-3 flex-col gap-1"
-              >
-                <GraduationCap size={20} />
-                <span className="text-[10px]">Rubrik</span>
-              </Button>
+      {/* Stats Grid */}
+      <motion.div variants={itemVariants}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {/* Total Users */}
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs text-zinc-500 mb-1">Total User</p>
+                <p className="text-2xl font-bold">{stats.totalUsers}</p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  {stats.totalMahasiswa} mhs, {stats.totalDosen} dsn
+                </p>
+              </div>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                <Users size={20} />
+              </div>
             </div>
-          </CardBody>
-        </Card>
+          </div>
+
+          {/* Total Projects */}
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-500" />
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs text-zinc-500 mb-1">Total Project</p>
+                <p className="text-2xl font-bold">{stats.totalProjects}</p>
+                <p className="text-xs text-zinc-400 mt-1">
+                  {stats.submittedProjects} disubmit
+                </p>
+              </div>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                <FolderGit2 size={20} />
+              </div>
+            </div>
+          </div>
+
+          {/* Mahasiswa */}
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-green-500" />
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs text-zinc-500 mb-1">Mahasiswa</p>
+                <p className="text-2xl font-bold">{stats.totalMahasiswa}</p>
+                <p className="text-xs text-zinc-400 mt-1">Terdaftar</p>
+              </div>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 text-white">
+                <GraduationCap size={20} />
+              </div>
+            </div>
+          </div>
+
+          {/* Reviews */}
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-xs text-zinc-500 mb-1">Review</p>
+                <p className="text-2xl font-bold">{stats.completedReviews}</p>
+                <p className="text-xs text-zinc-400 mt-1">Selesai</p>
+              </div>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                <ClipboardCheck size={20} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Quick Actions - Mobile */}
+      <motion.div variants={itemVariants} className="md:hidden">
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+          <h3 className="font-semibold text-sm mb-3">Aksi Cepat</h3>
+          <div className="grid grid-cols-3 gap-2">
+            <Button
+              as={Link}
+              href="/admin/users?action=add"
+              variant="flat"
+              className="h-auto py-3 flex-col gap-1"
+            >
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                <UserPlus size={18} />
+              </div>
+              <span className="text-[10px]">User Baru</span>
+            </Button>
+            <Button
+              as={Link}
+              href="/admin/assignments"
+              variant="flat"
+              className="h-auto py-3 flex-col gap-1"
+            >
+              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                <ClipboardCheck size={18} />
+              </div>
+              <span className="text-[10px]">Assign</span>
+            </Button>
+            <Button
+              as={Link}
+              href="/admin/rubrik"
+              variant="flat"
+              className="h-auto py-3 flex-col gap-1"
+            >
+              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                <BookOpen size={18} />
+              </div>
+              <span className="text-[10px]">Rubrik</span>
+            </Button>
+          </div>
+        </div>
       </motion.div>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Users */}
         <motion.div variants={itemVariants} className="lg:col-span-2">
-          <Card>
-            <CardHeader className="flex justify-between items-center px-4 py-3">
-              <h2 className="text-base md:text-lg font-semibold">User Terbaru</h2>
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                  <Users size={16} />
+                </div>
+                <h2 className="font-semibold">User Terbaru</h2>
+              </div>
               <Button
                 as={Link}
                 href="/admin/users"
@@ -348,8 +418,8 @@ export function AdminDashboardContent({
                 <span className="hidden sm:inline">Lihat Semua</span>
                 <span className="sm:hidden">Semua</span>
               </Button>
-            </CardHeader>
-            <CardBody className="pt-0">
+            </div>
+            <div className="p-4">
               {/* Mobile View - Cards */}
               <div className="md:hidden">
                 <motion.div variants={containerVariants}>
@@ -375,12 +445,12 @@ export function AdminDashboardContent({
                           <div className="flex items-center gap-3">
                             <Avatar
                               name={user.name}
-                              src={user.avatarUrl || undefined}
+                              src={user.image || undefined}
                               size="sm"
                             />
                             <div>
                               <p className="font-medium text-sm">{user.name}</p>
-                              <p className="text-xs text-default-500">
+                              <p className="text-xs text-zinc-500">
                                 {user.username}
                               </p>
                             </div>
@@ -401,7 +471,9 @@ export function AdminDashboardContent({
                             {getRoleLabel(user.role)}
                           </Chip>
                         </TableCell>
-                        <TableCell>{formatDate(user.createdAt)}</TableCell>
+                        <TableCell className="text-zinc-500 text-sm">
+                          {formatDate(user.createdAt)}
+                        </TableCell>
                         <TableCell>
                           <Button
                             as={Link}
@@ -417,24 +489,32 @@ export function AdminDashboardContent({
                   </TableBody>
                 </Table>
               </div>
-            </CardBody>
-          </Card>
+            </div>
+          </div>
         </motion.div>
 
-        {/* Activity & Quick Actions (Desktop) */}
-        <motion.div variants={itemVariants} className="space-y-4 md:space-y-6">
-          {/* Quick Actions - Desktop Only */}
-          <Card className="hidden md:block">
-            <CardHeader>
-              <h3 className="font-semibold">Aksi Cepat</h3>
-            </CardHeader>
-            <CardBody className="space-y-2">
+        {/* Quick Actions - Desktop */}
+        <motion.div variants={itemVariants} className="space-y-6">
+          <div className="hidden md:block rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 text-white">
+                  <Activity size={16} />
+                </div>
+                <h3 className="font-semibold">Aksi Cepat</h3>
+              </div>
+            </div>
+            <div className="p-4 space-y-2">
               <Button
                 as={Link}
                 href="/admin/users?action=add"
                 className="w-full justify-start"
                 variant="flat"
-                startContent={<UserPlus size={18} />}
+                startContent={
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                    <UserPlus size={14} />
+                  </div>
+                }
               >
                 Tambah User Baru
               </Button>
@@ -443,7 +523,11 @@ export function AdminDashboardContent({
                 href="/admin/assignments"
                 className="w-full justify-start"
                 variant="flat"
-                startContent={<ClipboardCheck size={18} />}
+                startContent={
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                    <ClipboardCheck size={14} />
+                  </div>
+                }
               >
                 Assign Dosen ke Project
               </Button>
@@ -452,23 +536,90 @@ export function AdminDashboardContent({
                 href="/admin/rubrik"
                 className="w-full justify-start"
                 variant="flat"
-                startContent={<GraduationCap size={18} />}
+                startContent={
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                    <BookOpen size={14} />
+                  </div>
+                }
               >
                 Kelola Rubrik Penilaian
               </Button>
-            </CardBody>
-          </Card>
+              <Button
+                as={Link}
+                href="/admin/semesters"
+                className="w-full justify-start"
+                variant="flat"
+                startContent={
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 text-white">
+                    <Calendar size={14} />
+                  </div>
+                }
+              >
+                Kelola Semester
+              </Button>
+              <Button
+                as={Link}
+                href="/admin/settings"
+                className="w-full justify-start"
+                variant="flat"
+                startContent={
+                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-zinc-500 to-zinc-600 text-white">
+                    <Settings size={14} />
+                  </div>
+                }
+              >
+                Pengaturan Sistem
+              </Button>
+            </div>
+          </div>
 
-          {/* Recent Activity */}
-          <RecentActivity activities={activities} />
+          {/* System Status */}
+          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
+            <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 text-white">
+                  <TrendingUp size={16} />
+                </div>
+                <h3 className="font-semibold">Status Sistem</h3>
+              </div>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="text-sm text-emerald-700 dark:text-emerald-400">Sistem Online</span>
+                </div>
+                <Chip size="sm" color="success" variant="flat">Active</Chip>
+              </div>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                  <span>Project Aktif</span>
+                  <span className="font-medium">{stats.submittedProjects}</span>
+                </div>
+                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                  <span>Review Pending</span>
+                  <span className="font-medium">{stats.totalProjects - stats.completedReviews}</span>
+                </div>
+                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                  <span>Dosen Terdaftar</span>
+                  <span className="font-medium">{stats.totalDosen}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </motion.div>
       </div>
 
       {/* Recent Projects */}
       <motion.div variants={itemVariants}>
-        <Card>
-          <CardHeader className="flex justify-between items-center px-4 py-3">
-            <h2 className="text-base md:text-lg font-semibold">Project Terbaru</h2>
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
+          <div className="flex justify-between items-center px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                <FolderGit2 size={16} />
+              </div>
+              <h2 className="font-semibold">Project Terbaru</h2>
+            </div>
             <Button
               as={Link}
               href="/admin/projects"
@@ -480,8 +631,8 @@ export function AdminDashboardContent({
               <span className="hidden sm:inline">Lihat Semua</span>
               <span className="sm:hidden">Semua</span>
             </Button>
-          </CardHeader>
-          <CardBody className="pt-0">
+          </div>
+          <div className="p-4">
             {/* Mobile View - Cards */}
             <div className="md:hidden">
               <motion.div variants={containerVariants}>
@@ -511,12 +662,19 @@ export function AdminDashboardContent({
                         </p>
                       </TableCell>
                       <TableCell>
-                        <p className="text-sm">{project.mahasiswa.name}</p>
-                        <p className="text-xs text-default-500">
-                          {project.mahasiswa.username}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <Avatar name={project.mahasiswa.name} size="sm" />
+                          <div>
+                            <p className="text-sm">{project.mahasiswa.name}</p>
+                            <p className="text-xs text-zinc-500">
+                              {project.mahasiswa.username}
+                            </p>
+                          </div>
+                        </div>
                       </TableCell>
-                      <TableCell>{project.semester}</TableCell>
+                      <TableCell>
+                        <Chip size="sm" variant="flat">{project.semester}</Chip>
+                      </TableCell>
                       <TableCell>
                         <Chip
                           size="sm"
@@ -526,7 +684,9 @@ export function AdminDashboardContent({
                           {getStatusLabel(project.status)}
                         </Chip>
                       </TableCell>
-                      <TableCell>{formatDate(project.createdAt)}</TableCell>
+                      <TableCell className="text-zinc-500 text-sm">
+                        {formatDate(project.createdAt)}
+                      </TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button
@@ -553,8 +713,8 @@ export function AdminDashboardContent({
                 </TableBody>
               </Table>
             </div>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </motion.div>
     </motion.div>
   );

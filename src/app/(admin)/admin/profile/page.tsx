@@ -37,7 +37,7 @@ interface UserProfile {
   role: string;
   nim: string | null;
   nip: string | null;
-  avatarUrl: string | null;
+  image: string | null;
   githubUsername: string | null;
   isActive: boolean;
   createdAt: string;
@@ -208,7 +208,7 @@ export default function ProfilePage() {
         <CardBody>
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
             <Avatar
-              src={profile.avatarUrl || undefined}
+              src={profile.image || undefined}
               name={profile.name}
               className="w-24 h-24 text-large"
             />
@@ -462,7 +462,7 @@ export default function ProfilePage() {
 
                   <div className="flex items-center gap-3 p-3 bg-default-100 rounded-lg">
                     <Avatar
-                      src={profile.avatarUrl || undefined}
+                      src={profile.image || undefined}
                       name={profile.githubUsername}
                       size="sm"
                     />

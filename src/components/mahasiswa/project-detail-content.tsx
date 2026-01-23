@@ -4,48 +4,44 @@ import Link from 'next/link';
 import {
   Card,
   CardBody,
-  CardHeader,
   Button,
   Chip,
-  Divider,
   Avatar,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
   Progress,
+  Tooltip,
 } from '@heroui/react';
+import { motion } from 'framer-motion';
 import {
   ArrowLeft,
   FileText,
-  Upload,
   Github,
   ExternalLink,
   Edit,
-  Trash2,
-  Download,
   MessageSquare,
+  ClipboardList,
+  CheckCircle2,
+  Circle,
+  Calendar,
+  Clock,
+  FolderGit2,
+  Send,
+  Users,
+  TrendingUp,
+  Award,
+  AlertCircle,
+  ChevronRight,
+  Sparkles,
+  GraduationCap,
+  Rocket,
+  Lightbulb,
+  Star,
 } from 'lucide-react';
 import { SubmitProjectButton } from '@/components/projects/submit-button';
 import {
-  formatDate,
   formatDateTime,
-  formatFileSize,
   getStatusColor,
   getStatusLabel,
-  getDocumentTypeLabel,
 } from '@/lib/utils';
-
-interface Document {
-  id: string;
-  fileName: string;
-  filePath: string;
-  fileSize: number;
-  type: string;
-  uploadedAt: Date;
-}
 
 interface ReviewComment {
   id: string;
@@ -73,7 +69,7 @@ interface Review {
     id: string;
     name: string;
     username: string;
-    avatarUrl: string | null;
+    image: string | null;
   };
   comments: ReviewComment[];
   scores: ReviewScore[];
@@ -85,8 +81,23 @@ interface Assignment {
     id: string;
     name: string;
     username: string;
-    avatarUrl: string | null;
+    image: string | null;
   };
+}
+
+interface ProjectRequirements {
+  id: string;
+  projectId: string;
+  integrasiMatakuliah: string | null;
+  metodologi: string | null;
+  ruangLingkup: string | null;
+  sumberDayaBatasan: string | null;
+  fiturUtama: string | null;
+  analisisTemuan: string | null;
+  presentasiUjian: string | null;
+  stakeholder: string | null;
+  kepatuhanEtika: string | null;
+  completionPercent: number;
 }
 
 interface Project {
@@ -106,9 +117,9 @@ interface Project {
     id: string;
     name: string;
     username: string;
-    avatarUrl: string | null;
+    image: string | null;
   };
-  documents: Document[];
+  requirements: ProjectRequirements | null;
   reviews: Review[];
   assignments: Assignment[];
 }
@@ -116,444 +127,741 @@ interface Project {
 interface ProjectDetailContentProps {
   project: Project;
   canEdit: boolean;
-  canSubmit: boolean;
 }
+
+// Progress steps configuration
+const PROGRESS_STEPS = [
+  { key: 'created', label: 'Project Dibuat', icon: FolderGit2 },
+  { key: 'requirements', label: 'Persyaratan Lengkap', icon: ClipboardList },
+  { key: 'submitted', label: 'Disubmit', icon: Send },
+  { key: 'review', label: 'Dalam Review', icon: MessageSquare },
+  { key: 'approved', label: 'Disetujui', icon: Award },
+];
+
+// Requirements list with database field mapping
+const REQUIREMENTS = [
+  { key: 'integrasiMatakuliah', label: 'Integrasi Mata Kuliah', icon: GraduationCap, category: 'akademik' },
+  { key: 'metodologi', label: 'Metodologi', icon: GraduationCap, category: 'akademik' },
+  { key: 'ruangLingkup', label: 'Ruang Lingkup', icon: Rocket, category: 'teknis' },
+  { key: 'sumberDayaBatasan', label: 'Sumber Daya & Batasan', icon: Rocket, category: 'teknis' },
+  { key: 'fiturUtama', label: 'Fitur Utama', icon: Rocket, category: 'teknis' },
+  { key: 'analisisTemuan', label: 'Analisis Temuan', icon: Lightbulb, category: 'analisis' },
+  { key: 'presentasiUjian', label: 'Presentasi & Ujian', icon: Lightbulb, category: 'analisis' },
+  { key: 'stakeholder', label: 'Stakeholder', icon: Lightbulb, category: 'analisis' },
+  { key: 'kepatuhanEtika', label: 'Kepatuhan Etika', icon: Lightbulb, category: 'analisis' },
+];
+
+const getStatusGradient = (status: string) => {
+  switch (status) {
+    case 'APPROVED':
+      return 'from-emerald-500 via-green-500 to-teal-500';
+    case 'REJECTED':
+      return 'from-red-500 via-rose-500 to-pink-500';
+    case 'IN_REVIEW':
+      return 'from-amber-500 via-orange-500 to-yellow-500';
+    case 'SUBMITTED':
+      return 'from-blue-500 via-indigo-500 to-violet-500';
+    case 'REVISION_NEEDED':
+      return 'from-orange-500 via-amber-500 to-yellow-500';
+    default:
+      return 'from-blue-600 via-indigo-600 to-violet-600';
+  }
+};
+
+const getProgressValue = (status: string, hasReviews: boolean, requirementsPercent: number) => {
+  switch (status) {
+    case 'APPROVED':
+      return 100;
+    case 'REJECTED':
+      return 100;
+    case 'IN_REVIEW':
+      return 75;
+    case 'SUBMITTED':
+      return 50;
+    case 'REVISION_NEEDED':
+      return 60;
+    default:
+      // For DRAFT status, use requirements completion as progress
+      // Scale from 0-100 to 0-40 (max 40% for draft with complete requirements)
+      return Math.round((requirementsPercent / 100) * 40);
+  }
+};
+
+const getStepStatus = (stepKey: string, projectStatus: string, hasReviews: boolean, requirementsComplete: boolean) => {
+  const statusOrder: Record<string, number> = {
+    DRAFT: 1,
+    SUBMITTED: 3,
+    IN_REVIEW: 4,
+    REVISION_NEEDED: 3,
+    APPROVED: 5,
+    REJECTED: 5,
+  };
+
+  const stepOrder: Record<string, number> = {
+    created: 1,
+    requirements: 2,
+    submitted: 3,
+    review: 4,
+    approved: 5,
+  };
+
+  const currentOrder = statusOrder[projectStatus] || 1;
+  const thisStepOrder = stepOrder[stepKey];
+
+  if (stepKey === 'approved' && projectStatus === 'REJECTED') return 'rejected';
+  if (stepKey === 'requirements' && requirementsComplete) return 'completed';
+  if (stepKey === 'requirements' && !requirementsComplete && projectStatus === 'DRAFT') return 'current';
+  if (stepKey === 'review' && hasReviews) return 'completed';
+  if (thisStepOrder < currentOrder) return 'completed';
+  if (thisStepOrder === currentOrder) return 'current';
+  return 'pending';
+};
 
 export function ProjectDetailContent({
   project,
   canEdit,
-  canSubmit,
 }: ProjectDetailContentProps) {
-  return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-        <div className="flex items-start gap-4">
-          <Button
-            as={Link}
-            href="/mahasiswa/projects"
-            variant="light"
-            isIconOnly
-          >
-            <ArrowLeft size={20} />
-          </Button>
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold">{project.title}</h1>
-              <Chip color={getStatusColor(project.status)} variant="flat">
-                {getStatusLabel(project.status)}
-              </Chip>
-            </div>
-            <p className="text-default-500">
-              {project.semester} - {project.tahunAkademik}
-            </p>
-          </div>
-        </div>
+  // Calculate requirements completion
+  const requirementsPercent = project.requirements?.completionPercent ?? 0;
+  const requirementsComplete = requirementsPercent === 100;
+  
+  // Check which requirements are filled
+  const getFilledRequirements = () => {
+    if (!project.requirements) return {};
+    const req = project.requirements;
+    return {
+      integrasiMatakuliah: !!req.integrasiMatakuliah?.trim(),
+      metodologi: !!req.metodologi?.trim(),
+      ruangLingkup: !!req.ruangLingkup?.trim(),
+      sumberDayaBatasan: !!req.sumberDayaBatasan?.trim(),
+      fiturUtama: !!req.fiturUtama?.trim(),
+      analisisTemuan: !!req.analisisTemuan?.trim(),
+      presentasiUjian: !!req.presentasiUjian?.trim(),
+      stakeholder: !!req.stakeholder?.trim(),
+      kepatuhanEtika: !!req.kepatuhanEtika?.trim(),
+    };
+  };
+  
+  const filledRequirements = getFilledRequirements();
+  const progressValue = getProgressValue(project.status, project.reviews.length > 0, requirementsPercent);
 
-        <div className="flex gap-2">
-          {canEdit && (
-            <>
-              <Button
-                as={Link}
-                href={`/mahasiswa/projects/${project.id}/edit`}
-                variant="flat"
-                startContent={<Edit size={18} />}
-              >
-                Edit
-              </Button>
-              {project.githubRepoUrl && (
+  return (
+    <div className="w-full space-y-6 pb-8">
+      {/* Hero Header Card */}
+      <Card className={`border-0 bg-gradient-to-br ${getStatusGradient(project.status)} text-white overflow-hidden`}>
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+          }}
+        />
+        <CardBody className="p-6 relative">
+          {/* Top Actions */}
+          <div className="flex items-center justify-between mb-6">
+            <Button
+              as={Link}
+              href="/mahasiswa/projects"
+              variant="flat"
+              size="sm"
+              className="bg-white/20 text-white hover:bg-white/30"
+              startContent={<ArrowLeft size={16} />}
+            >
+              Kembali
+            </Button>
+            <div className="flex items-center gap-2">
+              {canEdit && (
                 <Button
                   as={Link}
-                  href={`/mahasiswa/projects/${project.id}/requirements`}
-                  color="primary"
+                  href={`/mahasiswa/projects/${project.id}/edit`}
                   variant="flat"
-                  startContent={<FileText size={18} />}
+                  size="sm"
+                  className="bg-white/20 text-white hover:bg-white/30"
+                  startContent={<Edit size={16} />}
                 >
-                  Isi Persyaratan
+                  Edit
                 </Button>
               )}
-            </>
-          )}
-          <SubmitProjectButton
-            projectId={project.id}
-            canSubmit={canSubmit}
-            hasDocuments={project.documents.length > 0}
-          />
-        </div>
-      </div>
+              <SubmitProjectButton
+                projectId={project.id}
+                currentStatus={project.status}
+              />
+            </div>
+          </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Main Content */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Project Info */}
-          <Card>
-            <CardHeader>
-              <h2 className="text-lg font-semibold">Informasi Project</h2>
-            </CardHeader>
-            <CardBody className="space-y-4">
-              {project.description && (
-                <div>
-                  <h4 className="text-sm font-medium text-default-500 mb-1">
-                    Deskripsi
-                  </h4>
-                  <p className="text-default-700">{project.description}</p>
+          {/* Project Title & Info */}
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
+                  <FolderGit2 size={28} />
                 </div>
-              )}
-
-              {project.githubRepoUrl && (
                 <div>
-                  <h4 className="text-sm font-medium text-default-500 mb-1">
-                    Repository GitHub
-                  </h4>
+                  <Chip
+                    size="sm"
+                    className="bg-white/20 text-white mb-2"
+                    startContent={project.status === 'APPROVED' ? <Sparkles size={12} /> : undefined}
+                  >
+                    {getStatusLabel(project.status)}
+                  </Chip>
+                  <h1 className="text-2xl md:text-3xl font-bold">{project.title}</h1>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-4 text-white/80 text-sm">
+                <span className="flex items-center gap-1.5">
+                  <Calendar size={14} />
+                  {project.semester}
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Clock size={14} />
+                  {project.tahunAkademik}
+                </span>
+                {project.githubRepoUrl && (
                   <a
                     href={project.githubRepoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-primary hover:underline"
+                    className="flex items-center gap-1.5 hover:text-white transition-colors"
                   >
-                    <Github size={18} />
-                    <span>
-                      {project.githubRepoName || project.githubRepoUrl}
-                    </span>
-                    <ExternalLink size={14} />
+                    <Github size={14} />
+                    {project.githubRepoName?.split('/')[1] || 'Repository'}
+                    <ExternalLink size={12} />
                   </a>
-                </div>
-              )}
-
-              <Divider />
-
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-default-500">Dibuat</p>
-                  <p className="font-medium">
-                    {formatDateTime(project.createdAt)}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-default-500">Terakhir Diperbarui</p>
-                  <p className="font-medium">
-                    {formatDateTime(project.updatedAt)}
-                  </p>
-                </div>
-                {project.submittedAt && (
-                  <div>
-                    <p className="text-default-500">Disubmit</p>
-                    <p className="font-medium">
-                      {formatDateTime(project.submittedAt)}
-                    </p>
-                  </div>
                 )}
               </div>
-            </CardBody>
-          </Card>
+            </div>
 
-          {/* Documents */}
-          <Card>
-            <CardHeader className="flex justify-between items-center">
-              <h2 className="text-lg font-semibold">
-                Dokumen ({project.documents.length})
-              </h2>
-              <Button
-                as={Link}
-                href={`/mahasiswa/projects/${project.id}/upload`}
-                size="sm"
-                color="primary"
-                startContent={<Upload size={16} />}
-              >
-                Upload Dokumen
-              </Button>
-            </CardHeader>
-            <CardBody>
-              {project.documents.length === 0 ? (
-                <div className="text-center py-8">
-                  <FileText
-                    size={48}
-                    className="mx-auto text-default-300 mb-4"
+            {/* Progress Circle */}
+            <div className="flex items-center gap-4">
+              <div className="text-right hidden md:block">
+                <p className="text-white/70 text-sm">Progress</p>
+                <p className="text-3xl font-bold">{progressValue}%</p>
+              </div>
+              <div className="relative w-20 h-20">
+                <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="32"
+                    fill="none"
+                    stroke="rgba(255,255,255,0.2)"
+                    strokeWidth="8"
                   />
-                  <p className="text-default-500 mb-4">
-                    Belum ada dokumen. Upload dokumen pertama Anda.
-                  </p>
-                  <Button
-                    as={Link}
-                    href={`/mahasiswa/projects/${project.id}/upload`}
-                    color="primary"
-                    startContent={<Upload size={18} />}
-                  >
-                    Upload Dokumen
-                  </Button>
+                  <circle
+                    cx="40"
+                    cy="40"
+                    r="32"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="8"
+                    strokeLinecap="round"
+                    strokeDasharray={201}
+                    strokeDashoffset={201 - (201 * progressValue) / 100}
+                    className="transition-all duration-1000"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center md:hidden">
+                  <span className="text-lg font-bold">{progressValue}%</span>
                 </div>
-              ) : (
-                <Table aria-label="Documents table" removeWrapper>
-                  <TableHeader>
-                    <TableColumn>NAMA FILE</TableColumn>
-                    <TableColumn>TIPE</TableColumn>
-                    <TableColumn>UKURAN</TableColumn>
-                    <TableColumn>TANGGAL</TableColumn>
-                    <TableColumn>AKSI</TableColumn>
-                  </TableHeader>
-                  <TableBody>
-                    {project.documents.map((doc) => (
-                      <TableRow key={doc.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <FileText size={18} className="text-default-400" />
-                            <span className="truncate max-w-[200px]">
-                              {doc.fileName}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Chip size="sm" variant="flat">
-                            {getDocumentTypeLabel(doc.type)}
-                          </Chip>
-                        </TableCell>
-                        <TableCell>{formatFileSize(doc.fileSize)}</TableCell>
-                        <TableCell>{formatDate(doc.uploadedAt)}</TableCell>
-                        <TableCell>
-                          <div className="flex gap-2">
-                            <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              as="a"
-                              href={doc.filePath}
-                              target="_blank"
-                            >
-                              <Download size={16} />
-                            </Button>
-                            {canEdit && (
-                              <Button
-                                isIconOnly
-                                size="sm"
-                                variant="light"
-                                color="danger"
-                              >
-                                <Trash2 size={16} />
-                              </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardBody>
-          </Card>
+              </div>
+            </div>
+          </div>
+        </CardBody>
+      </Card>
 
-          {/* Reviews */}
-          {project.reviews.length > 0 && (
-            <Card>
-              <CardHeader>
-                <h2 className="text-lg font-semibold">
-                  Review & Feedback ({project.reviews.length})
-                </h2>
-              </CardHeader>
-              <CardBody className="space-y-4">
-                {project.reviews.map((review) => (
-                  <div
-                    key={review.id}
-                    className="border border-divider rounded-lg p-4"
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Main Content */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Description Card */}
+          {project.description && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                <CardBody className="p-5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30">
+                      <FileText size={18} className="text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <h2 className="font-semibold text-lg">Deskripsi Project</h2>
+                  </div>
+                  <p className="text-default-600 leading-relaxed">{project.description}</p>
+                </CardBody>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* GitHub Repository Card */}
+          {project.githubRepoUrl && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+            >
+              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+                <CardBody className="p-0">
+                  <a
+                    href={project.githubRepoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-4 p-5 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors group"
                   >
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <Avatar
-                          name={review.reviewer.name}
-                          src={review.reviewer.avatarUrl || undefined}
-                          size="sm"
-                        />
-                        <div>
-                          <p className="font-medium">{review.reviewer.name}</p>
-                          <p className="text-xs text-default-500">
-                            {formatDateTime(review.updatedAt)}
-                          </p>
-                        </div>
+                    <div className="p-3 rounded-2xl bg-zinc-900 dark:bg-zinc-700 text-white">
+                      <Github size={24} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-lg group-hover:text-primary transition-colors">
+                        {project.githubRepoName || 'GitHub Repository'}
+                      </p>
+                      <p className="text-sm text-default-500 truncate">{project.githubRepoUrl}</p>
+                    </div>
+                    <ExternalLink size={20} className="text-default-400 group-hover:text-primary transition-colors" />
+                  </a>
+                </CardBody>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Requirements Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <CardBody className="p-0">
+                {/* Header */}
+                <div className="p-5 bg-gradient-to-r from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
+                        <ClipboardList size={20} />
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Chip
-                          size="sm"
-                          color={getStatusColor(review.status)}
-                          variant="flat"
-                        >
-                          {getStatusLabel(review.status)}
-                        </Chip>
-                        {review.overallScore !== null && (
-                          <Chip size="sm" color="primary" variant="solid">
-                            Nilai: {review.overallScore}
-                          </Chip>
-                        )}
+                      <div>
+                        <h2 className="font-bold text-lg">Persyaratan Dokumen</h2>
+                        <p className="text-xs text-default-500">
+                          {requirementsComplete ? (
+                            <span className="text-emerald-600 dark:text-emerald-400 font-medium">Semua persyaratan lengkap!</span>
+                          ) : (
+                            <span>{requirementsPercent}% terisi - {Object.values(filledRequirements).filter(Boolean).length}/9 persyaratan</span>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {/* Progress Circle */}
+                      <div className="relative w-12 h-12">
+                        <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+                          <circle
+                            cx="24"
+                            cy="24"
+                            r="18"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            className="text-zinc-200 dark:text-zinc-700"
+                          />
+                          <circle
+                            cx="24"
+                            cy="24"
+                            r="18"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                            strokeLinecap="round"
+                            strokeDasharray={113}
+                            strokeDashoffset={113 - (113 * requirementsPercent) / 100}
+                            className={`transition-all duration-500 ${
+                              requirementsComplete ? 'text-emerald-500' : 'text-violet-500'
+                            }`}
+                          />
+                        </svg>
+                        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold">
+                          {requirementsPercent}%
+                        </span>
+                      </div>
+                      <Button
+                        as={Link}
+                        href={`/mahasiswa/documents/${project.id}`}
+                        color={requirementsComplete ? 'success' : 'primary'}
+                        size="sm"
+                        endContent={<ChevronRight size={16} />}
+                      >
+                        {requirementsComplete ? 'Lihat' : 'Isi'}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Requirements Grid */}
+                <div className="p-5">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+                    {/* Akademik */}
+                    <div className="p-4 rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap size={16} className="text-violet-600 dark:text-violet-400" />
+                          <span className="text-sm font-semibold text-violet-700 dark:text-violet-300">Akademik</span>
+                        </div>
+                        <span className="text-[10px] font-medium text-violet-600 dark:text-violet-400">
+                          {REQUIREMENTS.filter(r => r.category === 'akademik' && filledRequirements[r.key as keyof typeof filledRequirements]).length}/
+                          {REQUIREMENTS.filter(r => r.category === 'akademik').length}
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        {REQUIREMENTS.filter(r => r.category === 'akademik').map((req) => {
+                          const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
+                          return (
+                            <div key={req.key} className={`flex items-center gap-2 text-xs ${
+                              isFilled 
+                                ? 'text-emerald-600 dark:text-emerald-400' 
+                                : 'text-violet-600 dark:text-violet-400'
+                            }`}>
+                              {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
+                              <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
 
-                    {review.overallComment && (
-                      <div className="bg-default-100 rounded-lg p-3 mb-3">
-                        <p className="text-sm">{review.overallComment}</p>
+                    {/* Teknis */}
+                    <div className="p-4 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Rocket size={16} className="text-orange-600 dark:text-orange-400" />
+                          <span className="text-sm font-semibold text-orange-700 dark:text-orange-300">Teknis</span>
+                        </div>
+                        <span className="text-[10px] font-medium text-orange-600 dark:text-orange-400">
+                          {REQUIREMENTS.filter(r => r.category === 'teknis' && filledRequirements[r.key as keyof typeof filledRequirements]).length}/
+                          {REQUIREMENTS.filter(r => r.category === 'teknis').length}
+                        </span>
                       </div>
-                    )}
-
-                    {review.comments.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-sm font-medium flex items-center gap-2">
-                          <MessageSquare size={16} />
-                          Komentar ({review.comments.length})
-                        </p>
-                        {review.comments.slice(0, 3).map((comment) => (
-                          <div
-                            key={comment.id}
-                            className="bg-default-50 rounded-lg p-2 text-sm"
-                          >
-                            {comment.filePath && (
-                              <p className="text-xs text-default-500 mb-1">
-                                {comment.filePath}
-                                {comment.lineNumber && `:${comment.lineNumber}`}
-                              </p>
-                            )}
-                            <p>{comment.content}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {review.scores.length > 0 && (
-                      <div className="mt-3 space-y-2">
-                        <p className="text-sm font-medium">Skor per Kategori</p>
-                        {review.scores.map((score) => (
-                          <div key={score.id} className="space-y-1">
-                            <div className="flex justify-between text-sm">
-                              <span>{score.rubrik.name}</span>
-                              <span>
-                                {score.score}/{score.rubrik.bobotMax}
-                              </span>
+                        {REQUIREMENTS.filter(r => r.category === 'teknis').map((req) => {
+                          const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
+                          return (
+                            <div key={req.key} className={`flex items-center gap-2 text-xs ${
+                              isFilled 
+                                ? 'text-emerald-600 dark:text-emerald-400' 
+                                : 'text-orange-600 dark:text-orange-400'
+                            }`}>
+                              {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
+                              <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
                             </div>
-                            <Progress
-                              value={
-                                (score.score / score.rubrik.bobotMax) * 100
-                              }
-                              color="primary"
-                              size="sm"
-                            />
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
-                    )}
+                    </div>
+
+                    {/* Analisis */}
+                    <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <Lightbulb size={16} className="text-emerald-600 dark:text-emerald-400" />
+                          <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Analisis</span>
+                        </div>
+                        <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                          {REQUIREMENTS.filter(r => r.category === 'analisis' && filledRequirements[r.key as keyof typeof filledRequirements]).length}/
+                          {REQUIREMENTS.filter(r => r.category === 'analisis').length}
+                        </span>
+                      </div>
+                      <div className="space-y-2">
+                        {REQUIREMENTS.filter(r => r.category === 'analisis').map((req) => {
+                          const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
+                          return (
+                            <div key={req.key} className={`flex items-center gap-2 text-xs ${
+                              isFilled 
+                                ? 'text-emerald-600 dark:text-emerald-400' 
+                                : 'text-emerald-600/60 dark:text-emerald-400/60'
+                            }`}>
+                              {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
+                              <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
-                ))}
+
+                  <Button
+                    as={Link}
+                    href={`/mahasiswa/documents/${project.id}`}
+                    color={requirementsComplete ? 'success' : 'primary'}
+                    className="w-full"
+                    size="lg"
+                    startContent={requirementsComplete ? <Sparkles size={18} /> : <CheckCircle2 size={18} />}
+                  >
+                    {requirementsComplete ? 'Persyaratan Lengkap - Lihat Detail' : 'Lengkapi Persyaratan Sekarang'}
+                  </Button>
+                </div>
               </CardBody>
             </Card>
+          </motion.div>
+
+          {/* Reviews Card */}
+          {project.reviews.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
+                <CardBody className="p-5">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/30">
+                      <MessageSquare size={18} className="text-amber-600 dark:text-amber-400" />
+                    </div>
+                    <div>
+                      <h2 className="font-semibold text-lg">Review & Feedback</h2>
+                      <p className="text-xs text-default-500">{project.reviews.length} review</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4">
+                    {project.reviews.map((review) => (
+                      <div
+                        key={review.id}
+                        className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50"
+                      >
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar
+                              name={review.reviewer.name}
+                              src={review.reviewer.image || undefined}
+                              size="sm"
+                              className="ring-2 ring-white dark:ring-zinc-800"
+                            />
+                            <div>
+                              <p className="font-medium text-sm">{review.reviewer.name}</p>
+                              <p className="text-xs text-default-500">
+                                {formatDateTime(review.updatedAt)}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Chip
+                              size="sm"
+                              color={getStatusColor(review.status)}
+                              variant="flat"
+                            >
+                              {getStatusLabel(review.status)}
+                            </Chip>
+                            {review.overallScore !== null && (
+                              <Chip size="sm" color="primary" variant="solid" startContent={<Star size={10} />}>
+                                {review.overallScore}
+                              </Chip>
+                            )}
+                          </div>
+                        </div>
+
+                        {review.overallComment && (
+                          <div className="bg-white dark:bg-zinc-900 rounded-lg p-3 mb-3 border border-zinc-100 dark:border-zinc-700">
+                            <p className="text-sm text-default-600">{review.overallComment}</p>
+                          </div>
+                        )}
+
+                        {review.scores.length > 0 && (
+                          <div className="space-y-2">
+                            <p className="text-xs font-medium text-default-500">Skor per Kategori</p>
+                            {review.scores.map((score) => (
+                              <div key={score.id} className="space-y-1">
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-default-600">{score.rubrik.name}</span>
+                                  <span className="font-medium">
+                                    {score.score}/{score.rubrik.bobotMax}
+                                  </span>
+                                </div>
+                                <Progress
+                                  value={(score.score / score.rubrik.bobotMax) * 100}
+                                  color="primary"
+                                  size="sm"
+                                  className="h-1.5"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+            </motion.div>
           )}
         </div>
 
-        {/* Sidebar */}
+        {/* Right Column - Sidebar */}
         <div className="space-y-6">
-          {/* Progress Card */}
-          <Card>
-            <CardHeader>
-              <h3 className="font-semibold">Progress Project</h3>
-            </CardHeader>
-            <CardBody className="space-y-4">
-              <Progress
-                value={
-                  project.status === 'APPROVED'
-                    ? 100
-                    : project.status === 'REJECTED'
-                      ? 100
-                      : project.status === 'IN_REVIEW'
-                        ? 70
-                        : project.status === 'SUBMITTED'
-                          ? 50
-                          : project.status === 'REVISION_NEEDED'
-                            ? 40
-                            : 20
-                }
-                color={getStatusColor(project.status)}
-                showValueLabel
-              />
-              <div className="space-y-2 text-sm">
+          {/* Progress Timeline Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-b border-zinc-100 dark:border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <div
-                    className={`w-3 h-3 rounded-full ${project.status !== 'DRAFT'
-                        ? 'bg-success'
-                        : 'bg-default-300'
-                      }`}
-                  />
-                  <span>Project dibuat</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-3 h-3 rounded-full ${project.documents.length > 0
-                        ? 'bg-success'
-                        : 'bg-default-300'
-                      }`}
-                  />
-                  <span>Dokumen diupload</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-3 h-3 rounded-full ${project.status !== 'DRAFT'
-                        ? 'bg-success'
-                        : 'bg-default-300'
-                      }`}
-                  />
-                  <span>Disubmit untuk review</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-3 h-3 rounded-full ${project.reviews.length > 0
-                        ? 'bg-success'
-                        : 'bg-default-300'
-                      }`}
-                  />
-                  <span>Dalam proses review</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`w-3 h-3 rounded-full ${project.status === 'APPROVED'
-                        ? 'bg-success'
-                        : 'bg-default-300'
-                      }`}
-                  />
-                  <span>Disetujui</span>
+                  <TrendingUp size={18} className="text-blue-600 dark:text-blue-400" />
+                  <h3 className="font-semibold">Progress Project</h3>
                 </div>
               </div>
-            </CardBody>
-          </Card>
+              <CardBody className="p-4">
+                <div className="space-y-1">
+                  {PROGRESS_STEPS.map((step, index) => {
+                    const status = getStepStatus(step.key, project.status, project.reviews.length > 0, requirementsComplete);
+                    const StepIcon = step.icon;
+                    const isLast = index === PROGRESS_STEPS.length - 1;
 
-          {/* Assigned Reviewers */}
-          <Card>
-            <CardHeader>
-              <h3 className="font-semibold">Dosen Penguji</h3>
-            </CardHeader>
-            <CardBody>
-              {project.assignments.length === 0 ? (
-                <p className="text-sm text-default-500 text-center py-4">
-                  Belum ada dosen yang ditugaskan
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {project.assignments.map((assignment) => (
-                    <div
-                      key={assignment.id}
-                      className="flex items-center gap-3"
-                    >
-                      <Avatar
-                        name={assignment.dosen.name}
-                        src={assignment.dosen.avatarUrl || undefined}
-                        size="sm"
-                      />
+                    return (
+                      <div key={step.key} className="flex items-start gap-3">
+                        {/* Icon & Line */}
+                        <div className="flex flex-col items-center">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                              status === 'completed'
+                                ? 'bg-emerald-500 text-white'
+                                : status === 'current'
+                                  ? 'bg-blue-500 text-white ring-4 ring-blue-100 dark:ring-blue-900'
+                                  : status === 'rejected'
+                                    ? 'bg-red-500 text-white'
+                                    : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400'
+                            }`}
+                          >
+                            {status === 'completed' ? (
+                              <CheckCircle2 size={16} />
+                            ) : status === 'rejected' ? (
+                              <AlertCircle size={16} />
+                            ) : (
+                              <StepIcon size={16} />
+                            )}
+                          </div>
+                          {!isLast && (
+                            <div
+                              className={`w-0.5 h-8 my-1 ${
+                                status === 'completed'
+                                  ? 'bg-emerald-500'
+                                  : 'bg-zinc-200 dark:bg-zinc-700'
+                              }`}
+                            />
+                          )}
+                        </div>
+
+                        {/* Label */}
+                        <div className="pt-1">
+                          <p
+                            className={`text-sm font-medium ${
+                              status === 'completed'
+                                ? 'text-emerald-600 dark:text-emerald-400'
+                                : status === 'current'
+                                  ? 'text-blue-600 dark:text-blue-400'
+                                  : status === 'rejected'
+                                    ? 'text-red-600 dark:text-red-400'
+                                    : 'text-zinc-400'
+                            }`}
+                          >
+                            {step.label}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Dosen Penguji Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.35 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <Users size={18} className="text-violet-600 dark:text-violet-400" />
+                  <h3 className="font-semibold">Dosen Penguji</h3>
+                </div>
+              </div>
+              <CardBody className="p-4">
+                {project.assignments.length === 0 ? (
+                  <div className="text-center py-6">
+                    <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                      <Users size={24} className="text-zinc-400" />
+                    </div>
+                    <p className="text-sm text-default-500">Belum ada dosen yang ditugaskan</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {project.assignments.map((assignment) => (
+                      <div
+                        key={assignment.id}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50"
+                      >
+                        <Avatar
+                          name={assignment.dosen.name}
+                          src={assignment.dosen.image || undefined}
+                          size="sm"
+                          className="ring-2 ring-white dark:ring-zinc-700"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{assignment.dosen.name}</p>
+                          <p className="text-xs text-default-500">@{assignment.dosen.username}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Timeline Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <Clock size={18} className="text-zinc-600 dark:text-zinc-400" />
+                  <h3 className="font-semibold">Timeline</h3>
+                </div>
+              </div>
+              <CardBody className="p-4">
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 mt-2 rounded-full bg-blue-500" />
+                    <div>
+                      <p className="text-xs text-default-500">Dibuat</p>
+                      <p className="text-sm font-medium">{formatDateTime(project.createdAt)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-2 h-2 mt-2 rounded-full bg-emerald-500" />
+                    <div>
+                      <p className="text-xs text-default-500">Terakhir Diperbarui</p>
+                      <p className="text-sm font-medium">{formatDateTime(project.updatedAt)}</p>
+                    </div>
+                  </div>
+                  {project.submittedAt && (
+                    <div className="flex items-start gap-3">
+                      <div className="w-2 h-2 mt-2 rounded-full bg-violet-500" />
                       <div>
-                        <p className="text-sm font-medium">
-                          {assignment.dosen.name}
-                        </p>
-                        <p className="text-xs text-default-500">
-                          {assignment.dosen.username}
-                        </p>
+                        <p className="text-xs text-default-500">Disubmit</p>
+                        <p className="text-sm font-medium">{formatDateTime(project.submittedAt)}</p>
                       </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
-            </CardBody>
-          </Card>
+              </CardBody>
+            </Card>
+          </motion.div>
         </div>
       </div>
     </div>

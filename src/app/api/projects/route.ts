@@ -46,7 +46,7 @@ export async function GET(request: Request) {
               id: true,
               name: true,
               username: true,
-              avatarUrl: true,
+              image: true,
             },
           },
           documents: true,
@@ -133,12 +133,12 @@ export async function POST(request: Request) {
       );
     }
 
-    const { title, description, githubRepoUrl, semester, tahunAkademik } =
+    const { title, description, githubRepoUrl, githubRepoName: providedRepoName, semester, tahunAkademik } =
       validatedData.data;
 
-    // Extract GitHub repo name if URL provided
-    let githubRepoName = null;
-    if (githubRepoUrl) {
+    // Use provided repo name or extract from URL
+    let githubRepoName = providedRepoName || null;
+    if (!githubRepoName && githubRepoUrl) {
       const match = githubRepoUrl.match(/github\.com\/([^\/]+\/[^\/]+)/);
       if (match) {
         githubRepoName = match[1];

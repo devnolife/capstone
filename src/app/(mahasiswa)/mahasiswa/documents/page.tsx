@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import { MahasiswaDocumentsContent } from '@/components/mahasiswa/documents-content';
+import { DocumentsListContent } from '@/components/mahasiswa/documents-list-content';
 
 export default async function MahasiswaDocumentsPage() {
   const session = await auth();
@@ -10,44 +10,31 @@ export default async function MahasiswaDocumentsPage() {
     redirect('/login');
   }
 
-  // Fetch user's projects with documents
+  // Fetch user's projects with requirements
   const projects = await prisma.project.findMany({
     where: { mahasiswaId: session.user.id },
     include: {
-      documents: {
-        orderBy: { uploadedAt: 'desc' },
-      },
+      requirements: true,
     },
     orderBy: { updatedAt: 'desc' },
   });
 
-  // Flatten documents with project info
-  const documents = projects.flatMap((project) =>
-    project.documents.map((doc) => ({
-      ...doc,
-      project: {
-        id: project.id,
-        title: project.title,
-        status: project.status,
-      },
-    }))
-  );
+  // Transform projects for the component
+  const projectsWithProgress = projects.map((project) => ({
+    id: project.id,
+    title: project.title,
+    status: project.status,
+    semester: project.semester,
+    updatedAt: project.updatedAt.toISOString(),
+    requirements: project.requirements
+      ? {
+          completionPercent: project.requirements.completionPercent,
+          updatedAt: project.requirements.updatedAt.toISOString(),
+          judulProyek: project.requirements.judulProyek,
+          deadlineDate: project.requirements.deadlineDate?.toISOString() || null,
+        }
+      : null,
+  }));
 
-  // Calculate stats
-  const stats = {
-    totalDocuments: documents.length,
-    totalSize: documents.reduce((acc, doc) => acc + doc.fileSize, 0),
-    byType: documents.reduce((acc, doc) => {
-      acc[doc.type] = (acc[doc.type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>),
-  };
-
-  return (
-    <MahasiswaDocumentsContent
-      documents={documents}
-      projects={projects}
-      stats={stats}
-    />
-  );
+  return <DocumentsListContent projects={projectsWithProgress} />;
 }

@@ -7,7 +7,6 @@ import {
   Button,
   Card,
   CardBody,
-  CardHeader,
   Chip,
   Input,
   Select,
@@ -16,6 +15,7 @@ import {
   Avatar,
   Accordion,
   AccordionItem,
+  Tooltip,
 } from '@heroui/react';
 import {
   ClipboardCheck,
@@ -28,11 +28,16 @@ import {
   FileText,
   ExternalLink,
   ChevronRight,
-  User,
   AlertCircle,
+  TrendingUp,
+  Award,
+  Sparkles,
+  Calendar,
+  Code,
+  FolderGit2,
+  Zap,
 } from 'lucide-react';
-import { StatsCard } from '@/components/dashboard/stats-card';
-import { formatDate } from '@/lib/utils';
+import { formatDate, formatDateTime } from '@/lib/utils';
 
 interface ReviewScore {
   id: string;
@@ -112,9 +117,45 @@ const itemVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4 },
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
   },
 };
+
+// Stats card configurations
+const STATS_CONFIG = [
+  {
+    key: 'total',
+    label: 'Total Review',
+    icon: ClipboardCheck,
+    gradient: 'from-blue-500 via-indigo-500 to-violet-500',
+    bgLight: 'bg-blue-50 dark:bg-blue-900/20',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    key: 'completed',
+    label: 'Selesai',
+    icon: CheckCircle2,
+    gradient: 'from-emerald-500 via-green-500 to-teal-500',
+    bgLight: 'bg-emerald-50 dark:bg-emerald-900/20',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+  {
+    key: 'pending',
+    label: 'Menunggu',
+    icon: Clock,
+    gradient: 'from-amber-500 via-orange-500 to-yellow-500',
+    bgLight: 'bg-amber-50 dark:bg-amber-900/20',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+  {
+    key: 'average',
+    label: 'Rata-rata Nilai',
+    icon: Star,
+    gradient: 'from-violet-500 via-purple-500 to-fuchsia-500',
+    bgLight: 'bg-violet-50 dark:bg-violet-900/20',
+    iconColor: 'text-violet-600 dark:text-violet-400',
+  },
+];
 
 function getScoreColor(score: number, max: number): 'success' | 'warning' | 'danger' {
   const percentage = (score / max) * 100;
@@ -123,214 +164,224 @@ function getScoreColor(score: number, max: number): 'success' | 'warning' | 'dan
   return 'danger';
 }
 
-// Mobile Review Card
-function MobileReviewCard({ review }: { review: Review }) {
+function getStatusGradient(status: string) {
+  switch (status) {
+    case 'COMPLETED':
+      return 'from-emerald-500 to-green-400';
+    case 'IN_PROGRESS':
+      return 'from-blue-500 to-indigo-400';
+    case 'PENDING':
+      return 'from-amber-500 to-orange-400';
+    default:
+      return 'from-zinc-500 to-zinc-400';
+  }
+}
+
+function getScoreGrade(score: number): { label: string; color: string; bgColor: string } {
+  if (score >= 85) return { label: 'Excellent', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-50 dark:bg-emerald-900/20' };
+  if (score >= 70) return { label: 'Good', color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-50 dark:bg-blue-900/20' };
+  if (score >= 55) return { label: 'Fair', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-50 dark:bg-amber-900/20' };
+  return { label: 'Needs Work', color: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-50 dark:bg-red-900/20' };
+}
+
+// Modern Review Card
+function ReviewCard({ review, index }: { review: Review; index: number }) {
+  const grade = review.overallScore ? getScoreGrade(review.overallScore) : null;
+
   return (
-    <motion.div variants={itemVariants}>
-      <Card className="mb-3">
-        <CardBody className="p-4">
-          <div className="space-y-3">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0 flex-1">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.1 }}
+    >
+      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+        <CardBody className="p-0">
+          {/* Header with gradient */}
+          <div className={`p-4 md:p-5 bg-gradient-to-r ${getStatusGradient(review.status)} text-white`}>
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
                 <Avatar
                   name={review.reviewer.name}
-                  size="sm"
-                  className="shrink-0"
+                  size="md"
+                  className="ring-2 ring-white/30"
                 />
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-sm">{review.reviewer.name}</p>
-                  <p className="text-xs text-default-500 truncate">{review.project.title}</p>
+                <div>
+                  <p className="font-semibold">{review.reviewer.name}</p>
+                  <p className="text-sm text-white/80">@{review.reviewer.username}</p>
                 </div>
               </div>
-              <Chip
-                size="sm"
-                color={reviewStatusColors[review.status]}
-                variant="flat"
-                className="h-5 text-[10px] shrink-0"
-              >
-                {reviewStatusLabels[review.status]}
-              </Chip>
-            </div>
-
-            {/* Score */}
-            {review.overallScore !== null && (
-              <div className="flex items-center justify-between p-2 rounded-lg bg-default-100">
-                <span className="text-sm text-default-600">Nilai Keseluruhan</span>
-                <div className="flex items-center gap-1">
-                  <Star size={16} className="text-warning fill-warning" />
-                  <span className="font-bold text-lg">{review.overallScore}</span>
-                  <span className="text-default-400">/100</span>
-                </div>
+              <div className="flex flex-col items-end gap-2">
+                <Chip
+                  size="sm"
+                  className="bg-white/20 text-white"
+                  startContent={review.status === 'COMPLETED' ? <Sparkles size={12} /> : undefined}
+                >
+                  {reviewStatusLabels[review.status]}
+                </Chip>
+                {review.overallScore !== null && (
+                  <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-white/20">
+                    <Star size={14} className="fill-yellow-300 text-yellow-300" />
+                    <span className="font-bold">{review.overallScore}</span>
+                    <span className="text-white/70 text-sm">/100</span>
+                  </div>
+                )}
               </div>
-            )}
-
-            {/* Comment Preview */}
-            {review.overallComment && (
-              <div className="p-2 rounded-lg bg-default-50 border border-default-200">
-                <p className="text-xs text-default-500 mb-1 flex items-center gap-1">
-                  <MessageSquare size={12} />
-                  Komentar
-                </p>
-                <p className="text-sm line-clamp-2">{review.overallComment}</p>
-              </div>
-            )}
-
-            {/* Meta */}
-            <div className="flex items-center gap-3 text-xs text-default-500">
-              <span>{review.scores.length} kriteria dinilai</span>
-              <span>•</span>
-              <span>{formatDate(review.updatedAt)}</span>
             </div>
+          </div>
 
-            {/* Actions */}
-            <Button
-              as={Link}
+          {/* Content */}
+          <div className="p-4 md:p-5 space-y-4">
+            {/* Project Link Card */}
+            <Link
               href={`/mahasiswa/projects/${review.project.id}`}
-              size="sm"
-              variant="flat"
-              color="primary"
-              className="w-full h-8"
-              endContent={<ChevronRight size={14} />}
+              className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors group"
             >
-              Lihat Detail Project
-            </Button>
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-500 text-white">
+                <FolderGit2 size={18} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-default-500">Project</p>
+                <p className="font-medium truncate group-hover:text-primary transition-colors">
+                  {review.project.title}
+                </p>
+              </div>
+              <ExternalLink size={16} className="text-default-400 group-hover:text-primary transition-colors" />
+            </Link>
+
+            {/* Score Grade (if completed) */}
+            {grade && (
+              <div className={`p-4 rounded-xl ${grade.bgColor} border border-zinc-100 dark:border-zinc-700`}>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Award size={18} className={grade.color} />
+                    <span className="font-semibold">Nilai Keseluruhan</span>
+                  </div>
+                  <div className={`px-3 py-1 rounded-full ${grade.bgColor}`}>
+                    <span className={`text-sm font-bold ${grade.color}`}>{grade.label}</span>
+                  </div>
+                </div>
+                <div className="flex items-end gap-2">
+                  <span className="text-4xl font-bold">{review.overallScore}</span>
+                  <span className="text-default-500 mb-1">/100</span>
+                </div>
+                {/* Progress bar */}
+                <div className="mt-3">
+                  <Progress
+                    value={review.overallScore || 0}
+                    color={review.overallScore && review.overallScore >= 70 ? 'success' : review.overallScore && review.overallScore >= 55 ? 'warning' : 'danger'}
+                    size="sm"
+                    className="h-2"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Overall Comment */}
+            {review.overallComment && (
+              <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700">
+                <div className="flex items-center gap-2 mb-2">
+                  <MessageSquare size={14} className="text-default-500" />
+                  <span className="text-sm font-medium text-default-600">Komentar Dosen</span>
+                </div>
+                <p className="text-default-700 leading-relaxed">{review.overallComment}</p>
+              </div>
+            )}
+
+            {/* Scores Accordion */}
+            {review.scores.length > 0 && (
+              <Accordion variant="bordered" className="px-0">
+                <AccordionItem
+                  key="scores"
+                  aria-label="Lihat Nilai per Kriteria"
+                  title={
+                    <div className="flex items-center gap-2">
+                      <TrendingUp size={16} className="text-default-500" />
+                      <span className="text-sm font-medium">
+                        Nilai per Kriteria ({review.scores.length})
+                      </span>
+                    </div>
+                  }
+                  classNames={{
+                    content: 'pt-0 pb-4',
+                  }}
+                >
+                  <div className="space-y-3">
+                    {review.scores.map((score) => (
+                      <div key={score.id} className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
+                        <div className="flex justify-between items-center mb-2">
+                          <div>
+                            <span className="text-sm font-medium">{score.rubrik.name}</span>
+                            <Chip size="sm" variant="flat" className="ml-2 h-5 text-[10px]">
+                              {score.rubrik.kategori}
+                            </Chip>
+                          </div>
+                          <span className="font-bold">
+                            {score.score}
+                            <span className="text-default-400 font-normal">/{score.rubrik.bobotMax}</span>
+                          </span>
+                        </div>
+                        <Progress
+                          value={(score.score / score.rubrik.bobotMax) * 100}
+                          color={getScoreColor(score.score, score.rubrik.bobotMax)}
+                          size="sm"
+                          className="h-1.5"
+                        />
+                        {score.feedback && (
+                          <p className="text-xs text-default-500 mt-2 italic">&quot;{score.feedback}&quot;</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </AccordionItem>
+              </Accordion>
+            )}
+
+            {/* Code Comments */}
+            {review.comments.length > 0 && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Code size={14} className="text-default-500" />
+                  <span className="text-sm font-medium text-default-600">
+                    Komentar Code ({review.comments.length})
+                  </span>
+                </div>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {review.comments.slice(0, 3).map((comment) => (
+                    <div key={comment.id} className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700">
+                      {comment.filePath && (
+                        <p className="text-xs text-primary font-mono mb-1 flex items-center gap-1">
+                          <FileText size={10} />
+                          {comment.filePath}
+                          {comment.lineNumber && (
+                            <span className="text-default-400">:{comment.lineNumber}</span>
+                          )}
+                        </p>
+                      )}
+                      <p className="text-sm text-default-700">{comment.content}</p>
+                    </div>
+                  ))}
+                  {review.comments.length > 3 && (
+                    <p className="text-xs text-center text-default-400">
+                      +{review.comments.length - 3} komentar lainnya
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Timestamp */}
+            <div className="flex items-center gap-2 pt-2 text-xs text-default-400">
+              <Calendar size={12} />
+              <span>
+                {review.status === 'COMPLETED' && review.completedAt
+                  ? `Selesai: ${formatDateTime(review.completedAt)}`
+                  : `Diperbarui: ${formatDateTime(review.updatedAt)}`}
+              </span>
+            </div>
           </div>
         </CardBody>
       </Card>
     </motion.div>
-  );
-}
-
-// Desktop Review Card with expandable scores
-function DesktopReviewCard({ review }: { review: Review }) {
-  return (
-    <Card className="mb-4">
-      <CardBody className="p-6">
-        <div className="space-y-4">
-          {/* Header */}
-          <div className="flex items-start justify-between">
-            <div className="flex items-center gap-3">
-              <Avatar
-                name={review.reviewer.name}
-                size="md"
-              />
-              <div>
-                <p className="font-semibold">{review.reviewer.name}</p>
-                <p className="text-sm text-default-500">{review.reviewer.username}</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Chip
-                size="sm"
-                color={reviewStatusColors[review.status]}
-                variant="flat"
-              >
-                {reviewStatusLabels[review.status]}
-              </Chip>
-              {review.overallScore !== null && (
-                <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-warning/10">
-                  <Star size={16} className="text-warning fill-warning" />
-                  <span className="font-bold">{review.overallScore}</span>
-                  <span className="text-default-400 text-sm">/100</span>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Project Link */}
-          <div className="flex items-center gap-2 p-3 rounded-lg bg-default-50">
-            <FileText size={18} className="text-default-400" />
-            <span className="text-sm text-default-600">Project:</span>
-            <Link
-              href={`/mahasiswa/projects/${review.project.id}`}
-              className="text-primary hover:underline flex items-center gap-1 font-medium"
-            >
-              {review.project.title}
-              <ExternalLink size={14} />
-            </Link>
-          </div>
-
-          {/* Overall Comment */}
-          {review.overallComment && (
-            <div className="p-4 rounded-lg bg-default-50 border border-default-200">
-              <p className="text-sm text-default-500 mb-2 flex items-center gap-1">
-                <MessageSquare size={14} />
-                Komentar Keseluruhan
-              </p>
-              <p className="text-default-700">{review.overallComment}</p>
-            </div>
-          )}
-
-          {/* Scores Accordion */}
-          {review.scores.length > 0 && (
-            <Accordion variant="bordered">
-              <AccordionItem
-                key="scores"
-                aria-label="Lihat Nilai per Kriteria"
-                title={
-                  <span className="text-sm font-medium">
-                    Lihat Nilai per Kriteria ({review.scores.length})
-                  </span>
-                }
-              >
-                <div className="space-y-3 pb-2">
-                  {review.scores.map((score) => (
-                    <div key={score.id} className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-default-600">{score.rubrik.name}</span>
-                        <span className="font-medium">
-                          {score.score}/{score.rubrik.bobotMax}
-                        </span>
-                      </div>
-                      <Progress
-                        value={(score.score / score.rubrik.bobotMax) * 100}
-                        color={getScoreColor(score.score, score.rubrik.bobotMax)}
-                        size="sm"
-                        className="h-2"
-                      />
-                      {score.feedback && (
-                        <p className="text-xs text-default-500 mt-1">{score.feedback}</p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </AccordionItem>
-            </Accordion>
-          )}
-
-          {/* Comments Preview */}
-          {review.comments.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm text-default-500 flex items-center gap-1">
-                <MessageSquare size={14} />
-                Komentar Code ({review.comments.length})
-              </p>
-              <div className="space-y-2 max-h-40 overflow-y-auto">
-                {review.comments.slice(0, 3).map((comment) => (
-                  <div key={comment.id} className="p-2 rounded bg-default-50 text-sm">
-                    {comment.filePath && (
-                      <p className="text-xs text-default-400 font-mono mb-1">
-                        {comment.filePath}
-                        {comment.lineNumber && `:${comment.lineNumber}`}
-                      </p>
-                    )}
-                    <p className="text-default-700">{comment.content}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Timestamp */}
-          <p className="text-xs text-default-400">
-            {review.status === 'COMPLETED' && review.completedAt
-              ? `Selesai pada: ${formatDate(review.completedAt)}`
-              : `Diperbarui: ${formatDate(review.updatedAt)}`}
-          </p>
-        </div>
-      </CardBody>
-    </Card>
   );
 }
 
@@ -347,83 +398,143 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
     return matchesSearch && matchesStatus;
   });
 
+  const getStatsValue = (key: string) => {
+    switch (key) {
+      case 'total':
+        return stats.totalReviews;
+      case 'completed':
+        return stats.completedReviews;
+      case 'pending':
+        return stats.pendingReviews;
+      case 'average':
+        return stats.averageScore !== null ? stats.averageScore : '-';
+      default:
+        return 0;
+    }
+  };
+
   return (
     <motion.div
-      className="space-y-4 md:space-y-6"
+      className="w-full space-y-6 pb-8"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Header */}
+      {/* Hero Header Card */}
       <motion.div variants={itemVariants}>
-        <h1 className="text-xl md:text-2xl font-bold">Review Saya</h1>
-        <p className="text-sm md:text-base text-default-500">
-          Lihat semua review dari dosen penguji
-        </p>
+        <Card className="border-0 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 text-white overflow-hidden">
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage:
+                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
+            }}
+          />
+          <CardBody className="p-6 md:p-8 relative">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* Left side */}
+              <div className="flex items-center gap-4">
+                <div className="p-4 rounded-2xl bg-white/20 backdrop-blur-sm">
+                  <ClipboardCheck size={32} />
+                </div>
+                <div>
+                  <h1 className="text-2xl md:text-3xl font-bold">Review & Feedback</h1>
+                  <p className="text-white/80 text-sm md:text-base mt-1">
+                    Lihat semua review dari dosen penguji untuk project Anda
+                  </p>
+                </div>
+              </div>
+
+              {/* Right side - Quick Stats */}
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
+                  <p className="text-2xl md:text-3xl font-bold">{stats.totalReviews}</p>
+                  <p className="text-xs text-white/70">Total</p>
+                </div>
+                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
+                  <p className="text-2xl md:text-3xl font-bold">{stats.completedReviews}</p>
+                  <p className="text-xs text-white/70">Selesai</p>
+                </div>
+                {stats.averageScore !== null && (
+                  <div className="text-center px-4 py-2 rounded-xl bg-yellow-500/30 backdrop-blur-sm">
+                    <div className="flex items-center justify-center gap-1">
+                      <Star size={16} className="fill-yellow-300 text-yellow-300" />
+                      <p className="text-2xl md:text-3xl font-bold">{stats.averageScore}</p>
+                    </div>
+                    <p className="text-xs text-white/70">Rata-rata</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardBody>
+        </Card>
       </motion.div>
 
-      {/* Stats */}
-      <motion.div
-        variants={itemVariants}
-        className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 md:overflow-visible"
-      >
-        <div className="flex md:grid md:grid-cols-4 gap-3 md:gap-4 min-w-max md:min-w-0">
-          <div className="w-[140px] md:w-auto shrink-0">
-            <StatsCard
-              title="Total Review"
-              value={stats.totalReviews}
-              icon={ClipboardCheck}
-              color="primary"
-            />
-          </div>
-          <div className="w-[140px] md:w-auto shrink-0">
-            <StatsCard
-              title="Selesai"
-              value={stats.completedReviews}
-              icon={CheckCircle2}
-              color="success"
-            />
-          </div>
-          <div className="w-[140px] md:w-auto shrink-0">
-            <StatsCard
-              title="Menunggu"
-              value={stats.pendingReviews}
-              icon={Clock}
-              color="warning"
-            />
-          </div>
-          <div className="w-[140px] md:w-auto shrink-0">
-            <StatsCard
-              title="Rata-rata Nilai"
-              value={stats.averageScore !== null ? stats.averageScore : '-'}
-              icon={Star}
-              color="secondary"
-              description={stats.averageScore !== null ? '/100' : 'Belum ada'}
-            />
-          </div>
+      {/* Stats Grid */}
+      <motion.div variants={itemVariants}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          {STATS_CONFIG.map((stat) => {
+            const Icon = stat.icon;
+            const value = getStatsValue(stat.key);
+            return (
+              <Card
+                key={stat.key}
+                className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden group hover:shadow-md transition-shadow"
+              >
+                <CardBody className="p-4 md:p-5">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <p className="text-xs md:text-sm text-default-500">{stat.label}</p>
+                      <p className="text-2xl md:text-3xl font-bold">
+                        {value}
+                        {stat.key === 'average' && value !== '-' && (
+                          <span className="text-sm text-default-400 font-normal">/100</span>
+                        )}
+                      </p>
+                    </div>
+                    <div className={`p-2 md:p-3 rounded-xl ${stat.bgLight} transition-transform group-hover:scale-110`}>
+                      <Icon size={20} className={stat.iconColor} />
+                    </div>
+                  </div>
+                  <div className={`h-1 mt-4 rounded-full bg-gradient-to-r ${stat.gradient} opacity-50 group-hover:opacity-100 transition-opacity`} />
+                </CardBody>
+              </Card>
+            );
+          })}
         </div>
       </motion.div>
 
-      {/* Filters */}
+      {/* Filter Card */}
       <motion.div variants={itemVariants}>
-        <Card>
-          <CardBody className="p-3 md:p-4">
+        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+          <div className="p-4 bg-gradient-to-r from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
+            <div className="flex items-center gap-2">
+              <Filter size={18} className="text-default-500" />
+              <h3 className="font-semibold">Filter Review</h3>
+            </div>
+          </div>
+          <CardBody className="p-4">
             <div className="flex flex-col md:flex-row gap-3">
               <Input
-                placeholder="Cari review..."
+                placeholder="Cari berdasarkan project atau reviewer..."
                 value={searchQuery}
                 onValueChange={setSearchQuery}
                 startContent={<Search size={18} className="text-default-400" />}
-                className="md:max-w-xs"
+                className="md:flex-1"
                 size="sm"
+                classNames={{
+                  inputWrapper: 'border border-zinc-200 dark:border-zinc-700',
+                }}
               />
               <Select
                 placeholder="Semua Status"
                 selectedKeys={statusFilter ? [statusFilter] : []}
                 onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || 'all')}
-                className="md:max-w-[180px]"
+                className="md:w-[200px]"
                 size="sm"
-                startContent={<Filter size={16} className="text-default-400" />}
+                classNames={{
+                  trigger: 'border border-zinc-200 dark:border-zinc-700',
+                }}
                 items={[
                   { key: 'all', label: 'Semua Status' },
                   { key: 'PENDING', label: 'Menunggu' },
@@ -441,44 +552,55 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
       {/* Reviews List */}
       <motion.div variants={itemVariants}>
         {filteredReviews.length === 0 ? (
-          <Card>
-            <CardBody className="py-12 text-center">
+          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
+            <CardBody className="py-16 text-center">
               {reviews.length === 0 ? (
                 <>
-                  <AlertCircle size={48} className="mx-auto text-default-300 mb-4" />
-                  <p className="text-default-500 mb-2">Belum ada review</p>
-                  <p className="text-sm text-default-400">
-                    Review akan muncul setelah dosen penguji ditugaskan ke project Anda
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30 flex items-center justify-center">
+                    <ClipboardCheck size={36} className="text-amber-500" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Belum Ada Review</h3>
+                  <p className="text-default-500 mb-4 text-sm max-w-sm mx-auto">
+                    Review akan muncul setelah dosen penguji ditugaskan dan mulai menilai project Anda
                   </p>
+                  <Button
+                    as={Link}
+                    href="/mahasiswa/projects"
+                    color="primary"
+                    startContent={<Zap size={18} />}
+                  >
+                    Lihat Project Saya
+                  </Button>
                 </>
               ) : (
                 <>
-                  <Search size={48} className="mx-auto text-default-300 mb-4" />
-                  <p className="text-default-500">
-                    Tidak ada review yang cocok dengan filter
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center">
+                    <Search size={36} className="text-zinc-400" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">Tidak Ada Hasil</h3>
+                  <p className="text-default-500 text-sm">
+                    Tidak ada review yang cocok dengan filter Anda
                   </p>
+                  <Button
+                    variant="flat"
+                    className="mt-4"
+                    onPress={() => {
+                      setSearchQuery('');
+                      setStatusFilter('all');
+                    }}
+                  >
+                    Reset Filter
+                  </Button>
                 </>
               )}
             </CardBody>
           </Card>
         ) : (
-          <>
-            {/* Mobile View */}
-            <div className="md:hidden">
-              <motion.div variants={containerVariants}>
-                {filteredReviews.map((review) => (
-                  <MobileReviewCard key={review.id} review={review} />
-                ))}
-              </motion.div>
-            </div>
-
-            {/* Desktop View */}
-            <div className="hidden md:block">
-              {filteredReviews.map((review) => (
-                <DesktopReviewCard key={review.id} review={review} />
-              ))}
-            </div>
-          </>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+            {filteredReviews.map((review, index) => (
+              <ReviewCard key={review.id} review={review} index={index} />
+            ))}
+          </div>
         )}
       </motion.div>
     </motion.div>

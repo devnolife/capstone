@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
       name: true,
       username: true,
       role: true,
-      avatarUrl: true,
+      image: true,
       createdAt: true,
     },
   });

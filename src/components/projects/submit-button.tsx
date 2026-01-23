@@ -15,14 +15,12 @@ import { Send, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface SubmitProjectButtonProps {
   projectId: string;
-  canSubmit: boolean;
-  hasDocuments: boolean;
+  currentStatus: string;
 }
 
 export function SubmitProjectButton({
   projectId,
-  canSubmit,
-  hasDocuments,
+  currentStatus,
 }: SubmitProjectButtonProps) {
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -30,8 +28,11 @@ export function SubmitProjectButton({
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  // Hanya tampilkan tombol jika status DRAFT
+  const canSubmit = currentStatus === 'DRAFT';
+
   const handleSubmit = async () => {
-    if (!canSubmit || !hasDocuments) return;
+    if (!canSubmit) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -70,7 +71,6 @@ export function SubmitProjectButton({
         color="primary"
         startContent={<Send size={18} />}
         onPress={onOpen}
-        isDisabled={!hasDocuments}
       >
         Submit untuk Review
       </Button>
@@ -104,52 +104,39 @@ export function SubmitProjectButton({
                       </div>
                     )}
 
-                    {!hasDocuments ? (
-                      <div className="text-center py-4">
+                    <div className="space-y-4">
+                      <div className="flex items-start gap-3 p-4 bg-warning-50 rounded-lg">
                         <AlertTriangle
-                          size={48}
-                          className="mx-auto text-warning mb-4"
+                          className="text-warning mt-0.5"
+                          size={20}
                         />
-                        <p className="text-default-500">
-                          Anda harus mengupload minimal satu dokumen sebelum
-                          mengsubmit project.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="space-y-4">
-                        <div className="flex items-start gap-3 p-4 bg-warning-50 rounded-lg">
-                          <AlertTriangle
-                            className="text-warning mt-0.5"
-                            size={20}
-                          />
-                          <div>
-                            <p className="font-medium text-warning-700">
-                              Perhatian
-                            </p>
-                            <p className="text-sm text-warning-600">
-                              Setelah disubmit, Anda tidak dapat mengubah
-                              project kecuali diminta revisi oleh dosen.
-                            </p>
-                          </div>
+                        <div>
+                          <p className="font-medium text-warning-700">
+                            Perhatian
+                          </p>
+                          <p className="text-sm text-warning-600">
+                            Setelah disubmit, Anda tidak dapat mengubah
+                            project kecuali diminta revisi oleh dosen.
+                          </p>
                         </div>
-
-                        <p>Apakah Anda yakin ingin mengsubmit project ini?</p>
-
-                        <ul className="text-sm text-default-500 space-y-1">
-                          <li>
-                            - Project akan dikirim ke admin untuk ditugaskan ke
-                            dosen penguji
-                          </li>
-                          <li>
-                            - Anda akan menerima notifikasi ketika ada feedback
-                          </li>
-                          <li>
-                            - Status project akan berubah menjadi
-                            &quot;Disubmit&quot;
-                          </li>
-                        </ul>
                       </div>
-                    )}
+
+                      <p>Apakah Anda yakin ingin mengsubmit project ini?</p>
+
+                      <ul className="text-sm text-default-500 space-y-1">
+                        <li>
+                          - Project akan dikirim ke admin untuk ditugaskan ke
+                          dosen penguji
+                        </li>
+                        <li>
+                          - Anda akan menerima notifikasi ketika ada feedback
+                        </li>
+                        <li>
+                          - Status project akan berubah menjadi
+                          &quot;Disubmit&quot;
+                        </li>
+                      </ul>
+                    </div>
                   </>
                 )}
               </ModalBody>
@@ -167,7 +154,6 @@ export function SubmitProjectButton({
                       color="primary"
                       onPress={handleSubmit}
                       isLoading={isSubmitting}
-                      isDisabled={!hasDocuments}
                       startContent={
                         !isSubmitting ? <Send size={16} /> : undefined
                       }

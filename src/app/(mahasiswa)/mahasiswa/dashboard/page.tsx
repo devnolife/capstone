@@ -20,6 +20,11 @@ export default async function MahasiswaDashboardPage() {
           reviewer: true,
         },
       },
+      members: {
+        orderBy: {
+          role: 'asc', // leader first
+        },
+      },
       _count: {
         select: {
           documents: true,

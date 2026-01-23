@@ -629,7 +629,7 @@ export default function LandingPage() {
       {/* Requirements Section */}
       <section id="requirements" className="py-24 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent" />
-        <div className="max-w-6xl mx-auto relative">
+        <div className="max-w-7xl mx-auto relative">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -649,74 +649,129 @@ export default function LandingPage() {
             </p>
           </motion.div>
 
+          {/* Modern Requirements Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {requirements.map((req, i) => {
+              const Icon = req.icon;
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ delay: i * 0.05, duration: 0.4 }}
+                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                  className="group relative"
+                >
+                  {/* Card */}
+                  <div className="h-full p-6 rounded-2xl bg-white dark:bg-content1 border border-default-200 hover:border-default-300 dark:hover:border-default-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+                    {/* Gradient Background on Hover */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${req.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`} />
+                    
+                    {/* Header */}
+                    <div className="relative flex items-start gap-4 mb-5">
+                      {/* Icon Container with Gradient */}
+                      <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${req.gradient} flex items-center justify-center shrink-0 shadow-lg`}>
+                        <Icon className="text-white" size={22} />
+                        {/* Glow Effect */}
+                        <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${req.gradient} blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-300`} />
+                      </div>
+                      
+                      {/* Title & Number */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-[10px] font-bold text-default-400 bg-default-100 px-2 py-0.5 rounded-full">
+                            {String(i + 1).padStart(2, '0')}
+                          </span>
+                        </div>
+                        <h3 className="font-bold text-base leading-tight line-clamp-2 group-hover:text-default-900 transition-colors">
+                          {req.title}
+                        </h3>
+                      </div>
+                    </div>
+
+                    {/* Items List */}
+                    <div className="relative space-y-2.5">
+                      {req.items.map((item, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, x: -10 }}
+                          whileInView={{ opacity: 1, x: 0 }}
+                          viewport={{ once: true }}
+                          transition={{ delay: i * 0.05 + idx * 0.1 }}
+                          className="flex items-start gap-2.5 group/item"
+                        >
+                          {/* Animated Check Icon */}
+                          <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${req.gradient} flex items-center justify-center shrink-0 mt-0.5 opacity-80 group-hover/item:opacity-100 group-hover/item:scale-110 transition-all duration-200`}>
+                            <CheckCircle2 size={12} className="text-white" />
+                          </div>
+                          <span className="text-sm text-default-600 leading-relaxed group-hover/item:text-default-800 transition-colors">
+                            {item}
+                          </span>
+                        </motion.div>
+                      ))}
+                    </div>
+
+                    {/* Bottom Gradient Line */}
+                    <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${req.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Important Notice - Redesigned */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-            className="max-w-4xl mx-auto"
+            className="mt-16"
           >
-            <Accordion
-              variant="splitted"
-              selectionMode="multiple"
-              className="gap-4"
-              itemClasses={{
-                base: "px-0 rounded-2xl border border-default-200 bg-white dark:bg-content1 shadow-sm hover:shadow-md transition-shadow",
-                title: "font-semibold text-base",
-                trigger: "px-6 py-4 data-[hover=true]:bg-default-50",
-                content: "px-6 pb-6 pt-0",
-                indicator: "text-primary"
-              }}
-            >
-              {requirements.map((req, i) => {
-                const Icon = req.icon;
-                return (
-                  <AccordionItem
-                    key={i}
-                    aria-label={req.title}
-                    title={
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-xl bg-linear-to-br ${req.gradient} flex items-center justify-center shrink-0`}>
-                          <Icon className="text-white" size={20} />
-                        </div>
-                        <span>{req.title}</span>
-                      </div>
-                    }
-                  >
-                    <div className="space-y-3 pt-4">
-                      {req.items.map((item, idx) => (
+            <div className="relative overflow-hidden rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-yellow-500/5">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 opacity-30">
+                <div className="absolute top-0 left-0 w-40 h-40 bg-amber-400/20 rounded-full blur-3xl" />
+                <div className="absolute bottom-0 right-0 w-60 h-60 bg-orange-400/20 rounded-full blur-3xl" />
+              </div>
+              
+              <div className="relative p-8 md:p-10">
+                <div className="flex flex-col md:flex-row items-start gap-6">
+                  {/* Icon */}
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
+                    <AlertCircle className="text-white" size={28} />
+                  </div>
+                  
+                  {/* Content */}
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-2">
+                      Catatan Penting
+                      <span className="text-xs font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-1 rounded-full">
+                        Wajib Dibaca
+                      </span>
+                    </h4>
+                    <p className="text-default-600 leading-relaxed mb-4">
+                      Persyaratan ini bersifat wajib dan akan menjadi acuan dalam penilaian Capstone Project.
+                      Diskusikan dengan dosen pembimbing jika ada hal yang belum jelas atau memerlukan klarifikasi lebih lanjut.
+                    </p>
+                    
+                    {/* Quick Tips */}
+                    <div className="flex flex-wrap gap-3">
+                      {[
+                        { icon: Clock, text: 'Perhatikan deadline' },
+                        { icon: Users, text: 'Konsultasi rutin' },
+                        { icon: FileCheck, text: 'Dokumentasi lengkap' },
+                      ].map((tip, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start gap-3 p-3 rounded-lg bg-default-50 dark:bg-default-100/50"
+                          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 dark:bg-white/5 border border-amber-200/50 dark:border-amber-500/20"
                         >
-                          <CheckCircle2 size={18} className="text-success shrink-0 mt-0.5" />
-                          <span className="text-sm text-default-700 leading-relaxed">{item}</span>
+                          <tip.icon size={14} className="text-amber-600 dark:text-amber-400" />
+                          <span className="text-xs font-medium text-amber-700 dark:text-amber-300">{tip.text}</span>
                         </div>
                       ))}
                     </div>
-                  </AccordionItem>
-                );
-              })}
-            </Accordion>
-          </motion.div>
-
-          {/* Important Notice */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-12 p-6 rounded-2xl border border-amber-500/30 bg-amber-500/5"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="text-amber-500" size={20} />
-              </div>
-              <div>
-                <h4 className="font-bold text-amber-600 dark:text-amber-400 mb-2">Catatan Penting</h4>
-                <p className="text-sm text-default-600">
-                  Persyaratan ini bersifat wajib dan akan menjadi acuan dalam penilaian Capstone Project.
-                  Diskusikan dengan dosen pembimbing jika ada hal yang belum jelas atau memerlukan klarifikasi lebih lanjut.
-                </p>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>

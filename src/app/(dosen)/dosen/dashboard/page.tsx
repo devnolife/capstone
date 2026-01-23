@@ -14,37 +14,35 @@ export default async function DosenDashboardPage() {
     redirect('/');
   }
 
-  // Fetch assigned projects
-  const assignedProjects = await prisma.projectAssignment.findMany({
-    where: { dosenId: session.user.id },
+  // Fetch all submitted projects (dosen can see all projects that need review)
+  const projects = await prisma.project.findMany({
+    where: {
+      status: {
+        in: ['SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REVISION_NEEDED'],
+      },
+    },
     include: {
-      project: {
-        include: {
-          mahasiswa: {
-            select: {
-              id: true,
-              name: true,
-              username: true,
-              avatarUrl: true,
-            },
-          },
+      mahasiswa: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          image: true,
+        },
+      },
+      documents: true,
+      reviews: {
+        where: { reviewerId: session.user.id },
+      },
+      _count: {
+        select: {
           documents: true,
-          reviews: {
-            where: { reviewerId: session.user.id },
-          },
-          _count: {
-            select: {
-              documents: true,
-              reviews: true,
-            },
-          },
+          reviews: true,
         },
       },
     },
-    orderBy: { assignedAt: 'desc' },
+    orderBy: { submittedAt: 'desc' },
   });
-
-  const projects = assignedProjects.map((a) => a.project);
 
   // Calculate stats
   const totalAssigned = projects.length;
@@ -65,7 +63,7 @@ export default async function DosenDashboardPage() {
       project: {
         include: {
           mahasiswa: {
-            select: { name: true, avatarUrl: true },
+            select: { name: true, image: true },
           },
         },
       },
@@ -96,7 +94,7 @@ export default async function DosenDashboardPage() {
     mahasiswa: {
       name: p.mahasiswa.name,
       username: p.mahasiswa.username,
-      avatarUrl: p.mahasiswa.avatarUrl,
+      image: p.mahasiswa.image,
     },
     _count: p._count,
   }));

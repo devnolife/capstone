@@ -2,17 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import {
-  Card,
-  CardBody,
-  CardHeader,
   Button,
   Chip,
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
   Input,
   Textarea,
   Modal,
@@ -23,8 +14,21 @@ import {
   useDisclosure,
   Spinner,
   Switch,
+  Progress,
 } from '@heroui/react';
-import { Plus, Edit, Trash2, BookOpen, GripVertical } from 'lucide-react';
+import { motion } from 'framer-motion';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  BookOpen,
+  GripVertical,
+  Search,
+  CheckCircle2,
+  XCircle,
+  Scale,
+  ListOrdered,
+} from 'lucide-react';
 
 interface Rubrik {
   id: string;
@@ -37,12 +41,30 @@ interface Rubrik {
   createdAt: string;
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const },
+  },
+};
+
 export default function AdminRubrikPage() {
   const [rubriks, setRubriks] = useState<Rubrik[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedRubrik, setSelectedRubrik] = useState<Rubrik | null>(null);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -191,6 +213,13 @@ export default function AdminRubrikPage() {
   // Group by kategori
   const kategoris = [...new Set(rubriks.map((r) => r.kategori))];
 
+  // Filter rubriks
+  const filteredRubriks = rubriks.filter(
+    (r) =>
+      r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      r.kategori.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
@@ -200,167 +229,428 @@ export default function AdminRubrikPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Rubrik Penilaian</h1>
-          <p className="text-default-500">
-            Kelola kriteria penilaian untuk review project
-          </p>
-        </div>
-        <Button
-          color="primary"
-          startContent={<Plus size={18} />}
-          onPress={() => {
-            resetForm();
-            onOpen();
-          }}
-        >
-          Tambah Rubrik
-        </Button>
-      </div>
+    <motion.div
+      className="space-y-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Hero Header */}
+      <motion.div variants={itemVariants}>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 p-6 md:p-8 text-white">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <svg
+              className="w-full h-full"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
+              <defs>
+                <pattern
+                  id="grid"
+                  width="10"
+                  height="10"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M 10 0 L 0 0 0 10"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="0.5"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100" height="100" fill="url(#grid)" />
+            </svg>
+          </div>
+          <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 blur-xl" />
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card>
-          <CardBody className="flex flex-row items-center gap-4">
-            <div className="p-3 rounded-xl bg-primary-100">
-              <BookOpen className="text-primary-600" size={24} />
+          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
+                <BookOpen size={32} />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold">
+                  Rubrik Penilaian
+                </h1>
+                <p className="text-white/80 mt-1">
+                  Kelola kriteria penilaian untuk review project
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-default-500">Total Rubrik</p>
-              <p className="text-2xl font-bold">{rubriks.length}</p>
+            <Button
+              className="bg-white text-indigo-600 font-semibold shadow-lg"
+              startContent={<Plus size={18} />}
+              onPress={() => {
+                resetForm();
+                onOpen();
+              }}
+            >
+              Tambah Rubrik
+            </Button>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Stats Cards */}
+      <motion.div variants={itemVariants}>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-blue-500" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 text-white">
+                <BookOpen size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{rubriks.length}</p>
+                <p className="text-xs text-zinc-500">Total Rubrik</p>
+              </div>
             </div>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody className="flex flex-row items-center gap-4">
-            <div className="p-3 rounded-xl bg-success-100">
-              <BookOpen className="text-success-600" size={24} />
+          </div>
+
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                <CheckCircle2 size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">
+                  {rubriks.filter((r) => r.isActive).length}
+                </p>
+                <p className="text-xs text-zinc-500">Rubrik Aktif</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-default-500">Rubrik Aktif</p>
-              <p className="text-2xl font-bold">
-                {rubriks.filter((r) => r.isActive).length}
+          </div>
+
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-teal-500" />
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-teal-500 text-white">
+                <ListOrdered size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{kategoris.length}</p>
+                <p className="text-xs text-zinc-500">Kategori</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+            <div
+              className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${
+                totalBobot === 100
+                  ? 'from-emerald-500 to-green-500'
+                  : totalBobot > 100
+                    ? 'from-red-500 to-orange-500'
+                    : 'from-amber-500 to-yellow-500'
+              }`}
+            />
+            <div className="flex items-center gap-3">
+              <div
+                className={`p-2 rounded-lg text-white ${
+                  totalBobot === 100
+                    ? 'bg-gradient-to-br from-emerald-500 to-green-500'
+                    : totalBobot > 100
+                      ? 'bg-gradient-to-br from-red-500 to-orange-500'
+                      : 'bg-gradient-to-br from-amber-500 to-yellow-500'
+                }`}
+              >
+                <Scale size={18} />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{totalBobot}/100</p>
+                <p className="text-xs text-zinc-500">Total Bobot</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Total Bobot Progress */}
+      <motion.div variants={itemVariants}>
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-medium">Total Bobot Rubrik Aktif</span>
+            <span
+              className={`text-sm font-semibold ${
+                totalBobot === 100
+                  ? 'text-emerald-600'
+                  : totalBobot > 100
+                    ? 'text-red-600'
+                    : 'text-amber-600'
+              }`}
+            >
+              {totalBobot}%
+            </span>
+          </div>
+          <Progress
+            value={Math.min(totalBobot, 100)}
+            classNames={{
+              indicator:
+                totalBobot === 100
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-500'
+                  : totalBobot > 100
+                    ? 'bg-gradient-to-r from-red-500 to-orange-500'
+                    : 'bg-gradient-to-r from-amber-500 to-yellow-500',
+              track: 'bg-zinc-200 dark:bg-zinc-700',
+            }}
+          />
+          {totalBobot !== 100 && (
+            <p className="text-xs text-zinc-500 mt-2">
+              {totalBobot < 100
+                ? `Kurang ${100 - totalBobot}% untuk mencapai 100%`
+                : `Kelebihan ${totalBobot - 100}% dari total 100%`}
+            </p>
+          )}
+        </div>
+      </motion.div>
+
+      {/* Search Card */}
+      <motion.div variants={itemVariants}>
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+          <Input
+            placeholder="Cari rubrik berdasarkan nama atau kategori..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            startContent={<Search size={18} className="text-zinc-400" />}
+            classNames={{
+              inputWrapper:
+                'bg-zinc-100 dark:bg-zinc-800 border-none shadow-none',
+            }}
+          />
+        </div>
+      </motion.div>
+
+      {/* Rubriks List */}
+      <motion.div variants={itemVariants}>
+        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
+          <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
+            <h2 className="text-lg font-semibold">
+              Daftar Rubrik Penilaian ({filteredRubriks.length})
+            </h2>
+          </div>
+
+          {filteredRubriks.length === 0 ? (
+            <div className="text-center py-12">
+              <BookOpen size={64} className="mx-auto text-zinc-300 mb-4" />
+              <p className="text-zinc-500">
+                {searchQuery
+                  ? 'Rubrik tidak ditemukan'
+                  : 'Belum ada rubrik penilaian'}
               </p>
             </div>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardBody className="flex flex-row items-center gap-4">
-            <div
-              className={`p-3 rounded-xl ${totalBobot === 100 ? 'bg-success-100' : 'bg-warning-100'}`}
-            >
-              <BookOpen
-                className={
-                  totalBobot === 100 ? 'text-success-600' : 'text-warning-600'
-                }
-                size={24}
-              />
-            </div>
-            <div>
-              <p className="text-sm text-default-500">Total Bobot Aktif</p>
-              <p className="text-2xl font-bold">{totalBobot}/100</p>
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-
-      {/* Rubriks Table */}
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold">Daftar Rubrik Penilaian</h2>
-        </CardHeader>
-        <CardBody>
-          {rubriks.length === 0 ? (
-            <div className="text-center py-12">
-              <BookOpen size={64} className="mx-auto text-default-300 mb-4" />
-              <p className="text-default-500">Belum ada rubrik penilaian</p>
-            </div>
           ) : (
-            <Table aria-label="Rubriks table" removeWrapper>
-              <TableHeader>
-                <TableColumn width={50}>URUTAN</TableColumn>
-                <TableColumn>NAMA</TableColumn>
-                <TableColumn>KATEGORI</TableColumn>
-                <TableColumn>BOBOT MAX</TableColumn>
-                <TableColumn>STATUS</TableColumn>
-                <TableColumn>AKSI</TableColumn>
-              </TableHeader>
-              <TableBody>
-                {rubriks.map((rubrik) => (
-                  <TableRow key={rubrik.id}>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <GripVertical
-                          size={16}
-                          className="text-default-400 cursor-grab"
-                        />
-                        <span>{rubrik.urutan + 1}</span>
+            <>
+              {/* Mobile Card View */}
+              <div className="md:hidden divide-y divide-zinc-200 dark:divide-zinc-800">
+                {filteredRubriks.map((rubrik) => (
+                  <div key={rubrik.id} className="p-4 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start gap-3">
+                        <div className="flex items-center gap-1 text-zinc-400">
+                          <GripVertical size={16} className="cursor-grab" />
+                          <span className="text-sm font-medium">
+                            {rubrik.urutan + 1}
+                          </span>
+                        </div>
+                        <div>
+                          <p className="font-semibold">{rubrik.name}</p>
+                          {rubrik.description && (
+                            <p className="text-xs text-zinc-500 line-clamp-2 mt-1">
+                              {rubrik.description}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{rubrik.name}</p>
-                        {rubrik.description && (
-                          <p className="text-xs text-default-500 line-clamp-1">
-                            {rubrik.description}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Chip size="sm" variant="flat">
-                        {rubrik.kategori}
-                      </Chip>
-                    </TableCell>
-                    <TableCell>
-                      <span className="font-semibold">{rubrik.bobotMax}</span>
-                    </TableCell>
-                    <TableCell>
                       <Chip
                         size="sm"
-                        color={rubrik.isActive ? 'success' : 'default'}
-                        variant="flat"
+                        className={
+                          rubrik.isActive
+                            ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+                            : 'bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400'
+                        }
                       >
                         {rubrik.isActive ? 'Aktif' : 'Nonaktif'}
                       </Chip>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          isIconOnly
-                          size="sm"
-                          variant="flat"
-                          onPress={() => openEditModal(rubrik)}
-                        >
-                          <Edit size={16} />
-                        </Button>
-                        <Button
-                          isIconOnly
-                          size="sm"
-                          variant="flat"
-                          color="danger"
-                          onPress={() => handleDeleteRubrik(rubrik.id)}
-                        >
-                          <Trash2 size={16} />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Chip size="sm" variant="flat">
+                        {rubrik.kategori}
+                      </Chip>
+                      <Chip
+                        size="sm"
+                        className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
+                      >
+                        Bobot: {rubrik.bobotMax}
+                      </Chip>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        className="flex-1"
+                        startContent={<Edit size={14} />}
+                        onPress={() => openEditModal(rubrik)}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="danger"
+                        className="flex-1"
+                        startContent={<Trash2 size={14} />}
+                        onPress={() => handleDeleteRubrik(rubrik.id)}
+                      >
+                        Hapus
+                      </Button>
+                    </div>
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800/50">
+                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider w-16">
+                        Urutan
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        Nama
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        Kategori
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        Bobot Max
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        Aksi
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                    {filteredRubriks.map((rubrik) => (
+                      <tr
+                        key={rubrik.id}
+                        className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors"
+                      >
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <GripVertical
+                              size={16}
+                              className="text-zinc-400 cursor-grab"
+                            />
+                            <span className="font-medium text-zinc-600 dark:text-zinc-400">
+                              {rubrik.urutan + 1}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div>
+                            <p className="font-medium">{rubrik.name}</p>
+                            {rubrik.description && (
+                              <p className="text-xs text-zinc-500 line-clamp-1 mt-1">
+                                {rubrik.description}
+                              </p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <Chip size="sm" variant="flat">
+                            {rubrik.kategori}
+                          </Chip>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-2 rounded-full bg-zinc-200 dark:bg-zinc-700 overflow-hidden">
+                              <div
+                                className="h-full bg-gradient-to-r from-indigo-500 to-blue-500"
+                                style={{ width: `${rubrik.bobotMax}%` }}
+                              />
+                            </div>
+                            <span className="font-semibold text-indigo-600 dark:text-indigo-400">
+                              {rubrik.bobotMax}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center gap-2">
+                            {rubrik.isActive ? (
+                              <>
+                                <CheckCircle2
+                                  size={16}
+                                  className="text-emerald-500"
+                                />
+                                <Chip
+                                  size="sm"
+                                  className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
+                                >
+                                  Aktif
+                                </Chip>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle size={16} className="text-zinc-400" />
+                                <Chip
+                                  size="sm"
+                                  className="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+                                >
+                                  Nonaktif
+                                </Chip>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex gap-2">
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="flat"
+                              onPress={() => openEditModal(rubrik)}
+                            >
+                              <Edit size={16} />
+                            </Button>
+                            <Button
+                              isIconOnly
+                              size="sm"
+                              variant="flat"
+                              color="danger"
+                              onPress={() => handleDeleteRubrik(rubrik.id)}
+                            >
+                              <Trash2 size={16} />
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
-        </CardBody>
-      </Card>
+        </div>
+      </motion.div>
 
       {/* Create Rubrik Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="lg">
         <ModalContent>
-          <ModalHeader>Tambah Rubrik Baru</ModalHeader>
-          <ModalBody className="space-y-4">
+          <ModalHeader className="flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-t-lg">
+            <div className="p-2 rounded-lg bg-white/20">
+              <Plus size={20} />
+            </div>
+            <span>Tambah Rubrik Baru</span>
+          </ModalHeader>
+          <ModalBody className="space-y-4 pt-6">
             {error && (
               <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
                 {error}
@@ -428,13 +718,22 @@ export default function AdminRubrikPage() {
                 min={0}
               />
             </div>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+              <span className="text-sm font-medium">Status Aktif</span>
+              <Switch
+                isSelected={formData.isActive}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, isActive: value })
+                }
+              />
+            </div>
           </ModalBody>
           <ModalFooter>
             <Button variant="flat" onPress={onClose}>
               Batal
             </Button>
             <Button
-              color="primary"
+              className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold"
               onPress={handleCreateRubrik}
               isLoading={isSubmitting}
             >
@@ -447,8 +746,13 @@ export default function AdminRubrikPage() {
       {/* Edit Rubrik Modal */}
       <Modal isOpen={isEditOpen} onClose={onEditClose} size="lg">
         <ModalContent>
-          <ModalHeader>Edit Rubrik</ModalHeader>
-          <ModalBody className="space-y-4">
+          <ModalHeader className="flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-t-lg">
+            <div className="p-2 rounded-lg bg-white/20">
+              <Edit size={20} />
+            </div>
+            <span>Edit Rubrik</span>
+          </ModalHeader>
+          <ModalBody className="space-y-4 pt-6">
             {error && (
               <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
                 {error}
@@ -516,8 +820,8 @@ export default function AdminRubrikPage() {
                 min={0}
               />
             </div>
-            <div className="flex items-center justify-between">
-              <span>Status Aktif</span>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+              <span className="text-sm font-medium">Status Aktif</span>
               <Switch
                 isSelected={formData.isActive}
                 onValueChange={(value) =>
@@ -531,7 +835,7 @@ export default function AdminRubrikPage() {
               Batal
             </Button>
             <Button
-              color="primary"
+              className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold"
               onPress={handleUpdateRubrik}
               isLoading={isSubmitting}
             >
@@ -540,6 +844,6 @@ export default function AdminRubrikPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </div>
+    </motion.div>
   );
 }

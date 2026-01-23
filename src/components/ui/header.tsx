@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import {
@@ -11,6 +12,7 @@ import {
   DropdownItem,
   Badge,
   Input,
+  Skeleton,
 } from '@heroui/react';
 import { Bell, Moon, Sun, Search, LogOut, User, Settings, Menu, GitBranch, Command } from 'lucide-react';
 import Link from 'next/link';
@@ -23,6 +25,12 @@ interface HeaderProps {
 export function Header({ title, onMenuClick }: HeaderProps) {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  
+  // Wait for client-side hydration to complete
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   
   // Get role-based path prefix
   const role = (session?.user as { role?: string })?.role?.toLowerCase() || 'mahasiswa';
@@ -31,6 +39,27 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
+
+  // Show skeleton while mounting to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <header className="h-16 flex items-center justify-between px-4 md:px-6">
+        <div className="flex items-center gap-3">
+          <Skeleton className="w-10 h-10 rounded-lg md:hidden" />
+          <Skeleton className="w-24 h-6 rounded-lg md:hidden" />
+          {title && <Skeleton className="hidden md:block w-32 h-6 rounded-lg" />}
+        </div>
+        <div className="hidden md:flex flex-1 max-w-xl mx-8">
+          <Skeleton className="w-full h-10 rounded-lg" />
+        </div>
+        <div className="flex items-center gap-1">
+          <Skeleton className="w-8 h-8 rounded-full" />
+          <Skeleton className="w-8 h-8 rounded-full" />
+          <Skeleton className="w-8 h-8 rounded-full" />
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="h-16 flex items-center justify-between px-4 md:px-6">

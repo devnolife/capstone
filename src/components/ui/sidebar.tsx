@@ -44,13 +44,8 @@ const mahasiswaMenuItems: SidebarItem[] = [
     icon: <FolderGit2 size={20} />,
   },
   {
-    title: 'Dokumen',
-    href: '/mahasiswa/documents',
-    icon: <FileText size={20} />,
-  },
-  {
     title: 'Persyaratan',
-    href: '/mahasiswa/requirements',
+    href: '/mahasiswa/persyaratan',
     icon: <BookOpen size={20} />,
   },
   {

@@ -24,8 +24,9 @@ export async function GET(
           select: {
             id: true,
             name: true,
-            username: true,
-            avatarUrl: true,
+            email: true,
+            username: true, // username is used as NIM for mahasiswa
+            image: true,
             githubUsername: true,
           },
         },
@@ -39,7 +40,7 @@ export async function GET(
                 id: true,
                 name: true,
                 username: true,
-                avatarUrl: true,
+                image: true,
               },
             },
             comments: {
@@ -59,9 +60,14 @@ export async function GET(
                 id: true,
                 name: true,
                 username: true,
-                avatarUrl: true,
+                image: true,
               },
             },
+          },
+        },
+        requirements: {
+          select: {
+            completionPercent: true,
           },
         },
       },
@@ -80,8 +86,12 @@ export async function GET(
       (a) => a.dosenId === session.user.id,
     );
     const isAdmin = session.user.role === 'ADMIN';
+    // Dosen can view all submitted projects (not just assigned ones)
+    const isDosen = session.user.role === 'DOSEN_PENGUJI';
+    const isSubmittedProject = ['SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'REVISION_NEEDED'].includes(project.status);
+    const dosenCanView = isDosen && isSubmittedProject;
 
-    if (!isOwner && !isAssignedDosen && !isAdmin) {
+    if (!isOwner && !isAssignedDosen && !isAdmin && !dosenCanView) {
       return NextResponse.json(
         { error: 'Tidak memiliki akses' },
         { status: 403 },

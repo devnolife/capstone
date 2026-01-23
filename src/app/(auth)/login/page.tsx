@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Card,
@@ -11,6 +11,7 @@ import {
   Button,
   Divider,
   Checkbox,
+  Spinner,
 } from '@heroui/react';
 import { 
   Lock, 
@@ -25,9 +26,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
@@ -35,6 +38,9 @@ export default function LoginPage() {
     username: '',
     password: '',
   });
+
+  // Check for OAuth errors from callback
+  const callbackError = searchParams.get('error');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,6 +67,191 @@ export default function LoginPage() {
     }
   };
 
+  const handleGitHubLogin = async () => {
+    setIsGitHubLoading(true);
+    setError('');
+    
+    try {
+      await signIn('github', { callbackUrl: '/dashboard' });
+    } catch {
+      setError('Terjadi kesalahan saat login dengan GitHub.');
+      setIsGitHubLoading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-md"
+    >
+      {/* Mobile Logo */}
+      <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
+        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+          <GraduationCap className="text-white" size={24} />
+        </div>
+        <span className="text-xl font-bold">Capstone</span>
+      </div>
+
+      {/* Back to Home Button */}
+      <div className="mb-6">
+        <Button
+          as={Link}
+          href="/"
+          variant="light"
+          startContent={<Home size={18} />}
+          className="text-default-600 hover:text-primary -ml-2"
+        >
+          Kembali ke Beranda
+        </Button>
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-2xl md:text-3xl font-bold mb-2">Selamat Datang!</h2>
+        <p className="text-default-500">
+          Masuk dengan NIM/NIP Anda untuk melanjutkan
+        </p>
+      </div>
+
+      <Card className="shadow-none border border-default-200">
+        <CardBody className="p-6 md:p-8">
+          {(error || callbackError) && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-danger-50 text-danger border border-danger-200 rounded-xl p-4 mb-6 text-sm"
+            >
+              {error || (callbackError === 'OAuthAccountNotLinked' 
+                ? 'Akun GitHub ini sudah terhubung dengan akun lain.' 
+                : 'Terjadi kesalahan saat login. Silakan coba lagi.')}
+            </motion.div>
+          )}
+
+          {/* GitHub Login Button */}
+          <Button
+            type="button"
+            variant="bordered"
+            size="lg"
+            className="w-full font-semibold mb-4"
+            isLoading={isGitHubLoading}
+            startContent={!isGitHubLoading && <Github size={20} />}
+            onPress={handleGitHubLogin}
+          >
+            Masuk dengan GitHub
+          </Button>
+
+          <div className="flex items-center gap-3 my-5">
+            <Divider className="flex-1" />
+            <span className="text-default-400 text-sm">atau</span>
+            <Divider className="flex-1" />
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <Input
+              label="NIM / NIP"
+              type="text"
+              placeholder="Masukkan NIM atau NIP"
+              value={formData.username}
+              onChange={(e) =>
+                setFormData({ ...formData, username: e.target.value })
+              }
+              startContent={<IdCard size={18} className="text-default-400" />}
+              variant="bordered"
+              size="lg"
+              classNames={{
+                inputWrapper: "bg-default-50",
+              }}
+              isRequired
+              autoComplete="username"
+            />
+
+            <Input
+              label="Password"
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Masukkan password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              startContent={<Lock size={18} className="text-default-400" />}
+              endContent={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="focus:outline-none hover:opacity-70 transition-opacity"
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} className="text-default-400" />
+                  ) : (
+                    <Eye size={18} className="text-default-400" />
+                  )}
+                </button>
+              }
+              variant="bordered"
+              size="lg"
+              classNames={{
+                inputWrapper: "bg-default-50",
+              }}
+              isRequired
+              autoComplete="current-password"
+            />
+
+            <div className="flex items-center justify-between">
+              <Checkbox
+                size="sm"
+                isSelected={rememberMe}
+                onValueChange={setRememberMe}
+              >
+                <span className="text-sm">Ingat saya</span>
+              </Checkbox>
+              <button 
+                type="button"
+                className="text-sm text-primary hover:underline"
+              >
+                Lupa password?
+              </button>
+            </div>
+
+            <Button
+              type="submit"
+              color="primary"
+              size="lg"
+              className="w-full font-semibold"
+              isLoading={isLoading}
+              endContent={!isLoading && <ArrowRight size={18} />}
+            >
+              Masuk
+            </Button>
+          </form>
+
+          <Divider className="my-6" />
+
+          <div className="text-center">
+            <p className="text-sm text-default-500">
+              Dengan masuk menggunakan GitHub, akun Anda akan otomatis terhubung 
+              untuk fitur review code.
+            </p>
+          </div>
+        </CardBody>
+      </Card>
+
+      <p className="text-center text-sm text-default-500 mt-6">
+        Hubungi administrator jika Anda memerlukan akun baru
+      </p>
+    </motion.div>
+  );
+}
+
+function LoginFormFallback() {
+  return (
+    <div className="w-full max-w-md flex items-center justify-center min-h-[400px]">
+      <Spinner size="lg" />
+    </div>
+  );
+}
+
+export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex">
       {/* Left Side - Branding */}
@@ -144,148 +335,9 @@ export default function LoginPage() {
 
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 bg-background">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
-        >
-          {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-              <GraduationCap className="text-white" size={24} />
-            </div>
-            <span className="text-xl font-bold">Capstone</span>
-          </div>
-
-          {/* Back to Home Button */}
-          <div className="mb-6">
-            <Button
-              as={Link}
-              href="/"
-              variant="light"
-              startContent={<Home size={18} />}
-              className="text-default-600 hover:text-primary -ml-2"
-            >
-              Kembali ke Beranda
-            </Button>
-          </div>
-
-          <div className="mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2">Selamat Datang!</h2>
-            <p className="text-default-500">
-              Masuk dengan NIM/NIP Anda untuk melanjutkan
-            </p>
-          </div>
-
-          <Card className="shadow-none border border-default-200">
-            <CardBody className="p-6 md:p-8">
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-danger-50 text-danger border border-danger-200 rounded-xl p-4 mb-6 text-sm"
-                >
-                  {error}
-                </motion.div>
-              )}
-
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <Input
-                  label="NIM / NIP"
-                  type="text"
-                  placeholder="Masukkan NIM atau NIP"
-                  value={formData.username}
-                  onChange={(e) =>
-                    setFormData({ ...formData, username: e.target.value })
-                  }
-                  startContent={<IdCard size={18} className="text-default-400" />}
-                  variant="bordered"
-                  size="lg"
-                  classNames={{
-                    inputWrapper: "bg-default-50",
-                  }}
-                  isRequired
-                  autoComplete="username"
-                />
-
-                <Input
-                  label="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Masukkan password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  startContent={<Lock size={18} className="text-default-400" />}
-                  endContent={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="focus:outline-none hover:opacity-70 transition-opacity"
-                    >
-                      {showPassword ? (
-                        <EyeOff size={18} className="text-default-400" />
-                      ) : (
-                        <Eye size={18} className="text-default-400" />
-                      )}
-                    </button>
-                  }
-                  variant="bordered"
-                  size="lg"
-                  classNames={{
-                    inputWrapper: "bg-default-50",
-                  }}
-                  isRequired
-                  autoComplete="current-password"
-                />
-
-                <div className="flex items-center justify-between">
-                  <Checkbox
-                    size="sm"
-                    isSelected={rememberMe}
-                    onValueChange={setRememberMe}
-                  >
-                    <span className="text-sm">Ingat saya</span>
-                  </Checkbox>
-                  <button 
-                    type="button"
-                    className="text-sm text-primary hover:underline"
-                  >
-                    Lupa password?
-                  </button>
-                </div>
-
-                <Button
-                  type="submit"
-                  color="primary"
-                  size="lg"
-                  className="w-full font-semibold"
-                  isLoading={isLoading}
-                  endContent={!isLoading && <ArrowRight size={18} />}
-                >
-                  Masuk
-                </Button>
-              </form>
-
-              <Divider className="my-6" />
-
-              <div className="text-center">
-                <p className="text-sm text-default-500 mb-3">
-                  Integrasi dengan GitHub untuk review code
-                </p>
-                <div className="flex items-center justify-center gap-2 text-default-400">
-                  <Github size={20} />
-                  <span className="text-sm">Hubungkan setelah login</span>
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-
-          <p className="text-center text-sm text-default-500 mt-6">
-            Hubungi administrator jika Anda memerlukan akun baru
-          </p>
-        </motion.div>
+        <Suspense fallback={<LoginFormFallback />}>
+          <LoginForm />
+        </Suspense>
       </div>
     </div>
   );

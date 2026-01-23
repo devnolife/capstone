@@ -58,14 +58,6 @@ export async function POST(
       );
     }
 
-    // Check if project has at least one document
-    if (existingProject.documents.length === 0) {
-      return NextResponse.json(
-        { error: 'Project harus memiliki minimal satu dokumen untuk disubmit' },
-        { status: 400 },
-      );
-    }
-
     // Update project status to SUBMITTED
     const project = await prisma.project.update({
       where: { id },

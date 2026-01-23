@@ -69,7 +69,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', nextUrl));
   }
 
-  // Role-based access control
+  // Role-based access control - each role can only access their own routes
   if (isLoggedIn && isProtectedRoute) {
     // Mahasiswa can only access mahasiswa routes
     if (userRole === 'MAHASISWA' && !isMahasiswaRoute) {
@@ -81,9 +81,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/dosen/dashboard', nextUrl));
     }
 
-    // Admin can access all routes (admin, dosen, mahasiswa for viewing)
-    if (userRole === 'ADMIN') {
-      return NextResponse.next();
+    // Admin can only access admin routes
+    if (userRole === 'ADMIN' && !isAdminRoute) {
+      return NextResponse.redirect(new URL('/admin/dashboard', nextUrl));
     }
   }
 

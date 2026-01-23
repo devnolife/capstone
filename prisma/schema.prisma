@@ -51,10 +51,12 @@ enum ReviewStatus {
 model User {
   id             String    @id @default(cuid())
   username       String    @unique  // NIM untuk mahasiswa, NIP untuk dosen, username untuk admin
+  email          String?   @unique  // Email untuk OAuth providers
+  emailVerified  DateTime? // Required by NextAuth adapter
   name           String
-  password       String    // Required for all users
+  password       String?   // Nullable for OAuth users
   role           Role      @default(MAHASISWA)
-  avatarUrl      String?
+  image          String?   // For NextAuth compatibility (avatar URL)
   githubId       String?   @unique
   githubUsername String?
   githubToken    String?   // Encrypted GitHub access token
@@ -67,8 +69,30 @@ model User {
   reviews           Review[]            @relation("Reviewer")
   notifications     Notification[]
   assignedProjects  ProjectAssignment[]
+  accounts          Account[]
 
   @@map("users")
+}
+
+// NextAuth Account model for OAuth providers
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
 }
 
 model Project {
@@ -76,23 +100,50 @@ model Project {
   title          String
   description    String?       @db.Text
   status         ProjectStatus @default(DRAFT)
+  
+  // GitHub - Repo Mahasiswa
   githubRepoUrl  String?
   githubRepoName String?
+  
+  // GitHub - Repo di Organization (setelah fork)
+  orgRepoUrl     String?       // URL repo di org setelah fork
+  orgRepoName    String?       // Nama repo di org
+  forkedAt       DateTime?     // Kapan di-fork ke org
+  
   semester       String        // e.g., "Ganjil 2024/2025"
   tahunAkademik  String        // e.g., "2024/2025"
   submittedAt    DateTime?     // When project was submitted for review
+  approvedAt     DateTime?     // When project was approved
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 
   // Relations
-  mahasiswaId String
-  mahasiswa   User                @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
-  documents   Document[]
-  reviews     Review[]
-  assignments ProjectAssignment[]
-  requirements ProjectRequirement[]
+  mahasiswaId  String
+  mahasiswa    User                 @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
+  documents    Document[]
+  reviews      Review[]
+  assignments  ProjectAssignment[]
+  requirements ProjectRequirements?
+  members      ProjectMember[]
 
   @@map("projects")
+}
+
+// Project Team Members (via GitHub)
+model ProjectMember {
+  id              String   @id @default(cuid())
+  projectId       String
+  githubUsername  String
+  githubId        String?
+  githubAvatarUrl String?
+  name            String?
+  role            String   @default("member") // "leader" | "member"
+  addedAt         DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, githubUsername])
+  @@map("project_members")
 }
 
 model ProjectAssignment {
@@ -227,20 +278,48 @@ model Semester {
   @@map("semesters")
 }
 
-// ==================== PROJECT REQUIREMENTS ====================
+// ==================== PROJECT REQUIREMENTS (Persyaratan Proyek) ====================
 
-model ProjectRequirement {
-  id          String   @id @default(cuid())
-  projectId   String
-  category    String   // e.g., "judul", "tujuan", "metodologi", etc.
-  content     String   @db.Text
-  isCompleted Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model ProjectRequirements {
+  id        String   @id @default(cuid())
+  projectId String   @unique // One requirements per project
+
+  // ========== INFORMASI DASAR ==========
+  judulProyek          String?   // Text input - Judul proyek
+  targetPengguna       String?   @db.Text // Untuk siapa aplikasi/sistem ini
+  latarBelakangMasalah String?   @db.Text // Mengapa proyek ini perlu dibuat
+  tujuanProyek         String?   @db.Text // Apa yang ingin dicapai
+  manfaatProyek        String?   @db.Text // Keuntungan yang didapat
+
+  // ========== ASPEK AKADEMIK ==========
+  integrasiMatakuliah  String?   @db.Text // Integrasi konsep dari mata kuliah yang relevan
+  metodologi           String?   @db.Text // Metodologi pengembangan (Agile, Waterfall, dll)
+  penulisanLaporan     String?   @db.Text // Rencana format dan struktur laporan
+
+  // ========== TEKNIS & IMPLEMENTASI ==========
+  ruangLingkup         String?   @db.Text // Batasan dan cakupan proyek
+  sumberDayaBatasan    String?   @db.Text // Sumber daya & batasan (waktu, anggaran, akses data)
+  teknologi            String?   @db.Text // Stack/tools yang dipakai
+  fiturUtama           String?   @db.Text // Daftar fitur yang akan dibuat
+
+  // ========== ANALISIS & EVALUASI ==========
+  analisisTemuan       String?   @db.Text // Rencana analisis dan temuan yang diharapkan
+  presentasiUjian      String?   @db.Text // Rencana presentasi dan persiapan ujian
+  stakeholder          String?   @db.Text // Keterlibatan stakeholder
+  kepatuhanEtika       String?   @db.Text // Aspek etika dan penanganan data
+
+  // ========== TIMELINE ==========
+  timeline             String?   @db.Text // Deskripsi rencana pengerjaan
+  kerangkaWaktu        String?   @db.Text // Jadwal terstruktur per tahapan
+  deadlineDate         DateTime? // Tanggal deadline proyek
+
+  // Metadata
+  completionPercent Int      @default(0) // 0-100
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@index([projectId, category])
   @@map("project_requirements")
 }
