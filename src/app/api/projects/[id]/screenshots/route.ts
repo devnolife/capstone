@@ -112,12 +112,12 @@ export async function POST(
     const buffer = Buffer.from(arrayBuffer);
 
     // Upload to MinIO
-    await minioClient.putObject(MINIO_BUCKET, fileKey, buffer, file.size, {
+    await minioClient.putObject(MINIO_BUCKET_NAME, fileKey, buffer, file.size, {
       'Content-Type': file.type,
     });
 
     // Generate public URL
-    const publicUrl = `${process.env.MINIO_PUBLIC_URL}/${MINIO_BUCKET}/${fileKey}`;
+    const publicUrl = `${process.env.MINIO_PUBLIC_URL}/${MINIO_BUCKET_NAME}/${fileKey}`;
 
     // Get current max orderIndex
     const lastScreenshot = await prisma.projectScreenshot.findFirst({
@@ -204,7 +204,7 @@ export async function DELETE(
 
     // Delete from MinIO
     try {
-      await minioClient.removeObject(MINIO_BUCKET, screenshot.fileKey);
+      await minioClient.removeObject(MINIO_BUCKET_NAME, screenshot.fileKey);
     } catch (minioError) {
       console.error('Error deleting from MinIO:', minioError);
       // Continue to delete from database even if MinIO fails
