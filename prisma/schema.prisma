@@ -147,6 +147,7 @@ model Project {
   requirements         ProjectRequirements?
   members              ProjectMember[]
   stakeholderDocuments StakeholderDocument[]
+  screenshots          ProjectScreenshot[]
   invitations          TeamInvitation[]
 
   @@map("projects")
@@ -397,4 +398,33 @@ model StakeholderDocument {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("stakeholder_documents")
+}
+
+// ==================== PROJECT SCREENSHOTS (Screenshot Aplikasi) ====================
+
+model ProjectScreenshot {
+  id        String @id @default(cuid())
+  projectId String
+
+  // Screenshot Info
+  title       String  // Judul/nama screenshot (e.g., "Halaman Login", "Dashboard Admin")
+  description String? @db.Text // Deskripsi screenshot
+  category    String? // Kategori (e.g., "UI", "Fitur", "Testing", "Demo")
+  orderIndex  Int     @default(0) // Urutan tampilan
+
+  // File Info (MinIO)
+  fileName String // Original file name
+  fileKey  String // MinIO object key
+  fileUrl  String // Public URL to access file
+  fileSize Int    // in bytes
+  mimeType String // e.g., "image/png", "image/jpeg"
+
+  // Metadata
+  uploadedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_screenshots")
 }

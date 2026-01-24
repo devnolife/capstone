@@ -59,7 +59,20 @@ export async function GET(request: NextRequest) {
     // Verify user owns this project or is admin/dosen
     const project = await prisma.project.findUnique({
       where: { id: projectId },
-      select: { mahasiswaId: true },
+      select: {
+        id: true,
+        title: true,
+        semester: true,
+        status: true,
+        description: true,
+        mahasiswaId: true,
+        mahasiswa: {
+          select: {
+            name: true,
+            image: true,
+          },
+        },
+      },
     });
 
     if (!project) {
@@ -93,7 +106,18 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    return NextResponse.json(requirements);
+    // Return requirements with project info for efficiency
+    return NextResponse.json({
+      ...requirements,
+      project: {
+        id: project.id,
+        title: project.title,
+        semester: project.semester,
+        status: project.status,
+        description: project.description,
+        mahasiswa: project.mahasiswa,
+      },
+    });
   } catch (error) {
     console.error("Error fetching project requirements:", error);
     return NextResponse.json(

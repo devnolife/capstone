@@ -297,27 +297,31 @@ export default function ProjectRequirementsFormPage() {
     }));
   };
 
-  // Fetch project and requirements
+  // Fetch project and requirements (single API call for efficiency)
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const projectRes = await fetch(`/api/projects/${projectId}`);
-        if (!projectRes.ok) throw new Error('Project not found');
-        const projectData = await projectRes.json();
-        setProject(projectData);
-
+        // Single API call - project-requirements now includes project info
         const reqRes = await fetch(`/api/project-requirements?projectId=${projectId}`);
-        if (reqRes.ok) {
-          const reqData: ProjectRequirements = await reqRes.json();
-          const initialData: Record<string, string> = {};
-          ALL_FIELD_KEYS.forEach((key) => {
-            initialData[key] = (reqData[key as keyof ProjectRequirements] as string) || '';
-          });
-          setFormData(initialData);
 
-          if (reqData.updatedAt) {
-            setLastSaved(new Date(reqData.updatedAt));
-          }
+        if (!reqRes.ok) throw new Error('Data not found');
+
+        const reqData = await reqRes.json();
+
+        // Extract project from response
+        if (reqData.project) {
+          setProject(reqData.project);
+        }
+
+        // Set form data from requirements
+        const initialData: Record<string, string> = {};
+        ALL_FIELD_KEYS.forEach((key) => {
+          initialData[key] = (reqData[key as keyof ProjectRequirements] as string) || '';
+        });
+        setFormData(initialData);
+
+        if (reqData.updatedAt) {
+          setLastSaved(new Date(reqData.updatedAt));
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -481,7 +485,7 @@ export default function ProjectRequirementsFormPage() {
               </motion.div>
             )}
           </div>
-          
+
           {/* Section Quick Status */}
           <div className="grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700">
             {REQUIREMENT_SECTIONS.map((section) => {
@@ -566,14 +570,12 @@ export default function ProjectRequirementsFormPage() {
                           strokeLinecap="round"
                           strokeDasharray={138}
                           strokeDashoffset={138 - (138 * sectionCompletion.percent) / 100}
-                          className={`transition-all duration-500 ${
-                            sectionCompletion.percent === 100 ? 'text-emerald-500' : 'text-blue-500'
-                          }`}
+                          className={`transition-all duration-500 ${sectionCompletion.percent === 100 ? 'text-emerald-500' : 'text-blue-500'
+                            }`}
                         />
                       </svg>
-                      <span className={`absolute inset-0 flex items-center justify-center font-bold ${
-                        sectionCompletion.percent === 100 ? 'text-[11px]' : 'text-xs'
-                      }`}>
+                      <span className={`absolute inset-0 flex items-center justify-center font-bold ${sectionCompletion.percent === 100 ? 'text-[11px]' : 'text-xs'
+                        }`}>
                         {sectionCompletion.percent}%
                       </span>
                     </div>
@@ -618,22 +620,20 @@ export default function ProjectRequirementsFormPage() {
                               initial={{ opacity: 0, y: 15 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: fieldIndex * 0.08 }}
-                              className={`relative p-4 rounded-2xl border-2 transition-all duration-300 ${
-                                isActive
-                                  ? 'border-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-900/10'
-                                  : isFilled
-                                    ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-900/10'
-                                    : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900'
-                              }`}
+                              className={`relative p-4 rounded-2xl border-2 transition-all duration-300 ${isActive
+                                ? 'border-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-900/10'
+                                : isFilled
+                                  ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-900/10'
+                                  : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900'
+                                }`}
                             >
                               {/* Field Header */}
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                  <div className={`p-2 rounded-xl ${
-                                    isFilled 
-                                      ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600' 
-                                      : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'
-                                  }`}>
+                                  <div className={`p-2 rounded-xl ${isFilled
+                                    ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600'
+                                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'
+                                    }`}>
                                     <FieldIcon size={18} />
                                   </div>
                                   <div>
