@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');
+    const requireGithub = searchParams.get('requireGithub') === 'true';
 
     if (!query || query.length < 2) {
       return NextResponse.json(
@@ -21,18 +22,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Build where clause
+    const whereClause: Record<string, unknown> = {
+      role: 'MAHASISWA',
+      isActive: true,
+      id: { not: session.user.id }, // Exclude current user
+      OR: [
+        { username: { contains: query, mode: 'insensitive' } },
+        { nim: { contains: query, mode: 'insensitive' } },
+        { name: { contains: query, mode: 'insensitive' } },
+      ],
+    };
+
+    // Add GitHub filter if required
+    if (requireGithub) {
+      whereClause.githubUsername = { not: null };
+    }
+
     // Search mahasiswa by NIM (username) or name
     const users = await prisma.user.findMany({
-      where: {
-        role: 'MAHASISWA',
-        isActive: true,
-        id: { not: session.user.id }, // Exclude current user
-        OR: [
-          { username: { contains: query, mode: 'insensitive' } },
-          { nim: { contains: query, mode: 'insensitive' } },
-          { name: { contains: query, mode: 'insensitive' } },
-        ],
-      },
+      where: whereClause,
       select: {
         id: true,
         username: true,

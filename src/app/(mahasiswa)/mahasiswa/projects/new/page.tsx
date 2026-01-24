@@ -21,6 +21,7 @@ import {
   Switch,
   RadioGroup,
   Radio,
+  Spinner,
 } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -66,7 +67,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { GitHubRepoSelector } from '@/components/github/repo-selector';
-import TeamMembers from '@/components/mahasiswa/team-members';
+import TeamMembersNimNew from '@/components/mahasiswa/team-members-nim-new';
 
 interface Semester {
   id: string;
@@ -86,13 +87,13 @@ interface SelectedRepo {
   updated_at?: string;
 }
 
-interface ProjectMember {
+interface PendingMember {
   id: string;
+  name: string;
+  nim: string;
+  prodi?: string;
+  image?: string;
   githubUsername: string;
-  githubId?: string;
-  githubAvatarUrl?: string;
-  name?: string;
-  role: string;
 }
 
 // Project categories with icons
@@ -149,11 +150,18 @@ export default function NewProjectPage() {
   const [isRepoSelectorOpen, setIsRepoSelectorOpen] = useState(false);
   const [selectedRepo, setSelectedRepo] = useState<SelectedRepo | null>(null);
   const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
-  const [teamMembers, setTeamMembers] = useState<ProjectMember[]>([]);
+  const [pendingTeamMembers, setPendingTeamMembers] = useState<PendingMember[]>([]);
   const [showPreview, setShowPreview] = useState(true);
   const [isPublic, setIsPublic] = useState(true);
   const [techSearch, setTechSearch] = useState('');
   const [showOptional, setShowOptional] = useState(false);
+
+  // GitHub status - fetched from API to ensure accuracy (session might be stale)
+  const [githubStatus, setGithubStatus] = useState<{
+    isConnected: boolean;
+    username: string | null;
+    isLoading: boolean;
+  }>({ isConnected: false, username: null, isLoading: true });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -168,9 +176,32 @@ export default function NewProjectPage() {
     expectedOutcome: '',
   });
 
-  // Check if user has GitHub connected
-  const hasGitHubConnected = !!(session?.user as { githubUsername?: string })?.githubUsername;
-  const githubUsername = (session?.user as { githubUsername?: string })?.githubUsername;
+  // Fetch GitHub status from API (session might be stale after linking GitHub)
+  useEffect(() => {
+    const fetchGitHubStatus = async () => {
+      try {
+        const response = await fetch('/api/profile');
+        if (response.ok) {
+          const data = await response.json();
+          setGithubStatus({
+            isConnected: !!data.githubUsername,
+            username: data.githubUsername,
+            isLoading: false,
+          });
+        } else {
+          setGithubStatus(prev => ({ ...prev, isLoading: false }));
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setGithubStatus(prev => ({ ...prev, isLoading: false }));
+      }
+    };
+    fetchGitHubStatus();
+  }, []);
+
+  // Use API data for GitHub status (more reliable than session)
+  const hasGitHubConnected = githubStatus.isConnected;
+  const githubUsername = githubStatus.username;
 
   // Calculate form completion
   const formCompletion = useMemo(() => {
@@ -261,7 +292,7 @@ export default function NewProjectPage() {
         body: JSON.stringify({
           ...formData,
           technologies: selectedTechs,
-          teamMembers: teamMembers,
+          pendingTeamMembers: pendingTeamMembers,
           isPublic,
         }),
       });
@@ -316,8 +347,8 @@ export default function NewProjectPage() {
           {/* Progress Indicator */}
           <Tooltip content={`${formCompletion.filledCount}/${formCompletion.total} field terisi`}>
             <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${formCompletion.percentage === 100
-                ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30'
-                : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700'
+              ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30'
+              : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700'
               }`}>
               {/* Progress Circle */}
               <div className="relative w-7 h-7">
@@ -348,8 +379,8 @@ export default function NewProjectPage() {
               </div>
               {/* Percentage Text */}
               <span className={`text-xs font-bold min-w-[32px] text-center ${formCompletion.percentage === 100
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : 'text-zinc-700 dark:text-zinc-300'
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-zinc-700 dark:text-zinc-300'
                 }`}>
                 {formCompletion.percentage}%
               </span>
@@ -698,15 +729,25 @@ export default function NewProjectPage() {
                   icon={Github}
                   title="Repository GitHub"
                   action={
-                    hasGitHubConnected && (
+                    githubStatus.isLoading ? (
+                      <Chip size="sm" variant="flat" classNames={{ base: 'h-5' }}>
+                        <Spinner size="sm" className="w-3 h-3 mr-1" />
+                        Memuat...
+                      </Chip>
+                    ) : hasGitHubConnected ? (
                       <Chip size="sm" variant="dot" color="success" classNames={{ base: 'h-5' }}>
                         @{githubUsername}
                       </Chip>
-                    )
+                    ) : null
                   }
                 />
 
-                {!hasGitHubConnected ? (
+                {githubStatus.isLoading ? (
+                  <div className="flex items-center justify-center p-6">
+                    <Spinner size="sm" />
+                    <span className="ml-2 text-sm text-default-400">Memeriksa status GitHub...</span>
+                  </div>
+                ) : !hasGitHubConnected ? (
                   <div className="p-3 bg-warning-50 rounded-lg border border-warning-100">
                     <div className="flex items-start gap-2">
                       <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
@@ -795,12 +836,13 @@ export default function NewProjectPage() {
             </Card>
 
             {/* Team Members */}
-            <TeamMembers
-              members={teamMembers}
-              onMembersChange={setTeamMembers}
-              ownerGithubUsername={githubUsername}
+            <TeamMembersNimNew
+              pendingMembers={pendingTeamMembers}
+              onPendingMembersChange={setPendingTeamMembers}
+              ownerGithubUsername={githubUsername ?? undefined}
               ownerName={session?.user?.name || ''}
               ownerImage={session?.user?.image || ''}
+              ownerNim={(session?.user as { nim?: string })?.nim}
               maxMembers={3}
               isEditable={true}
             />
@@ -964,7 +1006,7 @@ export default function NewProjectPage() {
                     <div className="grid grid-cols-4 gap-2">
                       <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
                         <Users size={16} className="mx-auto mb-1 text-blue-500" />
-                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">{teamMembers.length + 1}</p>
+                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">{pendingTeamMembers.length + 1}</p>
                         <p className="text-[10px] text-zinc-400">Tim</p>
                       </div>
                       <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
@@ -1044,8 +1086,8 @@ export default function NewProjectPage() {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.05 }}
                           className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${field.filled
-                              ? 'bg-success-50 border border-success-100'
-                              : 'bg-default-50 border border-transparent hover:border-default-200'
+                            ? 'bg-success-50 border border-success-100'
+                            : 'bg-default-50 border border-transparent hover:border-default-200'
                             }`}
                         >
                           <span className={`font-medium ${field.filled ? 'text-success-700' : 'text-default-500'}`}>

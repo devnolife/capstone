@@ -191,18 +191,31 @@ export async function upsertUserFromSimak(
 
     if (existingUser) {
       // Update existing user with latest SIMAK data
+      // Only update email if it's not already taken by another user
+      let emailToUpdate = undefined;
+      if (simakData.email) {
+        const emailOwner = await prisma.user.findUnique({
+          where: { email: simakData.email },
+        });
+        if (!emailOwner || emailOwner.id === existingUser.id) {
+          emailToUpdate = simakData.email;
+        }
+      }
+
       const updated = await prisma.user.update({
         where: { id: existingUser.id },
         data: {
           nim: simakData.nim,
           name: simakData.nama,
-          email: simakData.email || undefined,
+          email: emailToUpdate,
           phone: simakData.hp || undefined,
           prodi: simakData.prodi || undefined,
           simakPhoto: simakData.foto || undefined,
           simakValidated: true,
           simakLastSync: new Date(),
           image: simakData.foto || existingUser.image,
+          // Update password hash if provided
+          ...(passwordHash && { password: passwordHash }),
         },
         select: {
           id: true,
@@ -211,7 +224,20 @@ export async function upsertUserFromSimak(
           role: true,
         },
       });
+      console.log('[SIMAK] Updated existing user:', updated.username);
       return updated;
+    }
+
+    // Check if email is already used by another user
+    let emailToUse = simakData.email;
+    if (emailToUse) {
+      const emailOwner = await prisma.user.findUnique({
+        where: { email: emailToUse },
+      });
+      if (emailOwner) {
+        console.log('[SIMAK] Email already in use, skipping email field');
+        emailToUse = null; // Don't use this email
+      }
     }
 
     // Create new user
@@ -220,7 +246,7 @@ export async function upsertUserFromSimak(
         username: simakData.nim,
         nim: simakData.nim,
         name: simakData.nama,
-        email: simakData.email,
+        email: emailToUse,
         phone: simakData.hp,
         prodi: simakData.prodi,
         simakPhoto: simakData.foto,
@@ -238,6 +264,7 @@ export async function upsertUserFromSimak(
         role: true,
       },
     });
+    console.log('[SIMAK] Created new user:', newUser.username);
 
     return newUser;
   } catch (error) {
