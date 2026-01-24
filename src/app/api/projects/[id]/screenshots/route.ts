@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { minioClient, MINIO_BUCKET } from '@/lib/minio';
+import { minioClient, MINIO_BUCKET_NAME } from '@/lib/minio';
 
 // GET /api/projects/[id]/screenshots - Get all screenshots for a project
 export async function GET(

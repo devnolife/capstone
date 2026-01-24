@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import {
   Card,
   CardBody,
@@ -20,6 +20,7 @@ import {
   Chip,
   Progress,
   addToast,
+  Spinner,
 } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -55,8 +56,6 @@ interface ProjectScreenshot {
 
 interface ScreenshotUploadProps {
   projectId: string;
-  screenshots: ProjectScreenshot[];
-  onScreenshotsChange: (screenshots: ProjectScreenshot[]) => void;
   readOnly?: boolean;
 }
 
@@ -76,17 +75,36 @@ const getCategoryConfig = (category: string | null | undefined) => {
 
 export default function ScreenshotUpload({
   projectId,
-  screenshots,
-  onScreenshotsChange,
   readOnly = false,
 }: ScreenshotUploadProps) {
   const uploadModal = useDisclosure();
   const previewModal = useDisclosure();
+  const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewTitle, setPreviewTitle] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fetch screenshots on mount
+  useEffect(() => {
+    const fetchScreenshots = async () => {
+      try {
+        const response = await fetch(`/api/projects/${projectId}/screenshots`);
+        if (response.ok) {
+          const data = await response.json();
+          setScreenshots(data.screenshots || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch screenshots:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchScreenshots();
+  }, [projectId]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -194,7 +212,7 @@ export default function ScreenshotUpload({
       const { screenshot } = await response.json();
 
       // Update screenshots list
-      onScreenshotsChange([...screenshots, screenshot]);
+      setScreenshots((prev) => [...prev, screenshot]);
 
       addToast({
         title: 'Berhasil',
@@ -234,7 +252,7 @@ export default function ScreenshotUpload({
       }
 
       // Update screenshots list
-      onScreenshotsChange(screenshots.filter((s) => s.id !== screenshotId));
+      setScreenshots((prev) => prev.filter((s) => s.id !== screenshotId));
 
       addToast({
         title: 'Berhasil',
@@ -295,7 +313,11 @@ export default function ScreenshotUpload({
         </CardHeader>
 
         <CardBody className="p-5">
-          {screenshots.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-10">
+              <Spinner size="lg" color="primary" />
+            </div>
+          ) : screenshots.length === 0 ? (
             <div className="text-center py-10">
               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
                 <ImageIcon size={32} className="text-default-400" />
@@ -431,8 +453,7 @@ export default function ScreenshotUpload({
                       color="danger"
                       isIconOnly
                       className="absolute top-2 right-2"
-                      onPress={(e) => {
-                        e.stopPropagation();
+                      onPress={() => {
                         setSelectedFile(null);
                         setPreviewDataUrl(null);
                         if (fileInputRef.current) fileInputRef.current.value = '';
