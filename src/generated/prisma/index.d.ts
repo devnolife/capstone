@@ -88,6 +88,11 @@ export type ProjectRequirements = $Result.DefaultSelection<Prisma.$ProjectRequir
  * 
  */
 export type StakeholderDocument = $Result.DefaultSelection<Prisma.$StakeholderDocumentPayload>
+/**
+ * Model ProjectScreenshot
+ * 
+ */
+export type ProjectScreenshot = $Result.DefaultSelection<Prisma.$ProjectScreenshotPayload>
 
 /**
  * Enums
@@ -439,6 +444,16 @@ export class PrismaClient<
     * ```
     */
   get stakeholderDocument(): Prisma.StakeholderDocumentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.projectScreenshot`: Exposes CRUD operations for the **ProjectScreenshot** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProjectScreenshots
+    * const projectScreenshots = await prisma.projectScreenshot.findMany()
+    * ```
+    */
+  get projectScreenshot(): Prisma.ProjectScreenshotDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -887,7 +902,8 @@ export namespace Prisma {
     Notification: 'Notification',
     Semester: 'Semester',
     ProjectRequirements: 'ProjectRequirements',
-    StakeholderDocument: 'StakeholderDocument'
+    StakeholderDocument: 'StakeholderDocument',
+    ProjectScreenshot: 'ProjectScreenshot'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -903,7 +919,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirements" | "stakeholderDocument"
+      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectAssignment" | "document" | "review" | "reviewComment" | "rubrikPenilaian" | "reviewScore" | "notification" | "semester" | "projectRequirements" | "stakeholderDocument" | "projectScreenshot"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2017,6 +2033,80 @@ export namespace Prisma {
           }
         }
       }
+      ProjectScreenshot: {
+        payload: Prisma.$ProjectScreenshotPayload<ExtArgs>
+        fields: Prisma.ProjectScreenshotFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProjectScreenshotFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProjectScreenshotFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>
+          }
+          findFirst: {
+            args: Prisma.ProjectScreenshotFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProjectScreenshotFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>
+          }
+          findMany: {
+            args: Prisma.ProjectScreenshotFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>[]
+          }
+          create: {
+            args: Prisma.ProjectScreenshotCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>
+          }
+          createMany: {
+            args: Prisma.ProjectScreenshotCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProjectScreenshotCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>[]
+          }
+          delete: {
+            args: Prisma.ProjectScreenshotDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>
+          }
+          update: {
+            args: Prisma.ProjectScreenshotUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProjectScreenshotDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProjectScreenshotUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProjectScreenshotUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProjectScreenshotUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectScreenshotPayload>
+          }
+          aggregate: {
+            args: Prisma.ProjectScreenshotAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectScreenshot>
+          }
+          groupBy: {
+            args: Prisma.ProjectScreenshotGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectScreenshotGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProjectScreenshotCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectScreenshotCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2140,6 +2230,7 @@ export namespace Prisma {
     semester?: SemesterOmit
     projectRequirements?: ProjectRequirementsOmit
     stakeholderDocument?: StakeholderDocumentOmit
+    projectScreenshot?: ProjectScreenshotOmit
   }
 
   /* Types for Logging */
@@ -2319,6 +2410,7 @@ export namespace Prisma {
     assignments: number
     members: number
     stakeholderDocuments: number
+    screenshots: number
     invitations: number
   }
 
@@ -2328,6 +2420,7 @@ export namespace Prisma {
     assignments?: boolean | ProjectCountOutputTypeCountAssignmentsArgs
     members?: boolean | ProjectCountOutputTypeCountMembersArgs
     stakeholderDocuments?: boolean | ProjectCountOutputTypeCountStakeholderDocumentsArgs
+    screenshots?: boolean | ProjectCountOutputTypeCountScreenshotsArgs
     invitations?: boolean | ProjectCountOutputTypeCountInvitationsArgs
   }
 
@@ -2375,6 +2468,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountStakeholderDocumentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: StakeholderDocumentWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountScreenshotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectScreenshotWhereInput
   }
 
   /**
@@ -5363,6 +5463,7 @@ export namespace Prisma {
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
     stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
+    screenshots?: boolean | Project$screenshotsArgs<ExtArgs>
     invitations?: boolean | Project$invitationsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
@@ -5435,6 +5536,7 @@ export namespace Prisma {
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     members?: boolean | Project$membersArgs<ExtArgs>
     stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
+    screenshots?: boolean | Project$screenshotsArgs<ExtArgs>
     invitations?: boolean | Project$invitationsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -5455,6 +5557,7 @@ export namespace Prisma {
       requirements: Prisma.$ProjectRequirementsPayload<ExtArgs> | null
       members: Prisma.$ProjectMemberPayload<ExtArgs>[]
       stakeholderDocuments: Prisma.$StakeholderDocumentPayload<ExtArgs>[]
+      screenshots: Prisma.$ProjectScreenshotPayload<ExtArgs>[]
       invitations: Prisma.$TeamInvitationPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -5875,6 +5978,7 @@ export namespace Prisma {
     requirements<T extends Project$requirementsArgs<ExtArgs> = {}>(args?: Subset<T, Project$requirementsArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     members<T extends Project$membersArgs<ExtArgs> = {}>(args?: Subset<T, Project$membersArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     stakeholderDocuments<T extends Project$stakeholderDocumentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$stakeholderDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    screenshots<T extends Project$screenshotsArgs<ExtArgs> = {}>(args?: Subset<T, Project$screenshotsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitations<T extends Project$invitationsArgs<ExtArgs> = {}>(args?: Subset<T, Project$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -6453,6 +6557,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: StakeholderDocumentScalarFieldEnum | StakeholderDocumentScalarFieldEnum[]
+  }
+
+  /**
+   * Project.screenshots
+   */
+  export type Project$screenshotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    where?: ProjectScreenshotWhereInput
+    orderBy?: ProjectScreenshotOrderByWithRelationInput | ProjectScreenshotOrderByWithRelationInput[]
+    cursor?: ProjectScreenshotWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectScreenshotScalarFieldEnum | ProjectScreenshotScalarFieldEnum[]
   }
 
   /**
@@ -20226,6 +20354,1206 @@ export namespace Prisma {
 
 
   /**
+   * Model ProjectScreenshot
+   */
+
+  export type AggregateProjectScreenshot = {
+    _count: ProjectScreenshotCountAggregateOutputType | null
+    _avg: ProjectScreenshotAvgAggregateOutputType | null
+    _sum: ProjectScreenshotSumAggregateOutputType | null
+    _min: ProjectScreenshotMinAggregateOutputType | null
+    _max: ProjectScreenshotMaxAggregateOutputType | null
+  }
+
+  export type ProjectScreenshotAvgAggregateOutputType = {
+    orderIndex: number | null
+    fileSize: number | null
+  }
+
+  export type ProjectScreenshotSumAggregateOutputType = {
+    orderIndex: number | null
+    fileSize: number | null
+  }
+
+  export type ProjectScreenshotMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    title: string | null
+    description: string | null
+    category: string | null
+    orderIndex: number | null
+    fileName: string | null
+    fileKey: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    mimeType: string | null
+    uploadedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectScreenshotMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    title: string | null
+    description: string | null
+    category: string | null
+    orderIndex: number | null
+    fileName: string | null
+    fileKey: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    mimeType: string | null
+    uploadedAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectScreenshotCountAggregateOutputType = {
+    id: number
+    projectId: number
+    title: number
+    description: number
+    category: number
+    orderIndex: number
+    fileName: number
+    fileKey: number
+    fileUrl: number
+    fileSize: number
+    mimeType: number
+    uploadedAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProjectScreenshotAvgAggregateInputType = {
+    orderIndex?: true
+    fileSize?: true
+  }
+
+  export type ProjectScreenshotSumAggregateInputType = {
+    orderIndex?: true
+    fileSize?: true
+  }
+
+  export type ProjectScreenshotMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    title?: true
+    description?: true
+    category?: true
+    orderIndex?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    uploadedAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectScreenshotMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    title?: true
+    description?: true
+    category?: true
+    orderIndex?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    uploadedAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectScreenshotCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    title?: true
+    description?: true
+    category?: true
+    orderIndex?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    uploadedAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProjectScreenshotAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectScreenshot to aggregate.
+     */
+    where?: ProjectScreenshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectScreenshots to fetch.
+     */
+    orderBy?: ProjectScreenshotOrderByWithRelationInput | ProjectScreenshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProjectScreenshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectScreenshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectScreenshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProjectScreenshots
+    **/
+    _count?: true | ProjectScreenshotCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProjectScreenshotAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProjectScreenshotSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProjectScreenshotMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProjectScreenshotMaxAggregateInputType
+  }
+
+  export type GetProjectScreenshotAggregateType<T extends ProjectScreenshotAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectScreenshot]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProjectScreenshot[P]>
+      : GetScalarType<T[P], AggregateProjectScreenshot[P]>
+  }
+
+
+
+
+  export type ProjectScreenshotGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectScreenshotWhereInput
+    orderBy?: ProjectScreenshotOrderByWithAggregationInput | ProjectScreenshotOrderByWithAggregationInput[]
+    by: ProjectScreenshotScalarFieldEnum[] | ProjectScreenshotScalarFieldEnum
+    having?: ProjectScreenshotScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProjectScreenshotCountAggregateInputType | true
+    _avg?: ProjectScreenshotAvgAggregateInputType
+    _sum?: ProjectScreenshotSumAggregateInputType
+    _min?: ProjectScreenshotMinAggregateInputType
+    _max?: ProjectScreenshotMaxAggregateInputType
+  }
+
+  export type ProjectScreenshotGroupByOutputType = {
+    id: string
+    projectId: string
+    title: string
+    description: string | null
+    category: string | null
+    orderIndex: number
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    uploadedAt: Date
+    updatedAt: Date
+    _count: ProjectScreenshotCountAggregateOutputType | null
+    _avg: ProjectScreenshotAvgAggregateOutputType | null
+    _sum: ProjectScreenshotSumAggregateOutputType | null
+    _min: ProjectScreenshotMinAggregateOutputType | null
+    _max: ProjectScreenshotMaxAggregateOutputType | null
+  }
+
+  type GetProjectScreenshotGroupByPayload<T extends ProjectScreenshotGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProjectScreenshotGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProjectScreenshotGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProjectScreenshotGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectScreenshotGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProjectScreenshotSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    description?: boolean
+    category?: boolean
+    orderIndex?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectScreenshot"]>
+
+  export type ProjectScreenshotSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    description?: boolean
+    category?: boolean
+    orderIndex?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectScreenshot"]>
+
+  export type ProjectScreenshotSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    description?: boolean
+    category?: boolean
+    orderIndex?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectScreenshot"]>
+
+  export type ProjectScreenshotSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    description?: boolean
+    category?: boolean
+    orderIndex?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    uploadedAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProjectScreenshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "title" | "description" | "category" | "orderIndex" | "fileName" | "fileKey" | "fileUrl" | "fileSize" | "mimeType" | "uploadedAt" | "updatedAt", ExtArgs["result"]["projectScreenshot"]>
+  export type ProjectScreenshotInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type ProjectScreenshotIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type ProjectScreenshotIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+
+  export type $ProjectScreenshotPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectScreenshot"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      title: string
+      description: string | null
+      category: string | null
+      orderIndex: number
+      fileName: string
+      fileKey: string
+      fileUrl: string
+      fileSize: number
+      mimeType: string
+      uploadedAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["projectScreenshot"]>
+    composites: {}
+  }
+
+  type ProjectScreenshotGetPayload<S extends boolean | null | undefined | ProjectScreenshotDefaultArgs> = $Result.GetResult<Prisma.$ProjectScreenshotPayload, S>
+
+  type ProjectScreenshotCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectScreenshotFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectScreenshotCountAggregateInputType | true
+    }
+
+  export interface ProjectScreenshotDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectScreenshot'], meta: { name: 'ProjectScreenshot' } }
+    /**
+     * Find zero or one ProjectScreenshot that matches the filter.
+     * @param {ProjectScreenshotFindUniqueArgs} args - Arguments to find a ProjectScreenshot
+     * @example
+     * // Get one ProjectScreenshot
+     * const projectScreenshot = await prisma.projectScreenshot.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProjectScreenshotFindUniqueArgs>(args: SelectSubset<T, ProjectScreenshotFindUniqueArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProjectScreenshot that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProjectScreenshotFindUniqueOrThrowArgs} args - Arguments to find a ProjectScreenshot
+     * @example
+     * // Get one ProjectScreenshot
+     * const projectScreenshot = await prisma.projectScreenshot.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProjectScreenshotFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectScreenshotFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectScreenshot that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectScreenshotFindFirstArgs} args - Arguments to find a ProjectScreenshot
+     * @example
+     * // Get one ProjectScreenshot
+     * const projectScreenshot = await prisma.projectScreenshot.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProjectScreenshotFindFirstArgs>(args?: SelectSubset<T, ProjectScreenshotFindFirstArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectScreenshot that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectScreenshotFindFirstOrThrowArgs} args - Arguments to find a ProjectScreenshot
+     * @example
+     * // Get one ProjectScreenshot
+     * const projectScreenshot = await prisma.projectScreenshot.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProjectScreenshotFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectScreenshotFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProjectScreenshots that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectScreenshotFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProjectScreenshots
+     * const projectScreenshots = await prisma.projectScreenshot.findMany()
+     * 
+     * // Get first 10 ProjectScreenshots
+     * const projectScreenshots = await prisma.projectScreenshot.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const projectScreenshotWithIdOnly = await prisma.projectScreenshot.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProjectScreenshotFindManyArgs>(args?: SelectSubset<T, ProjectScreenshotFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProjectScreenshot.
+     * @param {ProjectScreenshotCreateArgs} args - Arguments to create a ProjectScreenshot.
+     * @example
+     * // Create one ProjectScreenshot
+     * const ProjectScreenshot = await prisma.projectScreenshot.create({
+     *   data: {
+     *     // ... data to create a ProjectScreenshot
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProjectScreenshotCreateArgs>(args: SelectSubset<T, ProjectScreenshotCreateArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProjectScreenshots.
+     * @param {ProjectScreenshotCreateManyArgs} args - Arguments to create many ProjectScreenshots.
+     * @example
+     * // Create many ProjectScreenshots
+     * const projectScreenshot = await prisma.projectScreenshot.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProjectScreenshotCreateManyArgs>(args?: SelectSubset<T, ProjectScreenshotCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProjectScreenshots and returns the data saved in the database.
+     * @param {ProjectScreenshotCreateManyAndReturnArgs} args - Arguments to create many ProjectScreenshots.
+     * @example
+     * // Create many ProjectScreenshots
+     * const projectScreenshot = await prisma.projectScreenshot.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProjectScreenshots and only return the `id`
+     * const projectScreenshotWithIdOnly = await prisma.projectScreenshot.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProjectScreenshotCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectScreenshotCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProjectScreenshot.
+     * @param {ProjectScreenshotDeleteArgs} args - Arguments to delete one ProjectScreenshot.
+     * @example
+     * // Delete one ProjectScreenshot
+     * const ProjectScreenshot = await prisma.projectScreenshot.delete({
+     *   where: {
+     *     // ... filter to delete one ProjectScreenshot
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProjectScreenshotDeleteArgs>(args: SelectSubset<T, ProjectScreenshotDeleteArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProjectScreenshot.
+     * @param {ProjectScreenshotUpdateArgs} args - Arguments to update one ProjectScreenshot.
+     * @example
+     * // Update one ProjectScreenshot
+     * const projectScreenshot = await prisma.projectScreenshot.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProjectScreenshotUpdateArgs>(args: SelectSubset<T, ProjectScreenshotUpdateArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProjectScreenshots.
+     * @param {ProjectScreenshotDeleteManyArgs} args - Arguments to filter ProjectScreenshots to delete.
+     * @example
+     * // Delete a few ProjectScreenshots
+     * const { count } = await prisma.projectScreenshot.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProjectScreenshotDeleteManyArgs>(args?: SelectSubset<T, ProjectScreenshotDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectScreenshots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectScreenshotUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProjectScreenshots
+     * const projectScreenshot = await prisma.projectScreenshot.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProjectScreenshotUpdateManyArgs>(args: SelectSubset<T, ProjectScreenshotUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectScreenshots and returns the data updated in the database.
+     * @param {ProjectScreenshotUpdateManyAndReturnArgs} args - Arguments to update many ProjectScreenshots.
+     * @example
+     * // Update many ProjectScreenshots
+     * const projectScreenshot = await prisma.projectScreenshot.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProjectScreenshots and only return the `id`
+     * const projectScreenshotWithIdOnly = await prisma.projectScreenshot.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProjectScreenshotUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectScreenshotUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProjectScreenshot.
+     * @param {ProjectScreenshotUpsertArgs} args - Arguments to update or create a ProjectScreenshot.
+     * @example
+     * // Update or create a ProjectScreenshot
+     * const projectScreenshot = await prisma.projectScreenshot.upsert({
+     *   create: {
+     *     // ... data to create a ProjectScreenshot
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProjectScreenshot we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProjectScreenshotUpsertArgs>(args: SelectSubset<T, ProjectScreenshotUpsertArgs<ExtArgs>>): Prisma__ProjectScreenshotClient<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProjectScreenshots.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectScreenshotCountArgs} args - Arguments to filter ProjectScreenshots to count.
+     * @example
+     * // Count the number of ProjectScreenshots
+     * const count = await prisma.projectScreenshot.count({
+     *   where: {
+     *     // ... the filter for the ProjectScreenshots we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProjectScreenshotCountArgs>(
+      args?: Subset<T, ProjectScreenshotCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProjectScreenshotCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProjectScreenshot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectScreenshotAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProjectScreenshotAggregateArgs>(args: Subset<T, ProjectScreenshotAggregateArgs>): Prisma.PrismaPromise<GetProjectScreenshotAggregateType<T>>
+
+    /**
+     * Group by ProjectScreenshot.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectScreenshotGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProjectScreenshotGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProjectScreenshotGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectScreenshotGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProjectScreenshotGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectScreenshotGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProjectScreenshot model
+   */
+  readonly fields: ProjectScreenshotFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProjectScreenshot.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProjectScreenshotClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProjectScreenshot model
+   */
+  interface ProjectScreenshotFieldRefs {
+    readonly id: FieldRef<"ProjectScreenshot", 'String'>
+    readonly projectId: FieldRef<"ProjectScreenshot", 'String'>
+    readonly title: FieldRef<"ProjectScreenshot", 'String'>
+    readonly description: FieldRef<"ProjectScreenshot", 'String'>
+    readonly category: FieldRef<"ProjectScreenshot", 'String'>
+    readonly orderIndex: FieldRef<"ProjectScreenshot", 'Int'>
+    readonly fileName: FieldRef<"ProjectScreenshot", 'String'>
+    readonly fileKey: FieldRef<"ProjectScreenshot", 'String'>
+    readonly fileUrl: FieldRef<"ProjectScreenshot", 'String'>
+    readonly fileSize: FieldRef<"ProjectScreenshot", 'Int'>
+    readonly mimeType: FieldRef<"ProjectScreenshot", 'String'>
+    readonly uploadedAt: FieldRef<"ProjectScreenshot", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProjectScreenshot", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProjectScreenshot findUnique
+   */
+  export type ProjectScreenshotFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectScreenshot to fetch.
+     */
+    where: ProjectScreenshotWhereUniqueInput
+  }
+
+  /**
+   * ProjectScreenshot findUniqueOrThrow
+   */
+  export type ProjectScreenshotFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectScreenshot to fetch.
+     */
+    where: ProjectScreenshotWhereUniqueInput
+  }
+
+  /**
+   * ProjectScreenshot findFirst
+   */
+  export type ProjectScreenshotFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectScreenshot to fetch.
+     */
+    where?: ProjectScreenshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectScreenshots to fetch.
+     */
+    orderBy?: ProjectScreenshotOrderByWithRelationInput | ProjectScreenshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectScreenshots.
+     */
+    cursor?: ProjectScreenshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectScreenshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectScreenshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectScreenshots.
+     */
+    distinct?: ProjectScreenshotScalarFieldEnum | ProjectScreenshotScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectScreenshot findFirstOrThrow
+   */
+  export type ProjectScreenshotFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectScreenshot to fetch.
+     */
+    where?: ProjectScreenshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectScreenshots to fetch.
+     */
+    orderBy?: ProjectScreenshotOrderByWithRelationInput | ProjectScreenshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectScreenshots.
+     */
+    cursor?: ProjectScreenshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectScreenshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectScreenshots.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectScreenshots.
+     */
+    distinct?: ProjectScreenshotScalarFieldEnum | ProjectScreenshotScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectScreenshot findMany
+   */
+  export type ProjectScreenshotFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectScreenshots to fetch.
+     */
+    where?: ProjectScreenshotWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectScreenshots to fetch.
+     */
+    orderBy?: ProjectScreenshotOrderByWithRelationInput | ProjectScreenshotOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProjectScreenshots.
+     */
+    cursor?: ProjectScreenshotWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectScreenshots from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectScreenshots.
+     */
+    skip?: number
+    distinct?: ProjectScreenshotScalarFieldEnum | ProjectScreenshotScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectScreenshot create
+   */
+  export type ProjectScreenshotCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProjectScreenshot.
+     */
+    data: XOR<ProjectScreenshotCreateInput, ProjectScreenshotUncheckedCreateInput>
+  }
+
+  /**
+   * ProjectScreenshot createMany
+   */
+  export type ProjectScreenshotCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProjectScreenshots.
+     */
+    data: ProjectScreenshotCreateManyInput | ProjectScreenshotCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProjectScreenshot createManyAndReturn
+   */
+  export type ProjectScreenshotCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProjectScreenshots.
+     */
+    data: ProjectScreenshotCreateManyInput | ProjectScreenshotCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectScreenshot update
+   */
+  export type ProjectScreenshotUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProjectScreenshot.
+     */
+    data: XOR<ProjectScreenshotUpdateInput, ProjectScreenshotUncheckedUpdateInput>
+    /**
+     * Choose, which ProjectScreenshot to update.
+     */
+    where: ProjectScreenshotWhereUniqueInput
+  }
+
+  /**
+   * ProjectScreenshot updateMany
+   */
+  export type ProjectScreenshotUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProjectScreenshots.
+     */
+    data: XOR<ProjectScreenshotUpdateManyMutationInput, ProjectScreenshotUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectScreenshots to update
+     */
+    where?: ProjectScreenshotWhereInput
+    /**
+     * Limit how many ProjectScreenshots to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectScreenshot updateManyAndReturn
+   */
+  export type ProjectScreenshotUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * The data used to update ProjectScreenshots.
+     */
+    data: XOR<ProjectScreenshotUpdateManyMutationInput, ProjectScreenshotUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectScreenshots to update
+     */
+    where?: ProjectScreenshotWhereInput
+    /**
+     * Limit how many ProjectScreenshots to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectScreenshot upsert
+   */
+  export type ProjectScreenshotUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProjectScreenshot to update in case it exists.
+     */
+    where: ProjectScreenshotWhereUniqueInput
+    /**
+     * In case the ProjectScreenshot found by the `where` argument doesn't exist, create a new ProjectScreenshot with this data.
+     */
+    create: XOR<ProjectScreenshotCreateInput, ProjectScreenshotUncheckedCreateInput>
+    /**
+     * In case the ProjectScreenshot was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProjectScreenshotUpdateInput, ProjectScreenshotUncheckedUpdateInput>
+  }
+
+  /**
+   * ProjectScreenshot delete
+   */
+  export type ProjectScreenshotDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+    /**
+     * Filter which ProjectScreenshot to delete.
+     */
+    where: ProjectScreenshotWhereUniqueInput
+  }
+
+  /**
+   * ProjectScreenshot deleteMany
+   */
+  export type ProjectScreenshotDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectScreenshots to delete
+     */
+    where?: ProjectScreenshotWhereInput
+    /**
+     * Limit how many ProjectScreenshots to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectScreenshot without action
+   */
+  export type ProjectScreenshotDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectScreenshot
+     */
+    select?: ProjectScreenshotSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectScreenshot
+     */
+    omit?: ProjectScreenshotOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectScreenshotInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -20490,6 +21818,25 @@ export namespace Prisma {
   };
 
   export type StakeholderDocumentScalarFieldEnum = (typeof StakeholderDocumentScalarFieldEnum)[keyof typeof StakeholderDocumentScalarFieldEnum]
+
+
+  export const ProjectScreenshotScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    title: 'title',
+    description: 'description',
+    category: 'category',
+    orderIndex: 'orderIndex',
+    fileName: 'fileName',
+    fileKey: 'fileKey',
+    fileUrl: 'fileUrl',
+    fileSize: 'fileSize',
+    mimeType: 'mimeType',
+    uploadedAt: 'uploadedAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProjectScreenshotScalarFieldEnum = (typeof ProjectScreenshotScalarFieldEnum)[keyof typeof ProjectScreenshotScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -20928,6 +22275,7 @@ export namespace Prisma {
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     members?: ProjectMemberListRelationFilter
     stakeholderDocuments?: StakeholderDocumentListRelationFilter
+    screenshots?: ProjectScreenshotListRelationFilter
     invitations?: TeamInvitationListRelationFilter
   }
 
@@ -20955,6 +22303,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsOrderByWithRelationInput
     members?: ProjectMemberOrderByRelationAggregateInput
     stakeholderDocuments?: StakeholderDocumentOrderByRelationAggregateInput
+    screenshots?: ProjectScreenshotOrderByRelationAggregateInput
     invitations?: TeamInvitationOrderByRelationAggregateInput
   }
 
@@ -20985,6 +22334,7 @@ export namespace Prisma {
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     members?: ProjectMemberListRelationFilter
     stakeholderDocuments?: StakeholderDocumentListRelationFilter
+    screenshots?: ProjectScreenshotListRelationFilter
     invitations?: TeamInvitationListRelationFilter
   }, "id">
 
@@ -22007,6 +23357,103 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"StakeholderDocument"> | Date | string
   }
 
+  export type ProjectScreenshotWhereInput = {
+    AND?: ProjectScreenshotWhereInput | ProjectScreenshotWhereInput[]
+    OR?: ProjectScreenshotWhereInput[]
+    NOT?: ProjectScreenshotWhereInput | ProjectScreenshotWhereInput[]
+    id?: StringFilter<"ProjectScreenshot"> | string
+    projectId?: StringFilter<"ProjectScreenshot"> | string
+    title?: StringFilter<"ProjectScreenshot"> | string
+    description?: StringNullableFilter<"ProjectScreenshot"> | string | null
+    category?: StringNullableFilter<"ProjectScreenshot"> | string | null
+    orderIndex?: IntFilter<"ProjectScreenshot"> | number
+    fileName?: StringFilter<"ProjectScreenshot"> | string
+    fileKey?: StringFilter<"ProjectScreenshot"> | string
+    fileUrl?: StringFilter<"ProjectScreenshot"> | string
+    fileSize?: IntFilter<"ProjectScreenshot"> | number
+    mimeType?: StringFilter<"ProjectScreenshot"> | string
+    uploadedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }
+
+  export type ProjectScreenshotOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    orderIndex?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+  }
+
+  export type ProjectScreenshotWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProjectScreenshotWhereInput | ProjectScreenshotWhereInput[]
+    OR?: ProjectScreenshotWhereInput[]
+    NOT?: ProjectScreenshotWhereInput | ProjectScreenshotWhereInput[]
+    projectId?: StringFilter<"ProjectScreenshot"> | string
+    title?: StringFilter<"ProjectScreenshot"> | string
+    description?: StringNullableFilter<"ProjectScreenshot"> | string | null
+    category?: StringNullableFilter<"ProjectScreenshot"> | string | null
+    orderIndex?: IntFilter<"ProjectScreenshot"> | number
+    fileName?: StringFilter<"ProjectScreenshot"> | string
+    fileKey?: StringFilter<"ProjectScreenshot"> | string
+    fileUrl?: StringFilter<"ProjectScreenshot"> | string
+    fileSize?: IntFilter<"ProjectScreenshot"> | number
+    mimeType?: StringFilter<"ProjectScreenshot"> | string
+    uploadedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }, "id">
+
+  export type ProjectScreenshotOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    description?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    orderIndex?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProjectScreenshotCountOrderByAggregateInput
+    _avg?: ProjectScreenshotAvgOrderByAggregateInput
+    _max?: ProjectScreenshotMaxOrderByAggregateInput
+    _min?: ProjectScreenshotMinOrderByAggregateInput
+    _sum?: ProjectScreenshotSumOrderByAggregateInput
+  }
+
+  export type ProjectScreenshotScalarWhereWithAggregatesInput = {
+    AND?: ProjectScreenshotScalarWhereWithAggregatesInput | ProjectScreenshotScalarWhereWithAggregatesInput[]
+    OR?: ProjectScreenshotScalarWhereWithAggregatesInput[]
+    NOT?: ProjectScreenshotScalarWhereWithAggregatesInput | ProjectScreenshotScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    title?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    description?: StringNullableWithAggregatesFilter<"ProjectScreenshot"> | string | null
+    category?: StringNullableWithAggregatesFilter<"ProjectScreenshot"> | string | null
+    orderIndex?: IntWithAggregatesFilter<"ProjectScreenshot"> | number
+    fileName?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    fileKey?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    fileUrl?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    fileSize?: IntWithAggregatesFilter<"ProjectScreenshot"> | number
+    mimeType?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    uploadedAt?: DateTimeWithAggregatesFilter<"ProjectScreenshot"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProjectScreenshot"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -22327,6 +23774,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -22353,6 +23801,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -22379,6 +23828,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -22405,6 +23855,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -23517,6 +24968,117 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ProjectScreenshotCreateInput = {
+    id?: string
+    title: string
+    description?: string | null
+    category?: string | null
+    orderIndex?: number
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutScreenshotsInput
+  }
+
+  export type ProjectScreenshotUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    title: string
+    description?: string | null
+    category?: string | null
+    orderIndex?: number
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectScreenshotUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    orderIndex?: IntFieldUpdateOperationsInput | number
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutScreenshotsNestedInput
+  }
+
+  export type ProjectScreenshotUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    orderIndex?: IntFieldUpdateOperationsInput | number
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectScreenshotCreateManyInput = {
+    id?: string
+    projectId: string
+    title: string
+    description?: string | null
+    category?: string | null
+    orderIndex?: number
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectScreenshotUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    orderIndex?: IntFieldUpdateOperationsInput | number
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectScreenshotUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    orderIndex?: IntFieldUpdateOperationsInput | number
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23921,11 +25483,21 @@ export namespace Prisma {
     none?: StakeholderDocumentWhereInput
   }
 
+  export type ProjectScreenshotListRelationFilter = {
+    every?: ProjectScreenshotWhereInput
+    some?: ProjectScreenshotWhereInput
+    none?: ProjectScreenshotWhereInput
+  }
+
   export type DocumentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type StakeholderDocumentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProjectScreenshotOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -24650,6 +26222,64 @@ export namespace Prisma {
     _max?: NestedEnumStakeholderDocumentTypeFilter<$PrismaModel>
   }
 
+  export type ProjectScreenshotCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    orderIndex?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectScreenshotAvgOrderByAggregateInput = {
+    orderIndex?: SortOrder
+    fileSize?: SortOrder
+  }
+
+  export type ProjectScreenshotMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    orderIndex?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectScreenshotMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    category?: SortOrder
+    orderIndex?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    uploadedAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectScreenshotSumOrderByAggregateInput = {
+    orderIndex?: SortOrder
+    fileSize?: SortOrder
+  }
+
   export type ProjectCreateNestedManyWithoutMahasiswaInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -25079,6 +26709,13 @@ export namespace Prisma {
     connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
   }
 
+  export type ProjectScreenshotCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectScreenshotCreateWithoutProjectInput, ProjectScreenshotUncheckedCreateWithoutProjectInput> | ProjectScreenshotCreateWithoutProjectInput[] | ProjectScreenshotUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectScreenshotCreateOrConnectWithoutProjectInput | ProjectScreenshotCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectScreenshotCreateManyProjectInputEnvelope
+    connect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+  }
+
   export type TeamInvitationCreateNestedManyWithoutProjectInput = {
     create?: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput> | TeamInvitationCreateWithoutProjectInput[] | TeamInvitationUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: TeamInvitationCreateOrConnectWithoutProjectInput | TeamInvitationCreateOrConnectWithoutProjectInput[]
@@ -25125,6 +26762,13 @@ export namespace Prisma {
     connectOrCreate?: StakeholderDocumentCreateOrConnectWithoutProjectInput | StakeholderDocumentCreateOrConnectWithoutProjectInput[]
     createMany?: StakeholderDocumentCreateManyProjectInputEnvelope
     connect?: StakeholderDocumentWhereUniqueInput | StakeholderDocumentWhereUniqueInput[]
+  }
+
+  export type ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectScreenshotCreateWithoutProjectInput, ProjectScreenshotUncheckedCreateWithoutProjectInput> | ProjectScreenshotCreateWithoutProjectInput[] | ProjectScreenshotUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectScreenshotCreateOrConnectWithoutProjectInput | ProjectScreenshotCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectScreenshotCreateManyProjectInputEnvelope
+    connect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
   }
 
   export type TeamInvitationUncheckedCreateNestedManyWithoutProjectInput = {
@@ -25226,6 +26870,20 @@ export namespace Prisma {
     deleteMany?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
   }
 
+  export type ProjectScreenshotUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectScreenshotCreateWithoutProjectInput, ProjectScreenshotUncheckedCreateWithoutProjectInput> | ProjectScreenshotCreateWithoutProjectInput[] | ProjectScreenshotUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectScreenshotCreateOrConnectWithoutProjectInput | ProjectScreenshotCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectScreenshotUpsertWithWhereUniqueWithoutProjectInput | ProjectScreenshotUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectScreenshotCreateManyProjectInputEnvelope
+    set?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    disconnect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    delete?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    connect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    update?: ProjectScreenshotUpdateWithWhereUniqueWithoutProjectInput | ProjectScreenshotUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectScreenshotUpdateManyWithWhereWithoutProjectInput | ProjectScreenshotUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectScreenshotScalarWhereInput | ProjectScreenshotScalarWhereInput[]
+  }
+
   export type TeamInvitationUpdateManyWithoutProjectNestedInput = {
     create?: XOR<TeamInvitationCreateWithoutProjectInput, TeamInvitationUncheckedCreateWithoutProjectInput> | TeamInvitationCreateWithoutProjectInput[] | TeamInvitationUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: TeamInvitationCreateOrConnectWithoutProjectInput | TeamInvitationCreateOrConnectWithoutProjectInput[]
@@ -25318,6 +26976,20 @@ export namespace Prisma {
     update?: StakeholderDocumentUpdateWithWhereUniqueWithoutProjectInput | StakeholderDocumentUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: StakeholderDocumentUpdateManyWithWhereWithoutProjectInput | StakeholderDocumentUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: StakeholderDocumentScalarWhereInput | StakeholderDocumentScalarWhereInput[]
+  }
+
+  export type ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectScreenshotCreateWithoutProjectInput, ProjectScreenshotUncheckedCreateWithoutProjectInput> | ProjectScreenshotCreateWithoutProjectInput[] | ProjectScreenshotUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectScreenshotCreateOrConnectWithoutProjectInput | ProjectScreenshotCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectScreenshotUpsertWithWhereUniqueWithoutProjectInput | ProjectScreenshotUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectScreenshotCreateManyProjectInputEnvelope
+    set?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    disconnect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    delete?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    connect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+    update?: ProjectScreenshotUpdateWithWhereUniqueWithoutProjectInput | ProjectScreenshotUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectScreenshotUpdateManyWithWhereWithoutProjectInput | ProjectScreenshotUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectScreenshotScalarWhereInput | ProjectScreenshotScalarWhereInput[]
   }
 
   export type TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput = {
@@ -25706,6 +27378,20 @@ export namespace Prisma {
     update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutStakeholderDocumentsInput, ProjectUpdateWithoutStakeholderDocumentsInput>, ProjectUncheckedUpdateWithoutStakeholderDocumentsInput>
   }
 
+  export type ProjectCreateNestedOneWithoutScreenshotsInput = {
+    create?: XOR<ProjectCreateWithoutScreenshotsInput, ProjectUncheckedCreateWithoutScreenshotsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutScreenshotsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutScreenshotsNestedInput = {
+    create?: XOR<ProjectCreateWithoutScreenshotsInput, ProjectUncheckedCreateWithoutScreenshotsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutScreenshotsInput
+    upsert?: ProjectUpsertWithoutScreenshotsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutScreenshotsInput, ProjectUpdateWithoutScreenshotsInput>, ProjectUncheckedUpdateWithoutScreenshotsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -26014,6 +27700,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -26039,6 +27726,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -26928,6 +28616,46 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProjectScreenshotCreateWithoutProjectInput = {
+    id?: string
+    title: string
+    description?: string | null
+    category?: string | null
+    orderIndex?: number
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectScreenshotUncheckedCreateWithoutProjectInput = {
+    id?: string
+    title: string
+    description?: string | null
+    category?: string | null
+    orderIndex?: number
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectScreenshotCreateOrConnectWithoutProjectInput = {
+    where: ProjectScreenshotWhereUniqueInput
+    create: XOR<ProjectScreenshotCreateWithoutProjectInput, ProjectScreenshotUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectScreenshotCreateManyProjectInputEnvelope = {
+    data: ProjectScreenshotCreateManyProjectInput | ProjectScreenshotCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TeamInvitationCreateWithoutProjectInput = {
     id?: string
     status?: string
@@ -27207,6 +28935,41 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"StakeholderDocument"> | Date | string
   }
 
+  export type ProjectScreenshotUpsertWithWhereUniqueWithoutProjectInput = {
+    where: ProjectScreenshotWhereUniqueInput
+    update: XOR<ProjectScreenshotUpdateWithoutProjectInput, ProjectScreenshotUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectScreenshotCreateWithoutProjectInput, ProjectScreenshotUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectScreenshotUpdateWithWhereUniqueWithoutProjectInput = {
+    where: ProjectScreenshotWhereUniqueInput
+    data: XOR<ProjectScreenshotUpdateWithoutProjectInput, ProjectScreenshotUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectScreenshotUpdateManyWithWhereWithoutProjectInput = {
+    where: ProjectScreenshotScalarWhereInput
+    data: XOR<ProjectScreenshotUpdateManyMutationInput, ProjectScreenshotUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type ProjectScreenshotScalarWhereInput = {
+    AND?: ProjectScreenshotScalarWhereInput | ProjectScreenshotScalarWhereInput[]
+    OR?: ProjectScreenshotScalarWhereInput[]
+    NOT?: ProjectScreenshotScalarWhereInput | ProjectScreenshotScalarWhereInput[]
+    id?: StringFilter<"ProjectScreenshot"> | string
+    projectId?: StringFilter<"ProjectScreenshot"> | string
+    title?: StringFilter<"ProjectScreenshot"> | string
+    description?: StringNullableFilter<"ProjectScreenshot"> | string | null
+    category?: StringNullableFilter<"ProjectScreenshot"> | string | null
+    orderIndex?: IntFilter<"ProjectScreenshot"> | number
+    fileName?: StringFilter<"ProjectScreenshot"> | string
+    fileKey?: StringFilter<"ProjectScreenshot"> | string
+    fileUrl?: StringFilter<"ProjectScreenshot"> | string
+    fileSize?: IntFilter<"ProjectScreenshot"> | number
+    mimeType?: StringFilter<"ProjectScreenshot"> | string
+    uploadedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
+  }
+
   export type TeamInvitationUpsertWithWhereUniqueWithoutProjectInput = {
     where: TeamInvitationWhereUniqueInput
     update: XOR<TeamInvitationUpdateWithoutProjectInput, TeamInvitationUncheckedUpdateWithoutProjectInput>
@@ -27245,6 +29008,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -27270,6 +29034,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -27376,6 +29141,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -27401,6 +29167,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -27498,6 +29265,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutInvitationsInput = {
@@ -27523,6 +29291,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutInvitationsInput = {
@@ -27694,6 +29463,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutInvitationsInput = {
@@ -27719,6 +29489,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -27885,6 +29656,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -27910,6 +29682,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -28016,6 +29789,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -28041,6 +29815,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -28137,6 +29912,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -28162,6 +29938,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -28203,6 +29980,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -28228,6 +30006,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -28253,6 +30032,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -28278,6 +30058,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -28438,6 +30219,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -28463,6 +30245,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -28994,6 +30777,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -29019,6 +30803,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -29060,6 +30845,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -29085,6 +30871,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -29110,6 +30897,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
   }
 
@@ -29135,6 +30923,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
   }
 
@@ -29176,6 +30965,7 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -29201,6 +30991,127 @@ export namespace Prisma {
     assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectCreateWithoutScreenshotsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutScreenshotsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    semester: string
+    tahunAkademik: string
+    submittedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutScreenshotsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutScreenshotsInput, ProjectUncheckedCreateWithoutScreenshotsInput>
+  }
+
+  export type ProjectUpsertWithoutScreenshotsInput = {
+    update: XOR<ProjectUpdateWithoutScreenshotsInput, ProjectUncheckedUpdateWithoutScreenshotsInput>
+    create: XOR<ProjectCreateWithoutScreenshotsInput, ProjectUncheckedCreateWithoutScreenshotsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutScreenshotsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutScreenshotsInput, ProjectUncheckedUpdateWithoutScreenshotsInput>
+  }
+
+  export type ProjectUpdateWithoutScreenshotsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutScreenshotsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -29316,6 +31227,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
   }
 
@@ -29341,6 +31253,7 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
   }
 
@@ -29637,6 +31550,21 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ProjectScreenshotCreateManyProjectInput = {
+    id?: string
+    title: string
+    description?: string | null
+    category?: string | null
+    orderIndex?: number
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    uploadedAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type TeamInvitationCreateManyProjectInput = {
     id?: string
     inviterId: string
@@ -29812,6 +31740,51 @@ export namespace Prisma {
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectScreenshotUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    orderIndex?: IntFieldUpdateOperationsInput | number
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectScreenshotUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    orderIndex?: IntFieldUpdateOperationsInput | number
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectScreenshotUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    orderIndex?: IntFieldUpdateOperationsInput | number
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

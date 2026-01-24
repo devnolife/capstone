@@ -328,6 +328,22 @@ exports.Prisma.StakeholderDocumentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ProjectScreenshotScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  orderIndex: 'orderIndex',
+  fileName: 'fileName',
+  fileKey: 'fileKey',
+  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  uploadedAt: 'uploadedAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -401,7 +417,8 @@ exports.Prisma.ModelName = {
   Notification: 'Notification',
   Semester: 'Semester',
   ProjectRequirements: 'ProjectRequirements',
-  StakeholderDocument: 'StakeholderDocument'
+  StakeholderDocument: 'StakeholderDocument',
+  ProjectScreenshot: 'ProjectScreenshot'
 };
 
 /**

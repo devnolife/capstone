@@ -50,6 +50,7 @@ import {
   getStatusLabel,
 } from '@/lib/utils';
 import StakeholderUpload from './stakeholder-upload';
+import ProjectScreenshotUpload from './screenshot-upload';
 
 interface ReviewComment {
   id: string;
@@ -718,6 +719,22 @@ export function ProjectDetailContent({
                   projectId={project.id}
                   documents={stakeholderDocs as Parameters<typeof StakeholderUpload>[0]['documents']}
                   onDocumentsChange={(docs) => setStakeholderDocs(docs as StakeholderDocument[])}
+                  readOnly={!canEdit}
+                />
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Project Screenshots Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.23 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <CardBody className="p-5">
+                <ProjectScreenshotUpload
+                  projectId={project.id}
                   readOnly={!canEdit}
                 />
               </CardBody>
