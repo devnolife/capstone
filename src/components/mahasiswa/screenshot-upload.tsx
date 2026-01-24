@@ -73,6 +73,16 @@ const getCategoryConfig = (category: string | null | undefined) => {
   return found || { value: 'OTHER', label: 'Lainnya', icon: ImageIcon };
 };
 
+// Convert MinIO URL to proxy URL if needed
+const getProxyUrl = (url: string, fileKey: string) => {
+  // If already using proxy API, return as is
+  if (url.startsWith('/api/minio/')) {
+    return url;
+  }
+  // Convert old direct MinIO URLs to proxy URL
+  return `/api/minio/${fileKey}`;
+};
+
 export default function ScreenshotUpload({
   projectId,
   readOnly = false,
@@ -236,13 +246,22 @@ export default function ScreenshotUpload({
     }
   };
 
+  // State for delete confirmation
+  const deleteConfirmModal = useDisclosure();
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
   // Handle delete
   const handleDelete = async (screenshotId: string) => {
-    if (!confirm('Yakin ingin menghapus screenshot ini?')) return;
+    setDeleteTargetId(screenshotId);
+    deleteConfirmModal.onOpen();
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteTargetId) return;
 
     try {
       const response = await fetch(
-        `/api/projects/${projectId}/screenshots?screenshotId=${screenshotId}`,
+        `/api/projects/${projectId}/screenshots?screenshotId=${deleteTargetId}`,
         { method: 'DELETE' }
       );
 
@@ -252,13 +271,16 @@ export default function ScreenshotUpload({
       }
 
       // Update screenshots list
-      setScreenshots((prev) => prev.filter((s) => s.id !== screenshotId));
+      setScreenshots((prev) => prev.filter((s) => s.id !== deleteTargetId));
 
       addToast({
         title: 'Berhasil',
         description: 'Screenshot berhasil dihapus',
         color: 'success',
       });
+
+      deleteConfirmModal.onClose();
+      setDeleteTargetId(null);
     } catch (error) {
       console.error('Delete error:', error);
       addToast({
@@ -271,7 +293,8 @@ export default function ScreenshotUpload({
 
   // Open preview
   const openPreview = (screenshot: ProjectScreenshot) => {
-    setPreviewUrl(screenshot.fileUrl);
+    const imageUrl = getProxyUrl(screenshot.fileUrl, screenshot.fileKey);
+    setPreviewUrl(imageUrl);
     setPreviewTitle(screenshot.title);
     previewModal.onOpen();
   };
@@ -343,6 +366,7 @@ export default function ScreenshotUpload({
                 {screenshots.map((screenshot, index) => {
                   const categoryConfig = getCategoryConfig(screenshot.category);
                   const CategoryIcon = categoryConfig.icon;
+                  const imageUrl = getProxyUrl(screenshot.fileUrl, screenshot.fileKey);
 
                   return (
                     <motion.div
@@ -353,37 +377,33 @@ export default function ScreenshotUpload({
                       transition={{ delay: index * 0.05 }}
                       className="group relative"
                     >
-                      <div className="aspect-video rounded-lg overflow-hidden border border-default-200 bg-default-100">
-                        <Image
-                          src={screenshot.fileUrl}
-                          alt={screenshot.title}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
+                      <div className="aspect-video rounded-lg overflow-hidden border border-default-200 bg-default-100 relative">
+                        {/* Clickable image for preview */}
+                        <div
+                          className="w-full h-full cursor-pointer"
+                          onClick={() => openPreview(screenshot)}
+                        >
+                          <Image
+                            src={imageUrl}
+                            alt={screenshot.title}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                        </div>
 
-                        {/* Overlay on hover */}
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                        {/* Delete button on hover */}
+                        {!readOnly && (
                           <Button
                             size="sm"
-                            variant="flat"
+                            variant="solid"
                             isIconOnly
-                            className="bg-white/20 text-white"
-                            onPress={() => openPreview(screenshot)}
+                            color="danger"
+                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
+                            onPress={() => handleDelete(screenshot.id)}
                           >
-                            <Eye size={16} />
+                            <Trash2 size={14} />
                           </Button>
-                          {!readOnly && (
-                            <Button
-                              size="sm"
-                              variant="flat"
-                              isIconOnly
-                              className="bg-red-500/50 text-white"
-                              onPress={() => handleDelete(screenshot.id)}
-                            >
-                              <Trash2 size={16} />
-                            </Button>
-                          )}
-                        </div>
+                        )}
                       </div>
 
                       {/* Info below image */}
@@ -585,6 +605,39 @@ export default function ScreenshotUpload({
                 Buka di Tab Baru
               </Button>
             )}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={deleteConfirmModal.isOpen} onClose={deleteConfirmModal.onClose} size="sm">
+        <ModalContent>
+          <ModalHeader className="flex items-center gap-2">
+            <Trash2 size={20} className="text-danger" />
+            Konfirmasi Hapus
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-default-600">
+              Yakin ingin menghapus screenshot ini? Tindakan ini tidak dapat dibatalkan.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              variant="flat"
+              onPress={() => {
+                deleteConfirmModal.onClose();
+                setDeleteTargetId(null);
+              }}
+            >
+              Batal
+            </Button>
+            <Button
+              color="danger"
+              onPress={confirmDelete}
+              startContent={<Trash2 size={16} />}
+            >
+              Hapus
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

@@ -27,6 +27,7 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
+import { getSimakPhotoUrl } from '@/lib/utils';
 
 interface SearchedUser {
   id: string;
@@ -133,7 +134,7 @@ export default function TeamMembersNimNew({
       name: user.name || user.username,
       nim: user.nim || user.username,
       prodi: user.prodi || undefined,
-      image: user.image || user.simakPhoto || undefined,
+      image: getSimakPhotoUrl(user.nim) || user.image || user.simakPhoto || undefined,
       githubUsername: user.githubUsername,
     };
 
@@ -198,7 +199,7 @@ export default function TeamMembersNimNew({
         <div className="flex items-center gap-3 p-3 bg-primary-50/50 dark:bg-primary-900/10 rounded-lg border border-primary-100/50 dark:border-primary-800/30 mb-3">
           <div className="relative">
             <Avatar
-              src={ownerImage}
+              src={getSimakPhotoUrl(ownerNim) || ownerImage}
               name={ownerName || 'Owner'}
               size="sm"
               className="w-9 h-9"
@@ -345,7 +346,7 @@ export default function TeamMembersNimNew({
                           className="w-full flex items-center gap-3 p-2.5 hover:bg-default-100 transition-colors text-left border-b border-default-100 last:border-b-0"
                         >
                           <Avatar
-                            src={user.image || user.simakPhoto || undefined}
+                            src={getSimakPhotoUrl(user.nim) || user.image || user.simakPhoto || undefined}
                             name={user.name || user.username}
                             size="sm"
                             className="w-8 h-8"

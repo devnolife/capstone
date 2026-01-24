@@ -30,6 +30,7 @@ import {
   CreditCard,
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
+import { getSimakPhotoUrl } from '@/lib/utils';
 
 interface SearchedUser {
   id: string;
@@ -276,7 +277,7 @@ export default function TeamMembersNim({
         {/* Owner */}
         <div className="flex items-center gap-2">
           <Avatar
-            src={ownerImage}
+            src={getSimakPhotoUrl(ownerNim) || ownerImage}
             name={ownerName || 'Owner'}
             size="sm"
             isBordered
@@ -297,7 +298,7 @@ export default function TeamMembersNim({
         {members.map((member) => (
           <div key={member.id} className="flex items-center gap-2 group">
             <Avatar
-              src={member.user?.image || member.githubAvatarUrl}
+              src={getSimakPhotoUrl(member.user?.nim) || member.user?.image || member.githubAvatarUrl}
               name={member.user?.name || member.name || member.githubUsername}
               size="sm"
             />
@@ -332,7 +333,7 @@ export default function TeamMembersNim({
         {pendingInvitations.map((invitation) => (
           <div key={invitation.id} className="flex items-center gap-2 group opacity-70">
             <Avatar
-              src={invitation.invitee.image || undefined}
+              src={getSimakPhotoUrl(invitation.invitee.nim) || invitation.invitee.image || undefined}
               name={invitation.invitee.name || invitation.invitee.username}
               size="sm"
             />
@@ -410,7 +411,7 @@ export default function TeamMembersNim({
         {/* Owner - Team Lead */}
         <div className="flex items-center gap-3 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl">
           <Avatar
-            src={ownerImage}
+            src={getSimakPhotoUrl(ownerNim) || ownerImage}
             name={ownerName || 'Owner'}
             size="sm"
             isBordered
@@ -439,7 +440,7 @@ export default function TeamMembersNim({
               className="flex items-center gap-3 p-3 bg-success-50 dark:bg-success-900/20 rounded-xl group"
             >
               <Avatar
-                src={member.user?.image || member.githubAvatarUrl}
+                src={getSimakPhotoUrl(member.user?.nim) || member.user?.image || member.githubAvatarUrl}
                 name={member.user?.name || member.name || member.githubUsername}
                 size="sm"
               />
@@ -488,7 +489,7 @@ export default function TeamMembersNim({
                 className="flex items-center gap-3 p-3 bg-warning-50 dark:bg-warning-900/20 rounded-xl group"
               >
                 <Avatar
-                  src={invitation.invitee.image || undefined}
+                  src={getSimakPhotoUrl(invitation.invitee.nim) || invitation.invitee.image || undefined}
                   name={invitation.invitee.name || invitation.invitee.username}
                   size="sm"
                 />
@@ -536,7 +537,7 @@ export default function TeamMembersNim({
                   <div className="p-3 border-2 border-primary rounded-xl bg-primary-50/50">
                     <div className="flex items-center gap-3 mb-3">
                       <Avatar
-                        src={selectedUser.image || undefined}
+                        src={getSimakPhotoUrl(selectedUser.nim) || selectedUser.image || undefined}
                         name={selectedUser.name || selectedUser.username}
                         size="md"
                         isBordered
@@ -633,7 +634,7 @@ export default function TeamMembersNim({
                             onClick={() => handleSelectUser(user)}
                           >
                             <Avatar
-                              src={user.image || undefined}
+                              src={getSimakPhotoUrl(user.nim) || user.image || undefined}
                               name={user.name || user.username}
                               size="sm"
                             />

@@ -16,6 +16,7 @@ import {
 } from '@heroui/react';
 import { Bell, Moon, Sun, Search, LogOut, User, Settings, Menu, GitBranch, Command } from 'lucide-react';
 import Link from 'next/link';
+import { getSimakPhotoUrl } from '@/lib/utils';
 
 interface HeaderProps {
   title?: string;
@@ -26,12 +27,12 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  
+
   // Wait for client-side hydration to complete
   useEffect(() => {
     setMounted(true);
   }, []);
-  
+
   // Get role-based path prefix
   const role = (session?.user as { role?: string })?.role?.toLowerCase() || 'mahasiswa';
   const basePath = role === 'dosen_penguji' ? '/dosen' : `/${role}`;
@@ -66,9 +67,9 @@ export function Header({ title, onMenuClick }: HeaderProps) {
       {/* Left Side */}
       <div className="flex items-center gap-3">
         {/* Mobile Menu Button */}
-        <Button 
-          isIconOnly 
-          variant="light" 
+        <Button
+          isIconOnly
+          variant="light"
           onPress={onMenuClick}
           className="md:hidden"
         >
@@ -94,7 +95,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
       </div>
 
       {/* Center - Search Bar (Desktop) */}
-      <div className="hidden md:flex flex-1 max-w-xl mx-8">
+      <div className="hidden md:flex flex-1 max-w-2xl mx-8">
         <Input
           classNames={{
             base: 'w-full',
@@ -117,17 +118,17 @@ export function Header({ title, onMenuClick }: HeaderProps) {
       </div>
 
       {/* Right Side */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-3">
         {/* Mobile Search Button */}
         <Button isIconOnly variant="light" size="sm" className="md:hidden">
           <Search size={20} />
         </Button>
 
         {/* Theme Toggle - Desktop */}
-        <Button 
-          isIconOnly 
-          variant="light" 
-          onPress={toggleTheme} 
+        <Button
+          isIconOnly
+          variant="light"
+          onPress={toggleTheme}
           size="sm"
           className="hidden md:flex"
         >
@@ -197,7 +198,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                 color="primary"
                 name={session?.user?.name || 'User'}
                 size="sm"
-                src={session?.user?.image || undefined}
+                src={getSimakPhotoUrl((session?.user as { nim?: string })?.nim) || session?.user?.image || undefined}
               />
             </Button>
           </DropdownTrigger>

@@ -83,7 +83,9 @@ export async function uploadFile(
       }
     );
 
-    const url = `${MINIO_PUBLIC_URL}/${MINIO_BUCKET_NAME}/${objectName}`;
+    // Use proxy API URL for reliable access (avoids CORS and bucket policy issues)
+    // In production, you can switch to direct MinIO URL if properly configured
+    const url = `/api/minio/${objectName}`;
 
     return {
       success: true,

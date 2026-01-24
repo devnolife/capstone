@@ -99,3 +99,13 @@ export function getDocumentTypeLabel(type: string): string {
   };
   return typeLabels[type] || type;
 }
+
+/**
+ * Get SIMAK photo URL from NIM
+ * @param nim - Student NIM (Nomor Induk Mahasiswa)
+ * @returns URL to SIMAK photo or undefined if no NIM provided
+ */
+export function getSimakPhotoUrl(nim: string | null | undefined): string | undefined {
+  if (!nim) return undefined;
+  return `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}.jpg`;
+}

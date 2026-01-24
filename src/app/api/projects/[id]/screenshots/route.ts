@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { minioClient, MINIO_BUCKET_NAME } from '@/lib/minio';
+import { uploadFile, deleteFile } from '@/lib/minio';
 
 // GET /api/projects/[id]/screenshots - Get all screenshots for a project
 export async function GET(
@@ -111,13 +111,19 @@ export async function POST(
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Upload to MinIO
-    await minioClient.putObject(MINIO_BUCKET_NAME, fileKey, buffer, file.size, {
-      'Content-Type': file.type,
+    // Upload to MinIO using helper function
+    const uploadResult = await uploadFile(buffer, fileKey, file.type, {
+      originalName: file.name,
+      uploadedBy: session.user.id,
+      uploadedAt: new Date().toISOString(),
     });
 
-    // Generate public URL
-    const publicUrl = `${process.env.MINIO_PUBLIC_URL}/${MINIO_BUCKET_NAME}/${fileKey}`;
+    if (!uploadResult.success) {
+      return NextResponse.json(
+        { error: uploadResult.error || 'Failed to upload file' },
+        { status: 500 }
+      );
+    }
 
     // Get current max orderIndex
     const lastScreenshot = await prisma.projectScreenshot.findFirst({
@@ -138,7 +144,7 @@ export async function POST(
         orderIndex,
         fileName: file.name,
         fileKey,
-        fileUrl: publicUrl,
+        fileUrl: uploadResult.url,
         fileSize: file.size,
         mimeType: file.type,
       },
@@ -204,7 +210,7 @@ export async function DELETE(
 
     // Delete from MinIO
     try {
-      await minioClient.removeObject(MINIO_BUCKET_NAME, screenshot.fileKey);
+      await deleteFile(screenshot.fileKey);
     } catch (minioError) {
       console.error('Error deleting from MinIO:', minioError);
       // Continue to delete from database even if MinIO fails

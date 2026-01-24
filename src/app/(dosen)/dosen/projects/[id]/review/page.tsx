@@ -130,6 +130,21 @@ interface StakeholderDocument {
   uploadedAt: string;
 }
 
+interface ProjectScreenshot {
+  id: string;
+  projectId: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  orderIndex: number;
+  fileName: string;
+  fileKey: string;
+  fileUrl: string;
+  fileSize: number;
+  mimeType: string;
+  uploadedAt: string;
+}
+
 const getStakeholderTypeConfig = (type: string) => {
   const config: Record<string, { color: "success" | "primary" | "warning" | "secondary" | "danger" | "default"; icon: React.ElementType; label: string }> = {
     SIGNATURE: { color: "success", icon: FileSignature, label: "Tanda Tangan" },
@@ -199,6 +214,7 @@ export default function ReviewPage({
     Array<{ content: string; filePath?: string; lineNumber?: number }>
   >([]);
   const [stakeholderDocs, setStakeholderDocs] = useState<StakeholderDocument[]>([]);
+  const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -276,6 +292,13 @@ export default function ReviewPage({
         if (stakeholderRes.ok) {
           const stakeholderData = await stakeholderRes.json();
           setStakeholderDocs(stakeholderData.data || []);
+        }
+
+        // Fetch project screenshots
+        const screenshotsRes = await fetch(`/api/projects/${projectId}/screenshots`);
+        if (screenshotsRes.ok) {
+          const screenshotsData = await screenshotsRes.json();
+          setScreenshots(screenshotsData.screenshots || []);
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error loading data');

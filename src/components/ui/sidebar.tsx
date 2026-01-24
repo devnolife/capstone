@@ -25,7 +25,7 @@ import {
   Menu,
   Mail,
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getSimakPhotoUrl } from '@/lib/utils';
 
 interface SidebarItem {
   title: string;
@@ -252,7 +252,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
           <Tooltip content={session?.user?.name || 'User'} placement="right">
             <div className="flex justify-center">
               <Avatar
-                src={session?.user?.image || undefined}
+                src={getSimakPhotoUrl((session?.user as { nim?: string })?.nim) || session?.user?.image || undefined}
                 name={session?.user?.name || 'User'}
                 size="sm"
                 className="ring-2 ring-primary/20"
@@ -262,7 +262,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
         ) : (
           <div className="flex items-center gap-3 p-2 rounded-xl bg-default-100/50">
             <Avatar
-              src={session?.user?.image || undefined}
+              src={getSimakPhotoUrl((session?.user as { nim?: string })?.nim) || session?.user?.image || undefined}
               name={session?.user?.name || 'User'}
               size="sm"
               className="ring-2 ring-primary/20"
