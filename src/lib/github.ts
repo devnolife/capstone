@@ -59,12 +59,13 @@ export class GitHubClient {
   }
 
   /**
-   * Get authenticated user's repositories
+   * Get authenticated user's repositories (only public repos for capstone)
    */
-  async getUserRepos(): Promise<GitHubRepo[]> {
+  async getUserRepos(publicOnly: boolean = true): Promise<GitHubRepo[]> {
     const { data } = await this.octokit.rest.repos.listForAuthenticatedUser({
       sort: 'updated',
       per_page: 100,
+      visibility: publicOnly ? 'public' : 'all',
     });
 
     return data.map((repo) => ({

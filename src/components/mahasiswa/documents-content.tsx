@@ -72,26 +72,12 @@ interface DocumentsContentProps {
 }
 
 const documentTypeLabels: Record<string, string> = {
-  PROPOSAL: 'Proposal',
-  BAB_1: 'Bab 1',
-  BAB_2: 'Bab 2',
-  BAB_3: 'Bab 3',
-  BAB_4: 'Bab 4',
-  BAB_5: 'Bab 5',
-  FINAL_REPORT: 'Laporan Akhir',
   PRESENTATION: 'Presentasi',
   SOURCE_CODE: 'Source Code',
   OTHER: 'Lainnya',
 };
 
 const documentTypeColors: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'default'> = {
-  PROPOSAL: 'primary',
-  BAB_1: 'secondary',
-  BAB_2: 'secondary',
-  BAB_3: 'secondary',
-  BAB_4: 'secondary',
-  BAB_5: 'secondary',
-  FINAL_REPORT: 'success',
   PRESENTATION: 'warning',
   SOURCE_CODE: 'danger',
   OTHER: 'default',

@@ -296,9 +296,13 @@ export default function ReviewPage({
 
         // Fetch project screenshots
         const screenshotsRes = await fetch(`/api/projects/${projectId}/screenshots`);
+        console.log('[DOSEN REVIEW] Screenshots API response status:', screenshotsRes.status);
         if (screenshotsRes.ok) {
           const screenshotsData = await screenshotsRes.json();
+          console.log('[DOSEN REVIEW] Screenshots data:', screenshotsData);
           setScreenshots(screenshotsData.screenshots || []);
+        } else {
+          console.error('[DOSEN REVIEW] Screenshots API error:', await screenshotsRes.text());
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error loading data');
@@ -807,14 +811,158 @@ export default function ReviewPage({
                   <div className="flex items-center gap-2">
                     <FileText size={16} />
                     <span>Dokumen</span>
-                    {project.documents.length > 0 && (
-                      <Chip size="sm" variant="flat" color="secondary">{project.documents.length}</Chip>
+                    {(project.documents.length + stakeholderDocs.length) > 0 && (
+                      <Chip size="sm" variant="flat" color="secondary">{project.documents.length + stakeholderDocs.length}</Chip>
                     )}
                   </div>
                 }
               >
-                <CardBody className="pt-4">
-                  {project.documents.length === 0 ? (
+                <CardBody className="pt-4 space-y-6">
+                  {/* Project Documents Section */}
+                  {project.documents.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm flex items-center gap-2">
+                        <FileText size={16} className="text-blue-600 dark:text-blue-400" />
+                        Dokumen Project ({project.documents.length})
+                      </h4>
+                      <div className="space-y-3">
+                        {project.documents.map((doc, index) => (
+                          <motion.div
+                            key={doc.id}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 hover:border-primary/30 transition-colors group"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                                <FileText size={18} />
+                              </div>
+                              <div>
+                                <p className="font-medium">{doc.fileName}</p>
+                                <p className="text-xs text-default-500">
+                                  {getDocumentTypeLabel(doc.type)} • {formatDate(doc.uploadedAt)}
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              as="a"
+                              href={doc.filePath}
+                              target="_blank"
+                              size="sm"
+                              variant="flat"
+                              color="primary"
+                              endContent={<ExternalLink size={14} />}
+                            >
+                              Lihat
+                            </Button>
+                          </motion.div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Stakeholder Documents Section */}
+                  {stakeholderDocs.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-sm flex items-center gap-2">
+                        <FileSignature size={16} className="text-success" />
+                        Dokumen Stakeholder ({stakeholderDocs.length})
+                      </h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {stakeholderDocs.map((doc, index) => {
+                          const typeConfig = getStakeholderTypeConfig(doc.type);
+                          const TypeIcon = typeConfig.icon;
+                          const isImage = doc.mimeType.startsWith('image/');
+
+                          return (
+                            <motion.div
+                              key={doc.id}
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ delay: index * 0.05 }}
+                              className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:border-primary/50 transition-colors group"
+                            >
+                              {/* Preview Thumbnail */}
+                              {isImage ? (
+                                <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                                  <img
+                                    src={doc.fileUrl}
+                                    alt={doc.fileName}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <Button
+                                      as="a"
+                                      href={doc.fileUrl}
+                                      target="_blank"
+                                      size="sm"
+                                      variant="flat"
+                                      className="bg-white/20 backdrop-blur-sm text-white"
+                                      endContent={<ExternalLink size={14} />}
+                                    >
+                                      Lihat Full
+                                    </Button>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div className="relative h-40 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center">
+                                  <FileText size={48} className="text-zinc-400" />
+                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                    <Button
+                                      as="a"
+                                      href={doc.fileUrl}
+                                      target="_blank"
+                                      size="sm"
+                                      variant="flat"
+                                      className="bg-white/20 backdrop-blur-sm text-white"
+                                      endContent={<ExternalLink size={14} />}
+                                    >
+                                      Buka File
+                                    </Button>
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* Document Info */}
+                              <div className="p-4 space-y-3">
+                                <Chip
+                                  size="sm"
+                                  color={typeConfig.color}
+                                  variant="flat"
+                                  startContent={<TypeIcon size={12} />}
+                                >
+                                  {typeConfig.label}
+                                </Chip>
+
+                                <div className="space-y-1">
+                                  <p className="font-medium text-sm">{doc.stakeholderName}</p>
+                                  {doc.stakeholderRole && (
+                                    <p className="text-xs text-default-500">{doc.stakeholderRole}</p>
+                                  )}
+                                  {doc.organization && (
+                                    <p className="text-xs text-default-400">{doc.organization}</p>
+                                  )}
+                                </div>
+
+                                {doc.description && (
+                                  <p className="text-xs text-default-500 line-clamp-2">{doc.description}</p>
+                                )}
+
+                                <div className="flex items-center justify-between text-xs text-default-400 pt-2 border-t border-zinc-100 dark:border-zinc-700">
+                                  <span className="truncate max-w-[60%]">{doc.fileName}</span>
+                                  <span>{formatDate(doc.uploadedAt)}</span>
+                                </div>
+                              </div>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty State */}
+                  {project.documents.length === 0 && stakeholderDocs.length === 0 && (
                     <div className="text-center py-8">
                       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
                         <FileText size={28} className="text-zinc-400" />
@@ -822,41 +970,6 @@ export default function ReviewPage({
                       <p className="text-default-500">
                         Belum ada dokumen yang diupload
                       </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {project.documents.map((doc, index) => (
-                        <motion.div
-                          key={doc.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 hover:border-primary/30 transition-colors group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-                              <FileText size={18} />
-                            </div>
-                            <div>
-                              <p className="font-medium">{doc.fileName}</p>
-                              <p className="text-xs text-default-500">
-                                {getDocumentTypeLabel(doc.type)} • {formatDate(doc.uploadedAt)}
-                              </p>
-                            </div>
-                          </div>
-                          <Button
-                            as="a"
-                            href={doc.filePath}
-                            target="_blank"
-                            size="sm"
-                            variant="flat"
-                            color="primary"
-                            endContent={<ExternalLink size={14} />}
-                          >
-                            Lihat
-                          </Button>
-                        </motion.div>
-                      ))}
                     </div>
                   )}
                 </CardBody>
@@ -867,112 +980,65 @@ export default function ReviewPage({
                 title={
                   <div className="flex items-center gap-2">
                     <ImageIcon size={16} />
-                    <span>Screenshot & Stakeholder</span>
-                    {stakeholderDocs.length > 0 && (
-                      <Chip size="sm" variant="flat" color="primary">{stakeholderDocs.length}</Chip>
+                    <span>Screenshot</span>
+                    {screenshots.length > 0 && (
+                      <Chip size="sm" variant="flat" color="primary">{screenshots.length}</Chip>
                     )}
                   </div>
                 }
               >
                 <CardBody className="pt-4">
-                  {stakeholderDocs.length === 0 ? (
+                  {screenshots.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {screenshots.map((screenshot, index) => (
+                        <motion.div
+                          key={screenshot.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:border-primary/50 transition-colors group"
+                        >
+                          <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                            <img
+                              src={screenshot.fileUrl}
+                              alt={screenshot.title}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <Button
+                                as="a"
+                                href={screenshot.fileUrl}
+                                target="_blank"
+                                size="sm"
+                                variant="flat"
+                                className="bg-white/20 backdrop-blur-sm text-white"
+                                endContent={<ExternalLink size={14} />}
+                              >
+                                Lihat Full
+                              </Button>
+                            </div>
+                          </div>
+                          <div className="p-3 space-y-1">
+                            <p className="font-medium text-sm truncate">{screenshot.title}</p>
+                            {screenshot.description && (
+                              <p className="text-xs text-default-500 line-clamp-2">{screenshot.description}</p>
+                            )}
+                            {screenshot.category && (
+                              <Chip size="sm" variant="flat" color="secondary">{screenshot.category}</Chip>
+                            )}
+                            <p className="text-xs text-default-400">{formatDate(screenshot.uploadedAt)}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
                     <div className="text-center py-8">
                       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
                         <ImageIcon size={28} className="text-zinc-400" />
                       </div>
                       <p className="text-default-500">
-                        Belum ada screenshot atau dokumen stakeholder
+                        Belum ada screenshot aplikasi
                       </p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {stakeholderDocs.map((doc, index) => {
-                        const typeConfig = getStakeholderTypeConfig(doc.type);
-                        const TypeIcon = typeConfig.icon;
-                        const isImage = doc.mimeType.startsWith('image/');
-
-                        return (
-                          <motion.div
-                            key={doc.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:border-primary/50 transition-colors group"
-                          >
-                            {/* Preview Thumbnail */}
-                            {isImage ? (
-                              <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                                <img
-                                  src={doc.fileUrl}
-                                  alt={doc.fileName}
-                                  className="w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                  <Button
-                                    as="a"
-                                    href={doc.fileUrl}
-                                    target="_blank"
-                                    size="sm"
-                                    variant="flat"
-                                    className="bg-white/20 backdrop-blur-sm text-white"
-                                    endContent={<ExternalLink size={14} />}
-                                  >
-                                    Lihat Full
-                                  </Button>
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="relative h-40 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center">
-                                <FileText size={48} className="text-zinc-400" />
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                  <Button
-                                    as="a"
-                                    href={doc.fileUrl}
-                                    target="_blank"
-                                    size="sm"
-                                    variant="flat"
-                                    className="bg-white/20 backdrop-blur-sm text-white"
-                                    endContent={<ExternalLink size={14} />}
-                                  >
-                                    Buka File
-                                  </Button>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* Document Info */}
-                            <div className="p-4 space-y-3">
-                              <Chip
-                                size="sm"
-                                color={typeConfig.color}
-                                variant="flat"
-                                startContent={<TypeIcon size={12} />}
-                              >
-                                {typeConfig.label}
-                              </Chip>
-
-                              <div className="space-y-1">
-                                <p className="font-medium text-sm">{doc.stakeholderName}</p>
-                                {doc.stakeholderRole && (
-                                  <p className="text-xs text-default-500">{doc.stakeholderRole}</p>
-                                )}
-                                {doc.organization && (
-                                  <p className="text-xs text-default-400">{doc.organization}</p>
-                                )}
-                              </div>
-
-                              {doc.description && (
-                                <p className="text-xs text-default-500 line-clamp-2">{doc.description}</p>
-                              )}
-
-                              <div className="flex items-center justify-between text-xs text-default-400 pt-2 border-t border-zinc-100 dark:border-zinc-700">
-                                <span className="truncate max-w-[60%]">{doc.fileName}</span>
-                                <span>{formatDate(doc.uploadedAt)}</span>
-                              </div>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
                     </div>
                   )}
                 </CardBody>

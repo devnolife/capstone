@@ -241,7 +241,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               key="logout"
               color="danger"
               startContent={<LogOut size={18} />}
-              onPress={() => signOut({ callbackUrl: '/login' })}
+              onPress={() => signOut({ callbackUrl: '/login', redirect: true })}
             >
               Keluar
             </DropdownItem>

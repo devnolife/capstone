@@ -161,36 +161,47 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold">Notifikasi</h1>
-          <p className="text-default-500">
-            {unreadCount > 0
-              ? `${unreadCount} notifikasi belum dibaca`
-              : 'Semua notifikasi sudah dibaca'}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {unreadCount > 0 && (
-            <Button
-              variant="flat"
-              startContent={<CheckCheck size={18} />}
-              onPress={handleMarkAllAsRead}
-            >
-              Tandai Semua Dibaca
-            </Button>
-          )}
-          {notifications.some((n) => n.isRead) && (
-            <Button
-              variant="flat"
-              color="danger"
-              startContent={<Trash2 size={18} />}
-              onPress={handleDeleteAllRead}
-            >
-              Hapus Dibaca
-            </Button>
-          )}
+      {/* Header - Soft Colored */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-yellow-950/40 border border-amber-200/50 dark:border-amber-800/30 p-6 md:p-8">
+        {/* Subtle Background Accents */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-yellow-400/15 to-amber-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+        
+        <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25">
+              <Bell size={28} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">Notifikasi</h1>
+              <p className="text-amber-600/70 dark:text-amber-400/60">
+                {unreadCount > 0
+                  ? `${unreadCount} notifikasi belum dibaca`
+                  : 'Semua notifikasi sudah dibaca'}
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2">
+            {unreadCount > 0 && (
+              <Button
+                variant="flat"
+                startContent={<CheckCheck size={18} />}
+                onPress={handleMarkAllAsRead}
+              >
+                Tandai Semua Dibaca
+              </Button>
+            )}
+            {notifications.some((n) => n.isRead) && (
+              <Button
+                variant="flat"
+                color="danger"
+                startContent={<Trash2 size={18} />}
+                onPress={handleDeleteAllRead}
+              >
+                Hapus Dibaca
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

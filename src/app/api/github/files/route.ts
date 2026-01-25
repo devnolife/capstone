@@ -287,17 +287,46 @@ export async function GET(request: Request) {
           { status: 400 },
         );
     }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error fetching GitHub files:', error);
 
-    // Handle GitHub API errors
+    // Handle GitHub API errors with more detail
+    const httpError = error as { status?: number; message?: string };
+
+    if (httpError.status === 404) {
+      return NextResponse.json(
+        {
+          error: 'Repository atau branch tidak ditemukan. Pastikan repository ada dan dapat diakses.',
+          details: 'Repository mungkin private, belum dibuat, atau nama/branch salah.',
+          code: 'REPO_NOT_FOUND'
+        },
+        { status: 404 },
+      );
+    }
+
+    if (httpError.status === 403) {
+      return NextResponse.json(
+        {
+          error: 'Akses ditolak ke repository.',
+          details: 'Token GitHub tidak memiliki izin untuk mengakses repository ini.',
+          code: 'ACCESS_DENIED'
+        },
+        { status: 403 },
+      );
+    }
+
+    if (httpError.status === 401) {
+      return NextResponse.json(
+        {
+          error: 'Token GitHub tidak valid atau expired.',
+          details: 'Silakan login ulang dengan GitHub.',
+          code: 'UNAUTHORIZED'
+        },
+        { status: 401 },
+      );
+    }
+
     if (error instanceof Error) {
-      if (error.message.includes('Not Found')) {
-        return NextResponse.json(
-          { error: 'Repository atau file tidak ditemukan' },
-          { status: 404 },
-        );
-      }
       if (error.message.includes('rate limit')) {
         return NextResponse.json(
           { error: 'Batas request GitHub tercapai. Coba lagi nanti.' },

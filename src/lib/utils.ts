@@ -86,13 +86,6 @@ export function getRoleLabel(role: string): string {
 
 export function getDocumentTypeLabel(type: string): string {
   const typeLabels: Record<string, string> = {
-    PROPOSAL: 'Proposal',
-    BAB_1: 'Bab 1 - Pendahuluan',
-    BAB_2: 'Bab 2 - Tinjauan Pustaka',
-    BAB_3: 'Bab 3 - Metodologi',
-    BAB_4: 'Bab 4 - Hasil & Pembahasan',
-    BAB_5: 'Bab 5 - Kesimpulan',
-    FINAL_REPORT: 'Laporan Akhir',
     PRESENTATION: 'Presentasi',
     SOURCE_CODE: 'Source Code',
     OTHER: 'Lainnya',

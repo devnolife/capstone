@@ -4,6 +4,7 @@ import { Suspense, useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import {
   Card,
   CardBody,
@@ -18,9 +19,8 @@ import {
   GraduationCap,
   ArrowRight,
   Sparkles,
-  IdCard,
-  Home,
-  BookOpen,
+  User,
+  ArrowLeft,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -34,24 +34,15 @@ function LoginForm() {
     username: '',
     password: '',
   });
-  const [loginStatus, setLoginStatus] = useState('');
 
-  // Check for OAuth errors from callback
   const callbackError = searchParams.get('error');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-    setLoginStatus('Memverifikasi kredensial...');
 
     try {
-      // Check if NIM pattern (numeric) - will use SIMAK
-      const isStudentNim = /^\d+$/.test(formData.username);
-      if (isStudentNim) {
-        setLoginStatus('Menghubungi server SIMAK...');
-      }
-
       const result = await signIn('credentials', {
         username: formData.username,
         password: formData.password,
@@ -59,20 +50,16 @@ function LoginForm() {
       });
 
       if (result?.error) {
-        setLoginStatus('');
-        // Show more descriptive error messages
         if (result.error.includes('SIMAK')) {
           setError(result.error);
         } else {
-          setError('NIM/NIP atau password salah. Gunakan password SIMAK Anda.');
+          setError('Username atau password salah.');
         }
       } else {
-        setLoginStatus('Login berhasil! Mengalihkan...');
         router.push('/dashboard');
         router.refresh();
       }
     } catch {
-      setLoginStatus('');
       setError('Terjadi kesalahan. Silakan coba lagi.');
     } finally {
       setIsLoading(false);
@@ -84,151 +71,102 @@ function LoginForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="w-full max-w-md"
+      className="w-full max-w-sm"
     >
-      {/* Mobile Logo */}
-      <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-          <GraduationCap className="text-white" size={24} />
-        </div>
-        <span className="text-xl font-bold">Capstone</span>
-      </div>
-
-      {/* Back to Home Button */}
-      <div className="mb-6">
-        <Button
-          as={Link}
-          href="/"
-          variant="light"
-          startContent={<Home size={18} />}
-          className="text-default-600 hover:text-primary -ml-2"
-        >
-          Kembali ke Beranda
-        </Button>
-      </div>
-
-      <div className="mb-8">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">Selamat Datang!</h2>
-        <p className="text-default-500">
-          Masuk dengan akun SIMAK Anda untuk melanjutkan
+      {/* Logo */}
+      <div className="flex flex-col items-center mb-8">
+        <Image
+          src="/logo.png"
+          alt="Capstone Logo"
+          width={80}
+          height={80}
+          className="object-contain mb-4"
+        />
+        <h2 className="text-2xl font-bold">Selamat Datang!</h2>
+        <p className="text-default-500 text-sm mt-1">
+          Masuk untuk melanjutkan
         </p>
       </div>
 
-      <Card className="shadow-none border border-default-200">
-        <CardBody className="p-6 md:p-8">
-          {(error || callbackError) && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-danger-50 text-danger border border-danger-200 rounded-xl p-4 mb-6 text-sm"
+      {(error || callbackError) && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-danger-50 text-danger border border-danger-200 rounded-xl p-3 mb-4 text-sm"
+        >
+          {error || 'Terjadi kesalahan saat login.'}
+        </motion.div>
+      )}
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Input
+          label="Username / NIM"
+          type="text"
+          placeholder="Masukkan username atau NIM"
+          value={formData.username}
+          onChange={(e) =>
+            setFormData({ ...formData, username: e.target.value })
+          }
+          startContent={<User size={18} className="text-default-400" />}
+          variant="bordered"
+          size="lg"
+          isRequired
+          autoComplete="username"
+        />
+
+        <Input
+          label="Password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="Masukkan password"
+          value={formData.password}
+          onChange={(e) =>
+            setFormData({ ...formData, password: e.target.value })
+          }
+          startContent={<Lock size={18} className="text-default-400" />}
+          endContent={
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="focus:outline-none hover:opacity-70 transition-opacity"
             >
-              {error || 'Terjadi kesalahan saat login. Silakan coba lagi.'}
-            </motion.div>
-          )}
+              {showPassword ? (
+                <EyeOff size={18} className="text-default-400" />
+              ) : (
+                <Eye size={18} className="text-default-400" />
+              )}
+            </button>
+          }
+          variant="bordered"
+          size="lg"
+          isRequired
+          autoComplete="current-password"
+        />
 
-          {/* SIMAK Info Banner */}
-          <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 rounded-xl p-4 mb-6">
-            <div className="flex items-start gap-3">
-              <BookOpen className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-primary-700 dark:text-primary-300">
-                  Login dengan Akun SIMAK
-                </p>
-                <p className="text-xs text-primary-600/80 dark:text-primary-400/80 mt-1">
-                  Gunakan NIM dan password SIMAK Anda. Data profil akan otomatis tersinkronisasi.
-                </p>
-              </div>
-            </div>
-          </div>
+        <Button
+          type="submit"
+          color="primary"
+          size="lg"
+          className="w-full font-semibold"
+          isLoading={isLoading}
+          endContent={!isLoading && <ArrowRight size={18} />}
+        >
+          {isLoading ? 'Memproses...' : 'Masuk'}
+        </Button>
+      </form>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <Input
-              label="NIM / NIP"
-              type="text"
-              placeholder="Masukkan NIM SIMAK Anda"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              startContent={<IdCard size={18} className="text-default-400" />}
-              variant="bordered"
-              size="lg"
-              classNames={{
-                inputWrapper: "bg-default-50",
-              }}
-              isRequired
-              autoComplete="username"
-            />
-
-            <Input
-              label="Password SIMAK"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Masukkan password SIMAK"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              startContent={<Lock size={18} className="text-default-400" />}
-              endContent={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="focus:outline-none hover:opacity-70 transition-opacity"
-                >
-                  {showPassword ? (
-                    <EyeOff size={18} className="text-default-400" />
-                  ) : (
-                    <Eye size={18} className="text-default-400" />
-                  )}
-                </button>
-              }
-              variant="bordered"
-              size="lg"
-              classNames={{
-                inputWrapper: "bg-default-50",
-              }}
-              isRequired
-              autoComplete="current-password"
-            />
-
-            <Button
-              type="submit"
-              color="primary"
-              size="lg"
-              className="w-full font-semibold"
-              isLoading={isLoading}
-              endContent={!isLoading && <ArrowRight size={18} />}
-            >
-              Masuk
-            </Button>
-
-            {/* Login Status */}
-            {isLoading && loginStatus && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex items-center justify-center gap-2 text-sm text-primary"
-              >
-                <Spinner size="sm" color="primary" />
-                <span>{loginStatus}</span>
-              </motion.div>
-            )}
-          </form>
-        </CardBody>
-      </Card>
-
-      <p className="text-center text-sm text-default-500 mt-6">
-        Hubungi administrator jika mengalami kendala login
-      </p>
+      <div className="mt-6 text-center space-y-3">
+        <p className="text-xs text-default-400">
+          Hubungi administrator jika mengalami kendala
+        </p>
+        <Link 
+          href="/" 
+          className="inline-flex items-center gap-1 text-sm text-default-500 hover:text-primary transition-colors"
+        >
+          <ArrowLeft size={14} />
+          Kembali ke Beranda
+        </Link>
+      </div>
     </motion.div>
-  );
-}
-
-function LoginFormFallback() {
-  return (
-    <div className="w-full max-w-md flex items-center justify-center min-h-[400px]">
-      <Spinner size="lg" />
-    </div>
   );
 }
 
@@ -243,17 +181,6 @@ export default function LoginPage() {
           <div className="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-white rounded-full blur-3xl" />
         </div>
-
-        {/* Floating Elements */}
-        <motion.div
-          className="absolute top-32 left-16"
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-            <GraduationCap className="text-white" size={32} />
-          </div>
-        </motion.div>
 
         <motion.div
           className="absolute bottom-40 right-24"
@@ -272,11 +199,12 @@ export default function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                <GraduationCap size={28} />
+            <div className="flex items-center gap-4 mb-8">
+              <GraduationCap size={48} />
+              <div>
+                <span className="text-2xl font-bold">Capstone Project</span>
+                <p className="text-sm text-white/80">Prodi Informatika</p>
               </div>
-              <span className="text-2xl font-bold">Capstone</span>
             </div>
 
             <h1 className="text-4xl xl:text-5xl font-bold mb-6 leading-tight">
@@ -316,7 +244,7 @@ export default function LoginPage() {
 
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 md:p-12 bg-background">
-        <Suspense fallback={<LoginFormFallback />}>
+        <Suspense fallback={<Spinner size="lg" />}>
           <LoginForm />
         </Suspense>
       </div>

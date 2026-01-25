@@ -307,58 +307,53 @@ export function MahasiswaDashboardContent({
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Welcome Card */}
+      {/* Hero Welcome Card - Soft Colored */}
       <motion.div variants={itemVariants}>
-        <Card className="border-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 text-white overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-            }}
-          />
-          <CardBody className="p-6 md:p-8 relative">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              {/* Left side - Welcome */}
-              <div className="flex items-center gap-4">
-                <Avatar
-                  name={userName}
-                  src={userImage}
-                  size="lg"
-                  className="ring-4 ring-white/30 w-16 h-16 md:w-20 md:h-20"
-                />
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Sparkles size={16} className="text-yellow-300" />
-                    <span className="text-sm text-white/80">{getGreeting()}</span>
-                  </div>
-                  <h1 className="text-2xl md:text-3xl font-bold">{firstName}!</h1>
-                  <p className="text-white/70 text-sm md:text-base mt-1">
-                    Kelola project capstone Anda di sini
-                  </p>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-violet-950/40 border border-blue-200/50 dark:border-blue-800/30 p-6 md:p-8">
+          {/* Subtle Background Accents */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-violet-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+          
+          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Left side - Welcome */}
+            <div className="flex items-center gap-4">
+              <Avatar
+                name={userName}
+                src={userImage}
+                size="lg"
+                className="ring-4 ring-blue-200 dark:ring-blue-800 w-16 h-16 md:w-20 md:h-20"
+              />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles size={16} className="text-blue-500" />
+                  <span className="text-sm text-blue-600/70 dark:text-blue-400/70">{getGreeting()}</span>
                 </div>
-              </div>
-
-              {/* Right side - Quick Stats */}
-              <div className="flex items-center gap-3 md:gap-4">
-                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl md:text-3xl font-bold">{stats.totalProjects}</p>
-                  <p className="text-xs text-white/70">Project</p>
-                </div>
-                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl md:text-3xl font-bold">{stats.submittedProjects}</p>
-                  <p className="text-xs text-white/70">Disubmit</p>
-                </div>
-                {stats.pendingReviews > 0 && (
-                  <div className="text-center px-4 py-2 rounded-xl bg-amber-500/30 backdrop-blur-sm">
-                    <p className="text-2xl md:text-3xl font-bold">{stats.pendingReviews}</p>
-                    <p className="text-xs text-white/70">Pending</p>
-                  </div>
-                )}
+                <h1 className="text-2xl md:text-3xl font-bold text-zinc-800 dark:text-zinc-100">{firstName}!</h1>
+                <p className="text-blue-600/70 dark:text-blue-400/60 text-sm md:text-base mt-1">
+                  Kelola project capstone Anda di sini
+                </p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+
+            {/* Right side - Quick Stats */}
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-blue-200/50 dark:border-blue-700/30">
+                <p className="text-2xl md:text-3xl font-bold text-blue-700 dark:text-blue-300">{stats.totalProjects}</p>
+                <p className="text-xs text-blue-600/70 dark:text-blue-400/70">Project</p>
+              </div>
+              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-blue-200/50 dark:border-blue-700/30">
+                <p className="text-2xl md:text-3xl font-bold text-blue-700 dark:text-blue-300">{stats.submittedProjects}</p>
+                <p className="text-xs text-blue-600/70 dark:text-blue-400/70">Disubmit</p>
+              </div>
+              {stats.pendingReviews > 0 && (
+                <div className="text-center px-4 py-2 rounded-xl bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/30">
+                  <p className="text-2xl md:text-3xl font-bold text-amber-700 dark:text-amber-300">{stats.pendingReviews}</p>
+                  <p className="text-xs text-amber-600/70 dark:text-amber-400/70">Pending</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* GitHub Connection Banner */}
@@ -739,77 +734,87 @@ export function MahasiswaDashboardContent({
                 <h3 className="font-semibold">Ringkasan Progress</h3>
               </div>
             </div>
-            <CardBody className="p-4">
-              <div className="space-y-4">
-                {/* Overall progress */}
-                <div className="text-center py-4">
-                  <div className="relative w-24 h-24 mx-auto">
-                    <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+            <CardBody className="p-5">
+              <div className="space-y-5">
+                {/* Overall progress - Larger ring */}
+                <div className="text-center py-6">
+                  <div className="relative w-32 h-32 mx-auto">
+                    <svg className="w-32 h-32 -rotate-90" viewBox="0 0 120 120">
+                      {/* Background circle */}
                       <circle
-                        cx="50"
-                        cy="50"
-                        r="40"
+                        cx="60"
+                        cy="60"
+                        r="50"
                         fill="none"
                         stroke="currentColor"
-                        strokeWidth="8"
-                        className="text-zinc-200 dark:text-zinc-700"
+                        strokeWidth="10"
+                        className="text-zinc-100 dark:text-zinc-800"
                       />
+                      {/* Progress circle */}
                       <circle
-                        cx="50"
-                        cy="50"
-                        r="40"
+                        cx="60"
+                        cy="60"
+                        r="50"
                         fill="none"
                         stroke="url(#progressGradient)"
-                        strokeWidth="8"
+                        strokeWidth="10"
                         strokeLinecap="round"
-                        strokeDasharray={251}
+                        strokeDasharray={314}
                         strokeDashoffset={
-                          251 - (251 * (stats.totalProjects > 0 ? (stats.reviewedProjects / stats.totalProjects) * 100 : 0)) / 100
+                          314 - (314 * (stats.totalProjects > 0 ? (stats.reviewedProjects / stats.totalProjects) * 100 : 0)) / 100
                         }
-                        className="transition-all duration-1000"
+                        className="transition-all duration-1000 ease-out"
                       />
                       <defs>
                         <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                           <stop offset="0%" stopColor="#10b981" />
-                          <stop offset="100%" stopColor="#14b8a6" />
+                          <stop offset="50%" stopColor="#14b8a6" />
+                          <stop offset="100%" stopColor="#06b6d4" />
                         </linearGradient>
                       </defs>
                     </svg>
+                    {/* Center text - positioned properly */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-2xl font-bold">
+                      <span className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
                         {stats.totalProjects > 0 ? Math.round((stats.reviewedProjects / stats.totalProjects) * 100) : 0}%
                       </span>
-                      <span className="text-[10px] text-default-500">Selesai</span>
+                      <span className="text-xs text-default-500 mt-1">Selesai</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Stats breakdown */}
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-emerald-50 to-emerald-100/50 dark:from-emerald-900/30 dark:to-emerald-800/20 border border-emerald-200/50 dark:border-emerald-700/30">
                     <div className="flex items-center gap-2">
-                      <Award size={16} className="text-emerald-600 dark:text-emerald-400" />
-                      <span className="text-sm">Approved</span>
+                      <div className="p-1.5 rounded-lg bg-emerald-500/10">
+                        <Award size={14} className="text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <span className="text-sm font-medium">Approved</span>
                     </div>
                     <span className="font-bold text-emerald-600 dark:text-emerald-400">
                       {stats.reviewedProjects}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-amber-50 to-amber-100/50 dark:from-amber-900/30 dark:to-amber-800/20 border border-amber-200/50 dark:border-amber-700/30">
                     <div className="flex items-center gap-2">
-                      <Clock size={16} className="text-amber-600 dark:text-amber-400" />
-                      <span className="text-sm">Dalam Review</span>
+                      <div className="p-1.5 rounded-lg bg-amber-500/10">
+                        <Clock size={14} className="text-amber-600 dark:text-amber-400" />
+                      </div>
+                      <span className="text-sm font-medium">Dalam Review</span>
                     </div>
                     <span className="font-bold text-amber-600 dark:text-amber-400">
                       {stats.pendingReviews}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-zinc-50 to-zinc-100/50 dark:from-zinc-800/50 dark:to-zinc-700/30 border border-zinc-200/50 dark:border-zinc-600/30">
                     <div className="flex items-center gap-2">
-                      <FileText size={16} className="text-zinc-600 dark:text-zinc-400" />
-                      <span className="text-sm">Draft</span>
+                      <div className="p-1.5 rounded-lg bg-zinc-500/10">
+                        <FileText size={14} className="text-zinc-600 dark:text-zinc-400" />
+                      </div>
+                      <span className="text-sm font-medium">Draft</span>
                     </div>
-                    <span className="font-bold">
+                    <span className="font-bold text-zinc-600 dark:text-zinc-400">
                       {stats.totalProjects - stats.submittedProjects}
                     </span>
                   </div>

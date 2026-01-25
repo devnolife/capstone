@@ -420,54 +420,49 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Header Card */}
+      {/* Hero Header Card - Soft Colored */}
       <motion.div variants={itemVariants}>
-        <Card className="border-0 bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 text-white overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-            }}
-          />
-          <CardBody className="p-6 md:p-8 relative">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              {/* Left side */}
-              <div className="flex items-center gap-4">
-                <div className="p-4 rounded-2xl bg-white/20 backdrop-blur-sm">
-                  <ClipboardCheck size={32} />
-                </div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold">Review & Feedback</h1>
-                  <p className="text-white/80 text-sm md:text-base mt-1">
-                    Lihat semua review dari dosen penguji untuk project Anda
-                  </p>
-                </div>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-rose-950/40 border border-amber-200/50 dark:border-amber-800/30 p-6 md:p-8">
+          {/* Subtle Background Accents */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-rose-400/15 to-amber-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+          
+          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Left side */}
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25">
+                <ClipboardCheck size={28} />
               </div>
-
-              {/* Right side - Quick Stats */}
-              <div className="flex items-center gap-3 md:gap-4">
-                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl md:text-3xl font-bold">{stats.totalReviews}</p>
-                  <p className="text-xs text-white/70">Total</p>
-                </div>
-                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl md:text-3xl font-bold">{stats.completedReviews}</p>
-                  <p className="text-xs text-white/70">Selesai</p>
-                </div>
-                {stats.averageScore !== null && (
-                  <div className="text-center px-4 py-2 rounded-xl bg-yellow-500/30 backdrop-blur-sm">
-                    <div className="flex items-center justify-center gap-1">
-                      <Star size={16} className="fill-yellow-300 text-yellow-300" />
-                      <p className="text-2xl md:text-3xl font-bold">{stats.averageScore}</p>
-                    </div>
-                    <p className="text-xs text-white/70">Rata-rata</p>
-                  </div>
-                )}
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-zinc-800 dark:text-zinc-100">Review & Feedback</h1>
+                <p className="text-amber-600/70 dark:text-amber-400/60 text-sm md:text-base mt-1">
+                  Lihat semua review dari dosen penguji untuk project Anda
+                </p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+
+            {/* Right side - Quick Stats */}
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-amber-200/50 dark:border-amber-700/30">
+                <p className="text-2xl md:text-3xl font-bold text-amber-700 dark:text-amber-300">{stats.totalReviews}</p>
+                <p className="text-xs text-amber-600/70 dark:text-amber-400/70">Total</p>
+              </div>
+              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-amber-200/50 dark:border-amber-700/30">
+                <p className="text-2xl md:text-3xl font-bold text-amber-700 dark:text-amber-300">{stats.completedReviews}</p>
+                <p className="text-xs text-amber-600/70 dark:text-amber-400/70">Selesai</p>
+              </div>
+              {stats.averageScore !== null && (
+                <div className="text-center px-4 py-2 rounded-xl bg-yellow-100/80 dark:bg-yellow-900/30 border border-yellow-300/50 dark:border-yellow-700/30">
+                  <div className="flex items-center justify-center gap-1">
+                    <Star size={16} className="fill-yellow-500 text-yellow-500" />
+                    <p className="text-2xl md:text-3xl font-bold text-yellow-700 dark:text-yellow-300">{stats.averageScore}</p>
+                  </div>
+                  <p className="text-xs text-yellow-600/70 dark:text-yellow-400/70">Rata-rata</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Stats Grid */}

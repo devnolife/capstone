@@ -192,47 +192,42 @@ export default function PersyaratanPage() {
 
   return (
     <div className="w-full space-y-6 pb-8">
-      {/* Header Card */}
-      <Card className="border-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 text-white overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          }}
-        />
-        <CardBody className="p-6 sm:p-8 relative">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
-                <ClipboardList size={32} />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold">Persyaratan Capstone</h1>
-                <p className="text-white/80 mt-1">
-                  Panduan lengkap persyaratan dokumen yang harus dipenuhi
-                </p>
-                <div className="flex items-center gap-3 mt-3">
-                  <Chip className="bg-white/20 text-white" size="sm">
-                    {PERSYARATAN_SECTIONS.length} Kategori
-                  </Chip>
-                  <Chip className="bg-white/20 text-white" size="sm">
-                    {totalRequirements} Persyaratan
-                  </Chip>
-                </div>
+      {/* Header Card - Soft Colored */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-violet-950/40 border border-blue-200/50 dark:border-blue-800/30 p-6 sm:p-8">
+        {/* Subtle Background Accents */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-violet-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+        
+        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25">
+              <ClipboardList size={32} />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-800 dark:text-zinc-100">Persyaratan Capstone</h1>
+              <p className="text-blue-600/70 dark:text-blue-400/60 mt-1">
+                Panduan lengkap persyaratan dokumen yang harus dipenuhi
+              </p>
+              <div className="flex items-center gap-3 mt-3">
+                <Chip className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300" size="sm">
+                  {PERSYARATAN_SECTIONS.length} Kategori
+                </Chip>
+                <Chip className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300" size="sm">
+                  {totalRequirements} Persyaratan
+                </Chip>
               </div>
             </div>
-            <Button
-              as={Link}
-              href="/mahasiswa/projects"
-              className="bg-white text-indigo-600 font-semibold hover:bg-white/90"
-              endContent={<ArrowRight size={18} />}
-            >
-              Lihat Proyek Saya
-            </Button>
           </div>
-        </CardBody>
-      </Card>
+          <Button
+            as={Link}
+            href="/mahasiswa/projects"
+            color="primary"
+            endContent={<ArrowRight size={18} />}
+          >
+            Lihat Proyek Saya
+          </Button>
+        </div>
+      </div>
 
       {/* Info Card */}
       <Card className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30">

@@ -120,13 +120,6 @@ export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 
 
 export const DocumentType: {
-  PROPOSAL: 'PROPOSAL',
-  BAB_1: 'BAB_1',
-  BAB_2: 'BAB_2',
-  BAB_3: 'BAB_3',
-  BAB_4: 'BAB_4',
-  BAB_5: 'BAB_5',
-  FINAL_REPORT: 'FINAL_REPORT',
   PRESENTATION: 'PRESENTATION',
   SOURCE_CODE: 'SOURCE_CODE',
   OTHER: 'OTHER'
@@ -20387,6 +20380,7 @@ export namespace Prisma {
     fileUrl: string | null
     fileSize: number | null
     mimeType: string | null
+    isFeatured: boolean | null
     uploadedAt: Date | null
     updatedAt: Date | null
   }
@@ -20403,6 +20397,7 @@ export namespace Prisma {
     fileUrl: string | null
     fileSize: number | null
     mimeType: string | null
+    isFeatured: boolean | null
     uploadedAt: Date | null
     updatedAt: Date | null
   }
@@ -20419,6 +20414,7 @@ export namespace Prisma {
     fileUrl: number
     fileSize: number
     mimeType: number
+    isFeatured: number
     uploadedAt: number
     updatedAt: number
     _all: number
@@ -20447,6 +20443,7 @@ export namespace Prisma {
     fileUrl?: true
     fileSize?: true
     mimeType?: true
+    isFeatured?: true
     uploadedAt?: true
     updatedAt?: true
   }
@@ -20463,6 +20460,7 @@ export namespace Prisma {
     fileUrl?: true
     fileSize?: true
     mimeType?: true
+    isFeatured?: true
     uploadedAt?: true
     updatedAt?: true
   }
@@ -20479,6 +20477,7 @@ export namespace Prisma {
     fileUrl?: true
     fileSize?: true
     mimeType?: true
+    isFeatured?: true
     uploadedAt?: true
     updatedAt?: true
     _all?: true
@@ -20582,6 +20581,7 @@ export namespace Prisma {
     fileUrl: string
     fileSize: number
     mimeType: string
+    isFeatured: boolean
     uploadedAt: Date
     updatedAt: Date
     _count: ProjectScreenshotCountAggregateOutputType | null
@@ -20617,6 +20617,7 @@ export namespace Prisma {
     fileUrl?: boolean
     fileSize?: boolean
     mimeType?: boolean
+    isFeatured?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -20634,6 +20635,7 @@ export namespace Prisma {
     fileUrl?: boolean
     fileSize?: boolean
     mimeType?: boolean
+    isFeatured?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -20651,6 +20653,7 @@ export namespace Prisma {
     fileUrl?: boolean
     fileSize?: boolean
     mimeType?: boolean
+    isFeatured?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -20668,11 +20671,12 @@ export namespace Prisma {
     fileUrl?: boolean
     fileSize?: boolean
     mimeType?: boolean
+    isFeatured?: boolean
     uploadedAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProjectScreenshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "title" | "description" | "category" | "orderIndex" | "fileName" | "fileKey" | "fileUrl" | "fileSize" | "mimeType" | "uploadedAt" | "updatedAt", ExtArgs["result"]["projectScreenshot"]>
+  export type ProjectScreenshotOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "title" | "description" | "category" | "orderIndex" | "fileName" | "fileKey" | "fileUrl" | "fileSize" | "mimeType" | "isFeatured" | "uploadedAt" | "updatedAt", ExtArgs["result"]["projectScreenshot"]>
   export type ProjectScreenshotInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }
@@ -20700,6 +20704,7 @@ export namespace Prisma {
       fileUrl: string
       fileSize: number
       mimeType: string
+      isFeatured: boolean
       uploadedAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["projectScreenshot"]>
@@ -21137,6 +21142,7 @@ export namespace Prisma {
     readonly fileUrl: FieldRef<"ProjectScreenshot", 'String'>
     readonly fileSize: FieldRef<"ProjectScreenshot", 'Int'>
     readonly mimeType: FieldRef<"ProjectScreenshot", 'String'>
+    readonly isFeatured: FieldRef<"ProjectScreenshot", 'Boolean'>
     readonly uploadedAt: FieldRef<"ProjectScreenshot", 'DateTime'>
     readonly updatedAt: FieldRef<"ProjectScreenshot", 'DateTime'>
   }
@@ -21832,6 +21838,7 @@ export namespace Prisma {
     fileUrl: 'fileUrl',
     fileSize: 'fileSize',
     mimeType: 'mimeType',
+    isFeatured: 'isFeatured',
     uploadedAt: 'uploadedAt',
     updatedAt: 'updatedAt'
   };
@@ -23372,6 +23379,7 @@ export namespace Prisma {
     fileUrl?: StringFilter<"ProjectScreenshot"> | string
     fileSize?: IntFilter<"ProjectScreenshot"> | number
     mimeType?: StringFilter<"ProjectScreenshot"> | string
+    isFeatured?: BoolFilter<"ProjectScreenshot"> | boolean
     uploadedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
@@ -23389,6 +23397,7 @@ export namespace Prisma {
     fileUrl?: SortOrder
     fileSize?: SortOrder
     mimeType?: SortOrder
+    isFeatured?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
@@ -23409,6 +23418,7 @@ export namespace Prisma {
     fileUrl?: StringFilter<"ProjectScreenshot"> | string
     fileSize?: IntFilter<"ProjectScreenshot"> | number
     mimeType?: StringFilter<"ProjectScreenshot"> | string
+    isFeatured?: BoolFilter<"ProjectScreenshot"> | boolean
     uploadedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
@@ -23426,6 +23436,7 @@ export namespace Prisma {
     fileUrl?: SortOrder
     fileSize?: SortOrder
     mimeType?: SortOrder
+    isFeatured?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ProjectScreenshotCountOrderByAggregateInput
@@ -23450,6 +23461,7 @@ export namespace Prisma {
     fileUrl?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
     fileSize?: IntWithAggregatesFilter<"ProjectScreenshot"> | number
     mimeType?: StringWithAggregatesFilter<"ProjectScreenshot"> | string
+    isFeatured?: BoolWithAggregatesFilter<"ProjectScreenshot"> | boolean
     uploadedAt?: DateTimeWithAggregatesFilter<"ProjectScreenshot"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ProjectScreenshot"> | Date | string
   }
@@ -24979,6 +24991,7 @@ export namespace Prisma {
     fileUrl: string
     fileSize: number
     mimeType: string
+    isFeatured?: boolean
     uploadedAt?: Date | string
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutScreenshotsInput
@@ -24996,6 +25009,7 @@ export namespace Prisma {
     fileUrl: string
     fileSize: number
     mimeType: string
+    isFeatured?: boolean
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25011,6 +25025,7 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutScreenshotsNestedInput
@@ -25028,6 +25043,7 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25044,6 +25060,7 @@ export namespace Prisma {
     fileUrl: string
     fileSize: number
     mimeType: string
+    isFeatured?: boolean
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -25059,6 +25076,7 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25075,6 +25093,7 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26234,6 +26253,7 @@ export namespace Prisma {
     fileUrl?: SortOrder
     fileSize?: SortOrder
     mimeType?: SortOrder
+    isFeatured?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26255,6 +26275,7 @@ export namespace Prisma {
     fileUrl?: SortOrder
     fileSize?: SortOrder
     mimeType?: SortOrder
+    isFeatured?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26271,6 +26292,7 @@ export namespace Prisma {
     fileUrl?: SortOrder
     fileSize?: SortOrder
     mimeType?: SortOrder
+    isFeatured?: SortOrder
     uploadedAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -28627,6 +28649,7 @@ export namespace Prisma {
     fileUrl: string
     fileSize: number
     mimeType: string
+    isFeatured?: boolean
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -28642,6 +28665,7 @@ export namespace Prisma {
     fileUrl: string
     fileSize: number
     mimeType: string
+    isFeatured?: boolean
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -28966,6 +28990,7 @@ export namespace Prisma {
     fileUrl?: StringFilter<"ProjectScreenshot"> | string
     fileSize?: IntFilter<"ProjectScreenshot"> | number
     mimeType?: StringFilter<"ProjectScreenshot"> | string
+    isFeatured?: BoolFilter<"ProjectScreenshot"> | boolean
     uploadedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
   }
@@ -31561,6 +31586,7 @@ export namespace Prisma {
     fileUrl: string
     fileSize: number
     mimeType: string
+    isFeatured?: boolean
     uploadedAt?: Date | string
     updatedAt?: Date | string
   }
@@ -31755,6 +31781,7 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31770,6 +31797,7 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31785,6 +31813,7 @@ export namespace Prisma {
     fileUrl?: StringFieldUpdateOperationsInput | string
     fileSize?: IntFieldUpdateOperationsInput | number
     mimeType?: StringFieldUpdateOperationsInput | string
+    isFeatured?: BoolFieldUpdateOperationsInput | boolean
     uploadedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

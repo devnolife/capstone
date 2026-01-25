@@ -197,10 +197,21 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold">Profil Saya</h1>
-        <p className="text-default-500">Kelola informasi akun Anda</p>
+      {/* Header - Soft Colored */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-950/40 dark:via-purple-950/30 dark:to-fuchsia-950/40 border border-violet-200/50 dark:border-violet-800/30 p-6 md:p-8">
+        {/* Subtle Background Accents */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-400/20 to-purple-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-fuchsia-400/15 to-violet-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+        
+        <div className="relative flex items-center gap-4">
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/25">
+            <User size={28} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">Profil Saya</h1>
+            <p className="text-violet-600/70 dark:text-violet-400/60">Kelola informasi akun Anda</p>
+          </div>
+        </div>
       </div>
 
       {/* Profile Overview Card */}

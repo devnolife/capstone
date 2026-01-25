@@ -37,18 +37,7 @@ export const projectSubmitSchema = z.object({
 // Document Validations
 export const documentUploadSchema = z.object({
   projectId: z.string(),
-  type: z.enum([
-    'PROPOSAL',
-    'BAB_1',
-    'BAB_2',
-    'BAB_3',
-    'BAB_4',
-    'BAB_5',
-    'FINAL_REPORT',
-    'PRESENTATION',
-    'SOURCE_CODE',
-    'OTHER',
-  ]),
+  type: z.enum(['PRESENTATION', 'SOURCE_CODE', 'OTHER']),
   file: z.any(),
 });
 

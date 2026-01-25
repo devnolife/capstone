@@ -27,6 +27,37 @@ export interface CollaboratorResult {
   error?: string;
 }
 
+export interface OrgRepo {
+  id: number;
+  name: string;
+  full_name: string;
+  description: string | null;
+  html_url: string;
+  clone_url: string;
+  language: string | null;
+  stargazers_count: number;
+  forks_count: number;
+  open_issues_count: number;
+  size: number;
+  default_branch: string;
+  created_at: string;
+  updated_at: string;
+  pushed_at: string;
+  private: boolean;
+  fork: boolean;
+  archived: boolean;
+  topics: string[];
+  // Parent info if forked
+  parent?: {
+    full_name: string;
+    html_url: string;
+    owner: {
+      login: string;
+      avatar_url: string;
+    };
+  } | null;
+}
+
 /**
  * GitHub Organization Client for managing capstone repositories
  */
@@ -116,6 +147,23 @@ export class GitHubOrgClient {
     newRepoName?: string,
   ): Promise<ForkResult> {
     try {
+      console.log('Fork attempt:', { sourceOwner, sourceRepo, newRepoName, orgName: this.orgName });
+      
+      // First, verify source repo exists and is accessible
+      try {
+        const sourceRepoCheck = await this.octokit.rest.repos.get({
+          owner: sourceOwner,
+          repo: sourceRepo,
+        });
+        console.log('Source repo found:', sourceRepoCheck.data.full_name);
+      } catch (sourceError) {
+        console.error('Source repo not accessible:', sourceError);
+        return {
+          success: false,
+          error: `Repository sumber ${sourceOwner}/${sourceRepo} tidak ditemukan atau tidak dapat diakses`,
+        };
+      }
+      
       // Check if repo already exists in org
       try {
         const existingRepo = await this.octokit.rest.repos.get({
@@ -124,6 +172,7 @@ export class GitHubOrgClient {
         });
         
         if (existingRepo.data) {
+          console.log('Repo already exists in org:', existingRepo.data.full_name);
           return {
             success: true,
             repoUrl: existingRepo.data.html_url,
@@ -133,9 +182,11 @@ export class GitHubOrgClient {
         }
       } catch {
         // Repo doesn't exist, proceed with fork
+        console.log('Repo does not exist in org, proceeding with fork');
       }
 
       // Create fork in the organization
+      console.log('Creating fork to org:', this.orgName);
       const { data } = await this.octokit.rest.repos.createFork({
         owner: sourceOwner,
         repo: sourceRepo,
@@ -304,6 +355,169 @@ export class GitHubOrgClient {
    */
   getOrgName(): string {
     return this.orgName;
+  }
+
+  /**
+   * List all repositories in the organization
+   */
+  async listOrgRepos(options?: {
+    type?: 'all' | 'public' | 'private' | 'forks' | 'sources';
+    sort?: 'created' | 'updated' | 'pushed' | 'full_name';
+    direction?: 'asc' | 'desc';
+    perPage?: number;
+    page?: number;
+  }): Promise<{ repos: OrgRepo[]; total: number }> {
+    try {
+      const { data } = await this.octokit.rest.repos.listForOrg({
+        org: this.orgName,
+        type: options?.type || 'all',
+        sort: options?.sort || 'updated',
+        direction: options?.direction || 'desc',
+        per_page: options?.perPage || 100,
+        page: options?.page || 1,
+      });
+
+      const repos: OrgRepo[] = data.map((repo) => ({
+        id: repo.id,
+        name: repo.name,
+        full_name: repo.full_name,
+        description: repo.description || null,
+        html_url: repo.html_url,
+        clone_url: repo.clone_url || '',
+        language: repo.language || null,
+        stargazers_count: repo.stargazers_count || 0,
+        forks_count: repo.forks_count || 0,
+        open_issues_count: repo.open_issues_count || 0,
+        size: repo.size || 0,
+        default_branch: repo.default_branch || 'main',
+        created_at: repo.created_at || '',
+        updated_at: repo.updated_at || '',
+        pushed_at: repo.pushed_at || '',
+        private: repo.private,
+        fork: repo.fork,
+        archived: repo.archived || false,
+        topics: repo.topics || [],
+        parent: null, // Will be populated if needed via getOrgRepo
+      }));
+
+      return { repos, total: repos.length };
+    } catch (error) {
+      console.error('Error listing organization repos:', error);
+      return { repos: [], total: 0 };
+    }
+  }
+
+  /**
+   * Get detailed information about a specific repository in the organization
+   */
+  async getOrgRepo(repoName: string): Promise<OrgRepo | null> {
+    try {
+      const { data } = await this.octokit.rest.repos.get({
+        owner: this.orgName,
+        repo: repoName,
+      });
+
+      return {
+        id: data.id,
+        name: data.name,
+        full_name: data.full_name,
+        description: data.description || null,
+        html_url: data.html_url,
+        clone_url: data.clone_url || '',
+        language: data.language || null,
+        stargazers_count: data.stargazers_count || 0,
+        forks_count: data.forks_count || 0,
+        open_issues_count: data.open_issues_count || 0,
+        size: data.size || 0,
+        default_branch: data.default_branch || 'main',
+        created_at: data.created_at || '',
+        updated_at: data.updated_at || '',
+        pushed_at: data.pushed_at || '',
+        private: data.private,
+        fork: data.fork,
+        archived: data.archived || false,
+        topics: data.topics || [],
+        parent: data.parent ? {
+          full_name: data.parent.full_name,
+          html_url: data.parent.html_url,
+          owner: {
+            login: data.parent.owner.login,
+            avatar_url: data.parent.owner.avatar_url,
+          },
+        } : null,
+      };
+    } catch (error) {
+      console.error(`Error getting org repo ${repoName}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Get all forked capstone repositories (repos that start with 'capstone-')
+   */
+  async listCapstoneRepos(): Promise<OrgRepo[]> {
+    try {
+      const { repos } = await this.listOrgRepos({ type: 'forks', perPage: 100 });
+      
+      // Filter only capstone repos (naming convention: capstone-{year}-{slug})
+      return repos.filter(repo => repo.name.startsWith('capstone-'));
+    } catch (error) {
+      console.error('Error listing capstone repos:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get repository statistics (languages, commits count, contributors)
+   */
+  async getRepoStats(repoName: string): Promise<{
+    languages: Record<string, number>;
+    commitCount: number;
+    contributors: Array<{ login: string; contributions: number; avatar_url: string }>;
+  } | null> {
+    try {
+      const [languagesResponse, contributorsResponse, commitsResponse] = await Promise.all([
+        this.octokit.rest.repos.listLanguages({
+          owner: this.orgName,
+          repo: repoName,
+        }),
+        this.octokit.rest.repos.listContributors({
+          owner: this.orgName,
+          repo: repoName,
+          per_page: 100,
+        }),
+        this.octokit.rest.repos.listCommits({
+          owner: this.orgName,
+          repo: repoName,
+          per_page: 1,
+        }),
+      ]);
+
+      // Get total commit count from Link header
+      let commitCount = 0;
+      const linkHeader = commitsResponse.headers.link;
+      if (linkHeader) {
+        const match = linkHeader.match(/page=(\d+)>; rel="last"/);
+        if (match) {
+          commitCount = parseInt(match[1], 10);
+        }
+      } else {
+        commitCount = commitsResponse.data.length;
+      }
+
+      return {
+        languages: languagesResponse.data,
+        commitCount,
+        contributors: contributorsResponse.data.map((c) => ({
+          login: c.login || 'unknown',
+          contributions: c.contributions,
+          avatar_url: c.avatar_url || '',
+        })),
+      };
+    } catch (error) {
+      console.error(`Error getting repo stats for ${repoName}:`, error);
+      return null;
+    }
   }
 }
 

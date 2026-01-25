@@ -90,16 +90,22 @@ export function DocumentsListContent({ projects }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <FileText className="text-primary" size={28} />
-            Persyaratan Proyek
-          </h1>
-          <p className="text-sm text-default-500 mt-1">
-            Kelola persyaratan dan dokumentasi untuk setiap proyek capstone
-          </p>
+      {/* Page Header - Soft Colored */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-50 via-sky-50 to-blue-50 dark:from-cyan-950/40 dark:via-sky-950/30 dark:to-blue-950/40 border border-cyan-200/50 dark:border-cyan-800/30 p-6 md:p-8">
+        {/* Subtle Background Accents */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-cyan-400/20 to-sky-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-400/15 to-cyan-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+        
+        <div className="relative flex items-center gap-4">
+          <div className="p-3 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-lg shadow-cyan-500/25">
+            <FileText size={28} />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">Persyaratan Proyek</h1>
+            <p className="text-sm text-cyan-600/70 dark:text-cyan-400/60 mt-1">
+              Kelola persyaratan dan dokumentasi untuk setiap proyek capstone
+            </p>
+          </div>
         </div>
       </div>
 

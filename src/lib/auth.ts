@@ -38,6 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   // Note: We don't use PrismaAdapter here because our User model
   // has required fields (username) that the adapter doesn't handle.
   // Instead, we handle user creation/lookup manually in callbacks.
+  trustHost: true,
   session: {
     strategy: 'jwt',
   },

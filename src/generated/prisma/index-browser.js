@@ -340,6 +340,7 @@ exports.Prisma.ProjectScreenshotScalarFieldEnum = {
   fileUrl: 'fileUrl',
   fileSize: 'fileSize',
   mimeType: 'mimeType',
+  isFeatured: 'isFeatured',
   uploadedAt: 'uploadedAt',
   updatedAt: 'updatedAt'
 };
@@ -374,13 +375,6 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
 };
 
 exports.DocumentType = exports.$Enums.DocumentType = {
-  PROPOSAL: 'PROPOSAL',
-  BAB_1: 'BAB_1',
-  BAB_2: 'BAB_2',
-  BAB_3: 'BAB_3',
-  BAB_4: 'BAB_4',
-  BAB_5: 'BAB_5',
-  FINAL_REPORT: 'FINAL_REPORT',
   PRESENTATION: 'PRESENTATION',
   SOURCE_CODE: 'SOURCE_CODE',
   OTHER: 'OTHER'

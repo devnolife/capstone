@@ -151,15 +151,25 @@ export function SettingsContent({ role }: SettingsContentProps) {
       initial="hidden"
       animate="visible"
     >
-      {/* Header */}
+      {/* Header - Soft Colored */}
       <motion.div variants={itemVariants}>
-        <h1 className="text-xl md:text-2xl font-bold flex items-center gap-2">
-          <Settings size={24} />
-          Pengaturan
-        </h1>
-        <p className="text-sm md:text-base text-default-500">
-          Sesuaikan preferensi aplikasi Anda
-        </p>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-50 via-slate-50 to-gray-50 dark:from-zinc-950/40 dark:via-slate-950/30 dark:to-gray-950/40 border border-zinc-200/50 dark:border-zinc-800/30 p-6 md:p-8">
+          {/* Subtle Background Accents */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-zinc-400/20 to-slate-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-gray-400/15 to-zinc-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+          
+          <div className="relative flex items-center gap-4">
+            <div className="p-3 rounded-2xl bg-gradient-to-br from-zinc-600 to-slate-700 text-white shadow-lg shadow-zinc-500/25">
+              <Settings size={28} />
+            </div>
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold text-zinc-800 dark:text-zinc-100">Pengaturan</h1>
+              <p className="text-sm md:text-base text-zinc-600/70 dark:text-zinc-400/60">
+                Sesuaikan preferensi aplikasi Anda
+              </p>
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Success Message */}

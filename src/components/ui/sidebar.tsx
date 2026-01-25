@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
@@ -165,27 +166,35 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className={cn(
-        "flex items-center h-16 px-4",
+        "flex items-center h-20 px-4",
         isCollapsed ? "justify-center" : "justify-between"
       )}>
         {!isCollapsed && (
           <Link href={dashboardUrl} className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary via-primary to-secondary shadow-lg shadow-primary/25">
-              <GitBranch className="text-white" size={22} />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Capstone Logo"
+              width={48}
+              height={48}
+              className="object-contain"
+            />
             <div>
               <span className="font-bold text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 Capstone
               </span>
-              <p className="text-[10px] text-default-400 -mt-0.5">Management System</p>
+              <p className="text-[10px] text-default-400 -mt-0.5">Prodi Informatika</p>
             </div>
           </Link>
         )}
         {isCollapsed && (
           <Link href={dashboardUrl}>
-            <div className="p-2 rounded-xl bg-gradient-to-br from-primary via-primary to-secondary shadow-lg shadow-primary/25">
-              <GitBranch className="text-white" size={22} />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Capstone Logo"
+              width={40}
+              height={40}
+              className="object-contain"
+            />
           </Link>
         )}
       </div>

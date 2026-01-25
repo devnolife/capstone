@@ -28,13 +28,6 @@ enum ProjectStatus {
 }
 
 enum DocumentType {
-  PROPOSAL
-  BAB_1
-  BAB_2
-  BAB_3
-  BAB_4
-  BAB_5
-  FINAL_REPORT
   PRESENTATION
   SOURCE_CODE
   OTHER
@@ -419,6 +412,9 @@ model ProjectScreenshot {
   fileSize Int // in bytes
   mimeType String // e.g., "image/png", "image/jpeg"
 
+  // Featured Flag (untuk showcase di landing page)
+  isFeatured Boolean @default(false) // Apakah ditampilkan di gallery landing page
+
   // Metadata
   uploadedAt DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -426,5 +422,6 @@ model ProjectScreenshot {
   // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  @@index([isFeatured]) // Index untuk query featured screenshots
   @@map("project_screenshots")
 }

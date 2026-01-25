@@ -20,14 +20,12 @@ import {
   Search,
   Star,
   GitFork,
-  Lock,
   Globe,
   CheckCircle2,
   AlertCircle,
   RefreshCw,
   ExternalLink,
   Code2,
-  Sparkles,
   FolderGit2,
   Clock,
   X,
@@ -178,7 +176,7 @@ export function GitHubRepoSelector({
                   <div>
                     <h2 className="text-lg font-bold">Pilih Repository</h2>
                     <p className="text-xs text-default-500 hidden sm:block">
-                      {repos.length} repository tersedia
+                      {repos.length} repository public tersedia
                     </p>
                   </div>
                 </div>
@@ -233,6 +231,18 @@ export function GitHubRepoSelector({
 
           {/* Content */}
           <div className="flex-1 overflow-hidden">
+            {/* Info Banner - Only public repos */}
+            {!isLoading && !error && (
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-4">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800/50">
+                  <Globe className="text-blue-500 shrink-0" size={18} />
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    Hanya repository <strong>public</strong> yang ditampilkan. Repository private tidak dapat di-fork ke organisasi.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Error State */}
             {error && (
               <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
@@ -258,7 +268,7 @@ export function GitHubRepoSelector({
                 <div className="relative">
                   <Spinner size="lg" color="primary" />
                 </div>
-                <p className="text-default-500">Mengambil repository dari GitHub...</p>
+                <p className="text-default-500">Mengambil repository public dari GitHub...</p>
               </div>
             )}
 
@@ -273,10 +283,10 @@ export function GitHubRepoSelector({
                       </div>
                       <div className="text-center">
                         <p className="font-medium text-default-600">
-                          {searchQuery ? 'Tidak ada hasil' : 'Tidak ada repository'}
+                          {searchQuery ? 'Tidak ada hasil' : 'Tidak ada repository public'}
                         </p>
                         <p className="text-sm text-default-400 mt-1">
-                          {searchQuery ? `Tidak ditemukan repository untuk "${searchQuery}"` : 'Buat repository baru di GitHub'}
+                          {searchQuery ? `Tidak ditemukan repository untuk "${searchQuery}"` : 'Buat repository public baru di GitHub untuk project capstone'}
                         </p>
                       </div>
                     </div>
@@ -338,11 +348,7 @@ export function GitHubRepoSelector({
                                       <h3 className="font-semibold truncate">{repo.name}</h3>
                                     </div>
                                     <div className="flex items-center gap-1.5 shrink-0">
-                                      {repo.private ? (
-                                        <Lock size={12} className="text-warning-600" />
-                                      ) : (
-                                        <Globe size={12} className="text-success-600" />
-                                      )}
+                                      <Globe size={12} className="text-success-600" />
                                       {isSelected && (
                                         <motion.div
                                           initial={{ scale: 0 }}

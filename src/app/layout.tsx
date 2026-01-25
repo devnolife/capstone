@@ -9,9 +9,13 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Capstone Project Management System',
+  title: 'Capstone Project & Skripsi - Prodi Informatika',
   description:
-    'Dashboard untuk pengumpulan dan review capstone project mahasiswa informatika',
+    'Dashboard untuk pengumpulan dan review capstone project mahasiswa Prodi Informatika Universitas Muhammadiyah Makassar',
+  icons: {
+    icon: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

@@ -65,10 +65,18 @@ export async function GET(
             },
           },
         },
-        requirements: {
+        requirements: true,
+        members: {
           select: {
-            completionPercent: true,
+            id: true,
+            githubUsername: true,
+            githubAvatarUrl: true,
+            name: true,
+            role: true,
           },
+        },
+        stakeholderDocuments: {
+          orderBy: { uploadedAt: 'desc' },
         },
       },
     });
@@ -135,7 +143,40 @@ export async function PUT(
       );
     }
 
-    // Check ownership
+    // Check if this is a status-only update (for Admin/Dosen)
+    if (body.status && Object.keys(body).length === 1) {
+      // Only Admin or Dosen can change status
+      if (session.user.role !== 'ADMIN' && session.user.role !== 'DOSEN_PENGUJI') {
+        return NextResponse.json(
+          { error: 'Hanya Admin atau Dosen yang dapat mengubah status' },
+          { status: 403 },
+        );
+      }
+
+      const validStatuses = ['DRAFT', 'SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 'APPROVED', 'REJECTED'];
+      if (!validStatuses.includes(body.status)) {
+        return NextResponse.json(
+          { error: 'Status tidak valid' },
+          { status: 400 },
+        );
+      }
+
+      const project = await prisma.project.update({
+        where: { id },
+        data: {
+          status: body.status,
+          ...(body.status === 'APPROVED' && { approvedAt: new Date() }),
+          ...(body.status === 'REJECTED' && { approvedAt: null }),
+        },
+      });
+
+      return NextResponse.json({
+        message: `Status project berhasil diubah ke ${body.status}`,
+        project,
+      });
+    }
+
+    // Regular project update - Check ownership
     if (
       existingProject.mahasiswaId !== session.user.id &&
       session.user.role !== 'ADMIN'

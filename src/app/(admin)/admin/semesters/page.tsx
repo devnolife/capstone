@@ -255,53 +255,29 @@ export default function AdminSemestersPage() {
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Header */}
+      {/* Hero Header - Soft Emerald/Teal */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 p-6 md:p-8 text-white">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <pattern
-                  id="grid"
-                  width="10"
-                  height="10"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <path
-                    d="M 10 0 L 0 0 0 10"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="0.5"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100" height="100" fill="url(#grid)" />
-            </svg>
-          </div>
-          <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40 border border-emerald-200/50 dark:border-emerald-800/30 p-6 md:p-8">
+          {/* Subtle Background Accent */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-400/20 to-green-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-teal-400/15 to-emerald-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
 
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
-                <Calendar size={32} />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25">
+                <Calendar size={28} />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold">
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">
                   Manajemen Semester
                 </h1>
-                <p className="text-white/80 mt-1">
+                <p className="text-emerald-600/70 dark:text-emerald-400/60 text-sm mt-1">
                   Kelola periode semester untuk pengumpulan project
                 </p>
               </div>
             </div>
             <Button
-              className="bg-white text-emerald-600 font-semibold shadow-lg"
+              className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium shadow-lg shadow-emerald-500/25"
               startContent={<Plus size={18} />}
               onPress={() => {
                 resetForm();
@@ -314,17 +290,16 @@ export default function AdminSemestersPage() {
         </div>
       </motion.div>
 
-      {/* Active Semester Card */}
+      {/* Active Semester Card - Softer */}
       {activeSemester && (
         <motion.div variants={itemVariants}>
-          <div className="relative overflow-hidden rounded-xl border-2 border-emerald-200 dark:border-emerald-800 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 p-5">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-teal-500" />
-            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl" />
+          <div className="relative overflow-hidden rounded-xl border border-emerald-200/60 dark:border-emerald-800/40 bg-gradient-to-r from-emerald-50/80 to-teal-50/80 dark:from-emerald-950/30 dark:to-teal-950/30 p-5">
+            <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-emerald-400/15 blur-xl" />
 
             <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg">
-                  <CalendarCheck size={28} />
+                <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25">
+                  <CalendarCheck size={24} />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -336,10 +311,10 @@ export default function AdminSemestersPage() {
                       <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
                   </div>
-                  <h2 className="text-xl md:text-2xl font-bold text-zinc-900 dark:text-white">
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">
                     {activeSemester.name}
                   </h2>
-                  <div className="flex items-center gap-2 mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+                  <div className="flex items-center gap-2 mt-1 text-sm text-slate-600 dark:text-zinc-400">
                     <Clock size={14} />
                     <span>
                       {formatDate(activeSemester.startDate)} -{' '}
@@ -359,92 +334,93 @@ export default function AdminSemestersPage() {
         </motion.div>
       )}
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Softer Design */}
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-green-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 text-white">
-                <Calendar size={18} />
+              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/30">
+                <Calendar size={18} className="text-emerald-600 dark:text-emerald-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{semesters.length}</p>
-                <p className="text-xs text-zinc-500">Total Semester</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{semesters.length}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Total Semester</p>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-teal-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-green-500 to-teal-500 text-white">
-                <CalendarCheck size={18} />
+              <div className="p-2 rounded-lg bg-green-50 dark:bg-green-900/30">
+                <CalendarCheck size={18} className="text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                   {semesters.filter((s) => s.isActive).length}
                 </p>
-                <p className="text-xs text-zinc-500">Aktif</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Aktif</p>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-teal-500 to-cyan-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-teal-500 to-cyan-500 text-white">
-                <CalendarClock size={18} />
+              <div className="p-2 rounded-lg bg-teal-50 dark:bg-teal-900/30">
+                <CalendarClock size={18} className="text-teal-600 dark:text-teal-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-bold text-teal-600 dark:text-teal-400">
                   {semesters.filter((s) => !s.isActive).length}
                 </p>
-                <p className="text-xs text-zinc-500">Tidak Aktif</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Tidak Aktif</p>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-emerald-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-emerald-500 text-white">
-                <GraduationCap size={18} />
+              <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-900/30">
+                <GraduationCap size={18} className="text-cyan-600 dark:text-cyan-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">
                   {[...new Set(semesters.map((s) => s.tahunAkademik))].length}
                 </p>
-                <p className="text-xs text-zinc-500">Tahun Akademik</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Tahun Akademik</p>
               </div>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Search Card */}
+      {/* Search Card - Softer */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
           <Input
             placeholder="Cari semester..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            startContent={<Search size={18} className="text-zinc-400" />}
+            startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
             classNames={{
               inputWrapper:
-                'bg-zinc-100 dark:bg-zinc-800 border-none shadow-none',
+                'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50',
             }}
           />
         </div>
       </motion.div>
 
-      {/* Semesters List */}
+      {/* Semesters List - Softer Container */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
-            <h2 className="text-lg font-semibold">
-              Daftar Semester ({filteredSemesters.length})
-            </h2>
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30">
+                <Calendar size={14} className="text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <h2 className="font-medium text-slate-700 dark:text-zinc-300">
+                Daftar Semester ({filteredSemesters.length})
+              </h2>
+            </div>
           </div>
 
           {filteredSemesters.length === 0 ? (

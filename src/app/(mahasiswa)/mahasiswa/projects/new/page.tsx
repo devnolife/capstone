@@ -497,45 +497,50 @@ export default function NewProjectPage() {
 
                 {/* Semester & Academic Year Row */}
                 <div className="grid grid-cols-2 gap-3">
-                  <Select
-                    label="Semester"
-                    labelPlacement="outside"
-                    placeholder="Pilih semester"
-                    selectedKeys={formData.semester ? [formData.semester] : []}
-                    onChange={(e) => {
-                      const selected = semesterOptions.find((s) => s.name === e.target.value);
-                      setFormData({
-                        ...formData,
-                        semester: e.target.value,
-                        tahunAkademik: selected?.tahunAkademik || '',
-                      });
-                    }}
-                    isRequired
-                    variant="bordered"
-                    classNames={{
-                      label: 'text-sm font-medium',
-                      trigger: 'border-default-200 hover:border-primary data-[open=true]:border-primary',
-                    }}
-                    startContent={<Calendar size={14} className="text-default-400" />}
-                  >
-                    {semesterOptions.map((sem) => (
-                      <SelectItem key={sem.name}>{sem.name}</SelectItem>
-                    ))}
-                  </Select>
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-foreground">
+                      Semester <span className="text-danger">*</span>
+                    </label>
+                    <Select
+                      placeholder="Pilih semester"
+                      selectedKeys={formData.semester ? [formData.semester] : []}
+                      onChange={(e) => {
+                        const selected = semesterOptions.find((s) => s.name === e.target.value);
+                        setFormData({
+                          ...formData,
+                          semester: e.target.value,
+                          tahunAkademik: selected?.tahunAkademik || '',
+                        });
+                      }}
+                      variant="bordered"
+                      classNames={{
+                        trigger: 'border-default-200 hover:border-primary data-[open=true]:border-primary h-10',
+                      }}
+                      startContent={<Calendar size={14} className="text-default-400" />}
+                      aria-label="Pilih Semester"
+                    >
+                      {semesterOptions.map((sem) => (
+                        <SelectItem key={sem.name}>{sem.name}</SelectItem>
+                      ))}
+                    </Select>
+                  </div>
 
-                  <Input
-                    label="Tahun Akademik"
-                    labelPlacement="outside"
-                    placeholder="Otomatis"
-                    value={formData.tahunAkademik}
-                    isReadOnly
-                    variant="bordered"
-                    classNames={{
-                      label: 'text-sm font-medium',
-                      inputWrapper: 'bg-default-50 border-default-200',
-                    }}
-                    startContent={<BookOpen size={14} className="text-default-400" />}
-                  />
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-foreground">
+                      Tahun Akademik
+                    </label>
+                    <Input
+                      placeholder="Otomatis"
+                      value={formData.tahunAkademik}
+                      isReadOnly
+                      variant="bordered"
+                      classNames={{
+                        inputWrapper: 'bg-default-50 border-default-200 h-10',
+                      }}
+                      startContent={<BookOpen size={14} className="text-default-400" />}
+                      aria-label="Tahun Akademik"
+                    />
+                  </div>
                 </div>
 
                 {/* Objectives */}

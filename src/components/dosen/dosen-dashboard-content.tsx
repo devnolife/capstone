@@ -214,59 +214,54 @@ export function DosenDashboardContent({
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Welcome Card */}
+      {/* Hero Welcome Card - Soft Colored */}
       <motion.div variants={itemVariants}>
-        <Card className="border-0 bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-600 text-white overflow-hidden">
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-            }}
-          />
-          <CardBody className="p-6 md:p-8 relative">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              {/* Left side - Welcome */}
-              <div className="flex items-center gap-4">
-                <Avatar
-                  name={userName}
-                  src={userImage}
-                  size="lg"
-                  className="ring-4 ring-white/30 w-16 h-16 md:w-20 md:h-20"
-                  icon={<GraduationCap size={32} />}
-                />
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Sparkles size={16} className="text-yellow-300" />
-                    <span className="text-sm text-white/80">{getGreeting()}</span>
-                  </div>
-                  <h1 className="text-2xl md:text-3xl font-bold">{firstName}!</h1>
-                  <p className="text-white/70 text-sm md:text-base mt-1">
-                    Kelola review project mahasiswa di sini
-                  </p>
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/40 border border-emerald-200/50 dark:border-emerald-800/30 p-6 md:p-8">
+          {/* Subtle Background Accents */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-cyan-400/15 to-emerald-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+          
+          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Left side - Welcome */}
+            <div className="flex items-center gap-4">
+              <Avatar
+                name={userName}
+                src={userImage}
+                size="lg"
+                className="ring-4 ring-emerald-200 dark:ring-emerald-800 w-16 h-16 md:w-20 md:h-20"
+                icon={<GraduationCap size={32} />}
+              />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles size={16} className="text-emerald-500" />
+                  <span className="text-sm text-emerald-600/70 dark:text-emerald-400/70">{getGreeting()}</span>
                 </div>
-              </div>
-
-              {/* Right side - Quick Stats */}
-              <div className="flex items-center gap-3 md:gap-4">
-                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl md:text-3xl font-bold">{stats.totalAssigned}</p>
-                  <p className="text-xs text-white/70">Project</p>
-                </div>
-                <div className="text-center px-4 py-2 rounded-xl bg-white/10 backdrop-blur-sm">
-                  <p className="text-2xl md:text-3xl font-bold">{stats.totalMahasiswa}</p>
-                  <p className="text-xs text-white/70">Mahasiswa</p>
-                </div>
-                {stats.pendingReview > 0 && (
-                  <div className="text-center px-4 py-2 rounded-xl bg-amber-500/30 backdrop-blur-sm">
-                    <p className="text-2xl md:text-3xl font-bold">{stats.pendingReview}</p>
-                    <p className="text-xs text-white/70">Pending</p>
-                  </div>
-                )}
+                <h1 className="text-2xl md:text-3xl font-bold text-zinc-800 dark:text-zinc-100">{firstName}!</h1>
+                <p className="text-emerald-600/70 dark:text-emerald-400/60 text-sm md:text-base mt-1">
+                  Kelola review project mahasiswa di sini
+                </p>
               </div>
             </div>
-          </CardBody>
-        </Card>
+
+            {/* Right side - Quick Stats */}
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-emerald-200/50 dark:border-emerald-700/30">
+                <p className="text-2xl md:text-3xl font-bold text-emerald-700 dark:text-emerald-300">{stats.totalAssigned}</p>
+                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70">Project</p>
+              </div>
+              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-emerald-200/50 dark:border-emerald-700/30">
+                <p className="text-2xl md:text-3xl font-bold text-emerald-700 dark:text-emerald-300">{stats.totalMahasiswa}</p>
+                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70">Mahasiswa</p>
+              </div>
+              {stats.pendingReview > 0 && (
+                <div className="text-center px-4 py-2 rounded-xl bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/30">
+                  <p className="text-2xl md:text-3xl font-bold text-amber-700 dark:text-amber-300">{stats.pendingReview}</p>
+                  <p className="text-xs text-amber-600/70 dark:text-amber-400/70">Pending</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </motion.div>
 
       {/* Stats Grid */}

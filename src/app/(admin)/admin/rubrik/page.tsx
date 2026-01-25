@@ -235,53 +235,29 @@ export default function AdminRubrikPage() {
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Header */}
+      {/* Hero Header - Soft Indigo/Blue */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500 via-blue-500 to-cyan-500 p-6 md:p-8 text-white">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <svg
-              className="w-full h-full"
-              viewBox="0 0 100 100"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <pattern
-                  id="grid"
-                  width="10"
-                  height="10"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <path
-                    d="M 10 0 L 0 0 0 10"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="0.5"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100" height="100" fill="url(#grid)" />
-            </svg>
-          </div>
-          <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 dark:from-indigo-950/40 dark:via-blue-950/30 dark:to-cyan-950/40 border border-indigo-200/50 dark:border-indigo-800/30 p-6 md:p-8">
+          {/* Subtle Background Accent */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-400/20 to-blue-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-cyan-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
 
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
-                <BookOpen size={32} />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-lg shadow-indigo-500/25">
+                <BookOpen size={28} />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold">
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">
                   Rubrik Penilaian
                 </h1>
-                <p className="text-white/80 mt-1">
+                <p className="text-indigo-600/70 dark:text-indigo-400/60 text-sm mt-1">
                   Kelola kriteria penilaian untuk review project
                 </p>
               </div>
             </div>
             <Button
-              className="bg-white text-indigo-600 font-semibold shadow-lg"
+              className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white font-medium shadow-lg shadow-indigo-500/25"
               startContent={<Plus size={18} />}
               onPress={() => {
                 resetForm();
@@ -294,86 +270,86 @@ export default function AdminRubrikPage() {
         </div>
       </motion.div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - Softer Design */}
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-blue-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 text-white">
-                <BookOpen size={18} />
+              <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-900/30">
+                <BookOpen size={18} className="text-indigo-600 dark:text-indigo-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{rubriks.length}</p>
-                <p className="text-xs text-zinc-500">Total Rubrik</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{rubriks.length}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Total Rubrik</p>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
-                <CheckCircle2 size={18} />
+              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
+                <CheckCircle2 size={18} className="text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                   {rubriks.filter((r) => r.isActive).length}
                 </p>
-                <p className="text-xs text-zinc-500">Rubrik Aktif</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Rubrik Aktif</p>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-teal-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-cyan-500 to-teal-500 text-white">
-                <ListOrdered size={18} />
+              <div className="p-2 rounded-lg bg-cyan-50 dark:bg-cyan-900/30">
+                <ListOrdered size={18} className="text-cyan-600 dark:text-cyan-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{kategoris.length}</p>
-                <p className="text-xs text-zinc-500">Kategori</p>
+                <p className="text-2xl font-bold text-cyan-600 dark:text-cyan-400">{kategoris.length}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Kategori</p>
               </div>
             </div>
           </div>
 
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div
-              className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${
-                totalBobot === 100
-                  ? 'from-emerald-500 to-green-500'
-                  : totalBobot > 100
-                    ? 'from-red-500 to-orange-500'
-                    : 'from-amber-500 to-yellow-500'
-              }`}
-            />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
               <div
-                className={`p-2 rounded-lg text-white ${
+                className={`p-2 rounded-lg ${
                   totalBobot === 100
-                    ? 'bg-gradient-to-br from-emerald-500 to-green-500'
+                    ? 'bg-emerald-50 dark:bg-emerald-900/30'
                     : totalBobot > 100
-                      ? 'bg-gradient-to-br from-red-500 to-orange-500'
-                      : 'bg-gradient-to-br from-amber-500 to-yellow-500'
+                      ? 'bg-red-50 dark:bg-red-900/30'
+                      : 'bg-amber-50 dark:bg-amber-900/30'
                 }`}
               >
-                <Scale size={18} />
+                <Scale size={18} className={
+                  totalBobot === 100
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : totalBobot > 100
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-amber-600 dark:text-amber-400'
+                } />
               </div>
               <div>
-                <p className="text-2xl font-bold">{totalBobot}/100</p>
-                <p className="text-xs text-zinc-500">Total Bobot</p>
+                <p className={`text-2xl font-bold ${
+                  totalBobot === 100
+                    ? 'text-emerald-600 dark:text-emerald-400'
+                    : totalBobot > 100
+                      ? 'text-red-600 dark:text-red-400'
+                      : 'text-amber-600 dark:text-amber-400'
+                }`}>{totalBobot}/100</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Total Bobot</p>
               </div>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Total Bobot Progress */}
+      {/* Total Bobot Progress - Softer */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium">Total Bobot Rubrik Aktif</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-zinc-300">Total Bobot Rubrik Aktif</span>
             <span
               className={`text-sm font-semibold ${
                 totalBobot === 100
@@ -408,29 +384,34 @@ export default function AdminRubrikPage() {
         </div>
       </motion.div>
 
-      {/* Search Card */}
+      {/* Search Card - Softer */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
           <Input
             placeholder="Cari rubrik berdasarkan nama atau kategori..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            startContent={<Search size={18} className="text-zinc-400" />}
+            startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
             classNames={{
               inputWrapper:
-                'bg-zinc-100 dark:bg-zinc-800 border-none shadow-none',
+                'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50',
             }}
           />
         </div>
       </motion.div>
 
-      {/* Rubriks List */}
+      {/* Rubriks List - Softer Container */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
-          <div className="p-4 border-b border-zinc-200 dark:border-zinc-800">
-            <h2 className="text-lg font-semibold">
-              Daftar Rubrik Penilaian ({filteredRubriks.length})
-            </h2>
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30">
+                <BookOpen size={14} className="text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <h2 className="font-medium text-slate-700 dark:text-zinc-300">
+                Daftar Rubrik Penilaian ({filteredRubriks.length})
+              </h2>
+            </div>
           </div>
 
           {filteredRubriks.length === 0 ? (

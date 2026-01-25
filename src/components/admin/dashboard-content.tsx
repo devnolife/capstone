@@ -103,22 +103,22 @@ function getGreeting(): string {
   return 'Selamat Malam';
 }
 
-// Mobile User Card Component
+// Mobile User Card Component - Clean Design
 function MobileUserCard({ user }: { user: User }) {
   return (
     <motion.div variants={itemVariants}>
-      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 mb-3">
+      <div className="p-4 rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 mb-3 hover:shadow-md transition-shadow">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Avatar
               name={user.name}
               src={user.image || undefined}
               size="md"
-              className="ring-2 ring-zinc-200 dark:ring-zinc-700"
+              className="ring-2 ring-slate-200/60 dark:ring-zinc-700/50"
             />
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-sm truncate">{user.name}</p>
-              <p className="text-xs text-zinc-500 truncate">{user.username}</p>
+              <p className="font-semibold text-sm text-slate-800 dark:text-white truncate">{user.name}</p>
+              <p className="text-xs text-slate-500 dark:text-zinc-400 truncate">{user.username}</p>
               <div className="flex items-center gap-2 mt-1">
                 <Chip
                   size="sm"
@@ -134,7 +134,7 @@ function MobileUserCard({ user }: { user: User }) {
                 >
                   {getRoleLabel(user.role)}
                 </Chip>
-                <span className="text-[10px] text-zinc-400">
+                <span className="text-[10px] text-slate-400 dark:text-zinc-500">
                   {formatDate(user.createdAt)}
                 </span>
               </div>
@@ -155,22 +155,22 @@ function MobileUserCard({ user }: { user: User }) {
   );
 }
 
-// Mobile Project Card Component
+// Mobile Project Card Component - Clean Design
 function MobileProjectCard({ project }: { project: Project }) {
   return (
     <motion.div variants={itemVariants}>
-      <div className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 mb-3">
+      <div className="p-4 rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 mb-3 hover:shadow-md transition-shadow">
         <div className="space-y-3">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0 pr-2">
-              <p className="font-semibold text-sm line-clamp-2">{project.title}</p>
+              <p className="font-semibold text-sm text-slate-800 dark:text-white line-clamp-2">{project.title}</p>
               <div className="flex items-center gap-2 mt-1">
                 <Avatar
                   name={project.mahasiswa.name}
                   size="sm"
                   className="w-5 h-5"
                 />
-                <span className="text-xs text-zinc-500 truncate">
+                <span className="text-xs text-slate-500 dark:text-zinc-400 truncate">
                   {project.mahasiswa.name}
                 </span>
               </div>
@@ -185,7 +185,7 @@ function MobileProjectCard({ project }: { project: Project }) {
             </Chip>
           </div>
           
-          <div className="flex items-center justify-between text-xs text-zinc-400">
+          <div className="flex items-center justify-between text-xs text-slate-400 dark:text-zinc-500">
             <div className="flex items-center gap-1">
               <Calendar size={12} />
               <span>{project.semester}</span>
@@ -232,120 +232,102 @@ export function AdminDashboardContent({
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Welcome Card */}
+      {/* Hero Welcome Card - Soft Colored Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-500 via-pink-500 to-purple-600 p-6 md:p-8 text-white">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <defs>
-                <pattern id="admin-grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="100" height="100" fill="url(#admin-grid)" />
-            </svg>
-          </div>
-          
-          {/* Decorative circles */}
-          <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-rose-50 via-pink-50 to-fuchsia-50 dark:from-rose-950/40 dark:via-pink-950/30 dark:to-fuchsia-950/40 border border-rose-200/50 dark:border-rose-800/30 p-6 md:p-8">
+          {/* Subtle Background Accent */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-rose-400/20 to-pink-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-fuchsia-400/15 to-purple-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
           
           <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
-                <Shield className="w-8 h-8" />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white shadow-lg shadow-rose-500/25">
+                <Shield className="w-7 h-7" />
               </div>
               <div>
-                <p className="text-white/80 text-sm">{getGreeting()}</p>
-                <h1 className="text-2xl md:text-3xl font-bold">Admin Dashboard</h1>
-                <p className="text-white/70 text-sm mt-1">Kelola sistem capstone project</p>
+                <p className="text-rose-600/70 dark:text-rose-400/70 text-sm">{getGreeting()}</p>
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Admin Dashboard</h1>
+                <p className="text-rose-600/60 dark:text-rose-400/60 text-sm mt-1">Kelola sistem capstone project</p>
               </div>
             </div>
             
-            {/* Quick Stats */}
-            <div className="flex gap-4 md:gap-6">
-              <div className="text-center">
-                <p className="text-3xl md:text-4xl font-bold">{stats.totalUsers}</p>
-                <p className="text-white/70 text-xs">Total User</p>
+            {/* Quick Stats - Refined Cards */}
+            <div className="flex gap-3 md:gap-4">
+              <div className="text-center px-4 py-2 rounded-xl bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm border border-rose-200/50 dark:border-rose-800/30">
+                <p className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">{stats.totalUsers}</p>
+                <p className="text-rose-600/60 dark:text-rose-400/60 text-xs">Total User</p>
               </div>
-              <div className="w-px bg-white/20" />
-              <div className="text-center">
-                <p className="text-3xl md:text-4xl font-bold">{stats.totalProjects}</p>
-                <p className="text-white/70 text-xs">Total Project</p>
+              <div className="text-center px-4 py-2 rounded-xl bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm border border-rose-200/50 dark:border-rose-800/30">
+                <p className="text-2xl md:text-3xl font-bold text-violet-600 dark:text-violet-400">{stats.totalProjects}</p>
+                <p className="text-rose-600/60 dark:text-rose-400/60 text-xs">Total Project</p>
               </div>
-              <div className="w-px bg-white/20" />
-              <div className="text-center">
-                <p className="text-3xl md:text-4xl font-bold">{stats.completedReviews}</p>
-                <p className="text-white/70 text-xs">Review Selesai</p>
+              <div className="text-center px-4 py-2 rounded-xl bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm border border-rose-200/50 dark:border-rose-800/30">
+                <p className="text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.completedReviews}</p>
+                <p className="text-rose-600/60 dark:text-rose-400/60 text-xs">Review Selesai</p>
               </div>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Clean Design */}
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* Total Users */}
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs text-zinc-500 mb-1">Total User</p>
-                <p className="text-2xl font-bold">{stats.totalUsers}</p>
-                <p className="text-xs text-zinc-400 mt-1">
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">Total User</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{stats.totalUsers}</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
                   {stats.totalMahasiswa} mhs, {stats.totalDosen} dsn
                 </p>
               </div>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                 <Users size={20} />
               </div>
             </div>
           </div>
 
           {/* Total Projects */}
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs text-zinc-500 mb-1">Total Project</p>
-                <p className="text-2xl font-bold">{stats.totalProjects}</p>
-                <p className="text-xs text-zinc-400 mt-1">
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">Total Project</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{stats.totalProjects}</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">
                   {stats.submittedProjects} disubmit
                 </p>
               </div>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+              <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
                 <FolderGit2 size={20} />
               </div>
             </div>
           </div>
 
           {/* Mahasiswa */}
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-500 to-green-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs text-zinc-500 mb-1">Mahasiswa</p>
-                <p className="text-2xl font-bold">{stats.totalMahasiswa}</p>
-                <p className="text-xs text-zinc-400 mt-1">Terdaftar</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">Mahasiswa</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{stats.totalMahasiswa}</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">Terdaftar</p>
               </div>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 text-white">
+              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
                 <GraduationCap size={20} />
               </div>
             </div>
           </div>
 
           {/* Reviews */}
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm hover:shadow-md transition-shadow">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-xs text-zinc-500 mb-1">Review</p>
-                <p className="text-2xl font-bold">{stats.completedReviews}</p>
-                <p className="text-xs text-zinc-400 mt-1">Selesai</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">Review</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{stats.completedReviews}</p>
+                <p className="text-xs text-slate-400 dark:text-zinc-500 mt-1">Selesai</p>
               </div>
-              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+              <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
                 <ClipboardCheck size={20} />
               </div>
             </div>
@@ -355,8 +337,8 @@ export function AdminDashboardContent({
 
       {/* Quick Actions - Mobile */}
       <motion.div variants={itemVariants} className="md:hidden">
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-          <h3 className="font-semibold text-sm mb-3">Aksi Cepat</h3>
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
+          <h3 className="font-medium text-sm text-slate-700 dark:text-zinc-300 mb-3">Aksi Cepat</h3>
           <div className="grid grid-cols-3 gap-2">
             <Button
               as={Link}
@@ -364,7 +346,7 @@ export function AdminDashboardContent({
               variant="flat"
               className="h-auto py-3 flex-col gap-1"
             >
-              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                 <UserPlus size={18} />
               </div>
               <span className="text-[10px]">User Baru</span>
@@ -375,7 +357,7 @@ export function AdminDashboardContent({
               variant="flat"
               className="h-auto py-3 flex-col gap-1"
             >
-              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+              <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
                 <ClipboardCheck size={18} />
               </div>
               <span className="text-[10px]">Assign</span>
@@ -386,7 +368,7 @@ export function AdminDashboardContent({
               variant="flat"
               className="h-auto py-3 flex-col gap-1"
             >
-              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+              <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
                 <BookOpen size={18} />
               </div>
               <span className="text-[10px]">Rubrik</span>
@@ -399,13 +381,13 @@ export function AdminDashboardContent({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Users */}
         <motion.div variants={itemVariants} className="lg:col-span-2">
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
-            <div className="flex justify-between items-center px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
+            <div className="flex justify-between items-center px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                   <Users size={16} />
                 </div>
-                <h2 className="font-semibold">User Terbaru</h2>
+                <h2 className="font-medium text-slate-700 dark:text-zinc-300">User Terbaru</h2>
               </div>
               <Button
                 as={Link}
@@ -495,13 +477,13 @@ export function AdminDashboardContent({
 
         {/* Quick Actions - Desktop */}
         <motion.div variants={itemVariants} className="space-y-6">
-          <div className="hidden md:block rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="hidden md:block rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 text-white">
+                <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400">
                   <Activity size={16} />
                 </div>
-                <h3 className="font-semibold">Aksi Cepat</h3>
+                <h3 className="font-medium text-slate-700 dark:text-zinc-300">Aksi Cepat</h3>
               </div>
             </div>
             <div className="p-4 space-y-2">
@@ -511,7 +493,7 @@ export function AdminDashboardContent({
                 className="w-full justify-start"
                 variant="flat"
                 startContent={
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
+                  <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                     <UserPlus size={14} />
                   </div>
                 }
@@ -524,7 +506,7 @@ export function AdminDashboardContent({
                 className="w-full justify-start"
                 variant="flat"
                 startContent={
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+                  <div className="p-1.5 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
                     <ClipboardCheck size={14} />
                   </div>
                 }
@@ -537,7 +519,7 @@ export function AdminDashboardContent({
                 className="w-full justify-start"
                 variant="flat"
                 startContent={
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+                  <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
                     <BookOpen size={14} />
                   </div>
                 }
@@ -550,7 +532,7 @@ export function AdminDashboardContent({
                 className="w-full justify-start"
                 variant="flat"
                 startContent={
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 text-white">
+                  <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
                     <Calendar size={14} />
                   </div>
                 }
@@ -563,7 +545,7 @@ export function AdminDashboardContent({
                 className="w-full justify-start"
                 variant="flat"
                 startContent={
-                  <div className="p-1.5 rounded-lg bg-gradient-to-br from-zinc-500 to-zinc-600 text-white">
+                  <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-400">
                     <Settings size={14} />
                   </div>
                 }
@@ -574,17 +556,17 @@ export function AdminDashboardContent({
           </div>
 
           {/* System Status */}
-          <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
-            <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+          <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
               <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-gradient-to-br from-emerald-500 to-green-500 text-white">
+                <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
                   <TrendingUp size={16} />
                 </div>
-                <h3 className="font-semibold">Status Sistem</h3>
+                <h3 className="font-medium text-slate-700 dark:text-zinc-300">Status Sistem</h3>
               </div>
             </div>
             <div className="p-4 space-y-3">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-50/50 dark:bg-emerald-900/20 border border-emerald-200/50 dark:border-emerald-800/30">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span className="text-sm text-emerald-700 dark:text-emerald-400">Sistem Online</span>
@@ -592,17 +574,17 @@ export function AdminDashboardContent({
                 <Chip size="sm" color="success" variant="flat">Active</Chip>
               </div>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                <div className="flex justify-between text-slate-600 dark:text-zinc-400">
                   <span>Project Aktif</span>
-                  <span className="font-medium">{stats.submittedProjects}</span>
+                  <span className="font-medium text-slate-800 dark:text-white">{stats.submittedProjects}</span>
                 </div>
-                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                <div className="flex justify-between text-slate-600 dark:text-zinc-400">
                   <span>Review Pending</span>
-                  <span className="font-medium">{stats.totalProjects - stats.completedReviews}</span>
+                  <span className="font-medium text-slate-800 dark:text-white">{stats.totalProjects - stats.completedReviews}</span>
                 </div>
-                <div className="flex justify-between text-zinc-600 dark:text-zinc-400">
+                <div className="flex justify-between text-slate-600 dark:text-zinc-400">
                   <span>Dosen Terdaftar</span>
-                  <span className="font-medium">{stats.totalDosen}</span>
+                  <span className="font-medium text-slate-800 dark:text-white">{stats.totalDosen}</span>
                 </div>
               </div>
             </div>
@@ -612,13 +594,13 @@ export function AdminDashboardContent({
 
       {/* Recent Projects */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
-          <div className="flex justify-between items-center px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
+          <div className="flex justify-between items-center px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
+              <div className="p-1.5 rounded-lg bg-violet-50 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
                 <FolderGit2 size={16} />
               </div>
-              <h2 className="font-semibold">Project Terbaru</h2>
+              <h2 className="font-medium text-slate-700 dark:text-zinc-300">Project Terbaru</h2>
             </div>
             <Button
               as={Link}

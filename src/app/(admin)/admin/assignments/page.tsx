@@ -273,102 +273,91 @@ export default function AdminAssignmentsPage() {
 
   return (
     <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
-      {/* Hero Header */}
+      {/* Hero Header - Soft Amber/Orange */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 via-orange-500 to-red-500 p-6 md:p-8 text-white">
-          <div className="absolute inset-0 opacity-10">
-            <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <defs>
-                <pattern id="assignments-grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                  <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="100" height="100" fill="url(#assignments-grid)" />
-            </svg>
-          </div>
-          <div className="absolute -top-12 -right-12 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-white/10 blur-xl" />
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-yellow-950/40 border border-amber-200/50 dark:border-amber-800/30 p-6 md:p-8">
+          {/* Subtle Background Accent */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-yellow-400/15 to-amber-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+          
           <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
-                <Link2 className="w-8 h-8" />
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25">
+                <Link2 className="w-7 h-7" />
               </div>
               <div>
-                <h1 className="text-2xl md:text-3xl font-bold">Penugasan Dosen</h1>
-                <p className="text-white/70 text-sm mt-1">Kelola penugasan dosen penguji ke project mahasiswa</p>
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Penugasan Dosen</h1>
+                <p className="text-amber-600/70 dark:text-amber-400/60 text-sm mt-1">Kelola penugasan dosen penguji ke project mahasiswa</p>
               </div>
             </div>
-            <Button color="default" className="bg-white text-orange-600 font-medium" startContent={<UserPlus size={18} />} onPress={onOpen}>
+            <Button color="warning" className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-medium shadow-lg shadow-amber-500/25" startContent={<UserPlus size={18} />} onPress={onOpen}>
               Tambah Penugasan
             </Button>
           </div>
         </div>
       </motion.div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Softer Design */}
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-3 gap-4">
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-                <ClipboardCheck size={18} />
+              <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30">
+                <ClipboardCheck size={18} className="text-amber-600 dark:text-amber-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.total}</p>
-                <p className="text-xs text-zinc-500">Total Penugasan</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{stats.total}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Total Penugasan</p>
               </div>
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 to-purple-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 text-white">
-                <FolderGit2 size={18} />
+              <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30">
+                <FolderGit2 size={18} className="text-violet-600 dark:text-violet-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.projects}</p>
-                <p className="text-xs text-zinc-500">Project Ter-assign</p>
+                <p className="text-2xl font-bold text-violet-600 dark:text-violet-400">{stats.projects}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Project Ter-assign</p>
               </div>
             </div>
           </div>
-          <div className="relative overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-500" />
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 text-white">
-                <Users size={18} />
+              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
+                <Users size={18} className="text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.dosen}</p>
-                <p className="text-xs text-zinc-500">Dosen Aktif</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.dosen}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Dosen Aktif</p>
               </div>
             </div>
           </div>
         </div>
       </motion.div>
 
-      {/* Search */}
+      {/* Search - Cleaner Design */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 p-4 shadow-sm">
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
           <div className="flex items-center gap-2 mb-3">
-            <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-              <Search size={14} />
+            <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800">
+              <Search size={14} className="text-slate-600 dark:text-zinc-400" />
             </div>
-            <h3 className="font-semibold text-sm">Pencarian</h3>
+            <h3 className="font-medium text-sm text-slate-700 dark:text-zinc-300">Pencarian</h3>
           </div>
-          <Input placeholder="Cari project, mahasiswa, atau dosen..." startContent={<Search size={18} className="text-zinc-400" />} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} classNames={{ inputWrapper: 'border-zinc-200 dark:border-zinc-700' }} />
+          <Input placeholder="Cari project, mahasiswa, atau dosen..." startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} classNames={{ inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50' }} />
         </div>
       </motion.div>
 
-      {/* Assignments List */}
+      {/* Assignments List - Clean Container */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm overflow-hidden">
-          <div className="px-4 py-3 border-b border-zinc-200 dark:border-zinc-800">
+        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 text-white">
-                <Link2 size={14} />
+              <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/30">
+                <Link2 size={14} className="text-amber-600 dark:text-amber-400" />
               </div>
-              <h2 className="font-semibold">Daftar Penugasan ({filteredAssignments.length})</h2>
+              <h2 className="font-medium text-slate-700 dark:text-zinc-300">Daftar Penugasan ({filteredAssignments.length})</h2>
             </div>
           </div>
           <div className="p-4">
