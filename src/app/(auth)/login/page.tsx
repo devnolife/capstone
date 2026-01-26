@@ -158,8 +158,8 @@ function LoginForm() {
         <p className="text-xs text-default-400">
           Hubungi administrator jika mengalami kendala
         </p>
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="inline-flex items-center gap-1 text-sm text-default-500 hover:text-primary transition-colors"
         >
           <ArrowLeft size={14} />
