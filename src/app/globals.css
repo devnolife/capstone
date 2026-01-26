@@ -9,11 +9,9 @@
   --gradient-end: #1d4ed8;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0b;
-    --foreground: #fafafa;
-  }
+.dark {
+  --background: #0a0a0b;
+  --foreground: #fafafa;
 }
 
 body {
@@ -24,6 +22,7 @@ body {
     system-ui,
     -apple-system,
     sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* ============================================
@@ -540,45 +539,77 @@ body {
 /* ============================================
    DARK MODE ADJUSTMENTS
    ============================================ */
-@media (prefers-color-scheme: dark) {
-  .glass {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
+.dark .glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
 
-  .bento-card {
-    background: rgba(255, 255, 255, 0.02);
-    border-color: rgba(255, 255, 255, 0.06);
-  }
+.dark .bento-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.06);
+}
 
-  .dot-grid {
-    background-image: radial-gradient(
-      rgba(59, 130, 246, 0.12) 1px,
-      transparent 1px
-    );
-  }
+.dark .bento-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 0 0 1px rgba(59, 130, 246, 0.1),
+    0 20px 40px -20px rgba(0, 0, 0, 0.5),
+    0 0 60px -30px rgba(59, 130, 246, 0.4);
+}
+
+.dark .dot-grid {
+  background-image: radial-gradient(
+    rgba(59, 130, 246, 0.12) 1px,
+    transparent 1px
+  );
+}
+
+.dark .glass-strong {
+  background: rgba(10, 10, 11, 0.8);
+}
+
+.dark .code-preview {
+  background: rgba(0, 0, 0, 0.4);
 }
 
 /* Light mode */
-@media (prefers-color-scheme: light) {
-  .bento-card {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.06);
-  }
+:root .bento-card,
+:root:not(.dark) .bento-card {
+  background: rgba(0, 0, 0, 0.02);
+  border-color: rgba(0, 0, 0, 0.08);
+}
 
-  .bento-card:hover {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(59, 130, 246, 0.3);
-  }
+:root .bento-card:hover,
+:root:not(.dark) .bento-card:hover {
+  background: rgba(0, 0, 0, 0.04);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 
+    0 0 0 1px rgba(59, 130, 246, 0.1),
+    0 20px 40px -20px rgba(0, 0, 0, 0.15),
+    0 0 60px -30px rgba(59, 130, 246, 0.2);
+}
 
-  .glass {
-    background: rgba(255, 255, 255, 0.7);
-    border-color: rgba(0, 0, 0, 0.1);
-  }
+:root .glass,
+:root:not(.dark) .glass {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(0, 0, 0, 0.1);
+}
 
-  .gradient-orb {
-    opacity: 0.2;
-  }
+:root .glass-strong,
+:root:not(.dark) .glass-strong {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+:root .gradient-orb,
+:root:not(.dark) .gradient-orb {
+  opacity: 0.15;
+}
+
+:root .code-preview,
+:root:not(.dark) .code-preview {
+  background: rgba(30, 41, 59, 0.9);
 }
 
 /* ============================================

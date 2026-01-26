@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { Button, Accordion, AccordionItem } from '@heroui/react';
 import { motion, useScroll, useTransform } from 'framer-motion';
@@ -324,11 +325,16 @@ export default function LandingPage() {
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center gap-2.5 group">
                 <motion.div
-                  className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center"
                   whileHover={{ scale: 1.05, rotate: 5 }}
                   transition={{ type: 'spring', stiffness: 400 }}
                 >
-                  <GraduationCap className="text-white" size={18} />
+                  <Image
+                    src="/logo.png"
+                    alt="Capstone Logo"
+                    width={36}
+                    height={36}
+                    className="rounded-xl"
+                  />
                 </motion.div>
                 <span className="font-bold text-lg tracking-tight">
                   Cap<span className="gradient-text">stone</span>
@@ -1032,9 +1038,13 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                  <GraduationCap className="text-white" size={20} />
-                </div>
+                <Image
+                  src="/logo.png"
+                  alt="Capstone Logo"
+                  width={40}
+                  height={40}
+                  className="rounded-xl"
+                />
                 <span className="font-bold text-lg">Capstone</span>
               </div>
               <p className="text-default-500 text-sm max-w-sm">
