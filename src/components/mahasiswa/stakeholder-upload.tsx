@@ -38,6 +38,7 @@ import {
   Briefcase,
   Plus,
 } from "lucide-react";
+import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface StakeholderDocument {
   id: string;
@@ -93,6 +94,7 @@ export default function StakeholderUpload({
 }: StakeholderUploadProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const previewModal = useDisclosure();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -250,7 +252,15 @@ export default function StakeholderUpload({
   };
 
   const handleDelete = async (documentId: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus dokumen ini?")) return;
+    const confirmed = await confirm({
+      title: 'Hapus Dokumen',
+      message: 'Apakah Anda yakin ingin menghapus dokumen ini?',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      type: 'danger',
+    });
+
+    if (!confirmed) return;
 
     try {
       const res = await fetch(`/api/stakeholder-documents?id=${documentId}`, {
@@ -670,6 +680,9 @@ export default function StakeholderUpload({
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </div>
   );
 }

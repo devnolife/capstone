@@ -26,6 +26,7 @@ import {
 } from '@heroui/react';
 import { Search, UserPlus, Edit, Trash2, Users, ChevronRight, Shield, GraduationCap, UserCog } from 'lucide-react';
 import { formatDate, getRoleLabel } from '@/lib/utils';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface User {
   id: string;
@@ -166,6 +167,7 @@ export default function AdminUsersPage() {
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -241,7 +243,15 @@ export default function AdminUsersPage() {
   };
 
   const handleDeleteUser = async (userId: string) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus user ini?')) return;
+    const confirmed = await confirm({
+      title: 'Hapus User',
+      message: 'Apakah Anda yakin ingin menghapus user ini?',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      type: 'danger',
+    });
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`/api/users/${userId}`, {
@@ -255,7 +265,7 @@ export default function AdminUsersPage() {
 
       await fetchUsers();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error');
+      setError(err instanceof Error ? err.message : 'Error');
     }
   };
 
@@ -323,7 +333,7 @@ export default function AdminUsersPage() {
           {/* Subtle Background Accent */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-sky-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
+
           <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-lg shadow-blue-500/25">
@@ -334,7 +344,7 @@ export default function AdminUsersPage() {
                 <p className="text-blue-600/70 dark:text-blue-400/60 text-sm mt-1">Kelola semua user dalam sistem</p>
               </div>
             </div>
-            
+
             <Button
               className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-medium shadow-lg shadow-blue-500/25"
               startContent={<UserPlus size={18} />}
@@ -582,10 +592,10 @@ export default function AdminUsersPage() {
       </motion.div>
 
       {/* Create User Modal */}
-      <Modal 
-        isOpen={isOpen} 
-        onClose={onClose} 
-        size="lg" 
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        size="lg"
         scrollBehavior="inside"
         classNames={{
           backdrop: 'bg-black/50 backdrop-blur-sm',
@@ -656,10 +666,10 @@ export default function AdminUsersPage() {
       </Modal>
 
       {/* Edit User Modal */}
-      <Modal 
-        isOpen={isEditOpen} 
-        onClose={onEditClose} 
-        size="lg" 
+      <Modal
+        isOpen={isEditOpen}
+        onClose={onEditClose}
+        size="lg"
         scrollBehavior="inside"
         classNames={{
           backdrop: 'bg-black/50 backdrop-blur-sm',
@@ -736,6 +746,9 @@ export default function AdminUsersPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </motion.div>
   );
 }

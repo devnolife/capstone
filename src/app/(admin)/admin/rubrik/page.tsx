@@ -29,6 +29,7 @@ import {
   Scale,
   ListOrdered,
 } from 'lucide-react';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface Rubrik {
   id: string;
@@ -72,6 +73,7 @@ export default function AdminRubrikPage() {
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -161,7 +163,15 @@ export default function AdminRubrikPage() {
   };
 
   const handleDeleteRubrik = async (id: string) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus rubrik ini?')) return;
+    const confirmed = await confirm({
+      title: 'Hapus Rubrik',
+      message: 'Apakah Anda yakin ingin menghapus rubrik ini?',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      type: 'danger',
+    });
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`/api/rubrik/${id}`, {
@@ -175,7 +185,7 @@ export default function AdminRubrikPage() {
 
       await fetchRubriks();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error');
+      setError(err instanceof Error ? err.message : 'Error');
     }
   };
 
@@ -314,13 +324,12 @@ export default function AdminRubrikPage() {
           <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
               <div
-                className={`p-2 rounded-lg ${
-                  totalBobot === 100
-                    ? 'bg-emerald-50 dark:bg-emerald-900/30'
-                    : totalBobot > 100
-                      ? 'bg-red-50 dark:bg-red-900/30'
-                      : 'bg-amber-50 dark:bg-amber-900/30'
-                }`}
+                className={`p-2 rounded-lg ${totalBobot === 100
+                  ? 'bg-emerald-50 dark:bg-emerald-900/30'
+                  : totalBobot > 100
+                    ? 'bg-red-50 dark:bg-red-900/30'
+                    : 'bg-amber-50 dark:bg-amber-900/30'
+                  }`}
               >
                 <Scale size={18} className={
                   totalBobot === 100
@@ -331,13 +340,12 @@ export default function AdminRubrikPage() {
                 } />
               </div>
               <div>
-                <p className={`text-2xl font-bold ${
-                  totalBobot === 100
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : totalBobot > 100
-                      ? 'text-red-600 dark:text-red-400'
-                      : 'text-amber-600 dark:text-amber-400'
-                }`}>{totalBobot}/100</p>
+                <p className={`text-2xl font-bold ${totalBobot === 100
+                  ? 'text-emerald-600 dark:text-emerald-400'
+                  : totalBobot > 100
+                    ? 'text-red-600 dark:text-red-400'
+                    : 'text-amber-600 dark:text-amber-400'
+                  }`}>{totalBobot}/100</p>
                 <p className="text-xs text-slate-500 dark:text-zinc-400">Total Bobot</p>
               </div>
             </div>
@@ -351,13 +359,12 @@ export default function AdminRubrikPage() {
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-medium text-slate-700 dark:text-zinc-300">Total Bobot Rubrik Aktif</span>
             <span
-              className={`text-sm font-semibold ${
-                totalBobot === 100
-                  ? 'text-emerald-600'
-                  : totalBobot > 100
-                    ? 'text-red-600'
-                    : 'text-amber-600'
-              }`}
+              className={`text-sm font-semibold ${totalBobot === 100
+                ? 'text-emerald-600'
+                : totalBobot > 100
+                  ? 'text-red-600'
+                  : 'text-amber-600'
+                }`}
             >
               {totalBobot}%
             </span>
@@ -825,6 +832,9 @@ export default function AdminRubrikPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </motion.div>
   );
 }

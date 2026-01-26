@@ -23,6 +23,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface Notification {
   id: string;
@@ -54,6 +55,7 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     fetchNotifications();
@@ -127,7 +129,15 @@ export default function NotificationsPage() {
   };
 
   const handleDeleteAllRead = async () => {
-    if (!confirm('Hapus semua notifikasi yang sudah dibaca?')) return;
+    const confirmed = await confirm({
+      title: 'Hapus Notifikasi',
+      message: 'Hapus semua notifikasi yang sudah dibaca?',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      type: 'warning',
+    });
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch('/api/notifications?read=true', {
@@ -166,7 +176,7 @@ export default function NotificationsPage() {
         {/* Subtle Background Accents */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-yellow-400/15 to-amber-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-        
+
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25">
@@ -223,9 +233,8 @@ export default function NotificationsPage() {
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-default-50 transition-colors cursor-pointer ${
-                    !notification.isRead ? 'bg-primary-50/50' : ''
-                  }`}
+                  className={`p-4 hover:bg-default-50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary-50/50' : ''
+                    }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start gap-4">
@@ -294,6 +303,9 @@ export default function NotificationsPage() {
           )}
         </CardBody>
       </Card>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </div>
   );
 }

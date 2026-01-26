@@ -33,6 +33,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 // Animation variants
 const containerVariants = {
@@ -75,6 +76,7 @@ export function SettingsContent({ role }: SettingsContentProps) {
   const [githubStatus, setGithubStatus] = useState<GitHubLinkStatus | null>(null);
   const [isLoadingGithub, setIsLoadingGithub] = useState(true);
   const [isUnlinking, setIsUnlinking] = useState(false);
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Fetch GitHub link status on mount
   useEffect(() => {
@@ -114,9 +116,15 @@ export function SettingsContent({ role }: SettingsContentProps) {
   };
 
   const handleGitHubUnlink = async () => {
-    if (!confirm('Apakah Anda yakin ingin memutuskan hubungan dengan akun GitHub? Fitur review code tidak akan tersedia.')) {
-      return;
-    }
+    const confirmed = await confirm({
+      title: 'Putuskan Hubungan GitHub',
+      message: 'Apakah Anda yakin ingin memutuskan hubungan dengan akun GitHub? Fitur review code tidak akan tersedia.',
+      confirmText: 'Ya, Putuskan',
+      cancelText: 'Batal',
+      type: 'warning',
+    });
+
+    if (!confirmed) return;
 
     setIsUnlinking(true);
     try {
@@ -157,7 +165,7 @@ export function SettingsContent({ role }: SettingsContentProps) {
           {/* Subtle Background Accents */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-zinc-400/20 to-slate-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-gray-400/15 to-zinc-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
+
           <div className="relative flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-gradient-to-br from-zinc-600 to-slate-700 text-white shadow-lg shadow-zinc-500/25">
               <Settings size={28} />
@@ -491,6 +499,9 @@ export function SettingsContent({ role }: SettingsContentProps) {
           Simpan Pengaturan
         </Button>
       </motion.div>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </motion.div>
   );
 }

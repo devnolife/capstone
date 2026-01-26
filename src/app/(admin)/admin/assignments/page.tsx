@@ -25,6 +25,7 @@ import {
 } from '@heroui/react';
 import { Search, UserPlus, Trash2, UserCog, FolderGit2, Users, ClipboardCheck, Link2 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 // Animation variants
 const containerVariants = {
@@ -136,6 +137,7 @@ export default function AdminAssignmentsPage() {
   const [error, setError] = useState('');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Form state
   const [selectedProject, setSelectedProject] = useState('');
@@ -228,7 +230,15 @@ export default function AdminAssignmentsPage() {
   };
 
   const handleDeleteAssignment = async (id: string) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus penugasan ini?')) return;
+    const confirmed = await confirm({
+      title: 'Hapus Penugasan',
+      message: 'Apakah Anda yakin ingin menghapus penugasan ini?',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      type: 'danger',
+    });
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`/api/assignments?id=${id}`, {
@@ -242,7 +252,7 @@ export default function AdminAssignmentsPage() {
 
       await fetchData();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error');
+      setError(err instanceof Error ? err.message : 'Error');
     }
   };
 
@@ -279,7 +289,7 @@ export default function AdminAssignmentsPage() {
           {/* Subtle Background Accent */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-yellow-400/15 to-amber-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
+
           <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25">
@@ -478,6 +488,9 @@ export default function AdminAssignmentsPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </motion.div>
   );
 }

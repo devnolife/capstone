@@ -23,6 +23,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface Notification {
   id: string;
@@ -54,6 +55,7 @@ export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     fetchNotifications();
@@ -127,7 +129,15 @@ export default function NotificationsPage() {
   };
 
   const handleDeleteAllRead = async () => {
-    if (!confirm('Hapus semua notifikasi yang sudah dibaca?')) return;
+    const confirmed = await confirm({
+      title: 'Hapus Notifikasi',
+      message: 'Hapus semua notifikasi yang sudah dibaca?',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      type: 'warning',
+    });
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch('/api/notifications?read=true', {
@@ -212,9 +222,8 @@ export default function NotificationsPage() {
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-default-50 transition-colors cursor-pointer ${
-                    !notification.isRead ? 'bg-primary-50/50' : ''
-                  }`}
+                  className={`p-4 hover:bg-default-50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary-50/50' : ''
+                    }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start gap-4">
@@ -283,6 +292,9 @@ export default function NotificationsPage() {
           )}
         </CardBody>
       </Card>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </div>
   );
 }

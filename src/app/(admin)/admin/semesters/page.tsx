@@ -27,6 +27,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface Semester {
   id: string;
@@ -71,6 +72,7 @@ export default function AdminSemestersPage() {
     onOpen: onEditOpen,
     onClose: onEditClose,
   } = useDisclosure();
+  const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -164,7 +166,15 @@ export default function AdminSemestersPage() {
   };
 
   const handleDeleteSemester = async (id: string) => {
-    if (!confirm('Apakah Anda yakin ingin menghapus semester ini?')) return;
+    const confirmed = await confirm({
+      title: 'Hapus Semester',
+      message: 'Apakah Anda yakin ingin menghapus semester ini?',
+      confirmText: 'Ya, Hapus',
+      cancelText: 'Batal',
+      type: 'danger',
+    });
+
+    if (!confirmed) return;
 
     try {
       const response = await fetch(`/api/semesters/${id}`, {
@@ -178,7 +188,7 @@ export default function AdminSemestersPage() {
 
       await fetchSemesters();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error');
+      setError(err instanceof Error ? err.message : 'Error');
     }
   };
 
@@ -197,7 +207,7 @@ export default function AdminSemestersPage() {
 
       await fetchSemesters();
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error');
+      setError(err instanceof Error ? err.message : 'Error');
     }
   };
 
@@ -439,11 +449,10 @@ export default function AdminSemestersPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`p-2 rounded-lg ${
-                            semester.isActive
+                          className={`p-2 rounded-lg ${semester.isActive
                               ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
                               : 'bg-zinc-100 dark:bg-zinc-800'
-                          }`}
+                            }`}
                         >
                           <GraduationCap
                             size={18}
@@ -541,11 +550,10 @@ export default function AdminSemestersPage() {
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div
-                              className={`p-2 rounded-lg ${
-                                semester.isActive
+                              className={`p-2 rounded-lg ${semester.isActive
                                   ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
                                   : 'bg-zinc-100 dark:bg-zinc-800'
-                              }`}
+                                }`}
                             >
                               <GraduationCap
                                 size={18}
@@ -791,6 +799,9 @@ export default function AdminSemestersPage() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      {/* Confirm Dialog */}
+      <ConfirmDialog />
     </motion.div>
   );
 }
