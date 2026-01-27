@@ -212,6 +212,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+  debug: process.env.NODE_ENV === 'development', // Enable debug in development
   callbacks: {
     async signIn({ user, account, profile }) {
       // Handle GitHub OAuth sign in
@@ -338,6 +339,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async jwt({ token, user, account }) {
+      console.log('[AUTH JWT] user:', user ? 'exists' : 'null', 'account:', account?.provider || 'null');
+      
       if (user) {
         // For GitHub OAuth, fetch user from database
         if (account?.provider === 'github') {
@@ -369,6 +372,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
+      console.log('[AUTH SESSION] token:', token ? { id: token.id, role: token.role } : 'null');
+      
       if (token) {
         session.user.id = token.id;
         session.user.username = token.username;

@@ -5,10 +5,11 @@ import { getToken } from 'next-auth/jwt';
 export async function middleware(request: NextRequest) {
   const { nextUrl } = request;
 
-  // Get token from NextAuth
+  // Get token from NextAuth - use the same cookie name as configured in auth.ts
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
+    cookieName: 'next-auth.session-token', // Match the cookie name in auth.ts
   });
 
   const isLoggedIn = !!token;
