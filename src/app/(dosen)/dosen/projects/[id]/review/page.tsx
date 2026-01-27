@@ -296,13 +296,9 @@ export default function ReviewPage({
 
         // Fetch project screenshots
         const screenshotsRes = await fetch(`/api/projects/${projectId}/screenshots`);
-        console.log('[DOSEN REVIEW] Screenshots API response status:', screenshotsRes.status);
         if (screenshotsRes.ok) {
           const screenshotsData = await screenshotsRes.json();
-          console.log('[DOSEN REVIEW] Screenshots data:', screenshotsData);
           setScreenshots(screenshotsData.screenshots || []);
-        } else {
-          console.error('[DOSEN REVIEW] Screenshots API error:', await screenshotsRes.text());
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error loading data');

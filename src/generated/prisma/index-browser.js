@@ -306,6 +306,12 @@ exports.Prisma.ProjectRequirementsScalarFieldEnum = {
   timeline: 'timeline',
   kerangkaWaktu: 'kerangkaWaktu',
   deadlineDate: 'deadlineDate',
+  productionUrl: 'productionUrl',
+  productionUrlStatus: 'productionUrlStatus',
+  productionUrlCheckedAt: 'productionUrlCheckedAt',
+  testingUsername: 'testingUsername',
+  testingPassword: 'testingPassword',
+  testingNotes: 'testingNotes',
   completionPercent: 'completionPercent',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

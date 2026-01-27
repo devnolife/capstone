@@ -32,10 +32,8 @@ interface Invitation {
     id: string;
     title: string;
     description: string | null;
-    semester: {
-      id: string;
-      name: string;
-    };
+    semester: string;
+    tahunAkademik: string;
   };
   inviter: {
     id: string;
@@ -43,6 +41,7 @@ interface Invitation {
     username: string;
     image: string | null;
     nim: string | null;
+    prodi: string | null;
   };
 }
 
@@ -97,7 +96,7 @@ export default function InvitationsContent() {
       // Update local state
       setInvitations(invitations.map(inv =>
         inv.id === invitationId
-          ? { ...inv, status: action === 'accept' ? 'ACCEPTED' : 'REJECTED' }
+          ? { ...inv, status: action === 'accept' ? 'accepted' : 'rejected' }
           : inv
       ));
 
@@ -114,27 +113,27 @@ export default function InvitationsContent() {
   };
 
   const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING': return 'warning';
-      case 'ACCEPTED': return 'success';
-      case 'REJECTED': return 'danger';
-      case 'CANCELLED': return 'default';
+    switch (status.toLowerCase()) {
+      case 'pending': return 'warning';
+      case 'accepted': return 'success';
+      case 'rejected': return 'danger';
+      case 'cancelled': return 'default';
       default: return 'default';
     }
   };
 
   const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'PENDING': return 'Menunggu';
-      case 'ACCEPTED': return 'Diterima';
-      case 'REJECTED': return 'Ditolak';
-      case 'CANCELLED': return 'Dibatalkan';
+    switch (status.toLowerCase()) {
+      case 'pending': return 'Menunggu';
+      case 'accepted': return 'Diterima';
+      case 'rejected': return 'Ditolak';
+      case 'cancelled': return 'Dibatalkan';
       default: return status;
     }
   };
 
-  const pendingInvitations = invitations.filter(inv => inv.status === 'PENDING');
-  const historyInvitations = invitations.filter(inv => inv.status !== 'PENDING');
+  const pendingInvitations = invitations.filter(inv => inv.status.toLowerCase() === 'pending');
+  const historyInvitations = invitations.filter(inv => inv.status.toLowerCase() !== 'pending');
 
   if (isLoading) {
     return (
@@ -241,7 +240,7 @@ export default function InvitationsContent() {
                           )}
                           <div className="flex items-center gap-2 mt-2 text-xs text-default-400">
                             <Clock size={12} />
-                            <span>{invitation.project.semester.name}</span>
+                            <span>{invitation.project.semester} {invitation.project.tahunAkademik}</span>
                           </div>
                         </div>
 

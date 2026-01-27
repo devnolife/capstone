@@ -10,9 +10,41 @@ export default async function MahasiswaProjectsPage() {
     redirect('/login');
   }
 
+  // Fetch projects where user is owner OR team member
   const projects = await prisma.project.findMany({
-    where: { mahasiswaId: session.user.id },
+    where: {
+      OR: [
+        { mahasiswaId: session.user.id },
+        {
+          members: {
+            some: { userId: session.user.id },
+          },
+        },
+      ],
+    },
     include: {
+      mahasiswa: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          nim: true,
+          image: true,
+        },
+      },
+      members: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              nim: true,
+              image: true,
+            },
+          },
+        },
+      },
       documents: true,
       reviews: {
         include: {
@@ -23,11 +55,18 @@ export default async function MahasiswaProjectsPage() {
         select: {
           documents: true,
           reviews: true,
+          members: true,
         },
       },
     },
     orderBy: { updatedAt: 'desc' },
   });
+
+  // Add isOwner flag to each project
+  const projectsWithOwnership = projects.map((project) => ({
+    ...project,
+    isOwner: project.mahasiswaId === session.user.id,
+  }));
 
   const statusCounts = {
     all: projects.length,
@@ -38,5 +77,5 @@ export default async function MahasiswaProjectsPage() {
     REJECTED: projects.filter((p) => p.status === 'REJECTED').length,
   };
 
-  return <ProjectsListContent projects={projects} statusCounts={statusCounts} />;
+  return <ProjectsListContent projects={projectsWithOwnership} statusCounts={statusCounts} />;
 }

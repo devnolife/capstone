@@ -38,6 +38,7 @@ import {
   Building2,
   TrendingUp,
   Clock,
+  Trash2,
 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel, getSimakPhotoUrl } from '@/lib/utils';
 
@@ -128,10 +129,12 @@ function MobileProjectCard({
   project,
   onStatusChange,
   onApproveClick,
+  onDeleteClick,
 }: {
   project: Project;
   onStatusChange: (projectId: string, newStatus: string) => void;
   onApproveClick: (project: Project) => void;
+  onDeleteClick: (project: Project) => void;
 }) {
   const avatarUrl = getAvatarUrl(project.mahasiswa);
   
@@ -267,6 +270,15 @@ function MobileProjectCard({
                 Assign
               </Button>
             )}
+            <Button
+              size="sm"
+              color="danger"
+              variant="flat"
+              isIconOnly
+              onPress={() => onDeleteClick(project)}
+            >
+              <Trash2 size={16} />
+            </Button>
           </div>
         </div>
       </div>
@@ -287,6 +299,11 @@ export default function AdminProjectsPage() {
   const [forkToOrg, setForkToOrg] = useState(true);
   const [isApproving, setIsApproving] = useState(false);
   const [approvalError, setApprovalError] = useState('');
+
+  // Delete modal state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetchProjects();
@@ -378,6 +395,30 @@ export default function AdminProjectsPage() {
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/projects/${projectToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        await fetchProjects();
+        setDeleteModalOpen(false);
+        setProjectToDelete(null);
+      } else {
+        const data = await response.json();
+        console.error('Error deleting project:', data.error);
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const getDropdownItems = (project: Project): DropdownItemData[] => {
     const items: DropdownItemData[] = [
       {
@@ -434,6 +475,18 @@ export default function AdminProjectsPage() {
         },
       );
     }
+
+    // Add delete option for all projects (admin can delete any project)
+    items.push({
+      key: 'delete',
+      label: 'Hapus Project',
+      icon: <Trash2 size={16} />,
+      color: 'danger',
+      onPress: () => {
+        setProjectToDelete(project);
+        setDeleteModalOpen(true);
+      },
+    });
 
     return items;
   };
@@ -665,6 +718,10 @@ export default function AdminProjectsPage() {
                         project={project}
                         onStatusChange={handleStatusChange}
                         onApproveClick={handleApproveClick}
+                        onDeleteClick={(proj) => {
+                          setProjectToDelete(proj);
+                          setDeleteModalOpen(true);
+                        }}
                       />
                     ))}
                   </motion.div>
@@ -958,6 +1015,74 @@ export default function AdminProjectsPage() {
                   {forkToOrg && selectedProject?.githubRepoUrl
                     ? 'Approve & Fork'
                     : 'Approve'}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setProjectToDelete(null);
+        }}
+        classNames={{
+          backdrop: 'bg-black/50 backdrop-blur-sm',
+          base: 'border border-slate-200/60 dark:border-zinc-700/50',
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
+                <div className="p-2 rounded-xl bg-danger-50 dark:bg-danger-900/30 text-danger">
+                  <Trash2 size={20} />
+                </div>
+                <span className="font-semibold text-slate-800 dark:text-white">Hapus Project</span>
+              </ModalHeader>
+              <ModalBody className="py-5">
+                {projectToDelete && (
+                  <div className="space-y-4">
+                    <p className="text-slate-600 dark:text-zinc-400">
+                      Apakah Anda yakin ingin menghapus project:
+                    </p>
+                    <div className="p-3 bg-slate-50 dark:bg-zinc-800/50 rounded-lg border border-slate-200/60 dark:border-zinc-700/50">
+                      <p className="font-semibold text-slate-800 dark:text-white">{projectToDelete.title}</p>
+                      <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+                        {projectToDelete.mahasiswa.name} - {projectToDelete.semester}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800/30 rounded-lg">
+                      <p className="text-sm text-danger font-medium">
+                        Tindakan ini akan menghapus semua data terkait termasuk:
+                      </p>
+                      <ul className="text-xs text-danger-600 dark:text-danger-400 mt-2 space-y-1 ml-4 list-disc">
+                        <li>Dokumen ({projectToDelete._count.documents} file)</li>
+                        <li>Review ({projectToDelete._count.reviews} review)</li>
+                        <li>Assignment dosen ({projectToDelete._count.assignments} assignment)</li>
+                        <li>Anggota tim dan screenshot</li>
+                      </ul>
+                      <p className="text-xs text-danger font-semibold mt-2">
+                        Tindakan ini tidak dapat dibatalkan!
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
+                <Button variant="flat" onPress={onClose} isDisabled={isDeleting}>
+                  Batal
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={handleDeleteProject}
+                  isLoading={isDeleting}
+                  startContent={!isDeleting && <Trash2 size={18} />}
+                >
+                  Hapus Project
                 </Button>
               </ModalFooter>
             </>

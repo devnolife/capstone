@@ -1,8 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { Button, Chip, Card, CardBody } from '@heroui/react';
-import { Plus, FolderGit2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { 
+  Button, 
+  Chip, 
+  Card, 
+  CardBody,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@heroui/react';
+import { Plus, FolderGit2, Trash2, Crown, Users } from 'lucide-react';
 import { ProjectCard } from '@/components/projects/project-card';
 
 interface Project {
@@ -16,11 +28,20 @@ interface Project {
   tahunAkademik: string;
   createdAt: Date;
   updatedAt: Date;
+  isOwner?: boolean;
+  mahasiswa?: {
+    id: string;
+    name: string;
+    username: string;
+    nim: string | null;
+    image: string | null;
+  };
   documents?: { id: string }[];
   reviews?: { id: string }[];
   _count?: {
     documents: number;
     reviews: number;
+    members?: number;
   };
 }
 
@@ -37,6 +58,43 @@ interface ProjectsListContentProps {
 }
 
 export function ProjectsListContent({ projects, statusCounts }: ProjectsListContentProps) {
+  const router = useRouter();
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (project: Project) => {
+    setProjectToDelete(project);
+    setDeleteModalOpen(true);
+  };
+
+  const handleDeleteProject = async () => {
+    if (!projectToDelete) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/projects/${projectToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setDeleteModalOpen(false);
+        setProjectToDelete(null);
+        // Refresh the page to get updated data
+        router.refresh();
+      } else {
+        const data = await response.json();
+        console.error('Error deleting project:', data.error);
+        alert(data.error || 'Gagal menghapus project');
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      alert('Terjadi kesalahan saat menghapus project');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header - Soft Colored */}
@@ -96,7 +154,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
             <h3 className="text-lg font-semibold mb-2">Belum Ada Project</h3>
             <p className="text-default-500 mb-6">
               Anda belum memiliki project capstone. Mulai dengan membuat project
-              baru.
+              baru atau terima undangan dari ketua kelompok.
             </p>
             <Button
               as={Link}
@@ -111,10 +169,75 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {projects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
+            <ProjectCard 
+              key={project.id} 
+              project={project}
+              isOwner={project.isOwner}
+              ownerName={project.mahasiswa?.name}
+              onDelete={project.isOwner && project.status === 'DRAFT' ? handleDeleteClick : undefined}
+            />
           ))}
         </div>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteModalOpen}
+        onClose={() => {
+          setDeleteModalOpen(false);
+          setProjectToDelete(null);
+        }}
+        classNames={{
+          backdrop: 'bg-black/50 backdrop-blur-sm',
+          base: 'border border-slate-200/60 dark:border-zinc-700/50',
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
+                <div className="p-2 rounded-xl bg-danger-50 dark:bg-danger-900/30 text-danger">
+                  <Trash2 size={20} />
+                </div>
+                <span className="font-semibold text-slate-800 dark:text-white">Hapus Project</span>
+              </ModalHeader>
+              <ModalBody className="py-5">
+                {projectToDelete && (
+                  <div className="space-y-4">
+                    <p className="text-slate-600 dark:text-zinc-400">
+                      Apakah Anda yakin ingin menghapus project:
+                    </p>
+                    <div className="p-3 bg-slate-50 dark:bg-zinc-800/50 rounded-lg border border-slate-200/60 dark:border-zinc-700/50">
+                      <p className="font-semibold text-slate-800 dark:text-white">{projectToDelete.title}</p>
+                      <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+                        {projectToDelete.semester} - {projectToDelete.tahunAkademik}
+                      </p>
+                    </div>
+                    <div className="p-3 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800/30 rounded-lg">
+                      <p className="text-sm text-danger">
+                        Tindakan ini akan menghapus semua data terkait termasuk dokumen yang sudah diupload. Tindakan ini tidak dapat dibatalkan.
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </ModalBody>
+              <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
+                <Button variant="flat" onPress={onClose} isDisabled={isDeleting}>
+                  Batal
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={handleDeleteProject}
+                  isLoading={isDeleting}
+                  startContent={!isDeleting && <Trash2 size={18} />}
+                >
+                  Hapus Project
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }

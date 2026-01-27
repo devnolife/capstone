@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 // Auth Validations
 export const loginSchema = z.object({
-  username: z.string().min(1, 'NIM/NIP/Username wajib diisi'),
+  username: z.string().min(1, 'NIM/Username wajib diisi'),
   password: z.string().min(6, 'Password minimal 6 karakter'),
 });
 
@@ -10,7 +10,7 @@ export const loginSchema = z.object({
 export const registerSchema = z
   .object({
     name: z.string().min(2, 'Nama minimal 2 karakter'),
-    username: z.string().min(1, 'Username (NIM/NIP) wajib diisi'),
+    username: z.string().min(1, 'NIM/Username wajib diisi'),
     password: z.string().min(6, 'Password minimal 6 karakter'),
     confirmPassword: z.string(),
     role: z.enum(['MAHASISWA', 'DOSEN_PENGUJI', 'ADMIN']),
@@ -65,7 +65,7 @@ export const completeReviewSchema = z.object({
 // User Management Validations
 export const userUpdateSchema = z.object({
   name: z.string().min(2, 'Nama minimal 2 karakter'),
-  username: z.string().min(1, 'Username (NIM/NIP) wajib diisi'),
+  username: z.string().min(1, 'NIM/Username wajib diisi'),
   role: z.enum(['MAHASISWA', 'DOSEN_PENGUJI', 'ADMIN']),
   isActive: z.boolean(),
 });

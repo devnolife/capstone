@@ -147,15 +147,12 @@ export class GitHubOrgClient {
     newRepoName?: string,
   ): Promise<ForkResult> {
     try {
-      console.log('Fork attempt:', { sourceOwner, sourceRepo, newRepoName, orgName: this.orgName });
-      
       // First, verify source repo exists and is accessible
       try {
-        const sourceRepoCheck = await this.octokit.rest.repos.get({
+        await this.octokit.rest.repos.get({
           owner: sourceOwner,
           repo: sourceRepo,
         });
-        console.log('Source repo found:', sourceRepoCheck.data.full_name);
       } catch (sourceError) {
         console.error('Source repo not accessible:', sourceError);
         return {
@@ -172,7 +169,6 @@ export class GitHubOrgClient {
         });
         
         if (existingRepo.data) {
-          console.log('Repo already exists in org:', existingRepo.data.full_name);
           return {
             success: true,
             repoUrl: existingRepo.data.html_url,
@@ -182,11 +178,9 @@ export class GitHubOrgClient {
         }
       } catch {
         // Repo doesn't exist, proceed with fork
-        console.log('Repo does not exist in org, proceeding with fork');
       }
 
       // Create fork in the organization
-      console.log('Creating fork to org:', this.orgName);
       const { data } = await this.octokit.rest.repos.createFork({
         owner: sourceOwner,
         repo: sourceRepo,

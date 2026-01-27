@@ -15,9 +15,6 @@ export async function middleware(request: NextRequest) {
   const isLoggedIn = !!token;
   const userRole = token?.role as string | undefined;
 
-  // Debug logging
-  console.log(`[MIDDLEWARE] Path: ${nextUrl.pathname}, LoggedIn: ${isLoggedIn}, Role: ${userRole}`);
-
   // Public routes (registration disabled)
   const publicRoutes = ['/', '/login'];
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
@@ -25,6 +22,11 @@ export async function middleware(request: NextRequest) {
   // Auth routes (only login, registration disabled)
   const authRoutes = ['/login'];
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+
+  // NextAuth API routes - always allow (for logout to work properly)
+  if (nextUrl.pathname.startsWith('/api/auth')) {
+    return NextResponse.next();
+  }
 
   // Redirect /register to /login (registration disabled)
   if (nextUrl.pathname === '/register') {
@@ -35,10 +37,8 @@ export async function middleware(request: NextRequest) {
   if (nextUrl.pathname === '/dashboard' || nextUrl.pathname.startsWith('/dashboard/')) {
     if (isLoggedIn) {
       const redirectUrl = getDashboardUrl(userRole);
-      console.log(`[MIDDLEWARE] Redirecting /dashboard to: ${redirectUrl}`);
       return NextResponse.redirect(new URL(redirectUrl, nextUrl));
     } else {
-      console.log(`[MIDDLEWARE] Not logged in, redirecting to /login`);
       return NextResponse.redirect(new URL('/login', nextUrl));
     }
   }

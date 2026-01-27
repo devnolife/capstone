@@ -352,6 +352,16 @@ model ProjectRequirements {
   kerangkaWaktu String?   @db.Text // Jadwal terstruktur per tahapan
   deadlineDate  DateTime? // Tanggal deadline proyek
 
+  // ========== PRODUCTION & DEMO ==========
+  productionUrl       String?  // URL aplikasi yang sudah di-deploy (production/demo)
+  productionUrlStatus String?  // "valid", "invalid", "checking", null
+  productionUrlCheckedAt DateTime? // Kapan terakhir URL di-validasi
+  
+  // Testing Credentials (opsional)
+  testingUsername  String?  // Username untuk akun testing
+  testingPassword  String?  // Password untuk akun testing
+  testingNotes     String?  @db.Text // Catatan tambahan untuk testing (misal: role, flow)
+
   // Metadata
   completionPercent Int      @default(0) // 0-100
   createdAt         DateTime @default(now())

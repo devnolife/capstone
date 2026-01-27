@@ -73,7 +73,7 @@ export async function POST(request: Request) {
 
     if (!name || !username || !password || !role) {
       return NextResponse.json(
-        { error: 'Nama, username (NIM/NIP), password, dan role diperlukan' },
+        { error: 'Nama, username (NIM/Username), password, dan role diperlukan' },
         { status: 400 },
       );
     }
@@ -85,7 +85,7 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { error: 'Username (NIM/NIP) sudah terdaftar' },
+        { error: 'Username (NIM/Username) sudah terdaftar' },
         { status: 400 },
       );
     }

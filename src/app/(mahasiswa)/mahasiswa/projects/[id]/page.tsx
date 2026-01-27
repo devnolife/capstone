@@ -24,8 +24,43 @@ export default async function ProjectDetailPage({
           id: true,
           name: true,
           username: true,
+          nim: true,
+          prodi: true,
           image: true,
+          githubUsername: true,
         },
+      },
+      members: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              nim: true,
+              prodi: true,
+              image: true,
+              githubUsername: true,
+            },
+          },
+        },
+        orderBy: { addedAt: 'asc' },
+      },
+      invitations: {
+        include: {
+          invitee: {
+            select: {
+              id: true,
+              name: true,
+              username: true,
+              nim: true,
+              prodi: true,
+              image: true,
+              githubUsername: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
       },
       requirements: true,
       reviews: {
@@ -71,21 +106,23 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
-  // Check access
-  if (
-    project.mahasiswaId !== session.user.id &&
-    session.user.role !== 'ADMIN'
-  ) {
+  // Check access - owner or team member
+  const isOwner = project.mahasiswaId === session.user.id;
+  const isTeamMember = project.members.some((m) => m.userId === session.user.id);
+  const isAdmin = session.user.role === 'ADMIN';
+
+  if (!isOwner && !isTeamMember && !isAdmin) {
     redirect('/mahasiswa/dashboard');
   }
 
   const canEdit =
-    project.status === 'DRAFT' || project.status === 'REVISION_NEEDED';
+    (project.status === 'DRAFT' || project.status === 'REVISION_NEEDED') && isOwner;
 
   return (
     <ProjectDetailContent
       project={project}
       canEdit={canEdit}
+      isOwner={isOwner}
     />
   );
 }

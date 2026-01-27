@@ -53,7 +53,6 @@ export function hashMD5(password: string): string {
  */
 export async function getMahasiswaFromSimak(nim: string): Promise<SimakMahasiswa | null> {
   const startTime = Date.now();
-  console.log(`[SIMAK] Fetching data for NIM: ${nim}...`);
 
   try {
     const controller = new AbortController();
@@ -86,7 +85,6 @@ export async function getMahasiswaFromSimak(nim: string): Promise<SimakMahasiswa
       return null;
     }
 
-    console.log(`[SIMAK] Data fetched successfully (${elapsed}ms)`);
     return result.data?.mahasiswaUser || null;
   } catch (error) {
     const elapsed = Date.now() - startTime;
@@ -224,7 +222,6 @@ export async function upsertUserFromSimak(
           role: true,
         },
       });
-      console.log('[SIMAK] Updated existing user:', updated.username);
       return updated;
     }
 
@@ -235,7 +232,6 @@ export async function upsertUserFromSimak(
         where: { email: emailToUse },
       });
       if (emailOwner) {
-        console.log('[SIMAK] Email already in use, skipping email field');
         emailToUse = null; // Don't use this email
       }
     }
@@ -264,7 +260,6 @@ export async function upsertUserFromSimak(
         role: true,
       },
     });
-    console.log('[SIMAK] Created new user:', newUser.username);
 
     return newUser;
   } catch (error) {

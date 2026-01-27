@@ -21,12 +21,7 @@ function CallbackContent() {
     const error = searchParams.get('error');
     const errorDescription = searchParams.get('error_description');
 
-    console.log('[GITHUB-CALLBACK] Processing callback...');
-    console.log('[GITHUB-CALLBACK] Code present:', !!code);
-    console.log('[GITHUB-CALLBACK] Error:', error, errorDescription);
-
     if (error) {
-      console.log('[GITHUB-CALLBACK] OAuth error from GitHub');
       setStatus('error');
       setMessage(errorDescription || 'Gagal menghubungkan akun GitHub. Silakan coba lagi.');
       setTimeout(() => router.push('/mahasiswa/settings'), 3000);
@@ -34,7 +29,6 @@ function CallbackContent() {
     }
 
     if (!code) {
-      console.log('[GITHUB-CALLBACK] No code found');
       setStatus('error');
       setMessage('Kode otorisasi tidak ditemukan.');
       setTimeout(() => router.push('/mahasiswa/settings'), 3000);
@@ -44,7 +38,6 @@ function CallbackContent() {
     // Exchange code for token and link account
     const linkAccount = async () => {
       try {
-        console.log('[GITHUB-CALLBACK] Sending code to API...');
         const response = await fetch('/api/auth/link-github/callback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -52,7 +45,6 @@ function CallbackContent() {
         });
 
         const data = await response.json();
-        console.log('[GITHUB-CALLBACK] API response:', response.status, data);
 
         if (response.ok) {
           setStatus('success');
@@ -63,8 +55,7 @@ function CallbackContent() {
           setMessage(data.error || 'Gagal menghubungkan akun GitHub.');
           setTimeout(() => router.push('/mahasiswa/settings'), 3000);
         }
-      } catch (err) {
-        console.error('[GITHUB-CALLBACK] Error:', err);
+      } catch {
         setStatus('error');
         setMessage('Terjadi kesalahan. Silakan coba lagi.');
         setTimeout(() => router.push('/mahasiswa/settings'), 3000);

@@ -109,9 +109,6 @@ export function SettingsContent({ role }: SettingsContentProps) {
 
     const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scope)}`;
 
-    console.log('[GITHUB] Redirect URI:', redirectUri);
-    console.log('[GITHUB] Auth URL:', authUrl);
-
     window.location.href = authUrl;
   };
 

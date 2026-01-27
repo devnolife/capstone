@@ -22,7 +22,19 @@ export async function GET(request: Request) {
 
     // Filter based on role
     if (session.user.role === 'MAHASISWA') {
-      whereClause = { mahasiswaId: session.user.id };
+      // Mahasiswa can see:
+      // 1. Projects they own (mahasiswaId)
+      // 2. Projects where they are a team member
+      whereClause = {
+        OR: [
+          { mahasiswaId: session.user.id },
+          {
+            members: {
+              some: { userId: session.user.id },
+            },
+          },
+        ],
+      };
     } else if (session.user.role === 'DOSEN_PENGUJI') {
       whereClause = {
         assignments: {
@@ -46,7 +58,40 @@ export async function GET(request: Request) {
               id: true,
               name: true,
               username: true,
+              nim: true,
+              prodi: true,
               image: true,
+              githubUsername: true,
+            },
+          },
+          members: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  nim: true,
+                  prodi: true,
+                  image: true,
+                  githubUsername: true,
+                },
+              },
+            },
+          },
+          invitations: {
+            include: {
+              invitee: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                  nim: true,
+                  prodi: true,
+                  image: true,
+                  githubUsername: true,
+                },
+              },
             },
           },
           documents: true,
@@ -77,6 +122,8 @@ export async function GET(request: Request) {
               documents: true,
               reviews: true,
               assignments: true,
+              members: true,
+              invitations: true,
             },
           },
         },
@@ -136,6 +183,9 @@ export async function POST(request: Request) {
     const { title, description, githubRepoUrl, githubRepoName: providedRepoName, semester, tahunAkademik } =
       validatedData.data;
 
+    // Extract additional fields from body (not in schema but sent from frontend)
+    const { pendingTeamMembers, technologies, category, objectives, methodology, expectedOutcome, isPublic } = body;
+
     // Use provided repo name or extract from URL
     let githubRepoName = providedRepoName || null;
     if (!githubRepoName && githubRepoUrl) {
@@ -145,22 +195,117 @@ export async function POST(request: Request) {
       }
     }
 
-    const project = await prisma.project.create({
-      data: {
-        title,
-        description,
-        githubRepoUrl: githubRepoUrl || null,
-        githubRepoName,
-        semester,
-        tahunAkademik,
-        mahasiswaId: session.user.id,
-      },
+    // Create project with transaction to ensure all related data is saved
+    const project = await prisma.$transaction(async (tx) => {
+      // 1. Create the project
+      const newProject = await tx.project.create({
+        data: {
+          title,
+          description,
+          githubRepoUrl: githubRepoUrl || null,
+          githubRepoName,
+          semester,
+          tahunAkademik,
+          mahasiswaId: session.user.id,
+        },
+      });
+
+      // 2. Add owner as a project member (ketua)
+      await tx.projectMember.create({
+        data: {
+          projectId: newProject.id,
+          userId: session.user.id,
+          role: 'leader',
+          name: session.user.name,
+          githubUsername: session.user.githubUsername || null,
+        },
+      });
+
+      // 3. Create team invitations for pending members
+      if (pendingTeamMembers && Array.isArray(pendingTeamMembers) && pendingTeamMembers.length > 0) {
+        const invitationsData = pendingTeamMembers.map((member: { id: string }) => ({
+          projectId: newProject.id,
+          inviterId: session.user.id,
+          inviteeId: member.id,
+          status: 'pending',
+        }));
+
+        await tx.teamInvitation.createMany({
+          data: invitationsData,
+          skipDuplicates: true,
+        });
+
+        // 4. Create notifications for invited members
+        const notificationsData = pendingTeamMembers.map((member: { id: string; name: string }) => ({
+          userId: member.id,
+          title: 'Undangan Tim Project',
+          message: `${session.user.name} mengundang Anda untuk bergabung dalam project "${title}"`,
+          type: 'invitation',
+          link: `/mahasiswa/invitations`,
+        }));
+
+        await tx.notification.createMany({
+          data: notificationsData,
+        });
+      }
+
+      // 5. Create project requirements if additional fields are provided
+      if (objectives || methodology || expectedOutcome || technologies || category) {
+        await tx.projectRequirements.create({
+          data: {
+            projectId: newProject.id,
+            judulProyek: title,
+            tujuanProyek: objectives || null,
+            metodologi: methodology || null,
+            teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
+            ruangLingkup: category || null,
+          },
+        });
+      }
+
+      return newProject;
+    });
+
+    // Fetch the complete project with relations
+    const completeProject = await prisma.project.findUnique({
+      where: { id: project.id },
       include: {
         mahasiswa: {
           select: {
             id: true,
             name: true,
             username: true,
+            nim: true,
+            image: true,
+            githubUsername: true,
+          },
+        },
+        members: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                nim: true,
+                image: true,
+                githubUsername: true,
+              },
+            },
+          },
+        },
+        invitations: {
+          include: {
+            invitee: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                nim: true,
+                image: true,
+                githubUsername: true,
+              },
+            },
           },
         },
       },
@@ -169,7 +314,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         message: 'Project berhasil dibuat',
-        project,
+        project: completeProject,
       },
       { status: 201 },
     );

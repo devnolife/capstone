@@ -10,6 +10,7 @@ import {
   Spinner,
   Chip,
   Divider,
+  Avatar,
 } from '@heroui/react';
 import {
   Bell,
@@ -21,9 +22,12 @@ import {
   FileText,
   AlertCircle,
   ExternalLink,
+  Users,
+  X,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
+import { toast } from 'sonner';
 
 interface Notification {
   id: string;
@@ -35,6 +39,27 @@ interface Notification {
   createdAt: string;
 }
 
+interface TeamInvitation {
+  id: string;
+  status: string;
+  createdAt: string;
+  project: {
+    id: string;
+    title: string;
+    description: string | null;
+    semester: string;
+    tahunAkademik: string;
+  };
+  inviter: {
+    id: string;
+    name: string;
+    username: string;
+    nim: string | null;
+    image: string | null;
+    prodi: string | null;
+  };
+}
+
 const getNotificationIcon = (type: string) => {
   switch (type) {
     case 'assignment':
@@ -43,6 +68,8 @@ const getNotificationIcon = (type: string) => {
       return <ClipboardCheck size={20} className="text-success" />;
     case 'submission':
       return <FileText size={20} className="text-secondary" />;
+    case 'invitation':
+      return <Users size={20} className="text-emerald-500" />;
     case 'system':
       return <AlertCircle size={20} className="text-warning" />;
     default:
@@ -53,12 +80,15 @@ const getNotificationIcon = (type: string) => {
 export default function NotificationsPage() {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [invitations, setInvitations] = useState<TeamInvitation[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [respondingTo, setRespondingTo] = useState<string | null>(null);
   const { confirm, ConfirmDialog } = useConfirmDialog();
 
   useEffect(() => {
     fetchNotifications();
+    fetchInvitations();
   }, []);
 
   const fetchNotifications = async () => {
@@ -73,6 +103,54 @@ export default function NotificationsPage() {
       console.error('Error fetching notifications:', error);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const fetchInvitations = async () => {
+    try {
+      const response = await fetch('/api/invitations?status=pending');
+      if (response.ok) {
+        const data = await response.json();
+        setInvitations(data.invitations || []);
+      }
+    } catch (error) {
+      console.error('Error fetching invitations:', error);
+    }
+  };
+
+  const handleInvitationResponse = async (invitationId: string, action: 'accept' | 'reject') => {
+    setRespondingTo(invitationId);
+    try {
+      const response = await fetch(`/api/invitations/${invitationId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success(data.message);
+        // Remove the invitation from list
+        setInvitations((prev) => prev.filter((i) => i.id !== invitationId));
+        // Refresh notifications
+        fetchNotifications();
+        
+        if (action === 'accept') {
+          // Optionally redirect to the project
+          const invitation = invitations.find((i) => i.id === invitationId);
+          if (invitation) {
+            router.push(`/mahasiswa/projects/${invitation.project.id}`);
+          }
+        }
+      } else {
+        toast.error(data.error || 'Gagal merespon undangan');
+      }
+    } catch (error) {
+      console.error('Error responding to invitation:', error);
+      toast.error('Terjadi kesalahan');
+    } finally {
+      setRespondingTo(null);
     }
   };
 
@@ -214,6 +292,96 @@ export default function NotificationsPage() {
           </div>
         </div>
       </div>
+
+      {/* Team Invitations Section */}
+      {invitations.length > 0 && (
+        <Card className="border-2 border-emerald-200 dark:border-emerald-800">
+          <CardHeader className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30">
+            <div className="flex items-center gap-2">
+              <Users size={20} className="text-emerald-600 dark:text-emerald-400" />
+              <h2 className="text-lg font-semibold">
+                Undangan Tim ({invitations.length})
+              </h2>
+              <Chip size="sm" color="warning" variant="flat">Perlu Respon</Chip>
+            </div>
+          </CardHeader>
+          <CardBody className="p-0">
+            <div className="divide-y divide-divider">
+              {invitations.map((invitation) => (
+                <div
+                  key={invitation.id}
+                  className="p-4 bg-emerald-50/50 dark:bg-emerald-950/20"
+                >
+                  <div className="flex items-start gap-4">
+                    <Avatar
+                      name={invitation.inviter.name}
+                      src={invitation.inviter.image || undefined}
+                      size="md"
+                      className="ring-2 ring-emerald-200 dark:ring-emerald-700"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 flex-wrap">
+                        <div>
+                          <h3 className="font-semibold text-emerald-800 dark:text-emerald-200">
+                            Undangan Bergabung Tim
+                          </h3>
+                          <p className="text-sm text-default-600 mt-1">
+                            <span className="font-medium">{invitation.inviter.name}</span>
+                            {invitation.inviter.nim && (
+                              <span className="text-default-400"> ({invitation.inviter.nim})</span>
+                            )}
+                            {' '}mengundang Anda bergabung ke project:
+                          </p>
+                          <div className="mt-2 p-3 rounded-lg bg-white dark:bg-zinc-800 border border-emerald-100 dark:border-emerald-800">
+                            <p className="font-medium text-default-800">{invitation.project.title}</p>
+                            {invitation.project.description && (
+                              <p className="text-sm text-default-500 mt-1 line-clamp-2">
+                                {invitation.project.description}
+                              </p>
+                            )}
+                            <div className="flex items-center gap-2 mt-2">
+                              <Chip size="sm" variant="flat">
+                                {invitation.project.semester} {invitation.project.tahunAkademik}
+                              </Chip>
+                            </div>
+                          </div>
+                          <p className="text-xs text-default-400 mt-2">
+                            Dikirim {formatDate(invitation.createdAt)}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            color="success"
+                            variant="flat"
+                            startContent={<Check size={16} />}
+                            isLoading={respondingTo === invitation.id}
+                            isDisabled={respondingTo !== null}
+                            onPress={() => handleInvitationResponse(invitation.id, 'accept')}
+                          >
+                            Terima
+                          </Button>
+                          <Button
+                            size="sm"
+                            color="danger"
+                            variant="flat"
+                            startContent={<X size={16} />}
+                            isLoading={respondingTo === invitation.id}
+                            isDisabled={respondingTo !== null}
+                            onPress={() => handleInvitationResponse(invitation.id, 'reject')}
+                          >
+                            Tolak
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardBody>
+        </Card>
+      )}
 
       {/* Notifications List */}
       <Card>

@@ -8,6 +8,7 @@ import {
   Chip,
   Progress,
   Button,
+  Tooltip,
 } from '@heroui/react';
 import {
   FolderGit2,
@@ -18,6 +19,9 @@ import {
   Clock,
   ArrowRight,
   Sparkles,
+  Trash2,
+  Crown,
+  Users,
 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
 
@@ -37,15 +41,19 @@ interface ProjectWithRelations {
   _count?: {
     documents: number;
     reviews: number;
+    members?: number;
   };
 }
 
 interface ProjectCardProps {
   project: ProjectWithRelations;
   showActions?: boolean;
+  isOwner?: boolean;
+  ownerName?: string;
+  onDelete?: (project: ProjectWithRelations) => void;
 }
 
-export function ProjectCard({ project, showActions = true }: ProjectCardProps) {
+export function ProjectCard({ project, showActions = true, isOwner = true, ownerName, onDelete }: ProjectCardProps) {
   const documentCount =
     project._count?.documents || project.documents?.length || 0;
   const reviewCount = project._count?.reviews || project.reviews?.length || 0;
@@ -142,6 +150,33 @@ export function ProjectCard({ project, showActions = true }: ProjectCardProps) {
           </Chip>
         </div>
 
+        {/* Role Badge - Shows if user is owner or team member */}
+        <div className="flex items-center gap-2">
+          {isOwner ? (
+            <Chip
+              size="sm"
+              color="primary"
+              variant="flat"
+              startContent={<Crown size={12} />}
+              className="font-medium"
+            >
+              Ketua
+            </Chip>
+          ) : (
+            <Tooltip content={`Ketua: ${ownerName || 'Unknown'}`}>
+              <Chip
+                size="sm"
+                color="secondary"
+                variant="flat"
+                startContent={<Users size={12} />}
+                className="font-medium"
+              >
+                Anggota
+              </Chip>
+            </Tooltip>
+          )}
+        </div>
+
         {/* Description */}
         {project.description && (
           <p className="text-sm text-default-500 dark:text-default-400 line-clamp-2 leading-relaxed">
@@ -228,17 +263,31 @@ export function ProjectCard({ project, showActions = true }: ProjectCardProps) {
           >
             Lihat Detail
           </Button>
-          {project.status === 'DRAFT' && (
-            <Button
-              as={Link}
-              href={`/mahasiswa/projects/${project.id}/edit`}
-              size="sm"
-              color="primary"
-              variant="flat"
-              className="flex-1 bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 transition-all duration-300"
-            >
-              Edit
-            </Button>
+          {isOwner && project.status === 'DRAFT' && (
+            <>
+              <Button
+                as={Link}
+                href={`/mahasiswa/projects/${project.id}/edit`}
+                size="sm"
+                color="primary"
+                variant="flat"
+                className="flex-1 bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 transition-all duration-300"
+              >
+                Edit
+              </Button>
+              {onDelete && (
+                <Button
+                  size="sm"
+                  color="danger"
+                  variant="flat"
+                  isIconOnly
+                  className="bg-danger/10 hover:bg-danger/20 border border-danger/20 hover:border-danger/40 transition-all duration-300"
+                  onPress={() => onDelete(project)}
+                >
+                  <Trash2 size={16} />
+                </Button>
+              )}
+            </>
           )}
         </CardFooter>
       )}

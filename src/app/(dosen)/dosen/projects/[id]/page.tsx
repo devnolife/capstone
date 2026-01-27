@@ -41,6 +41,7 @@ import {
   Building2,
   ShieldCheck,
   ListChecks,
+  Crown,
 } from 'lucide-react';
 import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
@@ -54,10 +55,34 @@ import {
 
 interface ProjectMember {
   id: string;
+  userId: string | null;
   githubUsername: string | null;
   githubAvatarUrl: string | null;
   name: string | null;
   role: string;
+  user: {
+    id: string;
+    name: string;
+    username: string;
+    nim: string | null;
+    prodi: string | null;
+    image: string | null;
+    githubUsername: string | null;
+  } | null;
+}
+
+interface TeamInvitation {
+  id: string;
+  status: string;
+  invitee: {
+    id: string;
+    name: string;
+    username: string;
+    nim: string | null;
+    prodi: string | null;
+    image: string | null;
+    githubUsername: string | null;
+  };
 }
 
 interface ProjectRequirements {
@@ -114,10 +139,13 @@ interface Project {
     name: string;
     email: string | null;
     username: string;
+    nim?: string | null;
+    prodi?: string | null;
     image: string | null;
     githubUsername: string | null;
   };
   members?: ProjectMember[];
+  invitations?: TeamInvitation[];
   documents: Array<{
     id: string;
     type: string;
@@ -428,53 +456,104 @@ export default function DosenProjectDetailPage({
           {/* Mahasiswa & Deskripsi Card */}
           <motion.div variants={itemVariants}>
             <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <Users size={18} className="text-violet-600 dark:text-violet-400" />
+                  <h3 className="font-semibold">Tim Project</h3>
+                  <Chip size="sm" variant="flat" color="primary">
+                    {1 + (project.members?.filter(m => m.role !== 'leader').length || 0)} anggota
+                  </Chip>
+                </div>
+              </div>
               <CardBody className="p-4 space-y-4">
-                {/* Mahasiswa Info */}
-                <div className="flex items-center gap-3">
+                {/* Ketua (Owner) */}
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
                   <Avatar
                     name={project.mahasiswa.name}
                     src={avatarUrl}
-                    className="w-12 h-12 ring-2 ring-violet-200 dark:ring-violet-800"
+                    className="w-10 h-10 ring-2 ring-primary-200 dark:ring-primary-700"
                     imgProps={{ referrerPolicy: "no-referrer" }}
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold">{project.mahasiswa.name}</p>
-                    <p className="text-default-500 text-sm font-mono">{project.mahasiswa.username || '-'}</p>
+                    <div className="flex items-center gap-1.5">
+                      <p className="font-semibold text-sm">{project.mahasiswa.name}</p>
+                      <Crown size={14} className="text-amber-500" />
+                    </div>
+                    <p className="text-xs text-default-500">
+                      {project.mahasiswa.nim || project.mahasiswa.username}
+                      {project.mahasiswa.prodi && ` - ${project.mahasiswa.prodi}`}
+                    </p>
                   </div>
+                  <Chip size="sm" color="primary" variant="flat">Ketua</Chip>
                   {project.mahasiswa.githubUsername && (
                     <a
                       href={`https://github.com/${project.mahasiswa.githubUsername}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-sm"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-xs"
                     >
-                      <Github size={14} />
+                      <Github size={12} />
                       @{project.mahasiswa.githubUsername}
                     </a>
                   )}
                 </div>
 
                 {/* Team Members */}
-                {project.members && project.members.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {project.members.map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-sm"
+                {project.members?.filter(m => m.role !== 'leader').map((member) => (
+                  <div
+                    key={member.id}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700"
+                  >
+                    <Avatar
+                      name={member.user?.name || member.name || 'Member'}
+                      src={member.user?.image || member.githubAvatarUrl || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
+                      className="w-10 h-10 ring-2 ring-white dark:ring-zinc-700"
+                      imgProps={{ referrerPolicy: "no-referrer" }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm">{member.user?.name || member.name || member.githubUsername}</p>
+                      <p className="text-xs text-default-500">
+                        {member.user?.nim || member.user?.username}
+                        {member.user?.prodi && ` - ${member.user.prodi}`}
+                      </p>
+                    </div>
+                    <Chip size="sm" color="success" variant="flat">Anggota</Chip>
+                    {(member.user?.githubUsername || member.githubUsername) && (
+                      <a
+                        href={`https://github.com/${member.user?.githubUsername || member.githubUsername}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-xs"
                       >
-                        <Avatar
-                          name={member.name || member.githubUsername || 'Member'}
-                          src={member.githubAvatarUrl || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
-                          className="w-5 h-5"
-                        />
-                        <span>{member.name || member.githubUsername}</span>
-                        {member.role === 'leader' && (
-                          <Chip size="sm" color="warning" variant="flat" className="h-4 text-xs">Ketua</Chip>
-                        )}
-                      </div>
-                    ))}
+                        <Github size={12} />
+                        @{member.user?.githubUsername || member.githubUsername}
+                      </a>
+                    )}
                   </div>
-                )}
+                ))}
+
+                {/* Pending Invitations */}
+                {project.invitations?.filter(i => i.status === 'pending').map((invitation) => (
+                  <div
+                    key={invitation.id}
+                    className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50"
+                  >
+                    <Avatar
+                      name={invitation.invitee.name}
+                      src={invitation.invitee.image || undefined}
+                      className="w-10 h-10 ring-2 ring-amber-200 dark:ring-amber-700 opacity-75"
+                      imgProps={{ referrerPolicy: "no-referrer" }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-default-700 dark:text-default-300">{invitation.invitee.name}</p>
+                      <p className="text-xs text-default-500">
+                        {invitation.invitee.nim || invitation.invitee.username}
+                        {invitation.invitee.prodi && ` - ${invitation.invitee.prodi}`}
+                      </p>
+                    </div>
+                    <Chip size="sm" color="warning" variant="flat">Menunggu</Chip>
+                  </div>
+                ))}
 
                 {/* Description */}
                 {project.description && (

@@ -46,6 +46,14 @@ import {
   RotateCcw,
   Image as ImageIcon,
   Sparkles,
+  Crown,
+  Trash2,
+  Undo2,
+  Globe,
+  KeyRound,
+  User,
+  Copy,
+  Loader2,
 } from 'lucide-react';
 import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
@@ -60,9 +68,33 @@ import {
 
 interface ProjectMember {
   id: string;
+  userId: string | null;
   githubUsername: string | null;
   name: string | null;
   role: string;
+  user: {
+    id: string;
+    name: string;
+    username: string;
+    nim: string | null;
+    prodi: string | null;
+    image: string | null;
+    githubUsername: string | null;
+  } | null;
+}
+
+interface TeamInvitation {
+  id: string;
+  status: string;
+  invitee: {
+    id: string;
+    name: string;
+    username: string;
+    nim: string | null;
+    prodi: string | null;
+    image: string | null;
+    githubUsername: string | null;
+  };
 }
 
 interface Project {
@@ -86,10 +118,12 @@ interface Project {
     email: string | null;
     username: string;
     nim?: string | null;
+    prodi?: string | null;
     image: string | null;
     githubUsername: string | null;
   };
   members?: ProjectMember[];
+  invitations?: TeamInvitation[];
   documents: Array<{
     id: string;
     type: string;
@@ -110,6 +144,11 @@ interface Project {
   }>;
   requirements: {
     completionPercent: number;
+    productionUrl?: string | null;
+    productionUrlStatus?: string | null;
+    testingUsername?: string | null;
+    testingPassword?: string | null;
+    testingNotes?: string | null;
   } | null;
   _count?: {
     assignments: number;
@@ -204,6 +243,22 @@ export default function AdminProjectDetailPage({
   const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
   const [isLoadingScreenshots, setIsLoadingScreenshots] = useState(false);
   const [togglingFeatured, setTogglingFeatured] = useState<string | null>(null);
+
+  // Delete modal state
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Revert to draft modal state
+  const [revertModalOpen, setRevertModalOpen] = useState(false);
+  const [isReverting, setIsReverting] = useState(false);
+
+  // Production URL testing state
+  const [isCheckingUrl, setIsCheckingUrl] = useState(false);
+  const [urlCheckResult, setUrlCheckResult] = useState<{
+    valid: boolean;
+    message?: string;
+  } | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const fetchProject = async () => {
     try {
@@ -383,6 +438,154 @@ export default function AdminProjectDetailPage({
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (!project) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/projects/${project.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        addToast({
+          title: 'Berhasil',
+          description: 'Project berhasil dihapus',
+          color: 'success',
+        });
+        router.push('/admin/projects');
+      } else {
+        const data = await response.json();
+        addToast({
+          title: 'Gagal',
+          description: data.error || 'Gagal menghapus project',
+          color: 'danger',
+        });
+      }
+    } catch (error) {
+      console.error('Error deleting project:', error);
+      addToast({
+        title: 'Error',
+        description: 'Terjadi kesalahan saat menghapus project',
+        color: 'danger',
+      });
+    } finally {
+      setIsDeleting(false);
+      setDeleteModalOpen(false);
+    }
+  };
+
+  const handleRevertToDraft = async () => {
+    if (!project) return;
+
+    setIsReverting(true);
+    try {
+      const response = await fetch(`/api/projects/${project.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'DRAFT' }),
+      });
+
+      if (response.ok) {
+        addToast({
+          title: 'Berhasil',
+          description: 'Project dikembalikan ke status DRAFT. Mahasiswa sekarang dapat mengedit kembali.',
+          color: 'success',
+        });
+        setRevertModalOpen(false);
+        await fetchProject();
+      } else {
+        const data = await response.json();
+        addToast({
+          title: 'Gagal',
+          description: data.error || 'Gagal mengembalikan status project',
+          color: 'danger',
+        });
+      }
+    } catch (error) {
+      console.error('Error reverting project:', error);
+      addToast({
+        title: 'Error',
+        description: 'Terjadi kesalahan saat mengembalikan status project',
+        color: 'danger',
+      });
+    } finally {
+      setIsReverting(false);
+    }
+  };
+
+  // Check production URL
+  const checkProductionUrl = async () => {
+    if (!project?.requirements?.productionUrl) return;
+
+    setIsCheckingUrl(true);
+    setUrlCheckResult(null);
+
+    try {
+      const response = await fetch('/api/validate-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: project.requirements.productionUrl }),
+      });
+
+      const result = await response.json();
+      setUrlCheckResult({
+        valid: result.valid,
+        message: result.valid 
+          ? `URL aktif (${result.responseTime}ms)${result.title ? ` - ${result.title}` : ''}`
+          : result.error || 'URL tidak dapat diakses',
+      });
+    } catch {
+      setUrlCheckResult({
+        valid: false,
+        message: 'Gagal memvalidasi URL',
+      });
+    } finally {
+      setIsCheckingUrl(false);
+    }
+  };
+
+  // Copy to clipboard
+  const copyToClipboard = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      addToast({
+        title: 'Disalin',
+        description: 'Teks berhasil disalin ke clipboard',
+        color: 'success',
+      });
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch {
+      addToast({
+        title: 'Gagal',
+        description: 'Gagal menyalin ke clipboard',
+        color: 'danger',
+      });
+    }
+  };
+
+  // Open production URL with auto-fill (using URL params or bookmarklet approach)
+  const openWithCredentials = () => {
+    if (!project?.requirements?.productionUrl) return;
+    
+    const url = project.requirements.productionUrl;
+    const username = project.requirements.testingUsername || '';
+    const password = project.requirements.testingPassword || '';
+    
+    // Open the URL in a new tab
+    const newWindow = window.open(url, '_blank');
+    
+    // Show toast with credentials to copy
+    if (username || password) {
+      addToast({
+        title: 'Kredensial Testing',
+        description: `Username: ${username || '-'} | Password: ${password || '-'}`,
+        color: 'primary',
+      });
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
@@ -415,6 +618,8 @@ export default function AdminProjectDetailPage({
   const canReject = ['SUBMITTED', 'IN_REVIEW'].includes(project.status);
   const canStartReview = project.status === 'SUBMITTED';
   const canRequestRevision = project.status === 'IN_REVIEW';
+  // Admin can revert any non-DRAFT project back to DRAFT so mahasiswa can edit again
+  const canRevertToDraft = project.status !== 'DRAFT';
   const githubInfo = project.githubRepoUrl ? parseGitHubUrl(project.githubRepoUrl) : null;
   const avatarUrl = getAvatarUrl(project.mahasiswa);
 
@@ -602,23 +807,34 @@ export default function AdminProjectDetailPage({
               <div className="p-4 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border-b border-zinc-100 dark:border-zinc-800">
                 <div className="flex items-center gap-2">
                   <Users size={18} className="text-violet-600 dark:text-violet-400" />
-                  <h3 className="font-semibold">Informasi Mahasiswa</h3>
+                  <h3 className="font-semibold">Tim Project</h3>
+                  <Chip size="sm" variant="flat" color="primary">
+                    {1 + (project.members?.filter(m => m.role !== 'leader').length || 0)} anggota
+                  </Chip>
                 </div>
               </div>
               <CardBody className="p-5">
-                <div className="flex items-center gap-4">
+                {/* Ketua (Owner) */}
+                <div className="flex items-center gap-4 p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
                   <Avatar
                     name={project.mahasiswa.name}
                     src={avatarUrl}
                     size="lg"
-                    className="ring-2 ring-violet-200 dark:ring-violet-800"
+                    className="ring-2 ring-primary-200 dark:ring-primary-700"
                     imgProps={{ referrerPolicy: "no-referrer" }}
                   />
                   <div className="flex-1">
-                    <p className="font-semibold text-lg">{project.mahasiswa.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-lg">{project.mahasiswa.name}</p>
+                      <Crown size={16} className="text-amber-500" />
+                      <Chip size="sm" color="primary" variant="flat">Ketua</Chip>
+                    </div>
                     <p className="text-default-500 text-sm font-mono">
                       {project.mahasiswa.nim || project.mahasiswa.username || '-'}
                     </p>
+                    {project.mahasiswa.prodi && (
+                      <p className="text-default-400 text-xs">{project.mahasiswa.prodi}</p>
+                    )}
                     <p className="text-default-400 text-xs">{project.mahasiswa.email}</p>
                   </div>
                   {project.mahasiswa.githubUsername && (
@@ -635,27 +851,76 @@ export default function AdminProjectDetailPage({
                 </div>
 
                 {/* Team Members */}
-                {project.members && project.members.length > 0 && (
+                {project.members && project.members.filter(m => m.role !== 'leader').length > 0 && (
                   <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                    <p className="text-sm font-medium text-default-500 mb-3">Anggota Tim ({project.members.length})</p>
-                    <div className="flex flex-wrap gap-2">
-                      {project.members.map((member) => (
+                    <p className="text-sm font-medium text-default-500 mb-3">
+                      Anggota Tim ({project.members.filter(m => m.role !== 'leader').length})
+                    </p>
+                    <div className="space-y-2">
+                      {project.members.filter(m => m.role !== 'leader').map((member) => (
                         <div
                           key={member.id}
-                          className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700"
+                          className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700"
                         >
                           <Avatar
-                            name={member.name || member.githubUsername || 'Member'}
-                            src={member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined}
+                            name={member.user?.name || member.name || member.githubUsername || 'Member'}
+                            src={member.user?.image || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
                             size="sm"
-                            className="w-6 h-6"
+                            className="w-10 h-10"
+                            imgProps={{ referrerPolicy: "no-referrer" }}
                           />
-                          <span className="text-sm">{member.name || member.githubUsername}</span>
-                          {member.role === 'leader' && (
-                            <Chip size="sm" color="warning" variant="flat" className="h-5">
-                              Ketua
-                            </Chip>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm">{member.user?.name || member.name || member.githubUsername}</p>
+                            <p className="text-xs text-default-500">
+                              {member.user?.nim || member.user?.username}
+                              {member.user?.prodi && ` - ${member.user.prodi}`}
+                            </p>
+                          </div>
+                          <Chip size="sm" color="success" variant="flat">Anggota</Chip>
+                          {(member.user?.githubUsername || member.githubUsername) && (
+                            <a
+                              href={`https://github.com/${member.user?.githubUsername || member.githubUsername}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-xs"
+                            >
+                              <Github size={12} />
+                              @{member.user?.githubUsername || member.githubUsername}
+                            </a>
                           )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Pending Invitations */}
+                {project.invitations && project.invitations.filter(i => i.status === 'pending').length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+                    <p className="text-sm font-medium text-amber-600 dark:text-amber-400 mb-3">
+                      Undangan Pending ({project.invitations.filter(i => i.status === 'pending').length})
+                    </p>
+                    <div className="space-y-2">
+                      {project.invitations.filter(i => i.status === 'pending').map((invitation) => (
+                        <div
+                          key={invitation.id}
+                          className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50"
+                        >
+                          <Avatar
+                            name={invitation.invitee.name}
+                            src={invitation.invitee.image || undefined}
+                            size="sm"
+                            className="w-10 h-10 opacity-75"
+                            imgProps={{ referrerPolicy: "no-referrer" }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium text-sm text-default-700 dark:text-default-300">{invitation.invitee.name}</p>
+                            <p className="text-xs text-default-500">
+                              {invitation.invitee.nim || invitation.invitee.username}
+                              {invitation.invitee.prodi && ` - ${invitation.invitee.prodi}`}
+                            </p>
+                          </div>
+                          <Chip size="sm" color="warning" variant="flat">Menunggu</Chip>
                         </div>
                       ))}
                     </div>
@@ -997,6 +1262,20 @@ export default function AdminProjectDetailPage({
                     Reject Project
                   </Button>
                 )}
+
+                {/* Revert to Draft Button - allows mahasiswa to edit again */}
+                {canRevertToDraft && (
+                  <Button
+                    className="w-full"
+                    color="secondary"
+                    variant="flat"
+                    startContent={<Undo2 size={18} />}
+                    onPress={() => setRevertModalOpen(true)}
+                  >
+                    Kembalikan ke Draft
+                  </Button>
+                )}
+
                 <Button
                   as={Link}
                   href="/admin/assignments"
@@ -1005,6 +1284,17 @@ export default function AdminProjectDetailPage({
                   startContent={<UserPlus size={18} />}
                 >
                   Kelola Penugasan Dosen
+                </Button>
+
+                {/* Delete Button */}
+                <Button
+                  className="w-full"
+                  color="danger"
+                  variant="flat"
+                  startContent={<Trash2 size={18} />}
+                  onPress={() => setDeleteModalOpen(true)}
+                >
+                  Hapus Project
                 </Button>
 
                 {/* Status Info */}
@@ -1055,6 +1345,138 @@ export default function AdminProjectDetailPage({
                       </div>
                     ))}
                   </div>
+                </CardBody>
+              </Card>
+            </motion.div>
+          )}
+
+          {/* Production URL & Testing Credentials Card */}
+          {project.requirements?.productionUrl && (
+            <motion.div variants={itemVariants}>
+              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-950/30 border-b border-zinc-100 dark:border-zinc-800">
+                  <div className="flex items-center gap-2">
+                    <Globe size={18} className="text-cyan-600 dark:text-cyan-400" />
+                    <h3 className="font-semibold">Production URL & Testing</h3>
+                  </div>
+                </div>
+                <CardBody className="p-4 space-y-4">
+                  {/* Production URL */}
+                  <div className="space-y-2">
+                    <p className="text-xs font-medium text-default-500">URL Production</p>
+                    <div className="flex gap-2">
+                      <div className="flex-1 p-2.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700 truncate text-sm font-mono">
+                        {project.requirements.productionUrl}
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        isIconOnly
+                        onPress={() => copyToClipboard(project.requirements!.productionUrl!, 'url')}
+                      >
+                        {copiedField === 'url' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                      </Button>
+                    </div>
+                    
+                    {/* URL Check Result */}
+                    {urlCheckResult && (
+                      <div className={`p-2 rounded-lg text-xs ${
+                        urlCheckResult.valid 
+                          ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+                          : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                      }`}>
+                        <div className="flex items-center gap-1.5">
+                          {urlCheckResult.valid ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+                          {urlCheckResult.message}
+                        </div>
+                      </div>
+                    )}
+                    
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="flat"
+                        color="primary"
+                        onPress={checkProductionUrl}
+                        isLoading={isCheckingUrl}
+                        startContent={!isCheckingUrl && <Eye size={14} />}
+                        className="flex-1"
+                      >
+                        Cek URL
+                      </Button>
+                      <Button
+                        size="sm"
+                        color="primary"
+                        onPress={openWithCredentials}
+                        startContent={<ExternalLink size={14} />}
+                        className="flex-1"
+                      >
+                        Buka & Test
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Testing Credentials */}
+                  {(project.requirements.testingUsername || project.requirements.testingPassword) && (
+                    <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
+                      <p className="text-xs font-medium text-default-500 flex items-center gap-1.5">
+                        <KeyRound size={12} />
+                        Akun Testing
+                      </p>
+                      
+                      {project.requirements.testingUsername && (
+                        <div className="flex items-center gap-2">
+                          <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                            <User size={14} className="text-default-500" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-default-400">Username</p>
+                            <p className="text-sm font-mono truncate">{project.requirements.testingUsername}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="light"
+                            isIconOnly
+                            onPress={() => copyToClipboard(project.requirements!.testingUsername!, 'username')}
+                          >
+                            {copiedField === 'username' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                          </Button>
+                        </div>
+                      )}
+                      
+                      {project.requirements.testingPassword && (
+                        <div className="flex items-center gap-2">
+                          <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                            <KeyRound size={14} className="text-default-500" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs text-default-400">Password</p>
+                            <p className="text-sm font-mono truncate">{project.requirements.testingPassword}</p>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="light"
+                            isIconOnly
+                            onPress={() => copyToClipboard(project.requirements!.testingPassword!, 'password')}
+                          >
+                            {copiedField === 'password' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Testing Notes */}
+                  {project.requirements.testingNotes && (
+                    <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                      <p className="text-xs font-medium text-default-500 mb-2">Catatan Testing</p>
+                      <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800/50">
+                        <p className="text-sm text-amber-800 dark:text-amber-200 whitespace-pre-wrap">
+                          {project.requirements.testingNotes}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </CardBody>
               </Card>
             </motion.div>
@@ -1249,6 +1671,149 @@ export default function AdminProjectDetailPage({
                   {forkToOrg && project.githubRepoUrl
                     ? 'Approve & Fork'
                     : 'Approve'}
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        classNames={{
+          backdrop: 'bg-black/50 backdrop-blur-sm',
+          base: 'border border-slate-200/60 dark:border-zinc-700/50',
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
+                <div className="p-2 rounded-xl bg-danger-50 dark:bg-danger-900/30 text-danger">
+                  <Trash2 size={20} />
+                </div>
+                <span className="font-semibold text-slate-800 dark:text-white">Hapus Project</span>
+              </ModalHeader>
+              <ModalBody className="py-5">
+                <div className="space-y-4">
+                  <p className="text-slate-600 dark:text-zinc-400">
+                    Apakah Anda yakin ingin menghapus project ini?
+                  </p>
+                  <div className="p-3 bg-slate-50 dark:bg-zinc-800/50 rounded-lg border border-slate-200/60 dark:border-zinc-700/50">
+                    <p className="font-semibold text-slate-800 dark:text-white">{project.title}</p>
+                    <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+                      {project.mahasiswa.name} - {project.semester}
+                    </p>
+                    <div className="mt-2">
+                      <Chip size="sm" color={getStatusColor(project.status)} variant="flat">
+                        {getStatusLabel(project.status)}
+                      </Chip>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800/30 rounded-lg">
+                    <p className="text-sm text-danger font-medium">
+                      Tindakan ini akan menghapus semua data terkait termasuk:
+                    </p>
+                    <ul className="text-xs text-danger-600 dark:text-danger-400 mt-2 space-y-1 ml-4 list-disc">
+                      <li>Semua dokumen yang diupload</li>
+                      <li>Semua review dan komentar</li>
+                      <li>Semua assignment dosen penguji</li>
+                      <li>Semua anggota tim dan undangan</li>
+                      <li>Semua screenshot aplikasi</li>
+                    </ul>
+                    <p className="text-xs text-danger font-semibold mt-2">
+                      Tindakan ini tidak dapat dibatalkan!
+                    </p>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
+                <Button variant="flat" onPress={onClose} isDisabled={isDeleting}>
+                  Batal
+                </Button>
+                <Button
+                  color="danger"
+                  onPress={handleDeleteProject}
+                  isLoading={isDeleting}
+                  startContent={!isDeleting && <Trash2 size={18} />}
+                >
+                  Hapus Project
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
+      {/* Revert to Draft Confirmation Modal */}
+      <Modal
+        isOpen={revertModalOpen}
+        onClose={() => setRevertModalOpen(false)}
+        classNames={{
+          backdrop: 'bg-black/50 backdrop-blur-sm',
+          base: 'border border-slate-200/60 dark:border-zinc-700/50',
+        }}
+      >
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
+                <div className="p-2 rounded-xl bg-secondary-50 dark:bg-secondary-900/30 text-secondary">
+                  <Undo2 size={20} />
+                </div>
+                <div>
+                  <span className="block font-semibold text-slate-800 dark:text-white">Kembalikan ke Draft</span>
+                  <span className="text-sm font-normal text-slate-500 dark:text-zinc-400">
+                    Izinkan mahasiswa mengedit kembali project
+                  </span>
+                </div>
+              </ModalHeader>
+              <ModalBody className="py-5">
+                <div className="space-y-4">
+                  <p className="text-slate-600 dark:text-zinc-400">
+                    Apakah Anda yakin ingin mengembalikan status project ini ke <strong>DRAFT</strong>?
+                  </p>
+                  <div className="p-3 bg-slate-50 dark:bg-zinc-800/50 rounded-lg border border-slate-200/60 dark:border-zinc-700/50">
+                    <p className="font-semibold text-slate-800 dark:text-white">{project.title}</p>
+                    <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
+                      {project.mahasiswa.name} - {project.semester}
+                    </p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <Chip size="sm" color={getStatusColor(project.status)} variant="flat">
+                        {getStatusLabel(project.status)}
+                      </Chip>
+                      <span className="text-default-400">→</span>
+                      <Chip size="sm" color="default" variant="flat">
+                        DRAFT
+                      </Chip>
+                    </div>
+                  </div>
+                  <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg">
+                    <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                      Dengan mengembalikan ke DRAFT:
+                    </p>
+                    <ul className="text-xs text-blue-600 dark:text-blue-400 mt-2 space-y-1 ml-4 list-disc">
+                      <li>Mahasiswa dapat mengedit project kembali</li>
+                      <li>Mahasiswa perlu submit ulang untuk review</li>
+                      <li>Review sebelumnya tetap tersimpan</li>
+                      <li>Project tidak tampil di daftar yang perlu di-review</li>
+                    </ul>
+                  </div>
+                </div>
+              </ModalBody>
+              <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
+                <Button variant="flat" onPress={onClose} isDisabled={isReverting}>
+                  Batal
+                </Button>
+                <Button
+                  color="secondary"
+                  onPress={handleRevertToDraft}
+                  isLoading={isReverting}
+                  startContent={!isReverting && <Undo2 size={18} />}
+                >
+                  Kembalikan ke Draft
                 </Button>
               </ModalFooter>
             </>

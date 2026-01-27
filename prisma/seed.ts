@@ -42,11 +42,11 @@ async function main() {
   // ==================== CREATE ADMIN USER ====================
   console.log('👤 Creating Admin user...');
   
-  const adminPassword = await hashPassword('password123');
+  const adminPassword = await hashPassword('hanyaAdmin@25');
   
   const admin = await prisma.user.create({
     data: {
-      username: 'admin',
+      username: 'devnolife',
       name: 'Administrator',
       password: adminPassword,
       role: Role.ADMIN,
@@ -54,7 +54,7 @@ async function main() {
     },
   });
   
-  console.log(`  ✅ Admin: ${admin.username} (password: password123)\n`);
+  console.log(`  ✅ Admin: ${admin.username} (password: hanyaAdmin@25)\n`);
 
   // ==================== CREATE DOSEN USER ====================
   console.log('👨‍🏫 Creating Dosen user...');
@@ -157,8 +157,8 @@ async function main() {
   console.log('   ┌─────────────┬──────────────┬──────────────┬─────────────────┐');
   console.log('   │ Role        │ Username     │ Password     │ Login Method    │');
   console.log('   ├─────────────┼──────────────┼──────────────┼─────────────────┤');
-  console.log('   │ Admin       │ admin        │ password123  │ Form (NIM/NIP)  │');
-  console.log('   │ Dosen       │ dosen        │ password123  │ Form (NIM/NIP)  │');
+   console.log('   │ Admin       │ devnolife    │ hanyaAdmin@25│ Form (NIM/User) │');
+  console.log('   │ Dosen       │ dosen        │ password123  │ Form (NIM/User) │');
   console.log('   │ Mahasiswa   │ -            │ -            │ GitHub OAuth    │');
   console.log('   └─────────────┴──────────────┴──────────────┴─────────────────┘');
   console.log('\n   Note: Mahasiswa login via GitHub OAuth (otomatis role MAHASISWA)');

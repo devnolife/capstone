@@ -435,7 +435,7 @@ export default function AdminUsersPage() {
           </div>
           <div className="flex flex-col gap-3 md:flex-row md:gap-4">
             <Input
-              placeholder="Cari nama, email, NIM/NIP..."
+              placeholder="Cari nama, email, NIM/Username..."
               startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -506,7 +506,7 @@ export default function AdminUsersPage() {
                     <TableHeader>
                       <TableColumn>USER</TableColumn>
                       <TableColumn>ROLE</TableColumn>
-                      <TableColumn>NIM/NIP</TableColumn>
+                      <TableColumn>NIM/USERNAME</TableColumn>
                       <TableColumn>STATUS</TableColumn>
                       <TableColumn>TANGGAL DAFTAR</TableColumn>
                       <TableColumn>AKSI</TableColumn>
@@ -624,8 +624,8 @@ export default function AdminUsersPage() {
               isRequired
             />
             <Input
-              label="Username (NIM/NIP)"
-              description="Masukkan NIM untuk Mahasiswa, NIP untuk Dosen, atau username untuk Admin"
+              label="Username (NIM/Username)"
+              description="Masukkan NIM untuk Mahasiswa atau username untuk Dosen/Admin"
               value={formData.username}
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })
@@ -698,8 +698,8 @@ export default function AdminUsersPage() {
               isRequired
             />
             <Input
-              label="Username (NIM/NIP)"
-              description="NIM untuk Mahasiswa, NIP untuk Dosen, atau username untuk Admin"
+              label="Username (NIM/Username)"
+              description="NIM untuk Mahasiswa atau username untuk Dosen/Admin"
               value={formData.username}
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })

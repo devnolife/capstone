@@ -40,6 +40,7 @@ import {
   ChevronDown,
   ChevronUp,
   Eye,
+  Crown,
 } from 'lucide-react';
 import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
@@ -159,8 +160,38 @@ interface Project {
     id: string;
     name: string;
     username: string;
+    nim?: string | null;
+    prodi?: string | null;
     image: string | null;
+    githubUsername?: string | null;
   };
+  members?: {
+    id: string;
+    role: string;
+    userId: string | null;
+    user: {
+      id: string;
+      name: string;
+      username: string;
+      nim: string | null;
+      prodi: string | null;
+      image: string | null;
+      githubUsername: string | null;
+    } | null;
+  }[];
+  invitations?: {
+    id: string;
+    status: string;
+    invitee: {
+      id: string;
+      name: string;
+      username: string;
+      nim: string | null;
+      prodi: string | null;
+      image: string | null;
+      githubUsername: string | null;
+    };
+  }[];
   requirements: ProjectRequirements | null;
   reviews: Review[];
   assignments: Assignment[];
@@ -170,6 +201,7 @@ interface Project {
 interface ProjectDetailContentProps {
   project: Project;
   canEdit: boolean;
+  isOwner?: boolean;
 }
 
 // Progress steps configuration
@@ -263,6 +295,7 @@ const getStepStatus = (stepKey: string, projectStatus: string, hasReviews: boole
 export function ProjectDetailContent({
   project,
   canEdit,
+  isOwner = false,
 }: ProjectDetailContentProps) {
   // State for code viewer visibility
   const [showCodeViewer, setShowCodeViewer] = useState(false);
@@ -340,10 +373,12 @@ export function ProjectDetailContent({
                   Edit
                 </Button>
               )}
-              <SubmitProjectButton
-                projectId={project.id}
-                currentStatus={project.status}
-              />
+              {isOwner && (
+                <SubmitProjectButton
+                  projectId={project.id}
+                  currentStatus={project.status}
+                />
+              )}
             </div>
           </div>
 
@@ -594,11 +629,12 @@ export function ProjectDetailContent({
                       <Button
                         as={Link}
                         href={`/mahasiswa/documents/${project.id}`}
-                        color={requirementsComplete ? 'success' : 'primary'}
+                        color={!isOwner ? 'default' : (requirementsComplete ? 'success' : 'primary')}
+                        variant={!isOwner ? 'flat' : 'solid'}
                         size="sm"
                         endContent={<ChevronRight size={16} />}
                       >
-                        {requirementsComplete ? 'Lihat' : 'Isi'}
+                        {!isOwner ? 'Lihat' : (requirementsComplete ? 'Lihat' : 'Isi')}
                       </Button>
                     </div>
                   </div>
@@ -695,12 +731,15 @@ export function ProjectDetailContent({
                   <Button
                     as={Link}
                     href={`/mahasiswa/documents/${project.id}`}
-                    color={requirementsComplete ? 'success' : 'primary'}
+                    color={!isOwner ? 'default' : (requirementsComplete ? 'success' : 'primary')}
+                    variant={!isOwner ? 'flat' : 'solid'}
                     className="w-full"
                     size="lg"
-                    startContent={requirementsComplete ? <Sparkles size={18} /> : <CheckCircle2 size={18} />}
+                    startContent={!isOwner ? <FileText size={18} /> : (requirementsComplete ? <Sparkles size={18} /> : <CheckCircle2 size={18} />)}
                   >
-                    {requirementsComplete ? 'Persyaratan Lengkap - Lihat Detail' : 'Lengkapi Persyaratan Sekarang'}
+                    {!isOwner 
+                      ? 'Lihat Persyaratan' 
+                      : (requirementsComplete ? 'Persyaratan Lengkap - Lihat Detail' : 'Lengkapi Persyaratan Sekarang')}
                   </Button>
                 </div>
               </CardBody>
@@ -952,6 +991,92 @@ export function ProjectDetailContent({
                     ))}
                   </div>
                 )}
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Tim Project Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.38 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <Users size={18} className="text-emerald-600 dark:text-emerald-400" />
+                  <h3 className="font-semibold">Tim Project</h3>
+                  <Chip size="sm" variant="flat" color="primary">
+                    {1 + (project.members?.filter(m => m.role !== 'leader').length || 0) + (project.invitations?.filter(i => i.status === 'pending').length || 0)} anggota
+                  </Chip>
+                </div>
+              </div>
+              <CardBody className="p-4">
+                <div className="space-y-3">
+                  {/* Owner/Ketua */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
+                    <Avatar
+                      name={project.mahasiswa.name}
+                      src={project.mahasiswa.image || undefined}
+                      size="sm"
+                      className="ring-2 ring-primary-200 dark:ring-primary-700"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-sm font-medium truncate">{project.mahasiswa.name}</p>
+                        <Crown size={14} className="text-amber-500 flex-shrink-0" />
+                      </div>
+                      <p className="text-xs text-default-500">{project.mahasiswa.nim || `@${project.mahasiswa.username}`}</p>
+                    </div>
+                    <Chip size="sm" color="primary" variant="flat">Ketua</Chip>
+                  </div>
+
+                  {/* Accepted Members */}
+                  {project.members?.filter(m => m.role !== 'leader' && m.user).map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50"
+                    >
+                      <Avatar
+                        name={member.user!.name}
+                        src={member.user!.image || undefined}
+                        size="sm"
+                        className="ring-2 ring-white dark:ring-zinc-700"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{member.user!.name}</p>
+                        <p className="text-xs text-default-500">{member.user!.nim || `@${member.user!.username}`}</p>
+                      </div>
+                      <Chip size="sm" color="success" variant="flat">Anggota</Chip>
+                    </div>
+                  ))}
+
+                  {/* Pending Invitations */}
+                  {project.invitations?.filter(i => i.status === 'pending').map((invitation) => (
+                    <div
+                      key={invitation.id}
+                      className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50"
+                    >
+                      <Avatar
+                        name={invitation.invitee.name}
+                        src={invitation.invitee.image || undefined}
+                        size="sm"
+                        className="ring-2 ring-amber-200 dark:ring-amber-700 opacity-75"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate text-default-700 dark:text-default-300">{invitation.invitee.name}</p>
+                        <p className="text-xs text-default-500">{invitation.invitee.nim || `@${invitation.invitee.username}`}</p>
+                      </div>
+                      <Chip size="sm" color="warning" variant="flat">Menunggu</Chip>
+                    </div>
+                  ))}
+
+                  {/* Empty state if only owner */}
+                  {(!project.members || project.members.filter(m => m.role !== 'leader').length === 0) && 
+                   (!project.invitations || project.invitations.filter(i => i.status === 'pending').length === 0) && (
+                    <p className="text-xs text-center text-default-400 py-2">Belum ada anggota tim lainnya</p>
+                  )}
+                </div>
               </CardBody>
             </Card>
           </motion.div>

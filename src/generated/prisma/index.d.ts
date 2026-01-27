@@ -17840,6 +17840,12 @@ export namespace Prisma {
     timeline: string | null
     kerangkaWaktu: string | null
     deadlineDate: Date | null
+    productionUrl: string | null
+    productionUrlStatus: string | null
+    productionUrlCheckedAt: Date | null
+    testingUsername: string | null
+    testingPassword: string | null
+    testingNotes: string | null
     completionPercent: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -17867,6 +17873,12 @@ export namespace Prisma {
     timeline: string | null
     kerangkaWaktu: string | null
     deadlineDate: Date | null
+    productionUrl: string | null
+    productionUrlStatus: string | null
+    productionUrlCheckedAt: Date | null
+    testingUsername: string | null
+    testingPassword: string | null
+    testingNotes: string | null
     completionPercent: number | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -17894,6 +17906,12 @@ export namespace Prisma {
     timeline: number
     kerangkaWaktu: number
     deadlineDate: number
+    productionUrl: number
+    productionUrlStatus: number
+    productionUrlCheckedAt: number
+    testingUsername: number
+    testingPassword: number
+    testingNotes: number
     completionPercent: number
     createdAt: number
     updatedAt: number
@@ -17931,6 +17949,12 @@ export namespace Prisma {
     timeline?: true
     kerangkaWaktu?: true
     deadlineDate?: true
+    productionUrl?: true
+    productionUrlStatus?: true
+    productionUrlCheckedAt?: true
+    testingUsername?: true
+    testingPassword?: true
+    testingNotes?: true
     completionPercent?: true
     createdAt?: true
     updatedAt?: true
@@ -17958,6 +17982,12 @@ export namespace Prisma {
     timeline?: true
     kerangkaWaktu?: true
     deadlineDate?: true
+    productionUrl?: true
+    productionUrlStatus?: true
+    productionUrlCheckedAt?: true
+    testingUsername?: true
+    testingPassword?: true
+    testingNotes?: true
     completionPercent?: true
     createdAt?: true
     updatedAt?: true
@@ -17985,6 +18015,12 @@ export namespace Prisma {
     timeline?: true
     kerangkaWaktu?: true
     deadlineDate?: true
+    productionUrl?: true
+    productionUrlStatus?: true
+    productionUrlCheckedAt?: true
+    testingUsername?: true
+    testingPassword?: true
+    testingNotes?: true
     completionPercent?: true
     createdAt?: true
     updatedAt?: true
@@ -18099,6 +18135,12 @@ export namespace Prisma {
     timeline: string | null
     kerangkaWaktu: string | null
     deadlineDate: Date | null
+    productionUrl: string | null
+    productionUrlStatus: string | null
+    productionUrlCheckedAt: Date | null
+    testingUsername: string | null
+    testingPassword: string | null
+    testingNotes: string | null
     completionPercent: number
     createdAt: Date
     updatedAt: Date
@@ -18145,6 +18187,12 @@ export namespace Prisma {
     timeline?: boolean
     kerangkaWaktu?: boolean
     deadlineDate?: boolean
+    productionUrl?: boolean
+    productionUrlStatus?: boolean
+    productionUrlCheckedAt?: boolean
+    testingUsername?: boolean
+    testingPassword?: boolean
+    testingNotes?: boolean
     completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -18173,6 +18221,12 @@ export namespace Prisma {
     timeline?: boolean
     kerangkaWaktu?: boolean
     deadlineDate?: boolean
+    productionUrl?: boolean
+    productionUrlStatus?: boolean
+    productionUrlCheckedAt?: boolean
+    testingUsername?: boolean
+    testingPassword?: boolean
+    testingNotes?: boolean
     completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -18201,6 +18255,12 @@ export namespace Prisma {
     timeline?: boolean
     kerangkaWaktu?: boolean
     deadlineDate?: boolean
+    productionUrl?: boolean
+    productionUrlStatus?: boolean
+    productionUrlCheckedAt?: boolean
+    testingUsername?: boolean
+    testingPassword?: boolean
+    testingNotes?: boolean
     completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -18229,12 +18289,18 @@ export namespace Prisma {
     timeline?: boolean
     kerangkaWaktu?: boolean
     deadlineDate?: boolean
+    productionUrl?: boolean
+    productionUrlStatus?: boolean
+    productionUrlCheckedAt?: boolean
+    testingUsername?: boolean
+    testingPassword?: boolean
+    testingNotes?: boolean
     completionPercent?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProjectRequirementsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "judulProyek" | "targetPengguna" | "latarBelakangMasalah" | "tujuanProyek" | "manfaatProyek" | "integrasiMatakuliah" | "metodologi" | "penulisanLaporan" | "ruangLingkup" | "sumberDayaBatasan" | "teknologi" | "fiturUtama" | "analisisTemuan" | "presentasiUjian" | "stakeholder" | "kepatuhanEtika" | "timeline" | "kerangkaWaktu" | "deadlineDate" | "completionPercent" | "createdAt" | "updatedAt", ExtArgs["result"]["projectRequirements"]>
+  export type ProjectRequirementsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "judulProyek" | "targetPengguna" | "latarBelakangMasalah" | "tujuanProyek" | "manfaatProyek" | "integrasiMatakuliah" | "metodologi" | "penulisanLaporan" | "ruangLingkup" | "sumberDayaBatasan" | "teknologi" | "fiturUtama" | "analisisTemuan" | "presentasiUjian" | "stakeholder" | "kepatuhanEtika" | "timeline" | "kerangkaWaktu" | "deadlineDate" | "productionUrl" | "productionUrlStatus" | "productionUrlCheckedAt" | "testingUsername" | "testingPassword" | "testingNotes" | "completionPercent" | "createdAt" | "updatedAt", ExtArgs["result"]["projectRequirements"]>
   export type ProjectRequirementsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }
@@ -18272,6 +18338,12 @@ export namespace Prisma {
       timeline: string | null
       kerangkaWaktu: string | null
       deadlineDate: Date | null
+      productionUrl: string | null
+      productionUrlStatus: string | null
+      productionUrlCheckedAt: Date | null
+      testingUsername: string | null
+      testingPassword: string | null
+      testingNotes: string | null
       completionPercent: number
       createdAt: Date
       updatedAt: Date
@@ -18720,6 +18792,12 @@ export namespace Prisma {
     readonly timeline: FieldRef<"ProjectRequirements", 'String'>
     readonly kerangkaWaktu: FieldRef<"ProjectRequirements", 'String'>
     readonly deadlineDate: FieldRef<"ProjectRequirements", 'DateTime'>
+    readonly productionUrl: FieldRef<"ProjectRequirements", 'String'>
+    readonly productionUrlStatus: FieldRef<"ProjectRequirements", 'String'>
+    readonly productionUrlCheckedAt: FieldRef<"ProjectRequirements", 'DateTime'>
+    readonly testingUsername: FieldRef<"ProjectRequirements", 'String'>
+    readonly testingPassword: FieldRef<"ProjectRequirements", 'String'>
+    readonly testingNotes: FieldRef<"ProjectRequirements", 'String'>
     readonly completionPercent: FieldRef<"ProjectRequirements", 'Int'>
     readonly createdAt: FieldRef<"ProjectRequirements", 'DateTime'>
     readonly updatedAt: FieldRef<"ProjectRequirements", 'DateTime'>
@@ -21798,6 +21876,12 @@ export namespace Prisma {
     timeline: 'timeline',
     kerangkaWaktu: 'kerangkaWaktu',
     deadlineDate: 'deadlineDate',
+    productionUrl: 'productionUrl',
+    productionUrlStatus: 'productionUrlStatus',
+    productionUrlCheckedAt: 'productionUrlCheckedAt',
+    testingUsername: 'testingUsername',
+    testingPassword: 'testingPassword',
+    testingNotes: 'testingNotes',
     completionPercent: 'completionPercent',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -23135,6 +23219,12 @@ export namespace Prisma {
     timeline?: StringNullableFilter<"ProjectRequirements"> | string | null
     kerangkaWaktu?: StringNullableFilter<"ProjectRequirements"> | string | null
     deadlineDate?: DateTimeNullableFilter<"ProjectRequirements"> | Date | string | null
+    productionUrl?: StringNullableFilter<"ProjectRequirements"> | string | null
+    productionUrlStatus?: StringNullableFilter<"ProjectRequirements"> | string | null
+    productionUrlCheckedAt?: DateTimeNullableFilter<"ProjectRequirements"> | Date | string | null
+    testingUsername?: StringNullableFilter<"ProjectRequirements"> | string | null
+    testingPassword?: StringNullableFilter<"ProjectRequirements"> | string | null
+    testingNotes?: StringNullableFilter<"ProjectRequirements"> | string | null
     completionPercent?: IntFilter<"ProjectRequirements"> | number
     createdAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
@@ -23163,6 +23253,12 @@ export namespace Prisma {
     timeline?: SortOrderInput | SortOrder
     kerangkaWaktu?: SortOrderInput | SortOrder
     deadlineDate?: SortOrderInput | SortOrder
+    productionUrl?: SortOrderInput | SortOrder
+    productionUrlStatus?: SortOrderInput | SortOrder
+    productionUrlCheckedAt?: SortOrderInput | SortOrder
+    testingUsername?: SortOrderInput | SortOrder
+    testingPassword?: SortOrderInput | SortOrder
+    testingNotes?: SortOrderInput | SortOrder
     completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23194,6 +23290,12 @@ export namespace Prisma {
     timeline?: StringNullableFilter<"ProjectRequirements"> | string | null
     kerangkaWaktu?: StringNullableFilter<"ProjectRequirements"> | string | null
     deadlineDate?: DateTimeNullableFilter<"ProjectRequirements"> | Date | string | null
+    productionUrl?: StringNullableFilter<"ProjectRequirements"> | string | null
+    productionUrlStatus?: StringNullableFilter<"ProjectRequirements"> | string | null
+    productionUrlCheckedAt?: DateTimeNullableFilter<"ProjectRequirements"> | Date | string | null
+    testingUsername?: StringNullableFilter<"ProjectRequirements"> | string | null
+    testingPassword?: StringNullableFilter<"ProjectRequirements"> | string | null
+    testingNotes?: StringNullableFilter<"ProjectRequirements"> | string | null
     completionPercent?: IntFilter<"ProjectRequirements"> | number
     createdAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectRequirements"> | Date | string
@@ -23222,6 +23324,12 @@ export namespace Prisma {
     timeline?: SortOrderInput | SortOrder
     kerangkaWaktu?: SortOrderInput | SortOrder
     deadlineDate?: SortOrderInput | SortOrder
+    productionUrl?: SortOrderInput | SortOrder
+    productionUrlStatus?: SortOrderInput | SortOrder
+    productionUrlCheckedAt?: SortOrderInput | SortOrder
+    testingUsername?: SortOrderInput | SortOrder
+    testingPassword?: SortOrderInput | SortOrder
+    testingNotes?: SortOrderInput | SortOrder
     completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -23257,6 +23365,12 @@ export namespace Prisma {
     timeline?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
     kerangkaWaktu?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
     deadlineDate?: DateTimeNullableWithAggregatesFilter<"ProjectRequirements"> | Date | string | null
+    productionUrl?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    productionUrlStatus?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    productionUrlCheckedAt?: DateTimeNullableWithAggregatesFilter<"ProjectRequirements"> | Date | string | null
+    testingUsername?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    testingPassword?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    testingNotes?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
     completionPercent?: IntWithAggregatesFilter<"ProjectRequirements"> | number
     createdAt?: DateTimeWithAggregatesFilter<"ProjectRequirements"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ProjectRequirements"> | Date | string
@@ -24695,6 +24809,12 @@ export namespace Prisma {
     timeline?: string | null
     kerangkaWaktu?: string | null
     deadlineDate?: Date | string | null
+    productionUrl?: string | null
+    productionUrlStatus?: string | null
+    productionUrlCheckedAt?: Date | string | null
+    testingUsername?: string | null
+    testingPassword?: string | null
+    testingNotes?: string | null
     completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24723,6 +24843,12 @@ export namespace Prisma {
     timeline?: string | null
     kerangkaWaktu?: string | null
     deadlineDate?: Date | string | null
+    productionUrl?: string | null
+    productionUrlStatus?: string | null
+    productionUrlCheckedAt?: Date | string | null
+    testingUsername?: string | null
+    testingPassword?: string | null
+    testingNotes?: string | null
     completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24749,6 +24875,12 @@ export namespace Prisma {
     timeline?: NullableStringFieldUpdateOperationsInput | string | null
     kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
     deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlCheckedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
     completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24777,6 +24909,12 @@ export namespace Prisma {
     timeline?: NullableStringFieldUpdateOperationsInput | string | null
     kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
     deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlCheckedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
     completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24804,6 +24942,12 @@ export namespace Prisma {
     timeline?: string | null
     kerangkaWaktu?: string | null
     deadlineDate?: Date | string | null
+    productionUrl?: string | null
+    productionUrlStatus?: string | null
+    productionUrlCheckedAt?: Date | string | null
+    testingUsername?: string | null
+    testingPassword?: string | null
+    testingNotes?: string | null
     completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -24830,6 +24974,12 @@ export namespace Prisma {
     timeline?: NullableStringFieldUpdateOperationsInput | string | null
     kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
     deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlCheckedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
     completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -24857,6 +25007,12 @@ export namespace Prisma {
     timeline?: NullableStringFieldUpdateOperationsInput | string | null
     kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
     deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlCheckedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
     completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26098,6 +26254,12 @@ export namespace Prisma {
     timeline?: SortOrder
     kerangkaWaktu?: SortOrder
     deadlineDate?: SortOrder
+    productionUrl?: SortOrder
+    productionUrlStatus?: SortOrder
+    productionUrlCheckedAt?: SortOrder
+    testingUsername?: SortOrder
+    testingPassword?: SortOrder
+    testingNotes?: SortOrder
     completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26129,6 +26291,12 @@ export namespace Prisma {
     timeline?: SortOrder
     kerangkaWaktu?: SortOrder
     deadlineDate?: SortOrder
+    productionUrl?: SortOrder
+    productionUrlStatus?: SortOrder
+    productionUrlCheckedAt?: SortOrder
+    testingUsername?: SortOrder
+    testingPassword?: SortOrder
+    testingNotes?: SortOrder
     completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26156,6 +26324,12 @@ export namespace Prisma {
     timeline?: SortOrder
     kerangkaWaktu?: SortOrder
     deadlineDate?: SortOrder
+    productionUrl?: SortOrder
+    productionUrlStatus?: SortOrder
+    productionUrlCheckedAt?: SortOrder
+    testingUsername?: SortOrder
+    testingPassword?: SortOrder
+    testingNotes?: SortOrder
     completionPercent?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -28528,6 +28702,12 @@ export namespace Prisma {
     timeline?: string | null
     kerangkaWaktu?: string | null
     deadlineDate?: Date | string | null
+    productionUrl?: string | null
+    productionUrlStatus?: string | null
+    productionUrlCheckedAt?: Date | string | null
+    testingUsername?: string | null
+    testingPassword?: string | null
+    testingNotes?: string | null
     completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28554,6 +28734,12 @@ export namespace Prisma {
     timeline?: string | null
     kerangkaWaktu?: string | null
     deadlineDate?: Date | string | null
+    productionUrl?: string | null
+    productionUrlStatus?: string | null
+    productionUrlCheckedAt?: Date | string | null
+    testingUsername?: string | null
+    testingPassword?: string | null
+    testingNotes?: string | null
     completionPercent?: number
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28876,6 +29062,12 @@ export namespace Prisma {
     timeline?: NullableStringFieldUpdateOperationsInput | string | null
     kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
     deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlCheckedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
     completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28902,6 +29094,12 @@ export namespace Prisma {
     timeline?: NullableStringFieldUpdateOperationsInput | string | null
     kerangkaWaktu?: NullableStringFieldUpdateOperationsInput | string | null
     deadlineDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlStatus?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrlCheckedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
+    testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
     completionPercent?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

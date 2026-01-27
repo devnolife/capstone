@@ -1,156 +1,109 @@
 'use client';
 
-import { useRef, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { Button, Accordion, AccordionItem } from '@heroui/react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useTheme } from 'next-themes';
+import { Button } from '@heroui/react';
+import { motion } from 'framer-motion';
 import {
-  Sparkles,
-  GitBranch,
-  FileText,
-  Users,
-  CheckCircle,
   ArrowRight,
   Github,
-  BookOpen,
-  Zap,
-  Shield,
-  Star,
-  Rocket,
-  MessageCircle,
-  TrendingUp,
+  FileText,
+  Users,
+  GitBranch,
   Upload,
-  Eye,
+  MessageSquare,
+  CheckCircle,
+  Star,
+  TrendingUp,
   GraduationCap,
-  Clock,
-  AlertCircle,
-  CheckCircle2,
-  XCircle,
-  FileCheck,
-  Calendar,
-  Award,
-  Target,
+  BookOpen,
+  Shield,
+  Zap,
+  Eye,
   Layers,
-  HelpCircle,
-  ChevronDown,
+  Moon,
+  Sun,
 } from 'lucide-react';
 
-// Animated Counter Component
-function AnimatedCounter({ value, duration = 2000 }: { value: string; duration?: number }) {
-  const [count, setCount] = useState(0);
-  const numericValue = parseInt(value.replace(/\D/g, '')) || 0;
-  const hasPlus = value.includes('+');
-  const hasPercent = value.includes('%');
-  const ref = useRef<HTMLSpanElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setIsVisible(true);
-      },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isVisible) return;
-    const steps = 60;
-    const stepValue = numericValue / steps;
-    let current = 0;
-    const timer = setInterval(() => {
-      current += stepValue;
-      if (current >= numericValue) {
-        setCount(numericValue);
-        clearInterval(timer);
-      } else {
-        setCount(Math.floor(current));
-      }
-    }, duration / steps);
-    return () => clearInterval(timer);
-  }, [isVisible, numericValue, duration]);
-
-  if (value === '24/7') return <span ref={ref}>{value}</span>;
-  return <span ref={ref}>{count}{hasPlus && '+'}{hasPercent && '%'}</span>;
-}
-
-// Bento Card Component
-function BentoCard({
-  children,
-  className = '',
+// Feature Card Component
+function FeatureCard({
+  title,
+  icons,
   delay = 0,
 }: {
-  children: React.ReactNode;
-  className?: string;
+  title: string;
+  icons: { icon: React.ReactNode; color: string }[];
   delay?: number;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.5, delay, ease: [0.25, 0.1, 0.25, 1] }}
-      whileHover={{ scale: 1.02 }}
-      className={`bento-card card-shine group ${className}`}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay }}
+      className="relative bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
     >
-      {children}
+      <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">{title}</p>
+      <div className="grid grid-cols-3 gap-3">
+        {icons.map((item, i) => (
+          <div
+            key={i}
+            className={`w-10 h-10 rounded-xl bg-zinc-200/50 dark:bg-zinc-800/50 border border-zinc-300/50 dark:border-zinc-700/50 flex items-center justify-center ${item.color} hover:scale-110 transition-all duration-200`}
+          >
+            {item.icon}
+          </div>
+        ))}
+      </div>
     </motion.div>
   );
 }
 
-// Timeline Item Component
-function TimelineItem({
-  week,
-  title,
-  description,
-  isActive = false,
-  delay = 0,
-}: {
-  week: string;
-  title: string;
-  description: string;
-  isActive?: boolean;
-  delay?: number;
-}) {
+// Stats Component
+function StatItem({ value, label, icon, color = 'text-emerald-400' }: { value: string; label: string; icon: React.ReactNode; color?: string }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      className="flex gap-4"
-    >
-      <div className="flex flex-col items-center">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${isActive
-          ? 'bg-gradient-to-br from-blue-500 to-cyan-500 text-white'
-          : 'bg-default-100 text-default-500'
-          }`}>
-          {week}
-        </div>
-        <div className="w-px h-full bg-default-200 my-2" />
+    <div className="text-center">
+      <div className="flex items-center justify-center gap-2 mb-1">
+        <span className={color}>{icon}</span>
       </div>
-      <div className="pb-8">
-        <h4 className={`font-bold ${isActive ? 'text-foreground' : 'text-default-500'}`}>{title}</h4>
-        <p className="text-sm text-default-500 mt-1">{description}</p>
-      </div>
-    </motion.div>
+      <p className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">{value}</p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-500">{label}</p>
+    </div>
   );
 }
 
 export default function LandingPage() {
   const { data: session } = useSession();
-  const heroRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Wait for client-side hydration
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Fetch real-time stats
+  const [stats, setStats] = useState({
+    totalProjects: 0,
+    totalMahasiswa: 0,
+    successRate: 0,
   });
 
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const heroY = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch('/api/stats');
+        if (response.ok) {
+          const data = await response.json();
+          setStats(data);
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const getDashboardUrl = () => {
     switch (session?.user?.role) {
@@ -161,929 +114,419 @@ export default function LandingPage() {
     }
   };
 
-  const stats = [
-    { value: '500+', label: 'Projects', icon: <FileText size={16} /> },
-    { value: '50+', label: 'Dosen', icon: <Users size={16} /> },
-    { value: '98%', label: 'Success Rate', icon: <TrendingUp size={16} /> },
-  ];
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
-  const requirements = [
-    {
-      icon: BookOpen,
-      title: 'Judul Proyek',
-      gradient: 'from-blue-500 to-cyan-500',
-      items: [
-        'Mencerminkan topik utama yang relevan dengan bidang studi',
-        'Spesifik, jelas, dan mudah dipahami',
-        'Menunjukkan tujuan dan ruang lingkup proyek',
-      ],
-    },
-    {
-      icon: Target,
-      title: 'Tujuan dan Manfaat Proyek',
-      gradient: 'from-green-500 to-emerald-500',
-      items: [
-        'Memiliki tujuan yang jelas dan terukur',
-        'Kontribusi terhadap ilmu pengetahuan atau industri',
-        'Manfaat aplikatif untuk pengembangan produk/solusi',
-      ],
-    },
-    {
-      icon: Layers,
-      title: 'Integrasi Mata Kuliah',
-      gradient: 'from-purple-500 to-pink-500',
-      items: [
-        'Mengintegrasikan konsep dari beberapa mata kuliah',
-        'Penerapan teori dan keterampilan masa studi',
-        'Penjelasan relevansi mata kuliah dengan proyek',
-      ],
-    },
-    {
-      icon: GitBranch,
-      title: 'Metodologi',
-      gradient: 'from-orange-500 to-amber-500',
-      items: [
-        'Metodologi yang tepat sesuai bidang studi',
-        'Teknik pengumpulan dan analisis data yang jelas',
-        'Metodologi pengembangan, pengujian, dan evaluasi',
-      ],
-    },
-    {
-      icon: FileCheck,
-      title: 'Sumber Daya dan Batasan',
-      gradient: 'from-pink-500 to-rose-500',
-      items: [
-        'Penjelasan sumber daya yang diperlukan',
-        'Identifikasi batasan waktu, anggaran, akses data',
-        'Pemahaman kendala pelaksanaan proyek',
-      ],
-    },
-    {
-      icon: Calendar,
-      title: 'Kerangka Waktu',
-      gradient: 'from-teal-500 to-cyan-500',
-      items: [
-        'Jadwal pelaksanaan yang terstruktur',
-        'Tenggat waktu realistis setiap tahapan',
-        'Waktu untuk penelitian, pengembangan, dan laporan',
-      ],
-    },
-    {
-      icon: Sparkles,
-      title: 'Analisis dan Temuan',
-      gradient: 'from-yellow-500 to-orange-500',
-      items: [
-        'Analisis mendalam dengan data dan bukti relevan',
-        'Temuan yang dapat diaplikasikan dalam konteks nyata',
-        'Kontribusi untuk akademis, industri, atau masyarakat',
-      ],
-    },
-    {
-      icon: FileText,
-      title: 'Penulisan Laporan',
-      gradient: 'from-indigo-500 to-purple-500',
-      items: [
-        'Format akademik yang telah ditentukan (APA/MLA)',
-        'Struktur: pendahuluan, metodologi, analisis, kesimpulan',
-        'Referensi relevan dan mutakhir',
-      ],
-    },
-    {
-      icon: Award,
-      title: 'Presentasi dan Ujian',
-      gradient: 'from-red-500 to-pink-500',
-      items: [
-        'Presentasi lisan yang komunikatif',
-        'Mencakup tujuan, metodologi, temuan, dan rekomendasi',
-        'Evaluasi di depan penguji atau panel',
-      ],
-    },
-    {
-      icon: Users,
-      title: 'Keterlibatan Stakeholder',
-      gradient: 'from-cyan-500 to-blue-500',
-      items: [
-        'Melibatkan stakeholder dalam perencanaan/evaluasi',
-        'Feedback dari klien, pengguna, atau komunitas',
-        'Penjelasan kontribusi stakeholder dalam proyek',
-      ],
-    },
-    {
-      icon: Shield,
-      title: 'Kepatuhan Terhadap Etika',
-      gradient: 'from-emerald-500 to-green-500',
-      items: [
-        'Mematuhi standar etika yang berlaku',
-        'Penanganan data sensitif dan informasi pribadi',
-        'Penjelasan isu privasi dan persetujuan',
-      ],
-    },
-  ];
-
-  const faqs = [
-    {
-      question: 'Apa saja teknologi yang direkomendasikan?',
-      answer: 'Kami merekomendasikan penggunaan teknologi modern seperti React/Next.js untuk frontend, Node.js/Python untuk backend, dan PostgreSQL/MongoDB untuk database. Namun, Anda bebas memilih stack teknologi sesuai kebutuhan project selama dapat dipertanggungjawabkan.',
-    },
-    {
-      question: 'Berapa minimal SKS yang harus ditempuh?',
-      answer: 'Mahasiswa harus sudah menyelesaikan minimal 120 SKS dan telah lulus mata kuliah prasyarat seperti Pemrograman Web, Basis Data, dan Rekayasa Perangkat Lunak.',
-    },
-    {
-      question: 'Apakah bisa mengerjakan project secara tim?',
-      answer: 'Ya, project dapat dikerjakan secara tim dengan maksimal 3 orang. Setiap anggota tim harus memiliki kontribusi yang jelas dan terdokumentasi di GitHub.',
-    },
-    {
-      question: 'Bagaimana jika project ditolak?',
-      answer: 'Jika project ditolak, Anda akan mendapat feedback detail dari dosen penguji. Anda memiliki kesempatan untuk merevisi dan submit ulang maksimal 2 kali dalam periode yang sama.',
-    },
-    {
-      question: 'Apakah harus menggunakan GitHub?',
-      answer: 'Ya, penggunaan GitHub wajib untuk tracking progress development, code review, dan dokumentasi. Pastikan repository bersifat public atau berikan akses ke dosen penguji.',
-    },
-  ];
+  const isDark = theme === 'dark';
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden">
-      {/* Background Effects */}
-      <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="gradient-orb gradient-orb-1" />
-        <div className="gradient-orb gradient-orb-2" />
-        <div className="gradient-orb gradient-orb-3" />
-        <div className="dot-grid" />
+    <div className="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-white overflow-hidden">
+      {/* Grid Background */}
+      <div className="fixed inset-0 -z-10">
+        <div 
+          className="absolute inset-0 bg-white dark:bg-black"
+          style={{
+            backgroundImage: `linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        <div 
+          className="absolute inset-0 hidden dark:block"
+          style={{
+            backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
+            backgroundSize: '60px 60px',
+          }}
+        />
+        {/* Gradient overlay at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-white dark:from-black to-transparent" />
       </div>
 
       {/* Navigation */}
       <motion.nav
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
-        className="fixed top-0 left-0 right-0 z-50"
+        transition={{ duration: 0.5 }}
+        className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-xl"
       >
-        <div className="mx-4 mt-4">
-          <div className="max-w-6xl mx-auto px-6 py-3 rounded-2xl glass">
-            <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center gap-2.5 group">
-                <motion.div
-                  whileHover={{ scale: 1.05, rotate: 5 }}
-                  transition={{ type: 'spring', stiffness: 400 }}
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image
+              src="/logo.png"
+              alt="Capstone Logo"
+              width={32}
+              height={32}
+              className="rounded-lg"
+            />
+            <span className="font-bold text-lg text-zinc-900 dark:text-white">Capstone</span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-8">
+            <a href="#features" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              Features
+            </a>
+            <a href="#stats" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
+              Stats
+            </a>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            {mounted && (
+              <Button
+                isIconOnly
+                variant="light"
+                size="sm"
+                onPress={toggleTheme}
+                className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+              >
+                {isDark ? <Sun size={18} /> : <Moon size={18} />}
+              </Button>
+            )}
+            {session ? (
+              <Link href={getDashboardUrl()}>
+                <Button
+                  size="sm"
+                  className="font-medium bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
                 >
-                  <Image
-                    src="/logo.png"
-                    alt="Capstone Logo"
-                    width={36}
-                    height={36}
-                    className="rounded-xl"
-                  />
-                </motion.div>
-                <span className="font-bold text-lg tracking-tight">
-                  Cap<span className="gradient-text">stone</span>
-                </span>
+                  Dashboard
+                </Button>
               </Link>
-
-              <div className="hidden md:flex items-center gap-6">
-                {[
-                  { label: 'Features', href: '#features' },
-                  { label: 'Persyaratan', href: '#requirements' },
-                  { label: 'Alur', href: '#how-it-works' },
-                  { label: 'FAQ', href: '#faq' },
-                ].map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    className="text-sm font-medium text-default-500 hover:text-foreground transition-colors"
+            ) : (
+              <>
+                <Link href="/login">
+                  <Button
+                    size="sm"
+                    variant="light"
+                    className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
                   >
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-2">
-                {session ? (
-                  <Link href={getDashboardUrl()}>
-                    <Button
-                      size="sm"
-                      className="font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
-                      endContent={<ArrowRight size={14} />}
-                    >
-                      Dashboard
-                    </Button>
-                  </Link>
-                ) : (
-                  <Link href="/login">
-                    <Button
-                      size="sm"
-                      className="font-semibold bg-gradient-to-r from-blue-500 to-cyan-500 text-white"
-                    >
-                      Login
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            </div>
+                    Log in
+                  </Button>
+                </Link>
+                <Link href="/login">
+                  <Button
+                    size="sm"
+                    className="font-medium bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+                  >
+                    Get Started
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </motion.nav>
 
       {/* Hero Section */}
-      <motion.section
-        ref={heroRef}
-        style={{ opacity: heroOpacity, y: heroY }}
-        className="relative pt-32 pb-8 px-4"
-      >
-        <div className="max-w-6xl mx-auto">
-          {/* Hero Text */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            {/* Badge */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1 }}
-              className="mb-6"
-            >
-              <span className="inline-flex items-center gap-2 badge-modern badge-glow">
-                <Star className="text-amber-400" size={14} />
-                <span className="text-default-600 text-sm">Platform Resmi Informatika 2026</span>
-              </span>
-            </motion.div>
+      <section className="relative pt-32 pb-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left Content */}
+            <div>
+              {/* Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="mb-8"
+              >
+                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-zinc-600 dark:text-zinc-400">SISTEM CAPSTONE PROJECT 2026</span>
+                  <ArrowRight size={14} className="text-zinc-500" />
+                </span>
+              </motion.div>
 
-            {/* Headline */}
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-4"
-            >
-              Submit. Review.{' '}
-              <span className="gradient-text">Graduate.</span>
-            </motion.h1>
+              {/* Headline */}
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+              >
+                Semua project capstone,{' '}
+                <span className="text-zinc-500">dalam satu platform</span>
+              </motion.h1>
 
-            {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-lg md:text-xl text-default-500 max-w-2xl mx-auto mb-8"
-            >
-              Platform all-in-one untuk pengumpulan dan penilaian capstone project.{' '}
-              <span className="text-foreground font-medium">Terintegrasi dengan GitHub. Feedback real-time.</span>
-            </motion.p>
+              {/* Description */}
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-lg text-zinc-600 dark:text-zinc-400 mb-8 max-w-lg"
+              >
+                Platform terintegrasi untuk submit project, review code, track progress, dan dapatkan feedback real-time dari dosen pembimbing.
+              </motion.p>
 
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="flex flex-col sm:flex-row gap-3 justify-center"
-            >
-              {session ? (
-                <Link href={getDashboardUrl()}>
-                  <Button
-                    size="lg"
-                    className="font-bold bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all px-8"
-                    endContent={<Rocket size={18} />}
-                  >
-                    Buka Dashboard
-                  </Button>
-                </Link>
-              ) : (
-                <>
-                  <Link href="/login">
+              {/* CTA Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="flex flex-wrap gap-3"
+              >
+                {session ? (
+                  <Link href={getDashboardUrl()}>
                     <Button
                       size="lg"
-                      className="font-bold bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/30 transition-all px-8"
+                      className="font-semibold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-8"
                       endContent={<ArrowRight size={18} />}
                     >
-                      Login Sekarang
+                      Buka Dashboard
                     </Button>
                   </Link>
-                  <a href="#requirements">
-                    <Button
-                      size="lg"
-                      variant="bordered"
-                      className="font-semibold border-default-200 hover:bg-default-100 px-8"
-                      startContent={<FileText size={18} />}
-                    >
-                      Lihat Persyaratan
-                    </Button>
-                  </a>
-                </>
-              )}
-            </motion.div>
+                ) : (
+                  <>
+                    <Link href="/login">
+                      <Button
+                        size="lg"
+                        className="font-semibold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-8"
+                        endContent={<ArrowRight size={18} />}
+                      >
+                        Login Sekarang
+                      </Button>
+                    </Link>
+                    <a href="#features">
+                      <Button
+                        size="lg"
+                        variant="bordered"
+                        className="font-semibold border-zinc-300 text-zinc-900 hover:bg-zinc-100 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-900 px-8"
+                      >
+                        Lihat Features
+                      </Button>
+                    </a>
+                  </>
+                )}
+              </motion.div>
 
-            {/* Quick Stats */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="flex justify-center gap-8 mt-12"
-            >
-              {stats.map((stat, i) => (
-                <div key={i} className="text-center">
-                  <div className="flex items-center justify-center gap-1 mb-1">
-                    <span className="text-blue-500">{stat.icon}</span>
+              {/* Trust badges */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800"
+              >
+                <p className="text-xs text-zinc-500 mb-4">TERINTEGRASI DENGAN</p>
+                <div className="flex items-center gap-6 flex-wrap">
+                  <div className="flex items-center gap-2">
+                    <Github size={20} className="text-zinc-900 dark:text-white" />
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">GitHub</span>
                   </div>
-                  <p className="text-2xl md:text-3xl font-black gradient-text">
-                    <AnimatedCounter value={stat.value} />
-                  </p>
-                  <p className="text-xs text-default-500">{stat.label}</p>
-                </div>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          {/* Bento Grid Section */}
-          <section id="features" className="mt-20">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <span className="badge-modern inline-flex items-center gap-2 mb-4">
-                <Sparkles className="text-blue-400" size={14} />
-                <span className="text-sm">Platform Features</span>
-              </span>
-              <h2 className="text-3xl md:text-4xl font-black">
-                Semua yang kamu butuhkan,{' '}
-                <span className="gradient-text">dalam satu platform</span>
-              </h2>
-            </motion.div>
-
-            <div className="bento-grid">
-              {/* Large Card - GitHub Integration */}
-              <BentoCard className="bento-span-2 bento-span-2-row min-h-[320px]" delay={0}>
-                <div className="h-full flex flex-col">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                      <GitBranch className="text-white" size={24} />
-                    </div>
-                    <span className="text-xs font-medium text-blue-400 bg-blue-500/10 px-2 py-1 rounded-full">
-                      Popular
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <GraduationCap size={20} className="text-blue-500" />
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">SIMIKAD</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">GitHub Integration</h3>
-                  <p className="text-default-500 text-sm mb-4 flex-grow">
-                    Connect repository langsung ke platform. Review code, lihat commits, dan track progress development secara real-time.
-                  </p>
-                  {/* Code Preview */}
-                  <div className="code-preview mt-auto">
-                    <div className="code-line">
-                      <span className="code-line-number">1</span>
-                      <span className="code-line-content">
-                        <span className="code-keyword">const</span> <span className="code-function">project</span> = <span className="code-keyword">await</span> connect(
-                      </span>
-                    </div>
-                    <div className="code-line">
-                      <span className="code-line-number">2</span>
-                      <span className="code-line-content">
-                        {'  '}<span className="code-string">&quot;github.com/user/capstone&quot;</span>
-                      </span>
-                    </div>
-                    <div className="code-line">
-                      <span className="code-line-number">3</span>
-                      <span className="code-line-content">);</span>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Layers size={20} className="text-emerald-500" />
+                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">SIMTEKMU</span>
                   </div>
                 </div>
-              </BentoCard>
-
-              {/* Smart Upload Card */}
-              <BentoCard className="min-h-[150px]" delay={0.1}>
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sky-500 to-blue-500 flex items-center justify-center flex-shrink-0">
-                    <Upload className="text-white" size={20} />
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold mb-1">Smart Upload</h3>
-                <p className="text-default-500 text-sm">
-                  Drag & drop dokumen. Auto-organize per BAB dengan validasi format otomatis.
-                </p>
-              </BentoCard>
-
-              {/* Real-time Review Card */}
-              <BentoCard className="min-h-[150px]" delay={0.15}>
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0">
-                    <Zap className="text-white" size={20} />
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold mb-1">Real-time Feedback</h3>
-                <p className="text-default-500 text-sm">
-                  Notifikasi instan setiap ada review atau komentar dari dosen.
-                </p>
-              </BentoCard>
-
-              {/* Progress Tracking Card */}
-              <BentoCard className="min-h-[150px]" delay={0.2}>
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="text-white" size={20} />
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold mb-1">Progress Tracking</h3>
-                <p className="text-default-500 text-sm">
-                  Dashboard visual untuk monitor progress dan status project.
-                </p>
-              </BentoCard>
-
-              {/* Rubrik Penilaian Card */}
-              <BentoCard className="bento-span-2 min-h-[150px]" delay={0.25}>
-                <div className="h-full flex flex-col">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                      <Layers className="text-white" size={20} />
-                    </div>
-                  </div>
-                  <h3 className="text-lg font-bold mb-2">Rubrik Penilaian Terstandar</h3>
-                  <p className="text-default-500 text-sm mb-3">
-                    Penilaian objektif dengan rubrik yang jelas dan transparan.
-                  </p>
-                  <div className="grid grid-cols-5 gap-2 mt-auto">
-                    {['Kode', 'Fungsi', 'Docs', 'Inovasi', 'Demo'].map((item, i) => (
-                      <div key={i} className="text-center p-2 rounded-lg bg-default-100">
-                        <p className="text-xs text-default-500">{item}</p>
-                        <p className="text-sm font-bold text-default-700">{[20, 25, 20, 15, 20][i]}%</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </BentoCard>
-
-              {/* Code Review Card */}
-              <BentoCard className="min-h-[150px]" delay={0.3}>
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center flex-shrink-0">
-                    <Eye className="text-white" size={20} />
-                  </div>
-                </div>
-                <h3 className="text-lg font-bold mb-1">Code Review</h3>
-                <p className="text-default-500 text-sm">
-                  Inline comments langsung di code untuk feedback yang spesifik.
-                </p>
-              </BentoCard>
+              </motion.div>
             </div>
-          </section>
-        </div>
-      </motion.section>
 
-      {/* Requirements Section */}
-      <section id="requirements" className="py-24 px-4 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-500/5 to-transparent" />
-        <div className="max-w-7xl mx-auto relative">
+            {/* Right Content - Feature Cards Grid */}
+            <div className="hidden lg:grid grid-cols-2 gap-4">
+              <FeatureCard
+                title="PROJECTS"
+                delay={0.2}
+                icons={[
+                  { icon: <GitBranch key="1" size={20} />, color: 'text-blue-400' },
+                  { icon: <FileText key="2" size={20} />, color: 'text-emerald-400' },
+                  { icon: <Upload key="3" size={20} />, color: 'text-violet-400' },
+                  { icon: <Eye key="4" size={20} />, color: 'text-amber-400' },
+                  { icon: <Layers key="5" size={20} />, color: 'text-pink-400' },
+                  { icon: <Zap key="6" size={20} />, color: 'text-cyan-400' },
+                ]}
+              />
+              <FeatureCard
+                title="REVIEWS"
+                delay={0.3}
+                icons={[
+                  { icon: <MessageSquare key="1" size={20} />, color: 'text-orange-400' },
+                  { icon: <CheckCircle key="2" size={20} />, color: 'text-green-400' },
+                  { icon: <Star key="3" size={20} />, color: 'text-yellow-400' },
+                  { icon: <TrendingUp key="4" size={20} />, color: 'text-rose-400' },
+                  { icon: <Users key="5" size={20} />, color: 'text-indigo-400' },
+                  { icon: <BookOpen key="6" size={20} />, color: 'text-teal-400' },
+                ]}
+              />
+              <FeatureCard
+                title="DOCUMENTS"
+                delay={0.4}
+                icons={[
+                  { icon: <FileText key="1" size={20} />, color: 'text-red-400' },
+                  { icon: <Upload key="2" size={20} />, color: 'text-sky-400' },
+                  { icon: <Eye key="3" size={20} />, color: 'text-lime-400' },
+                  { icon: <CheckCircle key="4" size={20} />, color: 'text-fuchsia-400' },
+                  { icon: <Layers key="5" size={20} />, color: 'text-orange-400' },
+                  { icon: <Shield key="6" size={20} />, color: 'text-emerald-400' },
+                ]}
+              />
+              <FeatureCard
+                title="ANALYTICS"
+                delay={0.5}
+                icons={[
+                  { icon: <TrendingUp key="1" size={20} />, color: 'text-purple-400' },
+                  { icon: <Star key="2" size={20} />, color: 'text-amber-400' },
+                  { icon: <Users key="3" size={20} />, color: 'text-blue-400' },
+                  { icon: <Zap key="4" size={20} />, color: 'text-yellow-400' },
+                  { icon: <Eye key="5" size={20} />, color: 'text-cyan-400' },
+                  { icon: <CheckCircle key="6" size={20} />, color: 'text-green-400' },
+                ]}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section id="stats" className="py-16 px-6 border-y border-zinc-200/50 dark:border-zinc-800/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex justify-center gap-16 md:gap-24">
+            <StatItem
+              value={`${stats.totalProjects}+`}
+              label="Total Projects"
+              icon={<FileText size={16} />}
+              color="text-blue-400"
+            />
+            <StatItem
+              value={`${stats.totalMahasiswa}+`}
+              label="Mahasiswa"
+              icon={<Users size={16} />}
+              color="text-violet-400"
+            />
+            <StatItem
+              value={`${stats.successRate}%`}
+              label="Success Rate"
+              icon={<TrendingUp size={16} />}
+              color="text-emerald-400"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section id="features" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <span className="badge-modern inline-flex items-center gap-2 mb-4">
-              <FileCheck className="text-emerald-400" size={14} />
-              <span className="text-sm">Persyaratan Umum</span>
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black mb-4">
-              Persyaratan{' '}
-              <span className="gradient-text">Capstone Project</span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Platform lengkap untuk capstone project
             </h2>
-            <p className="text-default-500 max-w-2xl mx-auto">
-              Panduan lengkap persyaratan yang harus dipenuhi dalam pelaksanaan Capstone Project. Pastikan setiap aspek dipahami dan diterapkan dengan baik.
+            <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+              Semua yang Anda butuhkan untuk mengelola, submit, dan mendapatkan penilaian project capstone dalam satu platform terintegrasi.
             </p>
           </motion.div>
 
-          {/* Modern Requirements Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {requirements.map((req, i) => {
-              const Icon = req.icon;
-              return (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ delay: i * 0.05, duration: 0.4 }}
-                  whileHover={{ y: -4, transition: { duration: 0.2 } }}
-                  className="group relative"
-                >
-                  {/* Card */}
-                  <div className="h-full p-6 rounded-2xl bg-white dark:bg-content1 border border-default-200 hover:border-default-300 dark:hover:border-default-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
-                    {/* Gradient Background on Hover */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${req.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300`} />
-
-                    {/* Header */}
-                    <div className="relative flex items-start gap-4 mb-5">
-                      {/* Icon Container with Gradient */}
-                      <div className={`relative w-12 h-12 rounded-xl bg-gradient-to-br ${req.gradient} flex items-center justify-center shrink-0 shadow-lg`}>
-                        <Icon className="text-white" size={22} />
-                        {/* Glow Effect */}
-                        <div className={`absolute inset-0 rounded-xl bg-gradient-to-br ${req.gradient} blur-lg opacity-0 group-hover:opacity-40 transition-opacity duration-300`} />
-                      </div>
-
-                      {/* Title & Number */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] font-bold text-default-400 bg-default-100 px-2 py-0.5 rounded-full">
-                            {String(i + 1).padStart(2, '0')}
-                          </span>
-                        </div>
-                        <h3 className="font-bold text-base leading-tight line-clamp-2 group-hover:text-default-900 transition-colors">
-                          {req.title}
-                        </h3>
-                      </div>
-                    </div>
-
-                    {/* Items List */}
-                    <div className="relative space-y-2.5">
-                      {req.items.map((item, idx) => (
-                        <motion.div
-                          key={idx}
-                          initial={{ opacity: 0, x: -10 }}
-                          whileInView={{ opacity: 1, x: 0 }}
-                          viewport={{ once: true }}
-                          transition={{ delay: i * 0.05 + idx * 0.1 }}
-                          className="flex items-start gap-2.5 group/item"
-                        >
-                          {/* Animated Check Icon */}
-                          <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${req.gradient} flex items-center justify-center shrink-0 mt-0.5 opacity-80 group-hover/item:opacity-100 group-hover/item:scale-110 transition-all duration-200`}>
-                            <CheckCircle2 size={12} className="text-white" />
-                          </div>
-                          <span className="text-sm text-default-600 leading-relaxed group-hover/item:text-default-800 transition-colors">
-                            {item}
-                          </span>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    {/* Bottom Gradient Line */}
-                    <div className={`absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r ${req.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          {/* Important Notice - Redesigned */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mt-16"
-          >
-            <div className="relative overflow-hidden rounded-3xl border border-amber-500/20 bg-gradient-to-br from-amber-500/5 via-orange-500/5 to-yellow-500/5">
-              {/* Background Pattern */}
-              <div className="absolute inset-0 opacity-30">
-                <div className="absolute top-0 left-0 w-40 h-40 bg-amber-400/20 rounded-full blur-3xl" />
-                <div className="absolute bottom-0 right-0 w-60 h-60 bg-orange-400/20 rounded-full blur-3xl" />
-              </div>
-
-              <div className="relative p-8 md:p-10">
-                <div className="flex flex-col md:flex-row items-start gap-6">
-                  {/* Icon */}
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-500/20">
-                    <AlertCircle className="text-white" size={28} />
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1">
-                    <h4 className="text-xl font-bold text-amber-700 dark:text-amber-400 mb-3 flex items-center gap-2">
-                      Catatan Penting
-                      <span className="text-xs font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 px-2 py-1 rounded-full">
-                        Wajib Dibaca
-                      </span>
-                    </h4>
-                    <p className="text-default-600 leading-relaxed mb-4">
-                      Persyaratan ini bersifat wajib dan akan menjadi acuan dalam penilaian Capstone Project.
-                      Diskusikan dengan dosen pembimbing jika ada hal yang belum jelas atau memerlukan klarifikasi lebih lanjut.
-                    </p>
-
-                    {/* Quick Tips */}
-                    <div className="flex flex-wrap gap-3">
-                      {[
-                        { icon: Clock, text: 'Perhatikan deadline' },
-                        { icon: Users, text: 'Konsultasi rutin' },
-                        { icon: FileCheck, text: 'Dokumentasi lengkap' },
-                      ].map((tip, idx) => (
-                        <div
-                          key={idx}
-                          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 dark:bg-white/5 border border-amber-200/50 dark:border-amber-500/20"
-                        >
-                          <tip.icon size={14} className="text-amber-600 dark:text-amber-400" />
-                          <span className="text-xs font-medium text-amber-700 dark:text-amber-300">{tip.text}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="how-it-works" className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="badge-modern inline-flex items-center gap-2 mb-4">
-              <Rocket className="text-blue-400" size={14} />
-              <span className="text-sm">Alur Capstone</span>
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black">
-              Dari proposal sampai{' '}
-              <span className="gradient-text">lulus sidang</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            {/* Timeline */}
-            <div>
-              <TimelineItem
-                week="1-4"
-                title="Fase Proposal"
-                description="Submit proposal, review oleh dosen pembimbing, dan revisi hingga disetujui."
-                isActive
-                delay={0}
-              />
-              <TimelineItem
-                week="5-10"
-                title="Fase Development"
-                description="Implementasi project sesuai proposal. Push code ke GitHub secara berkala."
-                delay={0.1}
-              />
-              <TimelineItem
-                week="11-12"
-                title="Testing & Dokumentasi"
-                description="Testing menyeluruh, bug fixing, dan melengkapi dokumentasi."
-                delay={0.2}
-              />
-              <TimelineItem
-                week="13-14"
-                title="Review & Revisi"
-                description="Submit untuk review dosen penguji. Revisi berdasarkan feedback."
-                delay={0.3}
-              />
-              <TimelineItem
-                week="15-16"
-                title="Presentasi Final"
-                description="Demo project dan sidang akhir di depan tim penguji."
-                delay={0.4}
-              />
-            </div>
-
-            {/* Steps Cards */}
-            <div className="space-y-4">
-              {[
-                { step: '01', title: 'Login', desc: 'Masuk dengan NIM yang terdaftar di sistem', icon: <Users size={20} />, color: 'from-blue-500 to-cyan-500' },
-                { step: '02', title: 'Buat Project', desc: 'Isi detail project dan connect GitHub repo', icon: <GitBranch size={20} />, color: 'from-violet-500 to-purple-500' },
-                { step: '03', title: 'Upload Dokumen', desc: 'Upload proposal, laporan, dan dokumen pendukung', icon: <FileText size={20} />, color: 'from-amber-500 to-orange-500' },
-                { step: '04', title: 'Submit & Review', desc: 'Submit untuk review dan tunggu feedback dosen', icon: <MessageCircle size={20} />, color: 'from-emerald-500 to-teal-500' },
-              ].map((item, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="flex items-center gap-4 p-4 rounded-xl border border-default-200 bg-background/50 backdrop-blur-sm hover:border-primary/50 transition-all"
-                >
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${item.color} flex items-center justify-center text-white flex-shrink-0`}>
-                    {item.icon}
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-default-400">{item.step}</span>
-                      <h4 className="font-bold">{item.title}</h4>
-                    </div>
-                    <p className="text-sm text-default-500">{item.desc}</p>
-                  </div>
-                  <ArrowRight size={16} className="text-default-300" />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Roles Section */}
-      <section id="roles" className="py-24 px-4">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="badge-modern inline-flex items-center gap-2 mb-4">
-              <Users className="text-cyan-400" size={14} />
-              <span className="text-sm">User Roles</span>
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black">
-              Didesain untuk{' '}
-              <span className="gradient-text">semua peran</span>
-            </h2>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               {
-                title: 'Mahasiswa',
-                subtitle: 'Submit & track progress',
-                gradient: 'from-blue-500 to-cyan-500',
-                features: ['Buat & kelola project', 'Connect GitHub repo', 'Upload dokumen', 'Lihat feedback & nilai'],
-                icon: <GraduationCap size={28} />,
+                icon: <GitBranch size={24} />,
+                title: 'GitHub Integration',
+                desc: 'Connect repository langsung ke platform. Track commits dan review code secara real-time.',
+                color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
               },
               {
-                title: 'Dosen Penguji',
-                subtitle: 'Review & beri penilaian',
-                gradient: 'from-violet-500 to-purple-500',
-                features: ['Review code di GitHub', 'Beri skor per rubrik', 'Tulis komentar', 'Track progress mahasiswa'],
-                icon: <BookOpen size={28} />,
+                icon: <Upload size={24} />,
+                title: 'Smart Upload',
+                desc: 'Upload dokumen dengan drag & drop. Auto-organize berdasarkan kategori dan validasi format.',
+                color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
               },
               {
-                title: 'Admin',
-                subtitle: 'Kelola sistem',
-                gradient: 'from-emerald-500 to-teal-500',
-                features: ['Kelola user', 'Assign dosen penguji', 'Konfigurasi rubrik', 'Monitor seluruh sistem'],
-                icon: <Shield size={28} />,
+                icon: <MessageSquare size={24} />,
+                title: 'Real-time Feedback',
+                desc: 'Dapatkan notifikasi instan setiap ada review atau komentar dari dosen pembimbing.',
+                color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
               },
-            ].map((role, i) => (
+              {
+                icon: <TrendingUp size={24} />,
+                title: 'Progress Tracking',
+                desc: 'Dashboard visual untuk monitor progress dan status project secara real-time.',
+                color: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+              },
+              {
+                icon: <Layers size={24} />,
+                title: 'Rubrik Penilaian',
+                desc: 'Sistem penilaian terstandar dengan rubrik yang jelas dan transparan.',
+                color: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
+              },
+              {
+                icon: <Eye size={24} />,
+                title: 'Code Review',
+                desc: 'Inline comments langsung di code untuk feedback yang spesifik dan actionable.',
+                color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+              },
+            ].map((feature, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                whileHover={{ y: -4 }}
-                className={`rounded-2xl bg-gradient-to-br ${role.gradient} p-6 text-white relative overflow-hidden`}
+                className="p-6 rounded-2xl bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
-                <div className="relative">
-                  <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center mb-4">
-                    {role.icon}
-                  </div>
-                  <h3 className="text-xl font-bold mb-1">{role.title}</h3>
-                  <p className="text-white/70 text-sm mb-4">{role.subtitle}</p>
-                  <ul className="space-y-2">
-                    {role.features.map((f, j) => (
-                      <li key={j} className="flex items-center gap-2 text-sm text-white/90">
-                        <CheckCircle size={14} className="text-white/60" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
+                <div className={`w-12 h-12 rounded-xl ${feature.color} border flex items-center justify-center mb-4`}>
+                  {feature.icon}
                 </div>
+                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-zinc-600 dark:text-zinc-400 text-sm">{feature.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section id="faq" className="py-24 px-4">
-        <div className="max-w-3xl mx-auto">
+      {/* CTA Section */}
+      <section className="py-24 px-6">
+        <div className="max-w-4xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-center mb-12"
           >
-            <span className="badge-modern inline-flex items-center gap-2 mb-4">
-              <HelpCircle className="text-amber-400" size={14} />
-              <span className="text-sm">FAQ</span>
-            </span>
-            <h2 className="text-3xl md:text-4xl font-black">
-              Pertanyaan yang{' '}
-              <span className="gradient-text">sering diajukan</span>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Siap untuk memulai?
             </h2>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <Accordion variant="bordered" className="gap-3">
-              {faqs.map((faq, i) => (
-                <AccordionItem
-                  key={i}
-                  aria-label={faq.question}
-                  title={<span className="font-semibold text-sm">{faq.question}</span>}
-                  className="px-4"
+            <p className="text-zinc-600 dark:text-zinc-400 mb-8 max-w-lg mx-auto">
+              Login sekarang dan mulai perjalanan capstone project Anda. Tim kami siap membantu.
+            </p>
+            {!session && (
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="font-semibold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-8"
+                  endContent={<ArrowRight size={18} />}
                 >
-                  <p className="text-default-500 text-sm pb-4">{faq.answer}</p>
-                </AccordionItem>
-              ))}
-            </Accordion>
+                  Login Sekarang
+                </Button>
+              </Link>
+            )}
           </motion.div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="max-w-4xl mx-auto"
-        >
-          <div className="relative gradient-bg rounded-3xl p-10 md:p-14 text-center text-white overflow-hidden">
-            <div className="absolute inset-0 noise" />
-            <div className="absolute top-0 left-1/4 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
-            <div className="relative">
-              <motion.div
-                animate={{ y: [0, -5, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center mx-auto mb-6"
-              >
-                <Rocket size={32} />
-              </motion.div>
-              <h2 className="text-3xl md:text-4xl font-black mb-4">
-                Siap untuk memulai?
-              </h2>
-              <p className="text-lg text-white/80 mb-8 max-w-md mx-auto">
-                Login sekarang dan mulai perjalanan capstone project kamu. Tim kami siap membantu!
-              </p>
-              {!session && (
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Link href="/login">
-                    <Button
-                      size="lg"
-                      className="font-bold bg-white text-blue-600 hover:bg-white/90 px-8"
-                      endContent={<ArrowRight size={18} />}
-                    >
-                      Login Sekarang
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </section>
-
       {/* Footer */}
-      <footer className="py-12 px-4 border-t border-default-100">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8 mb-8">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-2 mb-4">
-                <Image
-                  src="/logo.png"
-                  alt="Capstone Logo"
-                  width={40}
-                  height={40}
-                  className="rounded-xl"
-                />
-                <span className="font-bold text-lg">Capstone</span>
-              </div>
-              <p className="text-default-500 text-sm max-w-sm">
-                Platform manajemen capstone project untuk Program Studi Informatika.
-                Terintegrasi dengan GitHub untuk pengalaman development yang lebih baik.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-sm text-default-500">
-                <li><a href="#features" className="hover:text-foreground transition-colors">Features</a></li>
-                <li><a href="#requirements" className="hover:text-foreground transition-colors">Persyaratan</a></li>
-                <li><a href="#how-it-works" className="hover:text-foreground transition-colors">Alur Capstone</a></li>
-                <li><a href="#faq" className="hover:text-foreground transition-colors">FAQ</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold mb-4">Kontak</h4>
-              <ul className="space-y-2 text-sm text-default-500">
-                <li>Gedung Informatika Lt. 3</li>
-                <li>capstone@informatika.ac.id</li>
-                <li>+62 21 1234 5678</li>
-              </ul>
-            </div>
+      <footer className="py-8 px-6 border-t border-zinc-200/50 dark:border-zinc-800/50">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/logo.png"
+              alt="Capstone Logo"
+              width={24}
+              height={24}
+              className="rounded"
+            />
+            <span className="text-sm text-zinc-500">Capstone Project System</span>
           </div>
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-default-100">
-            <p className="text-default-500 text-sm">
-              &copy; 2026 Program Studi Informatika. All rights reserved.
-            </p>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-default-500 hover:text-foreground transition-colors text-sm"
-            >
-              <Github size={16} />
-              <span>GitHub</span>
-            </a>
-          </div>
+          <p className="text-sm text-zinc-500">
+            &copy; 2026 Program Studi Informatika. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

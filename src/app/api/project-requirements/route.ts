@@ -27,6 +27,16 @@ const REQUIREMENT_FIELDS = [
   // Timeline
   "timeline",
   "kerangkaWaktu",
+  // Production & Demo (optional - not counted in completion)
+] as const;
+
+// Optional fields that don't count towards completion
+const OPTIONAL_FIELDS = [
+  "productionUrl",
+  "productionUrlStatus",
+  "testingUsername",
+  "testingPassword",
+  "testingNotes",
 ] as const;
 
 // Calculate completion percentage based on filled fields
@@ -84,11 +94,19 @@ export async function GET(request: NextRequest) {
       select: { role: true },
     });
 
-    if (
-      project.mahasiswaId !== session.user.id &&
-      user?.role === "MAHASISWA"
-    ) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // Check access for MAHASISWA role
+    if (user?.role === "MAHASISWA" && project.mahasiswaId !== session.user.id) {
+      // Check if user is a team member
+      const isMember = await prisma.projectMember.findFirst({
+        where: {
+          projectId,
+          userId: session.user.id,
+        },
+      });
+
+      if (!isMember) {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
     }
 
     // Get or create requirements
@@ -115,6 +133,7 @@ export async function GET(request: NextRequest) {
         semester: project.semester,
         status: project.status,
         description: project.description,
+        mahasiswaId: project.mahasiswaId,
         mahasiswa: project.mahasiswa,
       },
     });
@@ -196,6 +215,13 @@ export async function POST(request: NextRequest) {
         timeline: data.timeline || null,
         kerangkaWaktu: data.kerangkaWaktu || null,
         deadlineDate,
+        // Production & Demo
+        productionUrl: data.productionUrl || null,
+        productionUrlStatus: data.productionUrlStatus || null,
+        productionUrlCheckedAt: data.productionUrlCheckedAt ? new Date(data.productionUrlCheckedAt) : null,
+        testingUsername: data.testingUsername || null,
+        testingPassword: data.testingPassword || null,
+        testingNotes: data.testingNotes || null,
         completionPercent,
       },
       update: {
@@ -223,6 +249,13 @@ export async function POST(request: NextRequest) {
         timeline: data.timeline || null,
         kerangkaWaktu: data.kerangkaWaktu || null,
         deadlineDate,
+        // Production & Demo
+        productionUrl: data.productionUrl || null,
+        productionUrlStatus: data.productionUrlStatus || null,
+        productionUrlCheckedAt: data.productionUrlCheckedAt ? new Date(data.productionUrlCheckedAt) : null,
+        testingUsername: data.testingUsername || null,
+        testingPassword: data.testingPassword || null,
+        testingNotes: data.testingNotes || null,
         completionPercent,
       },
     });

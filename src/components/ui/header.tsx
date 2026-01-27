@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import {
@@ -27,6 +27,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Wait for client-side hydration to complete
   useEffect(() => {
@@ -40,6 +41,29 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
+
+  const handleLogout = useCallback(async () => {
+    if (isLoggingOut) return;
+    
+    setIsLoggingOut(true);
+    try {
+      // Clear any cached data first
+      if (typeof window !== 'undefined') {
+        // Clear session storage
+        sessionStorage.clear();
+      }
+      
+      // Sign out and redirect to landing page
+      await signOut({ 
+        callbackUrl: '/',
+        redirect: true 
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force redirect on error
+      window.location.href = '/';
+    }
+  }, [isLoggingOut]);
 
   // Show skeleton while mounting to prevent hydration mismatch
   if (!mounted) {
@@ -241,9 +265,10 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               key="logout"
               color="danger"
               startContent={<LogOut size={18} />}
-              onPress={() => signOut({ callbackUrl: '/login', redirect: true })}
+              onPress={handleLogout}
+              isDisabled={isLoggingOut}
             >
-              Keluar
+              {isLoggingOut ? 'Keluar...' : 'Keluar'}
             </DropdownItem>
           </DropdownMenu>
         </Dropdown>

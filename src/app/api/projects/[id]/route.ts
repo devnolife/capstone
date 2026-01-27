@@ -26,6 +26,8 @@ export async function GET(
             name: true,
             email: true,
             username: true, // username is used as NIM for mahasiswa
+            nim: true,
+            prodi: true,
             image: true,
             githubUsername: true,
           },
@@ -67,12 +69,42 @@ export async function GET(
         },
         requirements: true,
         members: {
-          select: {
-            id: true,
-            githubUsername: true,
-            githubAvatarUrl: true,
-            name: true,
-            role: true,
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                nim: true,
+                prodi: true,
+                image: true,
+                githubUsername: true,
+              },
+            },
+          },
+        },
+        invitations: {
+          include: {
+            inviter: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                nim: true,
+                image: true,
+              },
+            },
+            invitee: {
+              select: {
+                id: true,
+                name: true,
+                username: true,
+                nim: true,
+                prodi: true,
+                image: true,
+                githubUsername: true,
+              },
+            },
           },
         },
         stakeholderDocuments: {
@@ -98,8 +130,10 @@ export async function GET(
     const isDosen = session.user.role === 'DOSEN_PENGUJI';
     const isSubmittedProject = ['SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'REVISION_NEEDED'].includes(project.status);
     const dosenCanView = isDosen && isSubmittedProject;
+    // Team members can also view
+    const isTeamMember = project.members.some((m) => m.userId === session.user.id);
 
-    if (!isOwner && !isAssignedDosen && !isAdmin && !dosenCanView) {
+    if (!isOwner && !isAssignedDosen && !isAdmin && !dosenCanView && !isTeamMember) {
       return NextResponse.json(
         { error: 'Tidak memiliki akses' },
         { status: 403 },

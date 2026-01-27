@@ -34,7 +34,6 @@ export async function ensureBucket(): Promise<void> {
 
   if (!bucketExists) {
     await client.makeBucket(MINIO_BUCKET_NAME);
-    console.log(`Bucket '${MINIO_BUCKET_NAME}' created successfully`);
 
     // Set bucket policy to allow public read access
     const policy = {

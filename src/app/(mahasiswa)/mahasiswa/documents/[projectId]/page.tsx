@@ -38,6 +38,15 @@ import {
   GraduationCap,
   Lightbulb,
   TrendingUp,
+  Eye,
+  Globe,
+  Link2,
+  User,
+  KeyRound,
+  FileQuestion,
+  Loader2,
+  XCircle,
+  ExternalLink,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -56,6 +65,12 @@ interface ProjectRequirements {
   presentasiUjian: string | null;
   stakeholder: string | null;
   kepatuhanEtika: string | null;
+  // Production & Demo
+  productionUrl: string | null;
+  productionUrlStatus: string | null;
+  testingUsername: string | null;
+  testingPassword: string | null;
+  testingNotes: string | null;
   completionPercent: number;
   updatedAt: string;
 }
@@ -66,6 +81,7 @@ interface Project {
   semester: string;
   status: string;
   description?: string;
+  mahasiswaId: string;
   mahasiswa?: {
     name: string;
     image: string | null;
@@ -80,6 +96,8 @@ interface FieldConfig {
   description: string;
   tips?: string[];
   minRows?: number;
+  type?: 'textarea' | 'input' | 'url' | 'password';
+  optional?: boolean;
 }
 
 interface SectionConfig {
@@ -241,6 +259,62 @@ const REQUIREMENT_SECTIONS: SectionConfig[] = [
       },
     ],
   },
+  {
+    id: 'production-demo',
+    title: 'Production & Demo',
+    subtitle: 'URL aplikasi dan akun testing',
+    icon: Globe,
+    gradient: 'from-cyan-500 to-blue-500',
+    bgColor: 'bg-gradient-to-br',
+    fields: [
+      {
+        key: 'productionUrl',
+        label: 'URL Production/Demo',
+        icon: Link2,
+        placeholder: 'https://your-app.vercel.app atau https://your-domain.com',
+        description: 'URL aplikasi yang sudah di-deploy dan bisa diakses',
+        tips: [
+          'Pastikan URL bisa diakses publik',
+          'Gunakan HTTPS untuk keamanan',
+          'Pastikan server aktif saat review',
+        ],
+        type: 'url',
+        optional: true,
+      },
+      {
+        key: 'testingUsername',
+        label: 'Username Testing',
+        icon: User,
+        placeholder: 'admin@example.com atau username',
+        description: 'Username/email untuk akun testing (opsional)',
+        type: 'input',
+        optional: true,
+      },
+      {
+        key: 'testingPassword',
+        label: 'Password Testing',
+        icon: KeyRound,
+        placeholder: 'Password untuk akun testing',
+        description: 'Password untuk login ke akun testing (opsional)',
+        type: 'password',
+        optional: true,
+      },
+      {
+        key: 'testingNotes',
+        label: 'Catatan Testing',
+        icon: FileQuestion,
+        placeholder: 'Contoh: Login sebagai admin untuk melihat semua fitur. Flow utama: Dashboard > Manage Users > Reports',
+        description: 'Instruksi atau catatan tambahan untuk reviewer',
+        tips: [
+          'Jelaskan role/level akses akun testing',
+          'Sebutkan flow utama yang perlu ditest',
+          'Tambahkan catatan khusus jika ada',
+        ],
+        minRows: 3,
+        optional: true,
+      },
+    ],
+  },
 ];
 
 // Get all field keys for completion calculation
@@ -263,8 +337,20 @@ export default function ProjectRequirementsFormPage() {
     'aspek-akademik': true,
     'teknis-implementasi': false,
     'analisis-evaluasi': false,
+    'production-demo': false,
   });
   const [activeField, setActiveField] = useState<string | null>(null);
+  const [urlValidation, setUrlValidation] = useState<{
+    status: 'idle' | 'checking' | 'valid' | 'invalid';
+    message?: string;
+    title?: string;
+  }>({ status: 'idle' });
+
+  // Determine if current user is the project owner
+  const isOwner = useMemo(() => {
+    if (!project || !session?.user?.id) return false;
+    return project.mahasiswaId === session.user.id;
+  }, [project, session?.user?.id]);
 
   // Calculate completion
   const completion = useMemo(() => {
@@ -375,6 +461,50 @@ export default function ProjectRequirementsFormPage() {
 
   const handleFieldChange = (key: string, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
+    
+    // Reset URL validation when URL changes
+    if (key === 'productionUrl') {
+      setUrlValidation({ status: 'idle' });
+    }
+  };
+
+  // Validate production URL
+  const validateProductionUrl = async () => {
+    const url = formData.productionUrl;
+    if (!url || url.trim() === '') {
+      setUrlValidation({ status: 'idle' });
+      return;
+    }
+
+    setUrlValidation({ status: 'checking' });
+
+    try {
+      const response = await fetch('/api/validate-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+
+      const result = await response.json();
+
+      if (result.valid) {
+        setUrlValidation({
+          status: 'valid',
+          message: `URL aktif (${result.responseTime}ms)`,
+          title: result.title,
+        });
+      } else {
+        setUrlValidation({
+          status: 'invalid',
+          message: result.error || 'URL tidak dapat diakses',
+        });
+      }
+    } catch {
+      setUrlValidation({
+        status: 'invalid',
+        message: 'Gagal memvalidasi URL',
+      });
+    }
   };
 
   if (isLoading) {
@@ -440,6 +570,19 @@ export default function ProjectRequirementsFormPage() {
         </CardBody>
       </Card>
 
+      {/* Read-only Banner for non-owners */}
+      {!isOwner && (
+        <div className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-center gap-3">
+          <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/40">
+            <Eye size={18} className="text-amber-600 dark:text-amber-400" />
+          </div>
+          <div>
+            <p className="font-medium text-amber-800 dark:text-amber-300">Mode Lihat Saja</p>
+            <p className="text-sm text-amber-600 dark:text-amber-400">Anda adalah anggota tim. Hanya ketua tim yang dapat mengedit persyaratan ini.</p>
+          </div>
+        </div>
+      )}
+
       {/* Progress Card */}
       <Card className="mb-6 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
         <CardBody className="p-0">
@@ -487,7 +630,7 @@ export default function ProjectRequirementsFormPage() {
           </div>
 
           {/* Section Quick Status */}
-          <div className="grid grid-cols-3 divide-x divide-zinc-200 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700">
+          <div className="grid grid-cols-4 divide-x divide-zinc-200 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700">
             {REQUIREMENT_SECTIONS.map((section) => {
               const sectionCompletion = getSectionCompletion(section);
               const SectionIcon = section.icon;
@@ -499,6 +642,7 @@ export default function ProjectRequirementsFormPage() {
                       'aspek-akademik': section.id === 'aspek-akademik',
                       'teknis-implementasi': section.id === 'teknis-implementasi',
                       'analisis-evaluasi': section.id === 'analisis-evaluasi',
+                      'production-demo': section.id === 'production-demo',
                     }));
                     document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }}
@@ -671,29 +815,151 @@ export default function ProjectRequirementsFormPage() {
                                 </div>
                               )}
 
-                              {/* Field Input */}
-                              <Textarea
-                                placeholder={field.placeholder}
-                                value={formData[field.key] || ''}
-                                onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                                onFocus={() => setActiveField(field.key)}
-                                onBlur={() => setActiveField(null)}
-                                minRows={field.minRows || 4}
-                                maxRows={12}
-                                variant="bordered"
-                                classNames={{
-                                  inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
-                                    focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm`,
-                                  input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
-                                }}
-                              />
+                              {/* Field Input - Different types */}
+                              {field.type === 'url' ? (
+                                <div className="space-y-2">
+                                  <div className="flex gap-2">
+                                    <Input
+                                      type="url"
+                                      placeholder={field.placeholder}
+                                      value={formData[field.key] || ''}
+                                      onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                      onFocus={() => setActiveField(field.key)}
+                                      onBlur={() => setActiveField(null)}
+                                      variant="bordered"
+                                      isReadOnly={!isOwner}
+                                      startContent={<Globe size={16} className="text-default-400" />}
+                                      classNames={{
+                                        inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
+                                          focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
+                                        input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                      }}
+                                    />
+                                    {isOwner && (
+                                      <Button
+                                        color={urlValidation.status === 'valid' ? 'success' : urlValidation.status === 'invalid' ? 'danger' : 'primary'}
+                                        variant="flat"
+                                        isLoading={urlValidation.status === 'checking'}
+                                        onPress={validateProductionUrl}
+                                        isDisabled={!formData.productionUrl?.trim()}
+                                        className="min-w-[100px]"
+                                      >
+                                        {urlValidation.status === 'checking' ? (
+                                          'Mengecek...'
+                                        ) : urlValidation.status === 'valid' ? (
+                                          <>
+                                            <CheckCircle2 size={16} />
+                                            Valid
+                                          </>
+                                        ) : urlValidation.status === 'invalid' ? (
+                                          <>
+                                            <XCircle size={16} />
+                                            Invalid
+                                          </>
+                                        ) : (
+                                          'Cek URL'
+                                        )}
+                                      </Button>
+                                    )}
+                                  </div>
+                                  {/* URL Validation Result */}
+                                  {urlValidation.status !== 'idle' && urlValidation.status !== 'checking' && (
+                                    <div className={`p-3 rounded-xl text-sm ${
+                                      urlValidation.status === 'valid' 
+                                        ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800'
+                                        : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                                    }`}>
+                                      <div className="flex items-center gap-2">
+                                        {urlValidation.status === 'valid' ? (
+                                          <CheckCircle2 size={16} className="text-emerald-600" />
+                                        ) : (
+                                          <XCircle size={16} className="text-red-600" />
+                                        )}
+                                        <span className={urlValidation.status === 'valid' ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}>
+                                          {urlValidation.message}
+                                        </span>
+                                      </div>
+                                      {urlValidation.title && (
+                                        <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-500">
+                                          Judul halaman: {urlValidation.title}
+                                        </p>
+                                      )}
+                                      {urlValidation.status === 'valid' && formData.productionUrl && (
+                                        <Button
+                                          as="a"
+                                          href={formData.productionUrl}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          size="sm"
+                                          variant="flat"
+                                          color="success"
+                                          className="mt-2"
+                                          startContent={<ExternalLink size={14} />}
+                                        >
+                                          Buka URL
+                                        </Button>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              ) : field.type === 'input' ? (
+                                <Input
+                                  placeholder={field.placeholder}
+                                  value={formData[field.key] || ''}
+                                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                  onFocus={() => setActiveField(field.key)}
+                                  onBlur={() => setActiveField(null)}
+                                  variant="bordered"
+                                  isReadOnly={!isOwner}
+                                  classNames={{
+                                    inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
+                                      focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
+                                    input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                  }}
+                                />
+                              ) : field.type === 'password' ? (
+                                <Input
+                                  type="password"
+                                  placeholder={field.placeholder}
+                                  value={formData[field.key] || ''}
+                                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                  onFocus={() => setActiveField(field.key)}
+                                  onBlur={() => setActiveField(null)}
+                                  variant="bordered"
+                                  isReadOnly={!isOwner}
+                                  classNames={{
+                                    inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
+                                      focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
+                                    input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                  }}
+                                />
+                              ) : (
+                                <Textarea
+                                  placeholder={field.placeholder}
+                                  value={formData[field.key] || ''}
+                                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                  onFocus={() => setActiveField(field.key)}
+                                  onBlur={() => setActiveField(null)}
+                                  minRows={field.minRows || 4}
+                                  maxRows={12}
+                                  variant="bordered"
+                                  isReadOnly={!isOwner}
+                                  classNames={{
+                                    inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
+                                      focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
+                                    input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                  }}
+                                />
+                              )}
 
-                              {/* Character count */}
-                              <div className="flex justify-end mt-2">
-                                <span className="text-xs text-default-400">
-                                  {(formData[field.key] || '').length} karakter
-                                </span>
-                              </div>
+                              {/* Character count - only for textarea */}
+                              {(!field.type || field.type === 'textarea') && (
+                                <div className="flex justify-end mt-2">
+                                  <span className="text-xs text-default-400">
+                                    {(formData[field.key] || '').length} karakter
+                                  </span>
+                                </div>
+                              )}
                             </motion.div>
                           );
                         })}
@@ -707,51 +973,62 @@ export default function ProjectRequirementsFormPage() {
         })}
       </div>
 
-      {/* Floating Save Button (Desktop) */}
-      <div className="hidden sm:block fixed bottom-6 right-6 z-50">
-        <Button
-          color="primary"
-          size="lg"
-          startContent={!isSaving && <Save size={18} />}
-          isLoading={isSaving}
-          onPress={handleSave}
-          className="font-semibold px-6 rounded-full shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-shadow"
-        >
-          Simpan Perubahan
-        </Button>
-      </div>
-
-      {/* Bottom Save Bar (Mobile) */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800 sm:hidden z-50">
-        <div className="flex items-center gap-3">
-          <div className="flex-1">
-            <div className="flex items-center justify-between text-xs mb-1.5">
-              <span className="text-default-500">Progress</span>
-              <span className={`font-bold ${completion.percent === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>
-                {completion.percent}%
-              </span>
-            </div>
-            <Progress
-              value={completion.percent}
-              size="sm"
-              classNames={{
-                indicator: completion.percent === 100
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-400'
-                  : 'bg-gradient-to-r from-blue-500 to-cyan-400',
-              }}
-            />
-          </div>
+      {/* Floating Save Button (Desktop) - Only for owners */}
+      {isOwner && (
+        <div className="hidden sm:block fixed bottom-6 right-6 z-50">
           <Button
             color="primary"
-            startContent={!isSaving && <Save size={16} />}
+            size="lg"
+            startContent={!isSaving && <Save size={18} />}
             isLoading={isSaving}
             onPress={handleSave}
-            className="font-semibold rounded-full px-6"
+            className="font-semibold px-6 rounded-full shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-shadow"
           >
-            Simpan
+            Simpan Perubahan
           </Button>
         </div>
-      </div>
+      )}
+
+      {/* Bottom Save Bar (Mobile) - Only for owners */}
+      {isOwner ? (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800 sm:hidden z-50">
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <div className="flex items-center justify-between text-xs mb-1.5">
+                <span className="text-default-500">Progress</span>
+                <span className={`font-bold ${completion.percent === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>
+                  {completion.percent}%
+                </span>
+              </div>
+              <Progress
+                value={completion.percent}
+                size="sm"
+                classNames={{
+                  indicator: completion.percent === 100
+                    ? 'bg-gradient-to-r from-emerald-500 to-green-400'
+                    : 'bg-gradient-to-r from-blue-500 to-cyan-400',
+                }}
+              />
+            </div>
+            <Button
+              color="primary"
+              startContent={!isSaving && <Save size={16} />}
+              isLoading={isSaving}
+              onPress={handleSave}
+              className="font-semibold rounded-full px-6"
+            >
+              Simpan
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-amber-50/95 dark:bg-amber-900/30 backdrop-blur-xl border-t border-amber-200 dark:border-amber-800 sm:hidden z-50">
+          <div className="flex items-center justify-center gap-2 text-sm text-amber-700 dark:text-amber-400">
+            <Eye size={16} />
+            <span>Mode Lihat Saja - Hanya ketua tim yang dapat mengedit</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

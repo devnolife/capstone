@@ -328,7 +328,7 @@ export default function ProfilePage() {
 
               {profile.role === 'DOSEN_PENGUJI' && (
                 <Input
-                  label="NIP (Nomor Induk Pegawai)"
+                  label="Username Dosen"
                   value={nip}
                   onChange={(e) => setNip(e.target.value)}
                   startContent={
