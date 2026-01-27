@@ -89,7 +89,8 @@ interface Project {
       id: string;
       content: string;
       filePath: string | null;
-      lineNumber: number | null;
+      lineStart: number | null;
+      lineEnd: number | null;
     }>;
     scores: Array<{
       id: string;
@@ -122,10 +123,8 @@ interface StakeholderDocument {
   organization: string | null;
   type: "SIGNATURE" | "PHOTO" | "AGREEMENT_LETTER" | "ID_CARD" | "SCREENSHOT" | "SUPPORTING_DOCUMENT" | "OTHER";
   fileName: string;
-  fileKey: string;
   fileUrl: string;
   fileSize: number;
-  mimeType: string;
   description: string | null;
   uploadedAt: string;
 }
@@ -211,7 +210,7 @@ export default function ReviewPage({
   >({});
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState<
-    Array<{ content: string; filePath?: string; lineNumber?: number }>
+    Array<{ content: string; filePath?: string; lineStart?: number; lineEnd?: number }>
   >([]);
   const [stakeholderDocs, setStakeholderDocs] = useState<StakeholderDocument[]>([]);
   const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
@@ -276,11 +275,13 @@ export default function ReviewPage({
                 (c: {
                   content: string;
                   filePath: string | null;
-                  lineNumber: number | null;
+                  lineStart: number | null;
+                  lineEnd: number | null;
                 }) => ({
                   content: c.content,
                   filePath: c.filePath || undefined,
-                  lineNumber: c.lineNumber || undefined,
+                  lineStart: c.lineStart || undefined,
+                  lineEnd: c.lineEnd || undefined,
                 }),
               ),
             );
@@ -340,7 +341,8 @@ export default function ReviewPage({
         comments: comments.map((c) => ({
           content: c.content,
           filePath: c.filePath,
-          lineNumber: c.lineNumber,
+          lineStart: c.lineStart,
+          lineEnd: c.lineEnd,
         })),
         status: submit ? 'COMPLETED' : 'IN_PROGRESS',
       };
@@ -751,8 +753,8 @@ export default function ReviewPage({
                                   <div className="flex items-center gap-1 mt-2 text-xs text-primary">
                                     <Code size={12} />
                                     {comment.filePath}
-                                    {comment.lineNumber && (
-                                      <span className="text-default-500">:{comment.lineNumber}</span>
+                                    {comment.lineStart && (
+                                      <span className="text-default-500">:{comment.lineStart}{comment.lineEnd && comment.lineEnd !== comment.lineStart ? `-${comment.lineEnd}` : ''}</span>
                                     )}
                                   </div>
                                 )}
@@ -869,7 +871,9 @@ export default function ReviewPage({
                         {stakeholderDocs.map((doc, index) => {
                           const typeConfig = getStakeholderTypeConfig(doc.type);
                           const TypeIcon = typeConfig.icon;
-                          const isImage = doc.mimeType.startsWith('image/');
+                          // Check if file is image based on extension
+                          const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+                          const isImage = imageExtensions.some(ext => doc.fileName.toLowerCase().endsWith(ext));
 
                           return (
                             <motion.div
@@ -1093,13 +1097,13 @@ export default function ReviewPage({
                               .filter((c) => c.filePath)
                               .map((c) => ({
                                 filePath: c.filePath!,
-                                lineNumber: c.lineNumber || 0,
+                                lineStart: c.lineStart || 0,
                                 content: c.content,
                               }))}
-                            onAddComment={(filePath, lineNumber, content) => {
+                            onAddComment={(filePath, lineStart, content) => {
                               setComments([
                                 ...comments,
-                                { content, filePath, lineNumber },
+                                { content, filePath, lineStart },
                               ]);
                             }}
                           />

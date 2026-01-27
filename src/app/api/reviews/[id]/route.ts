@@ -158,11 +158,12 @@ export async function PUT(
 
       await prisma.reviewComment.createMany({
         data: comments.map(
-          (c: { content: string; filePath?: string; lineNumber?: number }) => ({
+          (c: { content: string; filePath?: string; lineStart?: number; lineEnd?: number }) => ({
             reviewId: id,
             content: c.content,
             filePath: c.filePath,
-            lineNumber: c.lineNumber,
+            lineStart: c.lineStart,
+            lineEnd: c.lineEnd,
           }),
         ),
       });

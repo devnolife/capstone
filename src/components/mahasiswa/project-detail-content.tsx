@@ -57,7 +57,8 @@ interface ReviewComment {
   id: string;
   content: string;
   filePath: string | null;
-  lineNumber: number | null;
+  lineStart: number | null;
+  lineEnd: number | null;
 }
 
 interface ReviewScore {
@@ -103,10 +104,8 @@ interface StakeholderDocument {
   organization: string | null;
   type: "SIGNATURE" | "PHOTO" | "AGREEMENT_LETTER" | "ID_CARD" | "SCREENSHOT" | "SUPPORTING_DOCUMENT" | "OTHER";
   fileName: string;
-  fileKey: string;
   fileUrl: string;
   fileSize: number;
-  mimeType: string;
   description: string | null;
   uploadedAt: string;
 }
@@ -120,10 +119,8 @@ interface StakeholderDocumentFromDB {
   organization: string | null;
   type: "SIGNATURE" | "PHOTO" | "AGREEMENT_LETTER" | "ID_CARD" | "SCREENSHOT" | "SUPPORTING_DOCUMENT" | "OTHER";
   fileName: string;
-  fileKey: string;
   fileUrl: string;
   fileSize: number;
-  mimeType: string;
   description: string | null;
   uploadedAt: Date;
 }

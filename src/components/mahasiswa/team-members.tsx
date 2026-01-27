@@ -46,7 +46,7 @@ interface ProjectMember {
   githubAvatarUrl?: string;
   name?: string;
   role: string;
-  addedAt?: string;
+  joinedAt?: string;
 }
 
 interface TeamMembersProps {

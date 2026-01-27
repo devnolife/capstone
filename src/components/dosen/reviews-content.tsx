@@ -53,7 +53,8 @@ interface ReviewComment {
   id: string;
   content: string;
   filePath: string | null;
-  lineNumber: number | null;
+  lineStart: number | null;
+  lineEnd: number | null;
   createdAt: Date;
 }
 

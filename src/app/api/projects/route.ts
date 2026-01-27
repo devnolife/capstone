@@ -235,11 +235,16 @@ export async function POST(request: Request) {
 
       // 3. Create team invitations for pending members
       if (pendingTeamMembers && Array.isArray(pendingTeamMembers) && pendingTeamMembers.length > 0) {
+        // Default expiration: 7 days from now
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7);
+
         const invitationsData = pendingTeamMembers.map((member: { id: string }) => ({
           projectId: newProject.id,
           inviterId: session.user.id,
           inviteeId: member.id,
           status: 'pending',
+          expiresAt,
         }));
 
         await tx.teamInvitation.createMany({

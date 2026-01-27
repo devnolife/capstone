@@ -54,7 +54,7 @@ interface ProjectMember {
     nim: string | null;
     image: string | null;
   };
-  addedAt?: string;
+  joinedAt?: string;
 }
 
 interface TeamInvitation {

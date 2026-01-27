@@ -46,7 +46,8 @@ export const reviewCommentSchema = z.object({
   reviewId: z.string(),
   content: z.string().min(1, 'Komentar tidak boleh kosong'),
   filePath: z.string().optional(),
-  lineNumber: z.number().optional(),
+  lineStart: z.number().optional(),
+  lineEnd: z.number().optional(),
 });
 
 export const reviewScoreSchema = z.object({

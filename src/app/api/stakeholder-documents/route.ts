@@ -227,8 +227,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Delete from MinIO
-    await deleteFile(document.fileKey);
+    // Delete from MinIO (if fileKey exists)
+    if (document.fileKey) {
+      await deleteFile(document.fileKey);
+    }
 
     // Delete from database
     await prisma.stakeholderDocument.delete({

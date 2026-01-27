@@ -26,7 +26,7 @@ export async function GET(
         members: {
           orderBy: [
             { role: 'desc' }, // leader first
-            { addedAt: 'asc' },
+            { joinedAt: 'asc' },
           ],
         },
         mahasiswa: {

@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         category: true,
         fileUrl: true,
         mimeType: true,
-        uploadedAt: true,
+        createdAt: true,
         project: {
           select: {
             id: true,
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
         },
       },
       orderBy: [
-        { uploadedAt: 'desc' },
+        { createdAt: 'desc' },
       ],
       take: limit,
     });

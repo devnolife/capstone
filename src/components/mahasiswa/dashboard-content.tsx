@@ -50,12 +50,11 @@ interface ProjectMember {
   id: string;
   projectId: string;
   githubUsername: string | null;
-  githubId: string | null;
   githubAvatarUrl: string | null;
   name: string | null;
   role: string;
   userId: string | null;
-  addedAt: Date;
+  joinedAt: Date;
 }
 
 interface Project {

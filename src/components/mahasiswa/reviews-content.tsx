@@ -55,7 +55,8 @@ interface ReviewComment {
   id: string;
   content: string;
   filePath: string | null;
-  lineNumber: number | null;
+  lineStart: number | null;
+  lineEnd: number | null;
   createdAt: Date;
 }
 
@@ -352,8 +353,8 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
                         <p className="text-xs text-primary font-mono mb-1 flex items-center gap-1">
                           <FileText size={10} />
                           {comment.filePath}
-                          {comment.lineNumber && (
-                            <span className="text-default-400">:{comment.lineNumber}</span>
+                          {comment.lineStart && (
+                            <span className="text-default-400">:{comment.lineStart}{comment.lineEnd && comment.lineEnd !== comment.lineStart ? `-${comment.lineEnd}` : ''}</span>
                           )}
                         </p>
                       )}

@@ -44,7 +44,7 @@ export default async function ProjectDetailPage({
             },
           },
         },
-        orderBy: { addedAt: 'asc' },
+        orderBy: { joinedAt: 'asc' },
       },
       invitations: {
         include: {

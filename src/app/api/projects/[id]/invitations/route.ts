@@ -179,6 +179,10 @@ export async function POST(
     }
 
     // Create invitation and notification in transaction
+    // Default expiration: 7 days from now
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
     const [invitation] = await prisma.$transaction([
       prisma.teamInvitation.create({
         data: {
@@ -186,6 +190,7 @@ export async function POST(
           inviterId: session.user.id,
           inviteeId,
           message,
+          expiresAt,
         },
         include: {
           invitee: {

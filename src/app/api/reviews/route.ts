@@ -191,11 +191,13 @@ export async function POST(request: Request) {
               (c: {
                 content: string;
                 filePath?: string;
-                lineNumber?: number;
+                lineStart?: number;
+                lineEnd?: number;
               }) => ({
                 content: c.content,
                 filePath: c.filePath,
-                lineNumber: c.lineNumber,
+                lineStart: c.lineStart,
+                lineEnd: c.lineEnd,
               }),
             ) || [],
         },

@@ -168,6 +168,10 @@ exports.Prisma.ProjectScalarFieldEnum = {
   githubRepoUrl: 'githubRepoUrl',
   githubRepoName: 'githubRepoName',
   productionUrl: 'productionUrl',
+  orgRepoUrl: 'orgRepoUrl',
+  orgRepoName: 'orgRepoName',
+  forkedAt: 'forkedAt',
+  approvedAt: 'approvedAt',
   semester: 'semester',
   tahunAkademik: 'tahunAkademik',
   createdAt: 'createdAt',
@@ -181,6 +185,7 @@ exports.Prisma.ProjectMemberScalarFieldEnum = {
   projectId: 'projectId',
   userId: 'userId',
   githubUsername: 'githubUsername',
+  githubId: 'githubId',
   githubAvatarUrl: 'githubAvatarUrl',
   name: 'name',
   role: 'role',
@@ -193,9 +198,11 @@ exports.Prisma.TeamInvitationScalarFieldEnum = {
   inviterId: 'inviterId',
   inviteeId: 'inviteeId',
   status: 'status',
+  message: 'message',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  expiresAt: 'expiresAt'
+  expiresAt: 'expiresAt',
+  respondedAt: 'respondedAt'
 };
 
 exports.Prisma.ProjectRequirementsScalarFieldEnum = {
@@ -213,6 +220,12 @@ exports.Prisma.ProjectRequirementsScalarFieldEnum = {
   sumberDayaBatasan: 'sumberDayaBatasan',
   teknologi: 'teknologi',
   fiturUtama: 'fiturUtama',
+  productionUrl: 'productionUrl',
+  productionUrlStatus: 'productionUrlStatus',
+  productionUrlCheckedAt: 'productionUrlCheckedAt',
+  testingUsername: 'testingUsername',
+  testingPassword: 'testingPassword',
+  testingNotes: 'testingNotes',
   analisisTemuan: 'analisisTemuan',
   presentasiUjian: 'presentasiUjian',
   stakeholder: 'stakeholder',
@@ -233,10 +246,29 @@ exports.Prisma.StakeholderDocumentScalarFieldEnum = {
   organization: 'organization',
   type: 'type',
   fileName: 'fileName',
+  fileKey: 'fileKey',
   fileUrl: 'fileUrl',
   fileSize: 'fileSize',
+  mimeType: 'mimeType',
   description: 'description',
   uploadedAt: 'uploadedAt'
+};
+
+exports.Prisma.ProjectScreenshotScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  title: 'title',
+  description: 'description',
+  category: 'category',
+  fileName: 'fileName',
+  fileKey: 'fileKey',
+  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  orderIndex: 'orderIndex',
+  isFeatured: 'isFeatured',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.DocumentScalarFieldEnum = {
@@ -246,6 +278,7 @@ exports.Prisma.DocumentScalarFieldEnum = {
   fileName: 'fileName',
   filePath: 'filePath',
   fileSize: 'fileSize',
+  mimeType: 'mimeType',
   uploadedAt: 'uploadedAt'
 };
 
@@ -267,7 +300,7 @@ exports.Prisma.ReviewScoreScalarFieldEnum = {
   rubrikId: 'rubrikId',
   score: 'score',
   maxScore: 'maxScore',
-  comment: 'comment'
+  feedback: 'feedback'
 };
 
 exports.Prisma.ReviewCommentScalarFieldEnum = {
@@ -379,6 +412,7 @@ exports.Prisma.ModelName = {
   TeamInvitation: 'TeamInvitation',
   ProjectRequirements: 'ProjectRequirements',
   StakeholderDocument: 'StakeholderDocument',
+  ProjectScreenshot: 'ProjectScreenshot',
   Document: 'Document',
   Review: 'Review',
   ReviewScore: 'ReviewScore',

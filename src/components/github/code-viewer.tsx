@@ -40,13 +40,13 @@ interface CodeViewerProps {
   onFileSelect?: (filePath: string, content: string) => void;
   onAddComment?: (
     filePath: string,
-    lineNumber: number,
+    lineStart: number,
     content: string,
   ) => void;
   selectedFile?: string;
   comments?: Array<{
     filePath: string;
-    lineNumber: number;
+    lineStart: number;
     content: string;
   }>;
 }
@@ -202,11 +202,11 @@ export function GitHubCodeViewer({
     }
   };
 
-  const handleLineClick = (lineNumber: number) => {
+  const handleLineClick = (lineStart: number) => {
     if (onAddComment && selectedFile) {
       const comment = prompt('Add a comment for this line:');
       if (comment) {
-        onAddComment(selectedFile, lineNumber, comment);
+        onAddComment(selectedFile, lineStart, comment);
       }
     }
   };
@@ -329,28 +329,28 @@ export function GitHubCodeViewer({
             <table className="w-full border-collapse">
               <tbody>
                 {lines.map((line, index) => {
-                  const lineNumber = index + 1;
+                  const lineNum = index + 1;
                   const lineComment = fileComments.find(
-                    (c) => c.lineNumber === lineNumber,
+                    (c) => c.lineStart === lineNum,
                   );
                   const hasComment = !!lineComment;
 
                   return (
-                    <React.Fragment key={lineNumber}>
+                    <React.Fragment key={lineNum}>
                       <tr
-                        className={`${hoveredLine === lineNumber ? 'bg-default-100' : ''
+                        className={`${hoveredLine === lineNum ? 'bg-default-100' : ''
                           } ${hasComment ? 'bg-warning-50' : ''}`}
-                        onMouseEnter={() => setHoveredLine(lineNumber)}
+                        onMouseEnter={() => setHoveredLine(lineNum)}
                         onMouseLeave={() => setHoveredLine(null)}
                       >
                         <td
                           className="select-none px-3 py-0.5 text-right text-default-400 border-r border-divider w-12 cursor-pointer hover:text-primary hover:bg-primary/10"
-                          onClick={() => handleLineClick(lineNumber)}
+                          onClick={() => handleLineClick(lineNum)}
                           title={
                             onAddComment ? 'Click to add comment' : undefined
                           }
                         >
-                          {lineNumber}
+                          {lineNum}
                         </td>
                         <td className="px-4 py-0.5 whitespace-pre overflow-x-auto">
                           {line || ' '}
