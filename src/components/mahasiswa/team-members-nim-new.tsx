@@ -10,7 +10,6 @@ import {
   Chip,
   Spinner,
   Tooltip,
-  Divider,
 } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -22,9 +21,9 @@ import {
   AlertCircle,
   CheckCircle2,
   Github,
-  CreditCard,
   Info,
-  AlertTriangle,
+  Trash2,
+  UserCheck,
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
 import { getSimakPhotoUrl } from '@/lib/utils';
@@ -74,7 +73,6 @@ export default function TeamMembersNimNew({
   const [searchResults, setSearchResults] = useState<SearchedUser[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState('');
-  const [showSearch, setShowSearch] = useState(false);
 
   const debouncedSearch = useDebounce(searchQuery, 300);
 
@@ -141,7 +139,6 @@ export default function TeamMembersNimNew({
     onPendingMembersChange([...pendingMembers, newMember]);
     setSearchQuery('');
     setSearchResults([]);
-    setShowSearch(false);
   };
 
   // Remove member from pending list
@@ -150,6 +147,7 @@ export default function TeamMembersNimNew({
   };
 
   const canAddMore = pendingMembers.length < maxMembers;
+  const totalMembers = pendingMembers.length + 1; // +1 for owner
 
   return (
     <Card className="border border-default-100 shadow-sm">
@@ -157,17 +155,29 @@ export default function TeamMembersNimNew({
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-success/10 to-success/5 text-success">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-violet-500/10 to-purple-500/10 text-violet-600 dark:text-violet-400">
               <Users size={18} />
             </div>
             <div>
               <h3 className="font-semibold text-foreground">Tim Project</h3>
-              <p className="text-xs text-default-400">Cari anggota berdasarkan NIM</p>
+              <p className="text-xs text-default-400">Kelola anggota tim</p>
             </div>
           </div>
-          <Chip size="sm" variant="flat" color="primary">
-            {pendingMembers.length + 1}/{maxMembers + 1}
-          </Chip>
+          <div className="flex items-center gap-1.5">
+            {Array.from({ length: maxMembers + 1 }).map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  i < totalMembers
+                    ? 'bg-violet-500'
+                    : 'bg-default-200 dark:bg-default-700'
+                }`}
+              />
+            ))}
+            <span className="text-xs text-default-400 ml-1">
+              {totalMembers}/{maxMembers + 1}
+            </span>
+          </div>
         </div>
 
         {/* Error Message */}
@@ -177,7 +187,7 @@ export default function TeamMembersNimNew({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="flex items-center gap-2 p-2.5 mb-3 bg-danger-50 text-danger rounded-lg text-xs"
+              className="flex items-center gap-2 p-2.5 mb-3 bg-danger-50 dark:bg-danger-500/10 text-danger rounded-lg text-xs"
             >
               <AlertCircle size={14} />
               <span className="flex-1">{error}</span>
@@ -195,240 +205,246 @@ export default function TeamMembersNimNew({
           )}
         </AnimatePresence>
 
-        {/* Owner Section */}
-        <div className="flex items-center gap-3 p-3 bg-primary-50/50 dark:bg-primary-900/10 rounded-lg border border-primary-100/50 dark:border-primary-800/30 mb-3">
-          <div className="relative">
-            <Avatar
-              src={getSimakPhotoUrl(ownerNim) || ownerImage}
-              name={ownerName || 'Owner'}
-              size="sm"
-              className="w-9 h-9"
-            />
-            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-primary rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
-              <Crown size={8} className="text-white" />
+        {/* Team Members Grid */}
+        <div className="space-y-2">
+          {/* Owner Card */}
+          <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-500/10 dark:to-green-500/10 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
+            <div className="relative">
+              <Avatar
+                src={getSimakPhotoUrl(ownerNim) || ownerImage}
+                name={ownerName || 'Owner'}
+                className="w-11 h-11 ring-2 ring-emerald-500/30"
+              />
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center shadow-sm">
+                <Crown size={10} className="text-white" />
+              </div>
             </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm truncate text-foreground">{ownerName || 'Anda'}</p>
+              <p className="text-xs text-default-500 flex items-center gap-1">
+                <span>{ownerNim || 'NIM'}</span>
+                {ownerGithubUsername && (
+                  <>
+                    <span className="text-default-300">•</span>
+                    <Github size={10} className="text-default-400" />
+                    <span className="text-default-400">@{ownerGithubUsername}</span>
+                  </>
+                )}
+              </p>
+            </div>
+            <Chip 
+              size="sm" 
+              classNames={{ 
+                base: 'bg-gradient-to-r from-emerald-500 to-green-500 border-0',
+                content: 'text-white font-medium text-[10px]'
+              }}
+            >
+              Ketua Tim
+            </Chip>
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-medium text-sm truncate">{ownerName || 'Anda'}</p>
-            <p className="text-xs text-default-500">{ownerNim || 'Ketua Tim'}</p>
-          </div>
-          <Chip size="sm" color="primary" variant="flat" classNames={{ base: 'h-5' }}>
-            Ketua
-          </Chip>
-        </div>
 
-        <Divider className="my-3" />
-
-        {/* Pending Members List */}
-        <div className="space-y-2 mb-3">
+          {/* Pending Members */}
           <AnimatePresence>
-            {pendingMembers.map((member) => (
+            {pendingMembers.map((member, index) => (
               <motion.div
                 key={member.id}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10, height: 0 }}
-                className="flex items-center gap-3 p-2.5 bg-default-50 dark:bg-default-100/10 rounded-lg group"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20, height: 0, marginBottom: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className="flex items-center gap-3 p-3 bg-default-50 dark:bg-default-100/5 rounded-xl border border-default-100 dark:border-default-800 group hover:border-violet-200 dark:hover:border-violet-500/30 transition-colors"
               >
-                <Avatar
-                  src={member.image}
-                  name={member.name}
-                  size="sm"
-                  className="w-9 h-9"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p className="font-medium text-sm truncate">{member.name}</p>
-                    <Tooltip content={`@${member.githubUsername}`}>
-                      <Github size={12} className="text-default-400 shrink-0" />
-                    </Tooltip>
+                <div className="relative">
+                  <Avatar
+                    src={member.image}
+                    name={member.name}
+                    className="w-11 h-11"
+                  />
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                    <UserCheck size={10} className="text-white" />
                   </div>
-                  <div className="flex items-center gap-2 text-xs text-default-400">
-                    <span className="flex items-center gap-1">
-                      <CreditCard size={10} />
-                      {member.nim}
-                    </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate text-foreground">{member.name}</p>
+                  <p className="text-xs text-default-500 flex items-center gap-1">
+                    <span>{member.nim}</span>
                     {member.prodi && (
                       <>
-                        <span>•</span>
+                        <span className="text-default-300">•</span>
                         <span className="truncate">{member.prodi}</span>
                       </>
                     )}
-                  </div>
+                  </p>
                 </div>
-                {isEditable && (
-                  <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    className="h-7 w-7 min-w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onPress={() => handleRemoveMember(member.id)}
-                  >
-                    <X size={14} />
-                  </Button>
-                )}
+                <div className="flex items-center gap-2">
+                  <Tooltip content={`@${member.githubUsername}`}>
+                    <Chip 
+                      size="sm" 
+                      variant="flat" 
+                      color="success" 
+                      classNames={{ base: 'h-6 gap-1' }}
+                      startContent={<Github size={10} />}
+                    >
+                      <span className="text-[10px]">Connected</span>
+                    </Chip>
+                  </Tooltip>
+                  {isEditable && (
+                    <Tooltip content="Hapus dari tim">
+                      <Button
+                        size="sm"
+                        variant="light"
+                        color="danger"
+                        isIconOnly
+                        className="h-7 w-7 min-w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onPress={() => handleRemoveMember(member.id)}
+                      >
+                        <Trash2 size={14} />
+                      </Button>
+                    </Tooltip>
+                  )}
+                </div>
               </motion.div>
             ))}
           </AnimatePresence>
 
+          {/* Empty State */}
           {pendingMembers.length === 0 && (
-            <div className="flex items-center gap-2 p-3 text-default-400 text-xs">
-              <Info size={12} />
-              <span>Belum ada anggota tim ditambahkan</span>
+            <div className="flex items-center justify-center gap-2 py-4 text-default-400">
+              <Users size={16} className="text-default-300" />
+              <span className="text-xs">Belum ada anggota ditambahkan</span>
             </div>
           )}
         </div>
 
         {/* Search Section */}
         {isEditable && canAddMore && (
-          <AnimatePresence>
-            {showSearch ? (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="space-y-2"
-              >
-                <div className="relative">
-                  <Input
-                    size="sm"
-                    variant="bordered"
-                    placeholder="Cari NIM atau nama mahasiswa..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    startContent={
-                      isSearching ? (
-                        <Spinner size="sm" className="w-4 h-4" />
-                      ) : (
-                        <Search size={14} className="text-default-400" />
-                      )
-                    }
-                    endContent={
-                      <Button
-                        size="sm"
-                        variant="light"
-                        isIconOnly
-                        className="h-6 w-6 min-w-6"
-                        onPress={() => {
-                          setShowSearch(false);
-                          setSearchQuery('');
-                          setSearchResults([]);
-                        }}
-                      >
-                        <X size={14} />
-                      </Button>
-                    }
-                    classNames={{
-                      inputWrapper: 'border-default-200 hover:border-primary',
-                    }}
-                    autoFocus
-                  />
-                </div>
-
-                {/* Search Results */}
-                <AnimatePresence>
-                  {searchResults.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -5 }}
-                      className="border border-default-200 rounded-lg overflow-hidden max-h-[200px] overflow-y-auto"
+          <div className="mt-4 space-y-3">
+            {/* Search Input */}
+            <div className="relative">
+              <Input
+                size="sm"
+                variant="bordered"
+                placeholder="Cari berdasarkan NIM atau nama..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                startContent={
+                  isSearching ? (
+                    <Spinner size="sm" className="w-4 h-4" />
+                  ) : (
+                    <Search size={14} className="text-default-400" />
+                  )
+                }
+                endContent={
+                  searchQuery && (
+                    <Button
+                      size="sm"
+                      variant="light"
+                      isIconOnly
+                      className="h-6 w-6 min-w-6"
+                      onPress={() => {
+                        setSearchQuery('');
+                        setSearchResults([]);
+                      }}
                     >
+                      <X size={14} />
+                    </Button>
+                  )
+                }
+                classNames={{
+                  inputWrapper: 'border-default-200 hover:border-violet-400 data-[focused=true]:border-violet-500',
+                }}
+              />
+
+              {/* Search Results Dropdown */}
+              <AnimatePresence>
+                {searchResults.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute z-50 w-full mt-2 bg-white dark:bg-zinc-900 border border-default-200 dark:border-default-700 rounded-xl shadow-lg overflow-hidden"
+                  >
+                    <div className="max-h-[240px] overflow-y-auto">
                       {searchResults.map((user, index) => (
                         <motion.button
                           key={user.id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          transition={{ delay: index * 0.05 }}
+                          transition={{ delay: index * 0.03 }}
                           type="button"
                           onClick={() => handleAddMember(user)}
-                          className="w-full flex items-center gap-3 p-2.5 hover:bg-default-100 transition-colors text-left border-b border-default-100 last:border-b-0"
+                          className="w-full flex items-center gap-3 p-3 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors text-left border-b border-default-100 dark:border-default-800 last:border-b-0 group"
                         >
                           <Avatar
                             src={getSimakPhotoUrl(user.nim) || user.image || user.simakPhoto || undefined}
                             name={user.name || user.username}
-                            size="sm"
-                            className="w-8 h-8"
+                            className="w-10 h-10"
                           />
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5">
-                              <p className="font-medium text-sm truncate">
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium text-sm truncate text-foreground">
                                 {user.name || user.username}
                               </p>
-                              {user.githubUsername ? (
-                                <Chip size="sm" variant="flat" color="success" classNames={{ base: 'h-4 px-1' }}>
-                                  <Github size={10} className="mr-0.5" />
-                                  <span className="text-[10px]">Connected</span>
-                                </Chip>
-                              ) : (
-                                <Chip size="sm" variant="flat" color="warning" classNames={{ base: 'h-4 px-1' }}>
-                                  <AlertTriangle size={10} className="mr-0.5" />
-                                  <span className="text-[10px]">No GitHub</span>
+                              {user.githubUsername && (
+                                <Chip 
+                                  size="sm" 
+                                  variant="flat" 
+                                  color="success" 
+                                  classNames={{ base: 'h-5 gap-0.5' }}
+                                  startContent={<Github size={10} />}
+                                >
+                                  <span className="text-[10px]">Ready</span>
                                 </Chip>
                               )}
                             </div>
-                            <div className="flex items-center gap-2 text-xs text-default-400">
-                              <span>{user.nim || user.username}</span>
-                              {user.prodi && (
-                                <>
-                                  <span>•</span>
-                                  <span className="truncate">{user.prodi}</span>
-                                </>
-                              )}
-                            </div>
+                            <p className="text-xs text-default-500">
+                              {user.nim || user.username}
+                              {user.prodi && ` • ${user.prodi}`}
+                            </p>
                           </div>
-                          <UserPlus size={16} className="text-primary shrink-0" />
+                          <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <UserPlus size={16} />
+                          </div>
                         </motion.button>
                       ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* No Results */}
-                {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
-                  <div className="text-center py-3 text-xs text-default-400">
-                    Tidak ada mahasiswa ditemukan
-                  </div>
+                    </div>
+                  </motion.div>
                 )}
+              </AnimatePresence>
 
-                {/* Info about GitHub requirement */}
-                <div className="flex items-start gap-2 p-2.5 bg-blue-50 dark:bg-blue-500/10 rounded-lg text-xs text-blue-700 dark:text-blue-300">
-                  <Info size={14} className="shrink-0 mt-0.5" />
-                  <span>
-                    Hanya mahasiswa yang sudah <strong>terdaftar di aplikasi</strong> dan{' '}
-                    <strong>menghubungkan akun GitHub</strong> yang dapat ditambahkan sebagai anggota tim.
-                  </span>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <Button
-                  variant="bordered"
-                  size="sm"
-                  className="w-full border-dashed border-default-300 h-10"
-                  startContent={<UserPlus size={16} />}
-                  onPress={() => setShowSearch(true)}
+              {/* No Results */}
+              {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="absolute z-50 w-full mt-2 bg-white dark:bg-zinc-900 border border-default-200 dark:border-default-700 rounded-xl shadow-lg p-4"
                 >
-                  <span className="flex-1 text-left">Tambah Anggota Tim</span>
-                  <span className="text-xs text-default-400">
-                    {pendingMembers.length}/{maxMembers}
-                  </span>
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <div className="text-center text-default-400">
+                    <Users size={24} className="mx-auto mb-2 text-default-300" />
+                    <p className="text-sm font-medium">Tidak ditemukan</p>
+                    <p className="text-xs">Coba kata kunci lain</p>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Info */}
+            <div className="flex items-start gap-2 p-3 bg-blue-50 dark:bg-blue-500/10 rounded-lg">
+              <Info size={14} className="shrink-0 mt-0.5 text-blue-500" />
+              <p className="text-xs text-blue-700 dark:text-blue-300">
+                Hanya mahasiswa yang sudah <strong>terdaftar</strong> dan <strong>menghubungkan GitHub</strong> yang dapat ditambahkan.
+              </p>
+            </div>
+          </div>
         )}
 
         {/* Max Members Reached */}
         {!canAddMore && (
-          <div className="flex items-center gap-2 p-2.5 bg-success-50 dark:bg-success-500/10 rounded-lg text-xs text-success-700 dark:text-success-300">
-            <CheckCircle2 size={14} />
-            <span>Tim sudah lengkap ({maxMembers} anggota)</span>
+          <div className="mt-4 flex items-center gap-2 p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg">
+            <CheckCircle2 size={16} className="text-emerald-500" />
+            <span className="text-xs font-medium text-emerald-700 dark:text-emerald-300">
+              Tim sudah lengkap! ({totalMembers} anggota)
+            </span>
           </div>
         )}
       </CardBody>

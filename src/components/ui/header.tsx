@@ -13,21 +13,90 @@ import {
   Badge,
   Input,
   Skeleton,
+  Spinner,
 } from '@heroui/react';
-import { Bell, Moon, Sun, Search, LogOut, User, Settings, Menu, GitBranch, Command } from 'lucide-react';
+import { 
+  Bell, 
+  Moon, 
+  Sun, 
+  Search, 
+  LogOut, 
+  User, 
+  Settings, 
+  Menu, 
+  GitBranch, 
+  Command,
+  Check,
+  FileText,
+  UserPlus,
+  ClipboardCheck,
+  AlertCircle,
+  RefreshCw,
+} from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { getSimakPhotoUrl } from '@/lib/utils';
+import { useNotifications, type Notification } from '@/hooks/use-notifications';
 
 interface HeaderProps {
   title?: string;
   onMenuClick?: () => void;
 }
 
+// Get icon based on notification type
+function getNotificationIcon(type: string) {
+  switch (type) {
+    case 'assignment':
+      return <UserPlus size={16} className="text-blue-500" />;
+    case 'review':
+      return <ClipboardCheck size={16} className="text-green-500" />;
+    case 'submission':
+      return <FileText size={16} className="text-violet-500" />;
+    case 'invitation':
+      return <UserPlus size={16} className="text-orange-500" />;
+    case 'system':
+    default:
+      return <AlertCircle size={16} className="text-zinc-500" />;
+  }
+}
+
+// Format relative time
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMs / 3600000);
+  const diffDays = Math.floor(diffMs / 86400000);
+
+  if (diffMins < 1) return 'Baru saja';
+  if (diffMins < 60) return `${diffMins} menit lalu`;
+  if (diffHours < 24) return `${diffHours} jam lalu`;
+  if (diffDays < 7) return `${diffDays} hari lalu`;
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+}
+
 export function Header({ title, onMenuClick }: HeaderProps) {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Use the notifications hook with 30 second polling
+  const {
+    notifications,
+    unreadCount,
+    isLoading: notifLoading,
+    markAsRead,
+    markAllAsRead,
+    refresh: refreshNotifications,
+  } = useNotifications({
+    pollingInterval: 30000, // 30 seconds
+    limit: 5, // Only show 5 in dropdown
+    autoStart: true,
+  });
 
   // Wait for client-side hydration to complete
   useEffect(() => {
@@ -64,6 +133,20 @@ export function Header({ title, onMenuClick }: HeaderProps) {
       window.location.href = '/';
     }
   }, [isLoggingOut]);
+
+  // Handle notification click
+  const handleNotificationClick = async (notification: Notification) => {
+    // Mark as read
+    if (!notification.isRead) {
+      await markAsRead(notification.id);
+    }
+    
+    // Navigate to link if exists
+    if (notification.link) {
+      setIsDropdownOpen(false);
+      router.push(notification.link);
+    }
+  };
 
   // Show skeleton while mounting to prevent hydration mismatch
   if (!mounted) {
@@ -159,50 +242,121 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
         </Button>
 
-        {/* Notifications */}
-        <Dropdown placement="bottom-end">
+        {/* Notifications - Real-time with polling */}
+        <Dropdown 
+          placement="bottom-end"
+          isOpen={isDropdownOpen}
+          onOpenChange={setIsDropdownOpen}
+        >
           <DropdownTrigger>
             <Button isIconOnly variant="light" size="sm">
-              <Badge color="danger" content="3" size="sm" shape="circle">
+              <Badge 
+                color="danger" 
+                content={unreadCount > 99 ? '99+' : unreadCount} 
+                size="sm" 
+                shape="circle"
+                isInvisible={unreadCount === 0}
+              >
                 <Bell size={20} />
               </Badge>
             </Button>
           </DropdownTrigger>
-          <DropdownMenu aria-label="Notifications" className="w-80 max-w-[calc(100vw-2rem)]">
+          <DropdownMenu 
+            aria-label="Notifications" 
+            className="w-80 max-w-[calc(100vw-2rem)]"
+            closeOnSelect={false}
+          >
             <DropdownItem
               key="header"
               className="h-14 gap-2"
               isReadOnly
-              textValue="Notifications"
+              textValue="Notifications Header"
             >
-              <p className="font-semibold">Notifikasi</p>
-              <p className="text-xs text-default-500">3 notifikasi baru</p>
+              <div className="flex items-center justify-between w-full">
+                <div>
+                  <p className="font-semibold">Notifikasi</p>
+                  <p className="text-xs text-default-500">
+                    {unreadCount > 0 ? `${unreadCount} notifikasi baru` : 'Tidak ada notifikasi baru'}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Button
+                    isIconOnly
+                    size="sm"
+                    variant="light"
+                    onPress={() => refreshNotifications()}
+                    isDisabled={notifLoading}
+                  >
+                    <RefreshCw size={14} className={notifLoading ? 'animate-spin' : ''} />
+                  </Button>
+                  {unreadCount > 0 && (
+                    <Button
+                      size="sm"
+                      variant="light"
+                      onPress={() => markAllAsRead()}
+                      startContent={<Check size={14} />}
+                      className="text-xs"
+                    >
+                      Baca semua
+                    </Button>
+                  )}
+                </div>
+              </div>
             </DropdownItem>
-            <DropdownItem
-              key="notif-1"
-              description="Dosen telah memberikan review pada project Anda"
-              className="py-3"
-            >
-              Review Baru
-            </DropdownItem>
-            <DropdownItem
-              key="notif-2"
-              description="Project Anda telah berhasil disubmit"
-              className="py-3"
-            >
-              Project Submitted
-            </DropdownItem>
-            <DropdownItem
-              key="notif-3"
-              description="Ada update baru pada rubrik penilaian"
-              className="py-3"
-            >
-              Update Rubrik
-            </DropdownItem>
+
+            {notifLoading && notifications.length === 0 ? (
+              <DropdownItem key="loading" isReadOnly textValue="Loading">
+                <div className="flex items-center justify-center py-4">
+                  <Spinner size="sm" />
+                </div>
+              </DropdownItem>
+            ) : notifications.length === 0 ? (
+              <DropdownItem key="empty" isReadOnly textValue="No notifications">
+                <div className="flex flex-col items-center justify-center py-6 text-center">
+                  <Bell size={32} className="text-default-300 mb-2" />
+                  <p className="text-sm text-default-500">Tidak ada notifikasi</p>
+                </div>
+              </DropdownItem>
+            ) : (
+              <>
+                {notifications.map((notification) => (
+                  <DropdownItem
+                    key={notification.id}
+                    textValue={notification.title}
+                    className={`py-3 ${!notification.isRead ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
+                    onPress={() => handleNotificationClick(notification)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="mt-0.5">
+                        {getNotificationIcon(notification.type)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className={`text-sm ${!notification.isRead ? 'font-semibold' : ''} truncate`}>
+                            {notification.title}
+                          </p>
+                          {!notification.isRead && (
+                            <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                          )}
+                        </div>
+                        <p className="text-xs text-default-500 line-clamp-2 mt-0.5">
+                          {notification.message}
+                        </p>
+                        <p className="text-[10px] text-default-400 mt-1">
+                          {formatRelativeTime(notification.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                  </DropdownItem>
+                ))}
+              </>
+            )}
+
             <DropdownItem
               key="view-all"
-              className="text-primary text-center"
+              className="text-primary text-center border-t border-default-100"
               href={`${basePath}/notifications`}
+              onPress={() => setIsDropdownOpen(false)}
             >
               Lihat semua notifikasi
             </DropdownItem>

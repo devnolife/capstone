@@ -25,6 +25,7 @@ import {
   X,
   Menu,
   Mail,
+  Bot,
 } from 'lucide-react';
 import { cn, getSimakPhotoUrl } from '@/lib/utils';
 
@@ -77,6 +78,11 @@ const dosenMenuItems: SidebarItem[] = [
     title: 'Review',
     href: '/dosen/reviews',
     icon: <ClipboardCheck size={20} />,
+  },
+  {
+    title: 'Auto Review',
+    href: '/dosen/auto-review',
+    icon: <Bot size={20} />,
   },
 ];
 

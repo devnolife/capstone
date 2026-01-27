@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
@@ -64,6 +64,11 @@ import {
   AlertTriangle,
   X,
   Plus,
+  Loader2,
+  ExternalLink,
+  User,
+  KeyRound,
+  XCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { GitHubRepoSelector } from '@/components/github/repo-selector';
@@ -156,6 +161,20 @@ export default function NewProjectPage() {
   const [techSearch, setTechSearch] = useState('');
   const [showOptional, setShowOptional] = useState(false);
 
+  // URL Validation state
+  const [urlValidation, setUrlValidation] = useState<{
+    status: 'idle' | 'checking' | 'valid' | 'invalid';
+    message?: string;
+    responseTime?: number;
+  }>({ status: 'idle' });
+
+  // Testing credentials state
+  const [testingCredentials, setTestingCredentials] = useState({
+    username: '',
+    password: '',
+    notes: '',
+  });
+
   // GitHub status - fetched from API to ensure accuracy (session might be stale)
   const [githubStatus, setGithubStatus] = useState<{
     isConnected: boolean;
@@ -174,6 +193,7 @@ export default function NewProjectPage() {
     objectives: '',
     methodology: '',
     expectedOutcome: '',
+    productionUrl: '',
   });
 
   // Fetch GitHub status from API (session might be stale after linking GitHub)
@@ -213,6 +233,7 @@ export default function NewProjectPage() {
       { name: 'Teknologi', filled: selectedTechs.length > 0 },
       { name: 'Tujuan', filled: formData.objectives.length > 0 },
       { name: 'GitHub', filled: !!(formData.githubRepoUrl || selectedRepo) },
+      { name: 'URL Production', filled: formData.productionUrl.length > 0 },
     ];
 
     const filledCount = fields.filter(f => f.filled).length;
@@ -226,7 +247,8 @@ export default function NewProjectPage() {
     return formData.title.length >= 5 &&
       formData.description.length >= 20 &&
       formData.semester &&
-      formData.category;
+      formData.category &&
+      formData.productionUrl.length > 0;
   }, [formData]);
 
   useEffect(() => {
@@ -281,6 +303,60 @@ export default function NewProjectPage() {
     setSelectedTechs(selectedTechs.filter(t => t !== tech));
   };
 
+  // Validate Production URL
+  const validateProductionUrl = useCallback(async (url: string) => {
+    if (!url) {
+      setUrlValidation({ status: 'idle' });
+      return;
+    }
+
+    // Basic URL format check
+    const urlPattern = /^https?:\/\/.+\..+/;
+    if (!urlPattern.test(url)) {
+      setUrlValidation({ status: 'idle' });
+      return;
+    }
+
+    setUrlValidation({ status: 'checking' });
+
+    try {
+      const response = await fetch('/api/validate-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        setUrlValidation({
+          status: 'valid',
+          message: `URL aktif (${data.responseTime}ms)`,
+          responseTime: data.responseTime,
+        });
+      } else {
+        setUrlValidation({
+          status: 'invalid',
+          message: data.error || 'URL tidak dapat diakses',
+        });
+      }
+    } catch {
+      setUrlValidation({
+        status: 'invalid',
+        message: 'Gagal memeriksa URL',
+      });
+    }
+  }, []);
+
+  // Auto-validate URL with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      validateProductionUrl(formData.productionUrl);
+    }, 800); // 800ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.productionUrl, validateProductionUrl]);
+
   const handleSubmit = async () => {
     setIsLoading(true);
     setError('');
@@ -294,6 +370,9 @@ export default function NewProjectPage() {
           technologies: selectedTechs,
           pendingTeamMembers: pendingTeamMembers,
           isPublic,
+          testingUsername: testingCredentials.username || null,
+          testingPassword: testingCredentials.password || null,
+          testingNotes: testingCredentials.notes || null,
         }),
       });
 
@@ -435,9 +514,9 @@ export default function NewProjectPage() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div className="lg:flex lg:gap-5 lg:items-start">
         {/* Left Column - Main Form */}
-        <div className={`space-y-5 ${showPreview ? 'lg:col-span-8' : 'lg:col-span-12'}`}>
+        <div className={`space-y-5 ${showPreview ? 'lg:flex-1 lg:min-w-0' : 'w-full'}`}>
 
           {/* Card 1: Basic Info */}
           <Card className="border border-default-100 shadow-sm">
@@ -853,6 +932,145 @@ export default function NewProjectPage() {
             />
           </div>
 
+          {/* Production URL & Testing Credentials - di bawah GitHub & Team */}
+          <Card className="border border-default-100 shadow-sm">
+            <CardBody className="p-5">
+              <div className="space-y-5">
+                {/* Production URL */}
+                <div>
+                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Globe size={16} className="text-primary" />
+                    URL Production/Demo
+                    <span className="text-danger">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <Input
+                      size="sm"
+                      variant="bordered"
+                      placeholder="https://your-app.vercel.app"
+                      value={formData.productionUrl}
+                      onChange={(e) => setFormData({ ...formData, productionUrl: e.target.value })}
+                      startContent={<Globe size={14} className="text-default-400" />}
+                      endContent={
+                        urlValidation.status === 'checking' ? (
+                          <Spinner size="sm" className="w-4 h-4" />
+                        ) : urlValidation.status === 'valid' ? (
+                          <CheckCircle2 size={16} className="text-success" />
+                        ) : urlValidation.status === 'invalid' ? (
+                          <XCircle size={16} className="text-danger" />
+                        ) : null
+                      }
+                      isRequired
+                      className="flex-1"
+                      classNames={{
+                        inputWrapper: `border-default-200 hover:border-primary data-[focused=true]:border-primary ${
+                          urlValidation.status === 'valid' ? 'border-success' : 
+                          urlValidation.status === 'invalid' ? 'border-danger' : ''
+                        }`,
+                      }}
+                    />
+                    {formData.productionUrl && urlValidation.status !== 'checking' && (
+                      <Tooltip content="Buka di tab baru">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          isIconOnly
+                          as="a"
+                          href={formData.productionUrl.startsWith('http') ? formData.productionUrl : `https://${formData.productionUrl}`}
+                          target="_blank"
+                          className="h-10 w-10"
+                        >
+                          <ExternalLink size={16} />
+                        </Button>
+                      </Tooltip>
+                    )}
+                  </div>
+                  {urlValidation.status === 'checking' && (
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-default-400">
+                      <Spinner size="sm" className="w-3 h-3" />
+                      Memeriksa URL...
+                    </p>
+                  )}
+                  {urlValidation.status === 'valid' && (
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-success">
+                      <CheckCircle2 size={12} />
+                      {urlValidation.message}
+                    </p>
+                  )}
+                  {urlValidation.status === 'invalid' && (
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-danger">
+                      <XCircle size={12} />
+                      {urlValidation.message}
+                    </p>
+                  )}
+                  {urlValidation.status === 'idle' && (
+                    <p className="text-xs text-default-400 mt-1.5">URL aplikasi yang sudah di-deploy dan bisa diakses publik</p>
+                  )}
+                </div>
+
+                <Divider />
+
+                {/* Testing Credentials */}
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <KeyRound size={16} className="text-warning" />
+                    <span className="text-sm font-medium">Akun Testing</span>
+                    <Chip size="sm" variant="flat" color="warning" classNames={{ base: 'h-5 text-[10px]' }}>
+                      Untuk Penguji
+                    </Chip>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      size="sm"
+                      variant="bordered"
+                      label="Username/Email"
+                      labelPlacement="outside"
+                      placeholder="user@example.com"
+                      value={testingCredentials.username}
+                      onChange={(e) => setTestingCredentials({ ...testingCredentials, username: e.target.value })}
+                      startContent={<User size={14} className="text-default-400" />}
+                      classNames={{
+                        label: 'text-xs font-medium',
+                        inputWrapper: 'border-default-200 hover:border-primary',
+                      }}
+                    />
+                    <Input
+                      size="sm"
+                      variant="bordered"
+                      label="Password"
+                      labelPlacement="outside"
+                      placeholder="password123"
+                      value={testingCredentials.password}
+                      onChange={(e) => setTestingCredentials({ ...testingCredentials, password: e.target.value })}
+                      startContent={<KeyRound size={14} className="text-default-400" />}
+                      classNames={{
+                        label: 'text-xs font-medium',
+                        inputWrapper: 'border-default-200 hover:border-primary',
+                      }}
+                    />
+                  </div>
+                  
+                  <Textarea
+                    size="sm"
+                    variant="bordered"
+                    label="Catatan Testing (Opsional)"
+                    labelPlacement="outside"
+                    placeholder="Langkah-langkah login, fitur utama yang bisa dicoba, atau informasi tambahan untuk penguji..."
+                    value={testingCredentials.notes}
+                    onChange={(e) => setTestingCredentials({ ...testingCredentials, notes: e.target.value })}
+                    minRows={2}
+                    className="mt-4"
+                    classNames={{
+                      label: 'text-xs font-medium',
+                      inputWrapper: 'border-default-200 hover:border-primary',
+                    }}
+                  />
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
           {/* Card 4: Optional Fields (Collapsible) */}
           <Card className="border border-default-100 shadow-sm">
             <CardBody className="p-0">
@@ -928,16 +1146,15 @@ export default function NewProjectPage() {
           </Card>
         </div>
 
-        {/* Right Column - Preview & Checklist */}
+        {/* Right Column - Preview & Checklist (Scroll together) */}
         <AnimatePresence>
           {showPreview && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="lg:col-span-4"
+              className="hidden lg:block w-[340px] flex-shrink-0 space-y-4"
             >
-              <div className="sticky top-20 space-y-4">
                 {/* Live Preview Card - Clean Design */}
                 <Card className="border border-zinc-200 dark:border-zinc-800 shadow-lg bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden">
                   <CardBody className="p-5 space-y-4">
@@ -1145,7 +1362,6 @@ export default function NewProjectPage() {
                     </ul>
                   </CardBody>
                 </Card>
-              </div>
             </motion.div>
           )}
         </AnimatePresence>

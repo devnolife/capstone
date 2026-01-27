@@ -23,6 +23,7 @@ import {
   useDisclosure,
   Spinner,
   Switch,
+  Pagination,
 } from '@heroui/react';
 import { Search, UserPlus, Edit, Trash2, Users, ChevronRight, Shield, GraduationCap, UserCog } from 'lucide-react';
 import { formatDate, getRoleLabel } from '@/lib/utils';
@@ -160,6 +161,8 @@ export default function AdminUsersPage() {
   const [roleFilter, setRoleFilter] = useState<string>('all');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -302,6 +305,18 @@ export default function AdminUsersPage() {
 
     return matchesSearch && matchesRole;
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredUsers.length / rowsPerPage);
+  const paginatedUsers = filteredUsers.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, roleFilter]);
 
   // Stats
   const stats = {
@@ -489,7 +504,7 @@ export default function AdminUsersPage() {
                 {/* Mobile View - Cards */}
                 <div className="md:hidden">
                   <motion.div variants={containerVariants}>
-                    {filteredUsers.map((user) => (
+                    {paginatedUsers.map((user) => (
                       <MobileUserCard
                         key={user.id}
                         user={user}
@@ -498,6 +513,18 @@ export default function AdminUsersPage() {
                       />
                     ))}
                   </motion.div>
+                  {/* Mobile Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-center mt-4">
+                      <Pagination
+                        total={totalPages}
+                        page={currentPage}
+                        onChange={setCurrentPage}
+                        size="sm"
+                        showControls
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Desktop View - Table */}
@@ -512,7 +539,7 @@ export default function AdminUsersPage() {
                       <TableColumn>AKSI</TableColumn>
                     </TableHeader>
                     <TableBody>
-                      {filteredUsers.map((user) => (
+                      {paginatedUsers.map((user) => (
                         <TableRow key={user.id}>
                           <TableCell>
                             <div className="flex items-center gap-3">
@@ -584,6 +611,21 @@ export default function AdminUsersPage() {
                       ))}
                     </TableBody>
                   </Table>
+                  {/* Desktop Pagination */}
+                  {totalPages > 1 && (
+                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-200/60 dark:border-zinc-700/50">
+                      <span className="text-sm text-slate-500 dark:text-zinc-400">
+                        Menampilkan {((currentPage - 1) * rowsPerPage) + 1} - {Math.min(currentPage * rowsPerPage, filteredUsers.length)} dari {filteredUsers.length} user
+                      </span>
+                      <Pagination
+                        total={totalPages}
+                        page={currentPage}
+                        onChange={setCurrentPage}
+                        showControls
+                        color="primary"
+                      />
+                    </div>
+                  )}
                 </div>
               </>
             )}

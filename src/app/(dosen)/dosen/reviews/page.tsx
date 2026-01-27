@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
-import { DosenReviewsContent } from '@/components/dosen/reviews-content';
+import { redirect } from 'next/navigation';
+import { DosenReviewsClient } from './client';
 
 export default async function DosenReviewsPage() {
   const session = await auth();
@@ -10,31 +10,26 @@ export default async function DosenReviewsPage() {
     redirect('/login');
   }
 
+  const userId = session.user.id;
+
   // Fetch reviews by this dosen
   const reviews = await prisma.review.findMany({
-    where: {
-      reviewerId: session.user.id,
-    },
+    where: { reviewerId: userId },
     include: {
       project: {
-        include: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
           mahasiswa: {
             select: {
-              id: true,
               name: true,
               username: true,
+              image: true,
+              profilePhoto: true,
             },
           },
         },
-      },
-      scores: {
-        include: {
-          rubrik: true,
-        },
-      },
-      comments: {
-        orderBy: { createdAt: 'desc' },
-        take: 5,
       },
     },
     orderBy: { updatedAt: 'desc' },
@@ -43,12 +38,10 @@ export default async function DosenReviewsPage() {
   // Fetch pending assignments (projects assigned but not yet reviewed)
   const pendingAssignments = await prisma.projectAssignment.findMany({
     where: {
-      dosenId: session.user.id,
+      dosenId: userId,
       project: {
         reviews: {
-          none: {
-            reviewerId: session.user.id,
-          },
+          none: { reviewerId: userId },
         },
         status: {
           in: ['SUBMITTED', 'IN_REVIEW'],
@@ -57,20 +50,17 @@ export default async function DosenReviewsPage() {
     },
     include: {
       project: {
-        include: {
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          submittedAt: true,
           mahasiswa: {
             select: {
-              id: true,
               name: true,
               username: true,
-            },
-          },
-          documents: {
-            take: 3,
-          },
-          _count: {
-            select: {
-              documents: true,
+              image: true,
+              profilePhoto: true,
             },
           },
         },
@@ -79,19 +69,41 @@ export default async function DosenReviewsPage() {
     orderBy: { assignedAt: 'desc' },
   });
 
-  // Calculate stats
-  const stats = {
-    totalReviews: reviews.length,
-    completedReviews: reviews.filter((r) => r.status === 'COMPLETED').length,
-    inProgressReviews: reviews.filter((r) => r.status === 'IN_PROGRESS').length,
-    pendingAssignments: pendingAssignments.length,
-  };
+  // Transform data for client
+  const reviewsData = reviews.map((review) => ({
+    id: review.id,
+    status: review.status,
+    overallScore: review.overallScore,
+    createdAt: review.createdAt.toISOString(),
+    updatedAt: review.updatedAt.toISOString(),
+    project: {
+      id: review.project.id,
+      title: review.project.title,
+      status: review.project.status,
+      mahasiswa: {
+        name: review.project.mahasiswa.name,
+        username: review.project.mahasiswa.username,
+        image: review.project.mahasiswa.image,
+        profilePhoto: review.project.mahasiswa.profilePhoto,
+      },
+    },
+  }));
 
-  return (
-    <DosenReviewsContent
-      reviews={reviews}
-      pendingAssignments={pendingAssignments}
-      stats={stats}
-    />
-  );
+  const pendingData = pendingAssignments.map((assignment) => ({
+    id: assignment.id,
+    project: {
+      id: assignment.project.id,
+      title: assignment.project.title,
+      status: assignment.project.status,
+      submittedAt: assignment.project.submittedAt?.toISOString() || null,
+      mahasiswa: {
+        name: assignment.project.mahasiswa.name,
+        username: assignment.project.mahasiswa.username,
+        image: assignment.project.mahasiswa.image,
+        profilePhoto: assignment.project.mahasiswa.profilePhoto,
+      },
+    },
+  }));
+
+  return <DosenReviewsClient reviews={reviewsData} pendingAssignments={pendingData} />;
 }

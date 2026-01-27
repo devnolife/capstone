@@ -184,7 +184,19 @@ export async function POST(request: Request) {
       validatedData.data;
 
     // Extract additional fields from body (not in schema but sent from frontend)
-    const { pendingTeamMembers, technologies, category, objectives, methodology, expectedOutcome, isPublic } = body;
+    const { 
+      pendingTeamMembers, 
+      technologies, 
+      category, 
+      objectives, 
+      methodology, 
+      expectedOutcome, 
+      isPublic, 
+      productionUrl,
+      testingUsername,
+      testingPassword,
+      testingNotes,
+    } = body;
 
     // Use provided repo name or extract from URL
     let githubRepoName = providedRepoName || null;
@@ -250,7 +262,7 @@ export async function POST(request: Request) {
       }
 
       // 5. Create project requirements if additional fields are provided
-      if (objectives || methodology || expectedOutcome || technologies || category) {
+      if (objectives || methodology || expectedOutcome || technologies || category || productionUrl || testingUsername || testingPassword) {
         await tx.projectRequirements.create({
           data: {
             projectId: newProject.id,
@@ -259,6 +271,10 @@ export async function POST(request: Request) {
             metodologi: methodology || null,
             teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
             ruangLingkup: category || null,
+            productionUrl: productionUrl || null,
+            testingUsername: testingUsername || null,
+            testingPassword: testingPassword || null,
+            testingNotes: testingNotes || null,
           },
         });
       }

@@ -59,7 +59,8 @@ model User {
   name           String
   password       String? // Nullable for OAuth users (bcrypt hash for fallback)
   role           Role      @default(MAHASISWA)
-  image          String? // For NextAuth compatibility (avatar URL)
+  image          String? // For NextAuth compatibility (avatar URL from OAuth)
+  profilePhoto   String? // Custom uploaded profile photo URL
   githubId       String?   @unique
   githubUsername String?
   githubToken    String? // Encrypted GitHub access token
@@ -68,12 +69,13 @@ model User {
   updatedAt      DateTime  @updatedAt
 
   // SIMAK Integration Fields
-  nim              String?   @unique // NIM dari SIMAK (untuk mahasiswa)
-  phone            String?            // No HP dari SIMAK
-  prodi            String?            // Program studi dari SIMAK
-  simakPhoto       String?            // URL foto dari SIMAK
-  simakValidated   Boolean   @default(false) // Apakah akun sudah tervalidasi via SIMAK
-  simakLastSync    DateTime?          // Terakhir sync data dari SIMAK
+  nim            String?   @unique // NIM dari SIMAK (untuk mahasiswa)
+  nip            String?   @unique // NIP untuk dosen
+  phone          String?            // No HP
+  prodi          String?            // Program studi
+  simakPhoto     String?            // URL foto dari SIMAK
+  simakValidated Boolean   @default(false) // Apakah akun sudah tervalidasi via SIMAK
+  simakLastSync  DateTime?          // Terakhir sync data dari SIMAK
 
   // Relations
   projects            Project[]           @relation("ProjectOwner")
@@ -110,93 +112,135 @@ model Account {
 }
 
 model Project {
-  id          String        @id @default(cuid())
-  title       String
-  description String?       @db.Text
-  status      ProjectStatus @default(DRAFT)
-
-  // GitHub - Repo Mahasiswa
+  id             String        @id @default(cuid())
+  title          String
+  description    String?       @db.Text
+  status         ProjectStatus @default(DRAFT)
   githubRepoUrl  String?
   githubRepoName String?
+  productionUrl  String?       // URL production/demo aplikasi
+  semester       String        @default("Ganjil")
+  tahunAkademik  String        @default("2024/2025")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  submittedAt    DateTime?
 
-  // GitHub - Repo di Organization (setelah fork)
-  orgRepoUrl  String? // URL repo di org setelah fork
-  orgRepoName String? // Nama repo di org
-  forkedAt    DateTime? // Kapan di-fork ke org
-
-  semester      String // e.g., "Ganjil 2024/2025"
-  tahunAkademik String // e.g., "2024/2025"
-  submittedAt   DateTime? // When project was submitted for review
-  approvedAt    DateTime? // When project was approved
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  // Owner
+  mahasiswaId String
+  mahasiswa   User   @relation("ProjectOwner", fields: [mahasiswaId], references: [id])
 
   // Relations
-  mahasiswaId          String
-  mahasiswa            User                  @relation("ProjectOwner", fields: [mahasiswaId], references: [id], onDelete: Cascade)
-  documents            Document[]
-  reviews              Review[]
-  assignments          ProjectAssignment[]
-  requirements         ProjectRequirements?
-  members              ProjectMember[]
-  stakeholderDocuments StakeholderDocument[]
-  screenshots          ProjectScreenshot[]
-  invitations          TeamInvitation[]
+  documents             Document[]
+  reviews               Review[]
+  assignments           ProjectAssignment[]
+  members               ProjectMember[]
+  invitations           TeamInvitation[]
+  requirements          ProjectRequirements?
+  stakeholderDocuments  StakeholderDocument[]
 
   @@map("projects")
 }
 
-// Project Team Members
+// Tim Project / Anggota Kelompok
 model ProjectMember {
   id              String   @id @default(cuid())
   projectId       String
-  userId          String?  // Link to registered user (for NIM-based members)
-  githubUsername  String?  // GitHub username (optional now)
-  githubId        String?
-  githubAvatarUrl String?
-  name            String?
-  role            String   @default("member") // "leader" | "member"
-  addedAt         DateTime @default(now())
+  userId          String?  // Null jika belum terhubung dengan akun
+  githubUsername  String?  // GitHub username untuk kolaborator eksternal
+  githubAvatarUrl String?  // Avatar URL dari GitHub
+  name            String?  // Nama manual jika tidak ada akun
+  role            String   @default("member") // "leader" atau "member"
+  joinedAt        DateTime @default(now())
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  user    User?   @relation("TeamMember", fields: [userId], references: [id], onDelete: SetNull)
+  user    User?   @relation("TeamMember", fields: [userId], references: [id])
 
   @@unique([projectId, userId])
+  @@unique([projectId, githubUsername])
   @@map("project_members")
 }
 
-// Team Invitation (Undangan Tim)
+// Undangan untuk bergabung tim
 model TeamInvitation {
-  id          String    @id @default(cuid())
-  projectId   String
-  inviterId   String    // User who sent the invitation (ketua)
-  inviteeId   String    // User being invited (anggota)
-  status      String    @default("pending") // "pending" | "accepted" | "rejected"
-  message     String?   @db.Text // Optional message from inviter
-  createdAt   DateTime  @default(now())
-  respondedAt DateTime? // When the invitation was accepted/rejected
+  id         String   @id @default(cuid())
+  projectId  String
+  inviterId  String   // User yang mengundang
+  inviteeId  String   // User yang diundang
+  status     String   @default("pending") // "pending", "accepted", "rejected"
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  expiresAt  DateTime // Kapan undangan kadaluarsa
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  inviter User    @relation("InvitationsSent", fields: [inviterId], references: [id], onDelete: Cascade)
-  invitee User    @relation("InvitationsReceived", fields: [inviteeId], references: [id], onDelete: Cascade)
+  inviter User    @relation("InvitationsSent", fields: [inviterId], references: [id])
+  invitee User    @relation("InvitationsReceived", fields: [inviteeId], references: [id])
 
-  @@unique([projectId, inviteeId]) // One invitation per user per project
-  @@index([inviteeId, status])
+  @@unique([projectId, inviteeId])
   @@map("team_invitations")
 }
 
-model ProjectAssignment {
-  id         String   @id @default(cuid())
-  projectId  String
-  dosenId    String
-  assignedAt DateTime @default(now())
+// Persyaratan Project (form lengkap)
+model ProjectRequirements {
+  id                   String   @id @default(cuid())
+  projectId            String   @unique
+  
+  // Basic Info
+  judulProyek          String?  @db.Text
+  targetPengguna       String?  @db.Text
+  latarBelakangMasalah String?  @db.Text
+  tujuanProyek         String?  @db.Text
+  manfaatProyek        String?  @db.Text
+  
+  // Academic
+  integrasiMatakuliah  String?  @db.Text
+  metodologi           String?  @db.Text
+  penulisanLaporan     String?  @db.Text
+  
+  // Technical
+  ruangLingkup         String?  @db.Text
+  sumberDayaBatasan    String?  @db.Text
+  teknologi            String?  @db.Text
+  fiturUtama           String?  @db.Text
+  
+  // Analysis
+  analisisTemuan       String?  @db.Text
+  presentasiUjian      String?  @db.Text
+  stakeholder          String?  @db.Text
+  kepatuhanEtika       String?  @db.Text
+  
+  // Timeline
+  timeline             String?  @db.Text
+  kerangkaWaktu        String?  @db.Text
+  deadlineDate         DateTime?
+  
+  // Completion tracking
+  completionPercent    Int      @default(0)
+  
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
-  // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  dosen   User    @relation(fields: [dosenId], references: [id], onDelete: Cascade)
 
-  @@unique([projectId, dosenId])
-  @@map("project_assignments")
+  @@map("project_requirements")
+}
+
+// Dokumen Stakeholder
+model StakeholderDocument {
+  id              String                  @id @default(cuid())
+  projectId       String
+  stakeholderName String                  // Nama stakeholder
+  stakeholderRole String?                 // Jabatan/peran stakeholder
+  organization    String?                 // Organisasi/instansi
+  type            StakeholderDocumentType @default(OTHER)
+  fileName        String
+  fileUrl         String
+  fileSize        Int                     // dalam bytes
+  description     String?                 @db.Text
+  uploadedAt      DateTime                @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("stakeholder_documents")
 }
 
 model Document {
@@ -205,12 +249,9 @@ model Document {
   type       DocumentType
   fileName   String
   filePath   String
-  fileSize   Int // in bytes
-  mimeType   String
+  fileSize   Int
   uploadedAt DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
 
-  // Relations
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("documents")
@@ -221,68 +262,75 @@ model Review {
   projectId      String
   reviewerId     String
   status         ReviewStatus @default(PENDING)
-  overallScore   Int? // 0-100
+  overallScore   Float?
   overallComment String?      @db.Text
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   completedAt    DateTime?
 
-  // Relations
   project  Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  reviewer User            @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: Cascade)
-  comments ReviewComment[]
+  reviewer User            @relation("Reviewer", fields: [reviewerId], references: [id])
   scores   ReviewScore[]
+  comments ReviewComment[]
 
-  @@unique([projectId, reviewerId])
   @@map("reviews")
 }
 
-model ReviewComment {
-  id         String   @id @default(cuid())
-  reviewId   String
-  content    String   @db.Text
-  filePath   String? // For inline code review (e.g., "src/app/page.tsx")
-  lineNumber Int? // For inline code review
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model ReviewScore {
+  id        String @id @default(cuid())
+  reviewId  String
+  rubrikId  String
+  score     Float
+  maxScore  Float
+  comment   String? @db.Text
 
-  // Relations
+  review Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  rubrik RubrikPenilaian @relation(fields: [rubrikId], references: [id])
+
+  @@unique([reviewId, rubrikId])
+  @@map("review_scores")
+}
+
+model ReviewComment {
+  id        String   @id @default(cuid())
+  reviewId  String
+  section   String // Bagian yang dikomentari (code, documentation, presentation, dll)
+  filePath  String? // Path file jika komentar untuk kode
+  lineStart Int? // Line awal jika komentar untuk kode
+  lineEnd   Int? // Line akhir jika komentar untuk kode
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
   review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
 
   @@map("review_comments")
 }
 
 model RubrikPenilaian {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   name        String
-  description String?  @db.Text
-  kategori    String // e.g., "Kualitas Kode", "Dokumentasi", "Presentasi"
-  bobotMax    Int // Max score for this category (e.g., 20)
-  urutan      Int      @default(0) // Order of display
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  description String? @db.Text
+  kategori    String // "Teknis", "Dokumentasi", "Presentasi", "Umum"
+  bobotMax    Float // Bobot maksimal (misal: 20, 25)
+  isActive    Boolean @default(true)
+  urutan      Int     @default(0) // Urutan tampil
 
-  // Relations
   scores ReviewScore[]
 
   @@map("rubrik_penilaian")
 }
 
-model ReviewScore {
-  id        String   @id @default(cuid())
-  reviewId  String
-  rubrikId  String
-  score     Int // Actual score given
-  feedback  String?  @db.Text
-  createdAt DateTime @default(now())
+model ProjectAssignment {
+  id         String   @id @default(cuid())
+  projectId  String
+  dosenId    String
+  assignedAt DateTime @default(now())
 
-  // Relations
-  review Review          @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  rubrik RubrikPenilaian @relation(fields: [rubrikId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  dosen   User    @relation(fields: [dosenId], references: [id])
 
-  @@unique([reviewId, rubrikId])
-  @@map("review_scores")
+  @@unique([projectId, dosenId])
+  @@map("project_assignments")
 }
 
 model Notification {
@@ -290,24 +338,20 @@ model Notification {
   userId    String
   title     String
   message   String   @db.Text
+  type      String // "assignment", "review", "submission", "system"
+  link      String?
   isRead    Boolean  @default(false)
-  type      String // e.g., "review", "submission", "assignment", "system"
-  link      String? // URL to navigate when clicked
   createdAt DateTime @default(now())
 
-  // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, isRead])
   @@map("notifications")
 }
 
-// ==================== SEMESTER CONFIGURATION ====================
-
 model Semester {
   id            String   @id @default(cuid())
-  name          String // e.g., "Ganjil 2024/2025"
-  tahunAkademik String // e.g., "2024/2025"
+  name          String // "Ganjil 2024/2025"
+  tahunAkademik String // "2024/2025"
   startDate     DateTime
   endDate       DateTime
   isActive      Boolean  @default(false)
@@ -315,123 +359,4 @@ model Semester {
   updatedAt     DateTime @updatedAt
 
   @@map("semesters")
-}
-
-// ==================== PROJECT REQUIREMENTS (Persyaratan Proyek) ====================
-
-model ProjectRequirements {
-  id        String @id @default(cuid())
-  projectId String @unique // One requirements per project
-
-  // ========== INFORMASI DASAR ==========
-  judulProyek          String? // Text input - Judul proyek
-  targetPengguna       String? @db.Text // Untuk siapa aplikasi/sistem ini
-  latarBelakangMasalah String? @db.Text // Mengapa proyek ini perlu dibuat
-  tujuanProyek         String? @db.Text // Apa yang ingin dicapai
-  manfaatProyek        String? @db.Text // Keuntungan yang didapat
-
-  // ========== ASPEK AKADEMIK ==========
-  integrasiMatakuliah String? @db.Text // Integrasi konsep dari mata kuliah yang relevan
-  metodologi          String? @db.Text // Metodologi pengembangan (Agile, Waterfall, dll)
-  penulisanLaporan    String? @db.Text // Rencana format dan struktur laporan
-
-  // ========== TEKNIS & IMPLEMENTASI ==========
-  ruangLingkup      String? @db.Text // Batasan dan cakupan proyek
-  sumberDayaBatasan String? @db.Text // Sumber daya & batasan (waktu, anggaran, akses data)
-  teknologi         String? @db.Text // Stack/tools yang dipakai
-  fiturUtama        String? @db.Text // Daftar fitur yang akan dibuat
-
-  // ========== ANALISIS & EVALUASI ==========
-  analisisTemuan  String? @db.Text // Rencana analisis dan temuan yang diharapkan
-  presentasiUjian String? @db.Text // Rencana presentasi dan persiapan ujian
-  stakeholder     String? @db.Text // Keterlibatan stakeholder
-  kepatuhanEtika  String? @db.Text // Aspek etika dan penanganan data
-
-  // ========== TIMELINE ==========
-  timeline      String?   @db.Text // Deskripsi rencana pengerjaan
-  kerangkaWaktu String?   @db.Text // Jadwal terstruktur per tahapan
-  deadlineDate  DateTime? // Tanggal deadline proyek
-
-  // ========== PRODUCTION & DEMO ==========
-  productionUrl       String?  // URL aplikasi yang sudah di-deploy (production/demo)
-  productionUrlStatus String?  // "valid", "invalid", "checking", null
-  productionUrlCheckedAt DateTime? // Kapan terakhir URL di-validasi
-  
-  // Testing Credentials (opsional)
-  testingUsername  String?  // Username untuk akun testing
-  testingPassword  String?  // Password untuk akun testing
-  testingNotes     String?  @db.Text // Catatan tambahan untuk testing (misal: role, flow)
-
-  // Metadata
-  completionPercent Int      @default(0) // 0-100
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  // Relations
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@map("project_requirements")
-}
-
-// ==================== STAKEHOLDER DOCUMENTS (Dokumen Stakeholder) ====================
-
-model StakeholderDocument {
-  id        String @id @default(cuid())
-  projectId String
-
-  // Stakeholder Info
-  stakeholderName String // Nama stakeholder
-  stakeholderRole String? // Jabatan/peran stakeholder (e.g., "Direktur", "Manager IT")
-  organization    String? // Nama organisasi/perusahaan
-
-  // Document Info
-  type     StakeholderDocumentType
-  fileName String // Original file name
-  fileKey  String // MinIO object key
-  fileUrl  String // Public URL to access file
-  fileSize Int // in bytes
-  mimeType String // e.g., "image/png", "application/pdf"
-
-  // Metadata
-  description String?  @db.Text // Optional description
-  uploadedAt  DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@map("stakeholder_documents")
-}
-
-// ==================== PROJECT SCREENSHOTS (Screenshot Aplikasi) ====================
-
-model ProjectScreenshot {
-  id        String @id @default(cuid())
-  projectId String
-
-  // Screenshot Info
-  title       String  // Judul/nama screenshot (e.g., "Halaman Login", "Dashboard Admin")
-  description String? @db.Text // Deskripsi screenshot
-  category    String? // Kategori (e.g., "UI", "Fitur", "Testing", "Demo")
-  orderIndex  Int     @default(0) // Urutan tampilan
-
-  // File Info (MinIO)
-  fileName String // Original file name
-  fileKey  String // MinIO object key
-  fileUrl  String // Public URL to access file
-  fileSize Int    // in bytes
-  mimeType String // e.g., "image/png", "image/jpeg"
-
-  // Featured Flag (untuk showcase di landing page)
-  isFeatured Boolean @default(false) // Apakah ditampilkan di gallery landing page
-
-  // Metadata
-  uploadedAt DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Relations
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  @@index([isFeatured]) // Index untuk query featured screenshots
-  @@map("project_screenshots")
 }

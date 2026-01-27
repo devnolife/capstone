@@ -129,6 +129,7 @@ exports.Prisma.UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   image: 'image',
+  profilePhoto: 'profilePhoto',
   githubId: 'githubId',
   githubUsername: 'githubUsername',
   githubToken: 'githubToken',
@@ -136,6 +137,7 @@ exports.Prisma.UserScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   nim: 'nim',
+  nip: 'nip',
   phone: 'phone',
   prodi: 'prodi',
   simakPhoto: 'simakPhoto',
@@ -165,15 +167,12 @@ exports.Prisma.ProjectScalarFieldEnum = {
   status: 'status',
   githubRepoUrl: 'githubRepoUrl',
   githubRepoName: 'githubRepoName',
-  orgRepoUrl: 'orgRepoUrl',
-  orgRepoName: 'orgRepoName',
-  forkedAt: 'forkedAt',
+  productionUrl: 'productionUrl',
   semester: 'semester',
   tahunAkademik: 'tahunAkademik',
-  submittedAt: 'submittedAt',
-  approvedAt: 'approvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
+  submittedAt: 'submittedAt',
   mahasiswaId: 'mahasiswaId'
 };
 
@@ -182,11 +181,10 @@ exports.Prisma.ProjectMemberScalarFieldEnum = {
   projectId: 'projectId',
   userId: 'userId',
   githubUsername: 'githubUsername',
-  githubId: 'githubId',
   githubAvatarUrl: 'githubAvatarUrl',
   name: 'name',
   role: 'role',
-  addedAt: 'addedAt'
+  joinedAt: 'joinedAt'
 };
 
 exports.Prisma.TeamInvitationScalarFieldEnum = {
@@ -195,93 +193,9 @@ exports.Prisma.TeamInvitationScalarFieldEnum = {
   inviterId: 'inviterId',
   inviteeId: 'inviteeId',
   status: 'status',
-  message: 'message',
-  createdAt: 'createdAt',
-  respondedAt: 'respondedAt'
-};
-
-exports.Prisma.ProjectAssignmentScalarFieldEnum = {
-  id: 'id',
-  projectId: 'projectId',
-  dosenId: 'dosenId',
-  assignedAt: 'assignedAt'
-};
-
-exports.Prisma.DocumentScalarFieldEnum = {
-  id: 'id',
-  projectId: 'projectId',
-  type: 'type',
-  fileName: 'fileName',
-  filePath: 'filePath',
-  fileSize: 'fileSize',
-  mimeType: 'mimeType',
-  uploadedAt: 'uploadedAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ReviewScalarFieldEnum = {
-  id: 'id',
-  projectId: 'projectId',
-  reviewerId: 'reviewerId',
-  status: 'status',
-  overallScore: 'overallScore',
-  overallComment: 'overallComment',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  completedAt: 'completedAt'
-};
-
-exports.Prisma.ReviewCommentScalarFieldEnum = {
-  id: 'id',
-  reviewId: 'reviewId',
-  content: 'content',
-  filePath: 'filePath',
-  lineNumber: 'lineNumber',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.RubrikPenilaianScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  kategori: 'kategori',
-  bobotMax: 'bobotMax',
-  urutan: 'urutan',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ReviewScoreScalarFieldEnum = {
-  id: 'id',
-  reviewId: 'reviewId',
-  rubrikId: 'rubrikId',
-  score: 'score',
-  feedback: 'feedback',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.NotificationScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  title: 'title',
-  message: 'message',
-  isRead: 'isRead',
-  type: 'type',
-  link: 'link',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.SemesterScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  tahunAkademik: 'tahunAkademik',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  expiresAt: 'expiresAt'
 };
 
 exports.Prisma.ProjectRequirementsScalarFieldEnum = {
@@ -306,12 +220,6 @@ exports.Prisma.ProjectRequirementsScalarFieldEnum = {
   timeline: 'timeline',
   kerangkaWaktu: 'kerangkaWaktu',
   deadlineDate: 'deadlineDate',
-  productionUrl: 'productionUrl',
-  productionUrlStatus: 'productionUrlStatus',
-  productionUrlCheckedAt: 'productionUrlCheckedAt',
-  testingUsername: 'testingUsername',
-  testingPassword: 'testingPassword',
-  testingNotes: 'testingNotes',
   completionPercent: 'completionPercent',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -325,29 +233,90 @@ exports.Prisma.StakeholderDocumentScalarFieldEnum = {
   organization: 'organization',
   type: 'type',
   fileName: 'fileName',
-  fileKey: 'fileKey',
   fileUrl: 'fileUrl',
   fileSize: 'fileSize',
-  mimeType: 'mimeType',
   description: 'description',
-  uploadedAt: 'uploadedAt',
-  updatedAt: 'updatedAt'
+  uploadedAt: 'uploadedAt'
 };
 
-exports.Prisma.ProjectScreenshotScalarFieldEnum = {
+exports.Prisma.DocumentScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
-  title: 'title',
-  description: 'description',
-  category: 'category',
-  orderIndex: 'orderIndex',
+  type: 'type',
   fileName: 'fileName',
-  fileKey: 'fileKey',
-  fileUrl: 'fileUrl',
+  filePath: 'filePath',
   fileSize: 'fileSize',
-  mimeType: 'mimeType',
-  isFeatured: 'isFeatured',
-  uploadedAt: 'uploadedAt',
+  uploadedAt: 'uploadedAt'
+};
+
+exports.Prisma.ReviewScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  reviewerId: 'reviewerId',
+  status: 'status',
+  overallScore: 'overallScore',
+  overallComment: 'overallComment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.ReviewScoreScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  rubrikId: 'rubrikId',
+  score: 'score',
+  maxScore: 'maxScore',
+  comment: 'comment'
+};
+
+exports.Prisma.ReviewCommentScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  section: 'section',
+  filePath: 'filePath',
+  lineStart: 'lineStart',
+  lineEnd: 'lineEnd',
+  content: 'content',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.RubrikPenilaianScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  kategori: 'kategori',
+  bobotMax: 'bobotMax',
+  isActive: 'isActive',
+  urutan: 'urutan'
+};
+
+exports.Prisma.ProjectAssignmentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  dosenId: 'dosenId',
+  assignedAt: 'assignedAt'
+};
+
+exports.Prisma.NotificationScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  message: 'message',
+  type: 'type',
+  link: 'link',
+  isRead: 'isRead',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.SemesterScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  tahunAkademik: 'tahunAkademik',
+  startDate: 'startDate',
+  endDate: 'endDate',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
@@ -380,6 +349,16 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   REJECTED: 'REJECTED'
 };
 
+exports.StakeholderDocumentType = exports.$Enums.StakeholderDocumentType = {
+  SIGNATURE: 'SIGNATURE',
+  PHOTO: 'PHOTO',
+  AGREEMENT_LETTER: 'AGREEMENT_LETTER',
+  ID_CARD: 'ID_CARD',
+  SCREENSHOT: 'SCREENSHOT',
+  SUPPORTING_DOCUMENT: 'SUPPORTING_DOCUMENT',
+  OTHER: 'OTHER'
+};
+
 exports.DocumentType = exports.$Enums.DocumentType = {
   PRESENTATION: 'PRESENTATION',
   SOURCE_CODE: 'SOURCE_CODE',
@@ -392,33 +371,22 @@ exports.ReviewStatus = exports.$Enums.ReviewStatus = {
   COMPLETED: 'COMPLETED'
 };
 
-exports.StakeholderDocumentType = exports.$Enums.StakeholderDocumentType = {
-  SIGNATURE: 'SIGNATURE',
-  PHOTO: 'PHOTO',
-  AGREEMENT_LETTER: 'AGREEMENT_LETTER',
-  ID_CARD: 'ID_CARD',
-  SCREENSHOT: 'SCREENSHOT',
-  SUPPORTING_DOCUMENT: 'SUPPORTING_DOCUMENT',
-  OTHER: 'OTHER'
-};
-
 exports.Prisma.ModelName = {
   User: 'User',
   Account: 'Account',
   Project: 'Project',
   ProjectMember: 'ProjectMember',
   TeamInvitation: 'TeamInvitation',
-  ProjectAssignment: 'ProjectAssignment',
-  Document: 'Document',
-  Review: 'Review',
-  ReviewComment: 'ReviewComment',
-  RubrikPenilaian: 'RubrikPenilaian',
-  ReviewScore: 'ReviewScore',
-  Notification: 'Notification',
-  Semester: 'Semester',
   ProjectRequirements: 'ProjectRequirements',
   StakeholderDocument: 'StakeholderDocument',
-  ProjectScreenshot: 'ProjectScreenshot'
+  Document: 'Document',
+  Review: 'Review',
+  ReviewScore: 'ReviewScore',
+  ReviewComment: 'ReviewComment',
+  RubrikPenilaian: 'RubrikPenilaian',
+  ProjectAssignment: 'ProjectAssignment',
+  Notification: 'Notification',
+  Semester: 'Semester'
 };
 
 /**
