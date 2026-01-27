@@ -6,11 +6,16 @@ import { AdminDashboardContent } from '@/components/admin/dashboard-content';
 export default async function AdminDashboardPage() {
   const session = await auth();
 
+  // Debug logging
+  console.log('[ADMIN DASHBOARD] Session:', session ? 'exists' : 'null', 'User:', session?.user?.username, 'Role:', session?.user?.role);
+
   if (!session?.user) {
+    console.log('[ADMIN DASHBOARD] No session, redirecting to login');
     redirect('/login');
   }
 
   if (session.user.role !== 'ADMIN') {
+    console.log('[ADMIN DASHBOARD] Not admin role, redirecting to /');
     redirect('/');
   }
 

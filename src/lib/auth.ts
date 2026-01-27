@@ -34,16 +34,19 @@ declare module '@auth/core/jwt' {
   }
 }
 
-const useSecureCookies = process.env.NEXTAUTH_URL?.startsWith('https://');
-const cookiePrefix = useSecureCookies ? '__Secure-' : '';
+// For reverse proxy setup: disable __Secure- prefix since the proxy handles HTTPS
+// The internal connection from proxy to Next.js is HTTP, but external is HTTPS
+const useSecureCookies = false; // Disable for reverse proxy setup
+const cookiePrefix = ''; // No prefix needed
+
+// Debug cookie settings
+console.log('[AUTH CONFIG] useSecureCookies:', useSecureCookies, 'cookiePrefix:', cookiePrefix);
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  // Note: We don't use PrismaAdapter here because our User model
-  // has required fields (username) that the adapter doesn't handle.
-  // Instead, we handle user creation/lookup manually in callbacks.
   trustHost: true,
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
   },
   cookies: {
     sessionToken: {
@@ -52,7 +55,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: useSecureCookies,
+        secure: false, // Let the reverse proxy handle HTTPS
       },
     },
     callbackUrl: {
@@ -60,7 +63,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       options: {
         sameSite: 'lax',
         path: '/',
-        secure: useSecureCookies,
+        secure: false,
       },
     },
     csrfToken: {
@@ -69,7 +72,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: useSecureCookies,
+        secure: false,
       },
     },
   },

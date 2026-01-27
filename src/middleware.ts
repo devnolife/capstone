@@ -14,6 +14,9 @@ export async function middleware(request: NextRequest) {
   const isLoggedIn = !!token;
   const userRole = token?.role as string | undefined;
 
+  // Debug logging
+  console.log(`[MIDDLEWARE] Path: ${nextUrl.pathname}, LoggedIn: ${isLoggedIn}, Role: ${userRole}`);
+
   // Public routes (registration disabled)
   const publicRoutes = ['/', '/login'];
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
@@ -31,8 +34,10 @@ export async function middleware(request: NextRequest) {
   if (nextUrl.pathname === '/dashboard' || nextUrl.pathname.startsWith('/dashboard/')) {
     if (isLoggedIn) {
       const redirectUrl = getDashboardUrl(userRole);
+      console.log(`[MIDDLEWARE] Redirecting /dashboard to: ${redirectUrl}`);
       return NextResponse.redirect(new URL(redirectUrl, nextUrl));
     } else {
+      console.log(`[MIDDLEWARE] Not logged in, redirecting to /login`);
       return NextResponse.redirect(new URL('/login', nextUrl));
     }
   }
@@ -41,7 +46,7 @@ export async function middleware(request: NextRequest) {
   const isMahasiswaRoute = nextUrl.pathname.startsWith('/mahasiswa');
   const isDosenRoute = nextUrl.pathname.startsWith('/dosen');
   const isAdminRoute = nextUrl.pathname.startsWith('/admin');
-  
+
   // Check if it's a protected route (any role-based route)
   const isProtectedRoute = isMahasiswaRoute || isDosenRoute || isAdminRoute;
 

@@ -1,4 +1,4 @@
-'use client';
+  'use client';
 
 import { Suspense, useState } from 'react';
 import { signIn } from 'next-auth/react';
@@ -56,8 +56,8 @@ function LoginForm() {
           setError('Username atau password salah.');
         }
       } else {
-        router.push('/dashboard');
-        router.refresh();
+        // Use window.location for full page navigation to ensure cookies are sent
+        window.location.href = '/dashboard';
       }
     } catch {
       setError('Terjadi kesalahan. Silakan coba lagi.');
