@@ -141,7 +141,7 @@ interface ProjectScreenshot {
   fileUrl: string;
   fileSize: number;
   mimeType: string;
-  uploadedAt: string;
+  createdAt: string;
 }
 
 const getStakeholderTypeConfig = (type: string) => {
@@ -1026,7 +1026,7 @@ export default function ReviewPage({
                             {screenshot.category && (
                               <Chip size="sm" variant="flat" color="secondary">{screenshot.category}</Chip>
                             )}
-                            <p className="text-xs text-default-400">{formatDate(screenshot.uploadedAt)}</p>
+                            <p className="text-xs text-default-400">{formatDate(screenshot.createdAt)}</p>
                           </div>
                         </motion.div>
                       ))}
