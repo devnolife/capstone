@@ -25,7 +25,7 @@ import {
   Switch,
   Pagination,
 } from '@heroui/react';
-import { Search, UserPlus, Edit, Trash2, Users, ChevronRight, Shield, GraduationCap, UserCog } from 'lucide-react';
+import { Search, UserPlus, Edit, Trash2, Users, ChevronRight, Shield, GraduationCap, UserCog, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
 import { formatDate, getRoleLabel } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
@@ -181,6 +181,32 @@ export default function AdminUsersPage() {
     isActive: true,
   });
 
+  // SIMAK sync state
+  const [syncMode, setSyncMode] = useState(false);
+  const [simakLoading, setSimakLoading] = useState(false);
+  const [simakData, setSimakData] = useState<{
+    nim: string;
+    nama: string;
+    email: string | null;
+    phone: string | null;
+    prodi: string | null;
+    foto: string | null;
+  } | null>(null);
+  const [simakError, setSimakError] = useState('');
+
+  // Edit sync state
+  const [editSyncMode, setEditSyncMode] = useState(false);
+  const [editSimakLoading, setEditSimakLoading] = useState(false);
+  const [editSimakData, setEditSimakData] = useState<{
+    nim: string;
+    nama: string;
+    email: string | null;
+    phone: string | null;
+    prodi: string | null;
+    foto: string | null;
+  } | null>(null);
+  const [editSimakError, setEditSimakError] = useState('');
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -202,6 +228,30 @@ export default function AdminUsersPage() {
   const handleCreateUser = async () => {
     setError('');
     try {
+      // If sync mode and SIMAK data is available, use sync-simak endpoint
+      if (syncMode && simakData) {
+        const response = await fetch('/api/users/sync-simak', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nim: simakData.nim,
+            password: formData.password,
+            isActive: formData.isActive,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Gagal membuat user dari SIMAK');
+        }
+
+        await fetchUsers();
+        onClose();
+        resetForm();
+        return;
+      }
+
+      // Normal user creation
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -221,11 +271,68 @@ export default function AdminUsersPage() {
     }
   };
 
+  // Fetch data from SIMAK
+  const handleFetchSimak = async () => {
+    if (!formData.username) {
+      setSimakError('Masukkan NIM terlebih dahulu');
+      return;
+    }
+
+    setSimakLoading(true);
+    setSimakError('');
+    setSimakData(null);
+
+    try {
+      const response = await fetch(`/api/users/sync-simak?nim=${formData.username}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Gagal mengambil data dari SIMAK');
+      }
+
+      setSimakData(data.data);
+      // Auto-fill name from SIMAK
+      setFormData(prev => ({
+        ...prev,
+        name: data.data.nama,
+        role: 'MAHASISWA',
+      }));
+    } catch (err) {
+      setSimakError(err instanceof Error ? err.message : 'Error');
+    } finally {
+      setSimakLoading(false);
+    }
+  };
+
   const handleUpdateUser = async () => {
     if (!selectedUser) return;
     setError('');
 
     try {
+      // If edit sync mode and SIMAK data is available, include SIMAK data
+      if (editSyncMode && editSimakData) {
+        const response = await fetch(`/api/users/${selectedUser.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            syncSimak: true,
+            simakData: editSimakData,
+          }),
+        });
+
+        if (!response.ok) {
+          const data = await response.json();
+          throw new Error(data.error || 'Gagal update user dari SIMAK');
+        }
+
+        await fetchUsers();
+        onEditClose();
+        resetForm();
+        return;
+      }
+
+      // Normal update
       const response = await fetch(`/api/users/${selectedUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -242,6 +349,39 @@ export default function AdminUsersPage() {
       resetForm();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error');
+    }
+  };
+
+  // Fetch data from SIMAK for edit mode
+  const handleFetchSimakForEdit = async () => {
+    if (!formData.username) {
+      setEditSimakError('NIM diperlukan untuk sinkronisasi');
+      return;
+    }
+
+    setEditSimakLoading(true);
+    setEditSimakError('');
+    setEditSimakData(null);
+
+    try {
+      // Use different endpoint that allows existing user
+      const response = await fetch(`/api/users/sync-simak/preview?nim=${formData.username}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Gagal mengambil data dari SIMAK');
+      }
+
+      setEditSimakData(data.data);
+      // Auto-fill name from SIMAK
+      setFormData(prev => ({
+        ...prev,
+        name: data.data.nama,
+      }));
+    } catch (err) {
+      setEditSimakError(err instanceof Error ? err.message : 'Error');
+    } finally {
+      setEditSimakLoading(false);
     }
   };
 
@@ -281,6 +421,10 @@ export default function AdminUsersPage() {
       role: user.role,
       isActive: user.isActive,
     });
+    // Reset edit sync state
+    setEditSyncMode(false);
+    setEditSimakData(null);
+    setEditSimakError('');
     onEditOpen();
   };
 
@@ -294,6 +438,12 @@ export default function AdminUsersPage() {
     });
     setSelectedUser(null);
     setError('');
+    setSyncMode(false);
+    setSimakData(null);
+    setSimakError('');
+    setEditSyncMode(false);
+    setEditSimakData(null);
+    setEditSimakError('');
   };
 
   const filteredUsers = users.filter((user) => {
@@ -637,71 +787,330 @@ export default function AdminUsersPage() {
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        size="lg"
+        size="2xl"
         scrollBehavior="inside"
         classNames={{
-          backdrop: 'bg-black/50 backdrop-blur-sm',
-          base: 'border border-slate-200/60 dark:border-zinc-700/50',
+          backdrop: 'bg-gradient-to-br from-blue-900/20 via-black/50 to-cyan-900/20 backdrop-blur-md',
+          base: 'border-0 bg-white dark:bg-zinc-900 shadow-2xl',
+          header: 'border-b-0',
+          body: 'p-0',
+          footer: 'border-t-0',
         }}
       >
         <ModalContent>
-          <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
-              <UserPlus size={20} />
+          {/* Gradient Header */}
+          <div className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500" />
+            <div className="absolute inset-0 opacity-30">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
+              <div className="absolute bottom-0 left-1/4 w-24 h-24 bg-white/10 rounded-full blur-xl" />
             </div>
-            <span className="font-semibold text-slate-800 dark:text-white">Tambah User Baru</span>
-          </ModalHeader>
-          <ModalBody className="space-y-4 py-5">
-            {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
-                {error}
+            <ModalHeader className="relative flex items-center gap-4 py-6 px-6">
+              <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
+                <UserPlus size={24} className="text-white" />
               </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Tambah User Baru</h2>
+                <p className="text-sm text-white/70">Buat akun pengguna baru atau sinkronkan dari SIMAK</p>
+              </div>
+            </ModalHeader>
+          </div>
+
+          <ModalBody className="px-6 py-5 space-y-5">
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border border-red-200/50 dark:border-red-800/30"
+              >
+                <div className="p-2 rounded-full bg-red-100 dark:bg-red-900/30">
+                  <AlertCircle size={16} className="text-red-600 dark:text-red-400" />
+                </div>
+                <span className="text-sm font-medium text-red-700 dark:text-red-300">{error}</span>
+              </motion.div>
             )}
-            <Input
-              label="Nama Lengkap"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              isRequired
-            />
-            <Input
-              label="Username (NIM/Username)"
-              description="Masukkan NIM untuk Mahasiswa atau username untuk Dosen/Admin"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              isRequired
-            />
-            <Input
-              label="Password"
-              type="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              isRequired
-            />
-            <Select
-              label="Role"
-              selectedKeys={[formData.role]}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
-              isRequired
-            >
-              <SelectItem key="MAHASISWA">Mahasiswa</SelectItem>
-              <SelectItem key="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
-              <SelectItem key="ADMIN">Admin</SelectItem>
-            </Select>
+
+            {/* Mode Selection Cards */}
+            <div className="grid grid-cols-2 gap-3">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  setSyncMode(false);
+                  setSimakData(null);
+                  setSimakError('');
+                }}
+                className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all duration-300 text-left ${!syncMode
+                  ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30 shadow-lg shadow-blue-500/10'
+                  : 'border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/50 hover:border-slate-300 dark:hover:border-zinc-600'
+                  }`}
+              >
+                {!syncMode && (
+                  <div className="absolute top-2 right-2">
+                    <div className="p-1 rounded-full bg-blue-500">
+                      <CheckCircle size={12} className="text-white" />
+                    </div>
+                  </div>
+                )}
+                <div className={`p-2.5 rounded-xl w-fit mb-3 ${!syncMode ? 'bg-blue-500 text-white' : 'bg-slate-200 dark:bg-zinc-700 text-slate-600 dark:text-zinc-400'}`}>
+                  <Edit size={20} />
+                </div>
+                <h3 className={`font-semibold ${!syncMode ? 'text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-zinc-300'}`}>
+                  Input Manual
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                  Isi data user secara manual
+                </p>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setSyncMode(true)}
+                className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all duration-300 text-left ${syncMode
+                  ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 shadow-lg shadow-emerald-500/10'
+                  : 'border-slate-200 dark:border-zinc-700 bg-slate-50 dark:bg-zinc-800/50 hover:border-slate-300 dark:hover:border-zinc-600'
+                  }`}
+              >
+                {syncMode && (
+                  <div className="absolute top-2 right-2">
+                    <div className="p-1 rounded-full bg-emerald-500">
+                      <CheckCircle size={12} className="text-white" />
+                    </div>
+                  </div>
+                )}
+                <div className={`p-2.5 rounded-xl w-fit mb-3 ${syncMode ? 'bg-emerald-500 text-white' : 'bg-slate-200 dark:bg-zinc-700 text-slate-600 dark:text-zinc-400'}`}>
+                  <RefreshCw size={20} />
+                </div>
+                <h3 className={`font-semibold ${syncMode ? 'text-emerald-700 dark:text-emerald-300' : 'text-slate-700 dark:text-zinc-300'}`}>
+                  Sinkron SIMAK
+                </h3>
+                <p className="text-xs text-slate-500 dark:text-zinc-400 mt-1">
+                  Ambil data otomatis dari SIMAK
+                </p>
+              </motion.button>
+            </div>
+
+            {syncMode ? (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                {/* NIM Search */}
+                <div className="relative">
+                  <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl opacity-20 blur" />
+                  <div className="relative p-4 rounded-xl bg-white dark:bg-zinc-800 border border-slate-200/60 dark:border-zinc-700/50">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-1.5 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+                        <Search size={14} className="text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <span className="text-sm font-medium text-slate-700 dark:text-zinc-300">Cari Data Mahasiswa</span>
+                    </div>
+                    <div className="flex gap-3">
+                      <Input
+                        placeholder="Masukkan NIM mahasiswa..."
+                        value={formData.username}
+                        onChange={(e) =>
+                          setFormData({ ...formData, username: e.target.value })
+                        }
+                        className="flex-1"
+                        size="lg"
+                        classNames={{
+                          inputWrapper: 'bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-700',
+                        }}
+                        startContent={
+                          <GraduationCap size={18} className="text-slate-400" />
+                        }
+                      />
+                      <Button
+                        color="success"
+                        size="lg"
+                        isLoading={simakLoading}
+                        onPress={handleFetchSimak}
+                        className="px-6 bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25"
+                      >
+                        {!simakLoading && <Search size={18} />}
+                        <span className="ml-1">Cari</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {simakError && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 border border-red-200/50 dark:border-red-800/30"
+                  >
+                    <div className="p-2 rounded-full bg-red-100 dark:bg-red-900/30">
+                      <AlertCircle size={18} className="text-red-500" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-red-700 dark:text-red-300 text-sm">{simakError}</p>
+                      <p className="text-xs text-red-500/70 mt-0.5">Pastikan NIM valid dan terdaftar di SIMAK</p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {simakData && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="relative"
+                  >
+                    <div className="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl opacity-30 blur" />
+                    <div className="relative p-5 rounded-xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-900/20 dark:via-teal-900/20 dark:to-cyan-900/20 border border-emerald-200/50 dark:border-emerald-800/30">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 shadow-lg">
+                          <CheckCircle size={20} className="text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-emerald-800 dark:text-emerald-200">Data Ditemukan!</h4>
+                          <p className="text-xs text-emerald-600/70 dark:text-emerald-400/60">Data mahasiswa berhasil diambil dari SIMAK</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-800/60 backdrop-blur-sm">
+                          <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">Nama Lengkap</p>
+                          <p className="font-semibold text-slate-800 dark:text-white">{simakData.nama}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-800/60 backdrop-blur-sm">
+                          <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">NIM</p>
+                          <p className="font-semibold text-slate-800 dark:text-white font-mono">{simakData.nim}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-800/60 backdrop-blur-sm">
+                          <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">Program Studi</p>
+                          <p className="font-semibold text-slate-800 dark:text-white">{simakData.prodi || '-'}</p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-white/60 dark:bg-zinc-800/60 backdrop-blur-sm">
+                          <p className="text-xs text-slate-500 dark:text-zinc-400 mb-1">Email</p>
+                          <p className="font-semibold text-slate-800 dark:text-white text-sm truncate">{simakData.email || '-'}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Password Field */}
+                <div className="relative">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/60 dark:border-zinc-700/50">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="p-1.5 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                        <Shield size={14} className="text-amber-600 dark:text-amber-400" />
+                      </div>
+                      <span className="text-sm font-medium text-slate-700 dark:text-zinc-300">Password Login</span>
+                    </div>
+                    <Input
+                      placeholder="Buat password untuk user ini..."
+                      type="password"
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                      size="lg"
+                      classNames={{
+                        inputWrapper: 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-700',
+                      }}
+                    />
+                    <p className="text-xs text-slate-500 dark:text-zinc-400 mt-2 flex items-center gap-1">
+                      <AlertCircle size={12} />
+                      Password ini berbeda dengan password SIMAK
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="space-y-4"
+              >
+                <Input
+                  label="Nama Lengkap"
+                  placeholder="Masukkan nama lengkap..."
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
+                  isRequired
+                  size="lg"
+                  classNames={{
+                    inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
+                  }}
+                />
+                <Input
+                  label="Username (NIM/Username)"
+                  placeholder="NIM untuk Mahasiswa atau username untuk lainnya"
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  isRequired
+                  size="lg"
+                  classNames={{
+                    inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
+                  }}
+                />
+                <Input
+                  label="Password"
+                  placeholder="Buat password..."
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
+                  isRequired
+                  size="lg"
+                  classNames={{
+                    inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
+                  }}
+                />
+                <Select
+                  label="Role Pengguna"
+                  selectedKeys={[formData.role]}
+                  onChange={(e) =>
+                    setFormData({ ...formData, role: e.target.value })
+                  }
+                  isRequired
+                  size="lg"
+                  classNames={{
+                    trigger: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
+                  }}
+                >
+                  <SelectItem key="MAHASISWA" startContent={<GraduationCap size={16} className="text-blue-500" />}>
+                    Mahasiswa
+                  </SelectItem>
+                  <SelectItem key="DOSEN_PENGUJI" startContent={<UserCog size={16} className="text-violet-500" />}>
+                    Dosen Penguji
+                  </SelectItem>
+                  <SelectItem key="ADMIN" startContent={<Shield size={16} className="text-rose-500" />}>
+                    Admin
+                  </SelectItem>
+                </Select>
+              </motion.div>
+            )}
           </ModalBody>
-          <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
-            <Button variant="flat" onPress={onClose}>
+
+          <ModalFooter className="px-6 py-4 bg-slate-50 dark:bg-zinc-800/50">
+            <Button
+              variant="flat"
+              onPress={onClose}
+              className="font-medium"
+            >
               Batal
             </Button>
-            <Button color="primary" onPress={handleCreateUser}>
-              Simpan
+            <Button
+              onPress={handleCreateUser}
+              isDisabled={syncMode && !simakData}
+              className={`font-semibold shadow-lg ${syncMode
+                ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-emerald-500/25'
+                : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-blue-500/25'
+                }`}
+              startContent={syncMode ? <RefreshCw size={18} /> : <UserPlus size={18} />}
+            >
+              {syncMode ? 'Buat dari SIMAK' : 'Buat User'}
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -715,75 +1124,154 @@ export default function AdminUsersPage() {
         scrollBehavior="inside"
         classNames={{
           backdrop: 'bg-black/50 backdrop-blur-sm',
-          base: 'border border-slate-200/60 dark:border-zinc-700/50',
+          base: 'border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900',
         }}
       >
         <ModalContent>
-          <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
-            <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400">
+          <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
+            <div className="p-2 rounded-xl bg-white/20">
               <Edit size={20} />
             </div>
-            <span className="font-semibold text-slate-800 dark:text-white">Edit User</span>
+            <div>
+              <span className="font-semibold">Edit User</span>
+              <p className="text-xs text-white/70 font-normal">Perbarui informasi pengguna</p>
+            </div>
           </ModalHeader>
+
           <ModalBody className="space-y-4 py-5">
             {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
+              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm flex items-center gap-2">
+                <AlertCircle size={16} />
                 {error}
               </div>
             )}
+
+            {/* User Info */}
+            {selectedUser && (
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/60 dark:border-zinc-700/50">
+                <Avatar
+                  name={selectedUser.name}
+                  src={selectedUser.image || undefined}
+                  size="md"
+                />
+                <div>
+                  <p className="font-medium text-slate-800 dark:text-white">{selectedUser.name}</p>
+                  <p className="text-xs text-slate-500 dark:text-zinc-400">{selectedUser.username}</p>
+                </div>
+                <Chip
+                  size="sm"
+                  color={selectedUser.role === 'ADMIN' ? 'danger' : selectedUser.role === 'DOSEN_PENGUJI' ? 'secondary' : 'primary'}
+                  variant="flat"
+                  className="ml-auto"
+                >
+                  {getRoleLabel(selectedUser.role)}
+                </Chip>
+              </div>
+            )}
+
+            {/* SIMAK Sync - Only for Mahasiswa */}
+            {formData.role === 'MAHASISWA' && (
+              <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200/50 dark:border-emerald-800/30">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <RefreshCw size={18} className="text-emerald-600 dark:text-emerald-400" />
+                    <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Sinkronisasi SIMAK</span>
+                  </div>
+                  <Button
+                    size="sm"
+                    color="success"
+                    variant="flat"
+                    isLoading={editSimakLoading}
+                    onPress={handleFetchSimakForEdit}
+                    startContent={!editSimakLoading && <RefreshCw size={14} />}
+                  >
+                    Ambil Data
+                  </Button>
+                </div>
+
+                {editSimakError && (
+                  <div className="text-sm text-danger flex items-center gap-2 mt-2">
+                    <AlertCircle size={14} />
+                    {editSimakError}
+                  </div>
+                )}
+
+                {editSimakData && (
+                  <div className="mt-3 p-3 rounded-lg bg-white dark:bg-zinc-800 border border-emerald-200 dark:border-emerald-800">
+                    <div className="flex items-center gap-2 mb-2">
+                      <CheckCircle size={16} className="text-emerald-500" />
+                      <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Data Ditemukan</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div>
+                        <span className="text-slate-500 dark:text-zinc-400">Nama:</span>
+                        <p className="font-medium text-slate-800 dark:text-white">{editSimakData.nama}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 dark:text-zinc-400">Prodi:</span>
+                        <p className="font-medium text-slate-800 dark:text-white">{editSimakData.prodi || '-'}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Form Fields */}
             <Input
               label="Nama Lengkap"
               value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               isRequired
+              isDisabled={editSimakData !== null}
             />
+
             <Input
               label="Username (NIM/Username)"
-              description="NIM untuk Mahasiswa atau username untuk Dosen/Admin"
               value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               isRequired
             />
+
             <Input
-              label="Password Baru (kosongkan jika tidak ingin mengubah)"
+              label="Password Baru"
+              description="Kosongkan jika tidak ingin mengubah"
               type="password"
               value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
+
             <Select
               label="Role"
               selectedKeys={[formData.role]}
-              onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               isRequired
             >
               <SelectItem key="MAHASISWA">Mahasiswa</SelectItem>
               <SelectItem key="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
               <SelectItem key="ADMIN">Admin</SelectItem>
             </Select>
+
             <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/40 dark:border-zinc-700/30">
               <span className="text-sm text-slate-700 dark:text-zinc-300">Status Aktif</span>
               <Switch
                 isSelected={formData.isActive}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, isActive: value })
-                }
+                onValueChange={(value) => setFormData({ ...formData, isActive: value })}
+                color="success"
               />
             </div>
           </ModalBody>
+
           <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
             <Button variant="flat" onPress={onEditClose}>
               Batal
             </Button>
-            <Button color="primary" onPress={handleUpdateUser}>
-              Update
+            <Button
+              color={editSimakData ? "success" : "warning"}
+              onPress={handleUpdateUser}
+              startContent={editSimakData ? <RefreshCw size={16} /> : <Edit size={16} />}
+            >
+              {editSimakData ? 'Update dari SIMAK' : 'Update'}
             </Button>
           </ModalFooter>
         </ModalContent>

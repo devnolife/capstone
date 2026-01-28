@@ -84,7 +84,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, username, password, role, isActive } = body;
+    const { name, username, password, role, isActive, syncSimak, simakData } = body;
 
     // Check if username is taken by another user
     if (username) {
@@ -105,8 +105,25 @@ export async function PUT(
 
     const updateData: Record<string, unknown> = {};
 
-    if (name) updateData.name = name;
-    if (username) updateData.username = username;
+    // If syncing from SIMAK, update with SIMAK data
+    if (syncSimak && simakData && isAdmin) {
+      console.log(`[ADMIN] Updating user ${id} with SIMAK data`);
+      updateData.name = simakData.nama;
+      updateData.nim = simakData.nim;
+      if (simakData.email) updateData.email = simakData.email;
+      if (simakData.phone) updateData.phone = simakData.phone;
+      if (simakData.prodi) updateData.prodi = simakData.prodi;
+      if (simakData.foto) {
+        updateData.simakPhoto = simakData.foto;
+        updateData.image = simakData.foto;
+      }
+      updateData.simakValidated = true;
+      updateData.simakLastSync = new Date();
+    } else {
+      if (name) updateData.name = name;
+      if (username) updateData.username = username;
+    }
+
     if (password) updateData.password = await bcrypt.hash(password, 12);
 
     // Only admin can change role and active status
