@@ -15,6 +15,8 @@ import {
   Spinner,
   Switch,
   Progress,
+  Select,
+  SelectItem,
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import {
@@ -28,6 +30,8 @@ import {
   XCircle,
   Scale,
   ListOrdered,
+  Users,
+  UsersRound,
 } from 'lucide-react';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
@@ -39,6 +43,7 @@ interface Rubrik {
   bobotMax: number;
   urutan: number;
   isActive: boolean;
+  tipe: string;
   createdAt: string;
 }
 
@@ -83,6 +88,7 @@ export default function AdminRubrikPage() {
     bobotMax: 20,
     urutan: 0,
     isActive: true,
+    tipe: 'kelompok',
   });
 
   useEffect(() => {
@@ -198,6 +204,7 @@ export default function AdminRubrikPage() {
       bobotMax: rubrik.bobotMax,
       urutan: rubrik.urutan,
       isActive: rubrik.isActive,
+      tipe: rubrik.tipe || 'kelompok',
     });
     onEditOpen();
   };
@@ -210,6 +217,7 @@ export default function AdminRubrikPage() {
       bobotMax: 20,
       urutan: rubriks.length,
       isActive: true,
+      tipe: 'kelompok',
     });
     setSelectedRubrik(null);
     setError('');
@@ -470,6 +478,17 @@ export default function AdminRubrikPage() {
                       </Chip>
                       <Chip
                         size="sm"
+                        className={
+                          rubrik.tipe === 'individu'
+                            ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
+                            : 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400'
+                        }
+                        startContent={rubrik.tipe === 'individu' ? <Users size={12} /> : <UsersRound size={12} />}
+                      >
+                        {rubrik.tipe === 'individu' ? 'Individu' : 'Kelompok'}
+                      </Chip>
+                      <Chip
+                        size="sm"
                         className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
                       >
                         Bobot: {rubrik.bobotMax}
@@ -515,6 +534,9 @@ export default function AdminRubrikPage() {
                         Kategori
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+                        Tipe
+                      </th>
+                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                         Bobot Max
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
@@ -555,6 +577,19 @@ export default function AdminRubrikPage() {
                         <td className="p-4">
                           <Chip size="sm" variant="flat">
                             {rubrik.kategori}
+                          </Chip>
+                        </td>
+                        <td className="p-4">
+                          <Chip
+                            size="sm"
+                            className={
+                              rubrik.tipe === 'individu'
+                                ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
+                                : 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400'
+                            }
+                            startContent={rubrik.tipe === 'individu' ? <Users size={12} /> : <UsersRound size={12} />}
+                          >
+                            {rubrik.tipe === 'individu' ? 'Individu' : 'Kelompok'}
                           </Chip>
                         </td>
                         <td className="p-4">
@@ -676,6 +711,24 @@ export default function AdminRubrikPage() {
                 <option key={k} value={k} />
               ))}
             </datalist>
+            <Select
+              label="Tipe Penilaian"
+              placeholder="Pilih tipe penilaian"
+              selectedKeys={[formData.tipe]}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0] as string;
+                setFormData({ ...formData, tipe: selected || 'kelompok' });
+              }}
+              isRequired
+              description="Kelompok = penilaian untuk project, Individu = penilaian per anggota"
+            >
+              <SelectItem key="kelompok" startContent={<UsersRound size={16} />}>
+                Kelompok
+              </SelectItem>
+              <SelectItem key="individu" startContent={<Users size={16} />}>
+                Individu
+              </SelectItem>
+            </Select>
             <div className="grid grid-cols-2 gap-4">
               <Input
                 type="number"
@@ -778,6 +831,24 @@ export default function AdminRubrikPage() {
                 <option key={k} value={k} />
               ))}
             </datalist>
+            <Select
+              label="Tipe Penilaian"
+              placeholder="Pilih tipe penilaian"
+              selectedKeys={[formData.tipe]}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0] as string;
+                setFormData({ ...formData, tipe: selected || 'kelompok' });
+              }}
+              isRequired
+              description="Kelompok = penilaian untuk project, Individu = penilaian per anggota"
+            >
+              <SelectItem key="kelompok" startContent={<UsersRound size={16} />}>
+                Kelompok
+              </SelectItem>
+              <SelectItem key="individu" startContent={<Users size={16} />}>
+                Individu
+              </SelectItem>
+            </Select>
             <div className="grid grid-cols-2 gap-4">
               <Input
                 type="number"

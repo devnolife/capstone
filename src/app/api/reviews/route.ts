@@ -41,6 +41,19 @@ export async function GET(request: Request) {
                 username: true,
               },
             },
+            members: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    nim: true,
+                    image: true,
+                  },
+                },
+              },
+            },
           },
         },
         reviewer: {
@@ -53,6 +66,24 @@ export async function GET(request: Request) {
         comments: true,
         scores: {
           include: {
+            rubrik: true,
+          },
+        },
+        memberScores: {
+          include: {
+            member: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    nim: true,
+                    image: true,
+                  },
+                },
+              },
+            },
             rubrik: true,
           },
         },
@@ -97,6 +128,7 @@ export async function POST(request: Request) {
       scores,
       comments,
       status,
+      memberScores,
     } = body;
 
     // Check if project exists and is assigned to this dosen
@@ -201,12 +233,46 @@ export async function POST(request: Request) {
               }),
             ) || [],
         },
+        memberScores: {
+          create:
+            memberScores?.flatMap(
+              (ms: {
+                memberId: string;
+                scores: Array<{ rubrikId: string; score: number; maxScore: number; feedback?: string }>;
+              }) =>
+                ms.scores.map((s) => ({
+                  memberId: ms.memberId,
+                  rubrikId: s.rubrikId,
+                  score: s.score,
+                  maxScore: s.maxScore,
+                  feedback: s.feedback,
+                })),
+            ) || [],
+        },
       },
       include: {
         scores: {
           include: { rubrik: true },
         },
         comments: true,
+        memberScores: {
+          include: {
+            member: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    nim: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+            rubrik: true,
+          },
+        },
       },
     });
 

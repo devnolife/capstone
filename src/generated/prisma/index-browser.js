@@ -321,7 +321,18 @@ exports.Prisma.RubrikPenilaianScalarFieldEnum = {
   kategori: 'kategori',
   bobotMax: 'bobotMax',
   isActive: 'isActive',
-  urutan: 'urutan'
+  urutan: 'urutan',
+  tipe: 'tipe'
+};
+
+exports.Prisma.MemberReviewScoreScalarFieldEnum = {
+  id: 'id',
+  reviewId: 'reviewId',
+  memberId: 'memberId',
+  rubrikId: 'rubrikId',
+  score: 'score',
+  maxScore: 'maxScore',
+  feedback: 'feedback'
 };
 
 exports.Prisma.ProjectAssignmentScalarFieldEnum = {
@@ -418,6 +429,7 @@ exports.Prisma.ModelName = {
   ReviewScore: 'ReviewScore',
   ReviewComment: 'ReviewComment',
   RubrikPenilaian: 'RubrikPenilaian',
+  MemberReviewScore: 'MemberReviewScore',
   ProjectAssignment: 'ProjectAssignment',
   Notification: 'Notification',
   Semester: 'Semester'

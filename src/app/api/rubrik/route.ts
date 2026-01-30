@@ -7,8 +7,18 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const activeOnly = searchParams.get('active') !== 'false';
+    const tipe = searchParams.get('tipe'); // "kelompok" atau "individu"
 
-    const whereClause = activeOnly ? { isActive: true } : {};
+    const whereClause: Record<string, unknown> = {};
+    
+    if (activeOnly) {
+      whereClause.isActive = true;
+    }
+    
+    // Filter by tipe if provided
+    if (tipe && (tipe === 'kelompok' || tipe === 'individu')) {
+      whereClause.tipe = tipe;
+    }
 
     const rubriks = await prisma.rubrikPenilaian.findMany({
       where: whereClause,
@@ -35,7 +45,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, description, kategori, bobotMax, urutan, isActive } = body;
+    const { name, description, kategori, bobotMax, urutan, isActive, tipe } = body;
 
     if (!name || !kategori || !bobotMax) {
       return NextResponse.json(
@@ -43,6 +53,9 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
+
+    // Validate tipe
+    const validTipe = tipe === 'individu' ? 'individu' : 'kelompok';
 
     const rubrik = await prisma.rubrikPenilaian.create({
       data: {
@@ -52,6 +65,7 @@ export async function POST(request: Request) {
         bobotMax,
         urutan: urutan || 0,
         isActive: isActive !== false,
+        tipe: validTipe,
       },
     });
 

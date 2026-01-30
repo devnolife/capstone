@@ -79,6 +79,11 @@ export type ReviewComment = $Result.DefaultSelection<Prisma.$ReviewCommentPayloa
  */
 export type RubrikPenilaian = $Result.DefaultSelection<Prisma.$RubrikPenilaianPayload>
 /**
+ * Model MemberReviewScore
+ * 
+ */
+export type MemberReviewScore = $Result.DefaultSelection<Prisma.$MemberReviewScorePayload>
+/**
  * Model ProjectAssignment
  * 
  */
@@ -417,6 +422,16 @@ export class PrismaClient<
     * ```
     */
   get rubrikPenilaian(): Prisma.RubrikPenilaianDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.memberReviewScore`: Exposes CRUD operations for the **MemberReviewScore** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MemberReviewScores
+    * const memberReviewScores = await prisma.memberReviewScore.findMany()
+    * ```
+    */
+  get memberReviewScore(): Prisma.MemberReviewScoreDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.projectAssignment`: Exposes CRUD operations for the **ProjectAssignment** model.
@@ -894,6 +909,7 @@ export namespace Prisma {
     ReviewScore: 'ReviewScore',
     ReviewComment: 'ReviewComment',
     RubrikPenilaian: 'RubrikPenilaian',
+    MemberReviewScore: 'MemberReviewScore',
     ProjectAssignment: 'ProjectAssignment',
     Notification: 'Notification',
     Semester: 'Semester'
@@ -912,7 +928,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectRequirements" | "stakeholderDocument" | "projectScreenshot" | "document" | "review" | "reviewScore" | "reviewComment" | "rubrikPenilaian" | "projectAssignment" | "notification" | "semester"
+      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectRequirements" | "stakeholderDocument" | "projectScreenshot" | "document" | "review" | "reviewScore" | "reviewComment" | "rubrikPenilaian" | "memberReviewScore" | "projectAssignment" | "notification" | "semester"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1878,6 +1894,80 @@ export namespace Prisma {
           }
         }
       }
+      MemberReviewScore: {
+        payload: Prisma.$MemberReviewScorePayload<ExtArgs>
+        fields: Prisma.MemberReviewScoreFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MemberReviewScoreFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MemberReviewScoreFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>
+          }
+          findFirst: {
+            args: Prisma.MemberReviewScoreFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MemberReviewScoreFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>
+          }
+          findMany: {
+            args: Prisma.MemberReviewScoreFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>[]
+          }
+          create: {
+            args: Prisma.MemberReviewScoreCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>
+          }
+          createMany: {
+            args: Prisma.MemberReviewScoreCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MemberReviewScoreCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>[]
+          }
+          delete: {
+            args: Prisma.MemberReviewScoreDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>
+          }
+          update: {
+            args: Prisma.MemberReviewScoreUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>
+          }
+          deleteMany: {
+            args: Prisma.MemberReviewScoreDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MemberReviewScoreUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MemberReviewScoreUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>[]
+          }
+          upsert: {
+            args: Prisma.MemberReviewScoreUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MemberReviewScorePayload>
+          }
+          aggregate: {
+            args: Prisma.MemberReviewScoreAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMemberReviewScore>
+          }
+          groupBy: {
+            args: Prisma.MemberReviewScoreGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MemberReviewScoreGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MemberReviewScoreCountArgs<ExtArgs>
+            result: $Utils.Optional<MemberReviewScoreCountAggregateOutputType> | number
+          }
+        }
+      }
       ProjectAssignment: {
         payload: Prisma.$ProjectAssignmentPayload<ExtArgs>
         fields: Prisma.ProjectAssignmentFieldRefs
@@ -2221,6 +2311,7 @@ export namespace Prisma {
     reviewScore?: ReviewScoreOmit
     reviewComment?: ReviewCommentOmit
     rubrikPenilaian?: RubrikPenilaianOmit
+    memberReviewScore?: MemberReviewScoreOmit
     projectAssignment?: ProjectAssignmentOmit
     notification?: NotificationOmit
     semester?: SemesterOmit
@@ -2479,17 +2570,50 @@ export namespace Prisma {
 
 
   /**
+   * Count Type ProjectMemberCountOutputType
+   */
+
+  export type ProjectMemberCountOutputType = {
+    reviewScores: number
+  }
+
+  export type ProjectMemberCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    reviewScores?: boolean | ProjectMemberCountOutputTypeCountReviewScoresArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProjectMemberCountOutputType without action
+   */
+  export type ProjectMemberCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectMemberCountOutputType
+     */
+    select?: ProjectMemberCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProjectMemberCountOutputType without action
+   */
+  export type ProjectMemberCountOutputTypeCountReviewScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberReviewScoreWhereInput
+  }
+
+
+  /**
    * Count Type ReviewCountOutputType
    */
 
   export type ReviewCountOutputType = {
     scores: number
     comments: number
+    memberScores: number
   }
 
   export type ReviewCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     scores?: boolean | ReviewCountOutputTypeCountScoresArgs
     comments?: boolean | ReviewCountOutputTypeCountCommentsArgs
+    memberScores?: boolean | ReviewCountOutputTypeCountMemberScoresArgs
   }
 
   // Custom InputTypes
@@ -2517,6 +2641,13 @@ export namespace Prisma {
     where?: ReviewCommentWhereInput
   }
 
+  /**
+   * ReviewCountOutputType without action
+   */
+  export type ReviewCountOutputTypeCountMemberScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberReviewScoreWhereInput
+  }
+
 
   /**
    * Count Type RubrikPenilaianCountOutputType
@@ -2524,10 +2655,12 @@ export namespace Prisma {
 
   export type RubrikPenilaianCountOutputType = {
     scores: number
+    memberScores: number
   }
 
   export type RubrikPenilaianCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     scores?: boolean | RubrikPenilaianCountOutputTypeCountScoresArgs
+    memberScores?: boolean | RubrikPenilaianCountOutputTypeCountMemberScoresArgs
   }
 
   // Custom InputTypes
@@ -2546,6 +2679,13 @@ export namespace Prisma {
    */
   export type RubrikPenilaianCountOutputTypeCountScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ReviewScoreWhereInput
+  }
+
+  /**
+   * RubrikPenilaianCountOutputType without action
+   */
+  export type RubrikPenilaianCountOutputTypeCountMemberScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberReviewScoreWhereInput
   }
 
 
@@ -6856,6 +6996,8 @@ export namespace Prisma {
     joinedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     user?: boolean | ProjectMember$userArgs<ExtArgs>
+    reviewScores?: boolean | ProjectMember$reviewScoresArgs<ExtArgs>
+    _count?: boolean | ProjectMemberCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["projectMember"]>
 
   export type ProjectMemberSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6902,6 +7044,8 @@ export namespace Prisma {
   export type ProjectMemberInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     user?: boolean | ProjectMember$userArgs<ExtArgs>
+    reviewScores?: boolean | ProjectMember$reviewScoresArgs<ExtArgs>
+    _count?: boolean | ProjectMemberCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectMemberIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -6917,6 +7061,7 @@ export namespace Prisma {
     objects: {
       project: Prisma.$ProjectPayload<ExtArgs>
       user: Prisma.$UserPayload<ExtArgs> | null
+      reviewScores: Prisma.$MemberReviewScorePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7324,6 +7469,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     user<T extends ProjectMember$userArgs<ExtArgs> = {}>(args?: Subset<T, ProjectMember$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    reviewScores<T extends ProjectMember$reviewScoresArgs<ExtArgs> = {}>(args?: Subset<T, ProjectMember$reviewScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7774,6 +7920,30 @@ export namespace Prisma {
      */
     include?: UserInclude<ExtArgs> | null
     where?: UserWhereInput
+  }
+
+  /**
+   * ProjectMember.reviewScores
+   */
+  export type ProjectMember$reviewScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    where?: MemberReviewScoreWhereInput
+    orderBy?: MemberReviewScoreOrderByWithRelationInput | MemberReviewScoreOrderByWithRelationInput[]
+    cursor?: MemberReviewScoreWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberReviewScoreScalarFieldEnum | MemberReviewScoreScalarFieldEnum[]
   }
 
   /**
@@ -14125,6 +14295,7 @@ export namespace Prisma {
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     scores?: boolean | Review$scoresArgs<ExtArgs>
     comments?: boolean | Review$commentsArgs<ExtArgs>
+    memberScores?: boolean | Review$memberScoresArgs<ExtArgs>
     _count?: boolean | ReviewCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["review"]>
 
@@ -14174,6 +14345,7 @@ export namespace Prisma {
     reviewer?: boolean | UserDefaultArgs<ExtArgs>
     scores?: boolean | Review$scoresArgs<ExtArgs>
     comments?: boolean | Review$commentsArgs<ExtArgs>
+    memberScores?: boolean | Review$memberScoresArgs<ExtArgs>
     _count?: boolean | ReviewCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ReviewIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -14192,6 +14364,7 @@ export namespace Prisma {
       reviewer: Prisma.$UserPayload<ExtArgs>
       scores: Prisma.$ReviewScorePayload<ExtArgs>[]
       comments: Prisma.$ReviewCommentPayload<ExtArgs>[]
+      memberScores: Prisma.$MemberReviewScorePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -14601,6 +14774,7 @@ export namespace Prisma {
     reviewer<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     scores<T extends Review$scoresArgs<ExtArgs> = {}>(args?: Subset<T, Review$scoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Review$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Review$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewCommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    memberScores<T extends Review$memberScoresArgs<ExtArgs> = {}>(args?: Subset<T, Review$memberScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -15080,6 +15254,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ReviewCommentScalarFieldEnum | ReviewCommentScalarFieldEnum[]
+  }
+
+  /**
+   * Review.memberScores
+   */
+  export type Review$memberScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    where?: MemberReviewScoreWhereInput
+    orderBy?: MemberReviewScoreOrderByWithRelationInput | MemberReviewScoreOrderByWithRelationInput[]
+    cursor?: MemberReviewScoreWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberReviewScoreScalarFieldEnum | MemberReviewScoreScalarFieldEnum[]
   }
 
   /**
@@ -17383,6 +17581,7 @@ export namespace Prisma {
     bobotMax: number | null
     isActive: boolean | null
     urutan: number | null
+    tipe: string | null
   }
 
   export type RubrikPenilaianMaxAggregateOutputType = {
@@ -17393,6 +17592,7 @@ export namespace Prisma {
     bobotMax: number | null
     isActive: boolean | null
     urutan: number | null
+    tipe: string | null
   }
 
   export type RubrikPenilaianCountAggregateOutputType = {
@@ -17403,6 +17603,7 @@ export namespace Prisma {
     bobotMax: number
     isActive: number
     urutan: number
+    tipe: number
     _all: number
   }
 
@@ -17425,6 +17626,7 @@ export namespace Prisma {
     bobotMax?: true
     isActive?: true
     urutan?: true
+    tipe?: true
   }
 
   export type RubrikPenilaianMaxAggregateInputType = {
@@ -17435,6 +17637,7 @@ export namespace Prisma {
     bobotMax?: true
     isActive?: true
     urutan?: true
+    tipe?: true
   }
 
   export type RubrikPenilaianCountAggregateInputType = {
@@ -17445,6 +17648,7 @@ export namespace Prisma {
     bobotMax?: true
     isActive?: true
     urutan?: true
+    tipe?: true
     _all?: true
   }
 
@@ -17542,6 +17746,7 @@ export namespace Prisma {
     bobotMax: number
     isActive: boolean
     urutan: number
+    tipe: string
     _count: RubrikPenilaianCountAggregateOutputType | null
     _avg: RubrikPenilaianAvgAggregateOutputType | null
     _sum: RubrikPenilaianSumAggregateOutputType | null
@@ -17571,7 +17776,9 @@ export namespace Prisma {
     bobotMax?: boolean
     isActive?: boolean
     urutan?: boolean
+    tipe?: boolean
     scores?: boolean | RubrikPenilaian$scoresArgs<ExtArgs>
+    memberScores?: boolean | RubrikPenilaian$memberScoresArgs<ExtArgs>
     _count?: boolean | RubrikPenilaianCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["rubrikPenilaian"]>
 
@@ -17583,6 +17790,7 @@ export namespace Prisma {
     bobotMax?: boolean
     isActive?: boolean
     urutan?: boolean
+    tipe?: boolean
   }, ExtArgs["result"]["rubrikPenilaian"]>
 
   export type RubrikPenilaianSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -17593,6 +17801,7 @@ export namespace Prisma {
     bobotMax?: boolean
     isActive?: boolean
     urutan?: boolean
+    tipe?: boolean
   }, ExtArgs["result"]["rubrikPenilaian"]>
 
   export type RubrikPenilaianSelectScalar = {
@@ -17603,11 +17812,13 @@ export namespace Prisma {
     bobotMax?: boolean
     isActive?: boolean
     urutan?: boolean
+    tipe?: boolean
   }
 
-  export type RubrikPenilaianOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "kategori" | "bobotMax" | "isActive" | "urutan", ExtArgs["result"]["rubrikPenilaian"]>
+  export type RubrikPenilaianOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "kategori" | "bobotMax" | "isActive" | "urutan" | "tipe", ExtArgs["result"]["rubrikPenilaian"]>
   export type RubrikPenilaianInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     scores?: boolean | RubrikPenilaian$scoresArgs<ExtArgs>
+    memberScores?: boolean | RubrikPenilaian$memberScoresArgs<ExtArgs>
     _count?: boolean | RubrikPenilaianCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RubrikPenilaianIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -17617,6 +17828,7 @@ export namespace Prisma {
     name: "RubrikPenilaian"
     objects: {
       scores: Prisma.$ReviewScorePayload<ExtArgs>[]
+      memberScores: Prisma.$MemberReviewScorePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -17626,6 +17838,7 @@ export namespace Prisma {
       bobotMax: number
       isActive: boolean
       urutan: number
+      tipe: string
     }, ExtArgs["result"]["rubrikPenilaian"]>
     composites: {}
   }
@@ -18021,6 +18234,7 @@ export namespace Prisma {
   export interface Prisma__RubrikPenilaianClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     scores<T extends RubrikPenilaian$scoresArgs<ExtArgs> = {}>(args?: Subset<T, RubrikPenilaian$scoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ReviewScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    memberScores<T extends RubrikPenilaian$memberScoresArgs<ExtArgs> = {}>(args?: Subset<T, RubrikPenilaian$memberScoresArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -18057,6 +18271,7 @@ export namespace Prisma {
     readonly bobotMax: FieldRef<"RubrikPenilaian", 'Float'>
     readonly isActive: FieldRef<"RubrikPenilaian", 'Boolean'>
     readonly urutan: FieldRef<"RubrikPenilaian", 'Int'>
+    readonly tipe: FieldRef<"RubrikPenilaian", 'String'>
   }
     
 
@@ -18469,6 +18684,30 @@ export namespace Prisma {
   }
 
   /**
+   * RubrikPenilaian.memberScores
+   */
+  export type RubrikPenilaian$memberScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    where?: MemberReviewScoreWhereInput
+    orderBy?: MemberReviewScoreOrderByWithRelationInput | MemberReviewScoreOrderByWithRelationInput[]
+    cursor?: MemberReviewScoreWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MemberReviewScoreScalarFieldEnum | MemberReviewScoreScalarFieldEnum[]
+  }
+
+  /**
    * RubrikPenilaian without action
    */
   export type RubrikPenilaianDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -18484,6 +18723,1144 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: RubrikPenilaianInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model MemberReviewScore
+   */
+
+  export type AggregateMemberReviewScore = {
+    _count: MemberReviewScoreCountAggregateOutputType | null
+    _avg: MemberReviewScoreAvgAggregateOutputType | null
+    _sum: MemberReviewScoreSumAggregateOutputType | null
+    _min: MemberReviewScoreMinAggregateOutputType | null
+    _max: MemberReviewScoreMaxAggregateOutputType | null
+  }
+
+  export type MemberReviewScoreAvgAggregateOutputType = {
+    score: number | null
+    maxScore: number | null
+  }
+
+  export type MemberReviewScoreSumAggregateOutputType = {
+    score: number | null
+    maxScore: number | null
+  }
+
+  export type MemberReviewScoreMinAggregateOutputType = {
+    id: string | null
+    reviewId: string | null
+    memberId: string | null
+    rubrikId: string | null
+    score: number | null
+    maxScore: number | null
+    feedback: string | null
+  }
+
+  export type MemberReviewScoreMaxAggregateOutputType = {
+    id: string | null
+    reviewId: string | null
+    memberId: string | null
+    rubrikId: string | null
+    score: number | null
+    maxScore: number | null
+    feedback: string | null
+  }
+
+  export type MemberReviewScoreCountAggregateOutputType = {
+    id: number
+    reviewId: number
+    memberId: number
+    rubrikId: number
+    score: number
+    maxScore: number
+    feedback: number
+    _all: number
+  }
+
+
+  export type MemberReviewScoreAvgAggregateInputType = {
+    score?: true
+    maxScore?: true
+  }
+
+  export type MemberReviewScoreSumAggregateInputType = {
+    score?: true
+    maxScore?: true
+  }
+
+  export type MemberReviewScoreMinAggregateInputType = {
+    id?: true
+    reviewId?: true
+    memberId?: true
+    rubrikId?: true
+    score?: true
+    maxScore?: true
+    feedback?: true
+  }
+
+  export type MemberReviewScoreMaxAggregateInputType = {
+    id?: true
+    reviewId?: true
+    memberId?: true
+    rubrikId?: true
+    score?: true
+    maxScore?: true
+    feedback?: true
+  }
+
+  export type MemberReviewScoreCountAggregateInputType = {
+    id?: true
+    reviewId?: true
+    memberId?: true
+    rubrikId?: true
+    score?: true
+    maxScore?: true
+    feedback?: true
+    _all?: true
+  }
+
+  export type MemberReviewScoreAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MemberReviewScore to aggregate.
+     */
+    where?: MemberReviewScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberReviewScores to fetch.
+     */
+    orderBy?: MemberReviewScoreOrderByWithRelationInput | MemberReviewScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MemberReviewScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberReviewScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberReviewScores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MemberReviewScores
+    **/
+    _count?: true | MemberReviewScoreCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: MemberReviewScoreAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: MemberReviewScoreSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MemberReviewScoreMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MemberReviewScoreMaxAggregateInputType
+  }
+
+  export type GetMemberReviewScoreAggregateType<T extends MemberReviewScoreAggregateArgs> = {
+        [P in keyof T & keyof AggregateMemberReviewScore]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMemberReviewScore[P]>
+      : GetScalarType<T[P], AggregateMemberReviewScore[P]>
+  }
+
+
+
+
+  export type MemberReviewScoreGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MemberReviewScoreWhereInput
+    orderBy?: MemberReviewScoreOrderByWithAggregationInput | MemberReviewScoreOrderByWithAggregationInput[]
+    by: MemberReviewScoreScalarFieldEnum[] | MemberReviewScoreScalarFieldEnum
+    having?: MemberReviewScoreScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MemberReviewScoreCountAggregateInputType | true
+    _avg?: MemberReviewScoreAvgAggregateInputType
+    _sum?: MemberReviewScoreSumAggregateInputType
+    _min?: MemberReviewScoreMinAggregateInputType
+    _max?: MemberReviewScoreMaxAggregateInputType
+  }
+
+  export type MemberReviewScoreGroupByOutputType = {
+    id: string
+    reviewId: string
+    memberId: string
+    rubrikId: string
+    score: number
+    maxScore: number
+    feedback: string | null
+    _count: MemberReviewScoreCountAggregateOutputType | null
+    _avg: MemberReviewScoreAvgAggregateOutputType | null
+    _sum: MemberReviewScoreSumAggregateOutputType | null
+    _min: MemberReviewScoreMinAggregateOutputType | null
+    _max: MemberReviewScoreMaxAggregateOutputType | null
+  }
+
+  type GetMemberReviewScoreGroupByPayload<T extends MemberReviewScoreGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MemberReviewScoreGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MemberReviewScoreGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MemberReviewScoreGroupByOutputType[P]>
+            : GetScalarType<T[P], MemberReviewScoreGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MemberReviewScoreSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reviewId?: boolean
+    memberId?: boolean
+    rubrikId?: boolean
+    score?: boolean
+    maxScore?: boolean
+    feedback?: boolean
+    review?: boolean | ReviewDefaultArgs<ExtArgs>
+    member?: boolean | ProjectMemberDefaultArgs<ExtArgs>
+    rubrik?: boolean | RubrikPenilaianDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["memberReviewScore"]>
+
+  export type MemberReviewScoreSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reviewId?: boolean
+    memberId?: boolean
+    rubrikId?: boolean
+    score?: boolean
+    maxScore?: boolean
+    feedback?: boolean
+    review?: boolean | ReviewDefaultArgs<ExtArgs>
+    member?: boolean | ProjectMemberDefaultArgs<ExtArgs>
+    rubrik?: boolean | RubrikPenilaianDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["memberReviewScore"]>
+
+  export type MemberReviewScoreSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    reviewId?: boolean
+    memberId?: boolean
+    rubrikId?: boolean
+    score?: boolean
+    maxScore?: boolean
+    feedback?: boolean
+    review?: boolean | ReviewDefaultArgs<ExtArgs>
+    member?: boolean | ProjectMemberDefaultArgs<ExtArgs>
+    rubrik?: boolean | RubrikPenilaianDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["memberReviewScore"]>
+
+  export type MemberReviewScoreSelectScalar = {
+    id?: boolean
+    reviewId?: boolean
+    memberId?: boolean
+    rubrikId?: boolean
+    score?: boolean
+    maxScore?: boolean
+    feedback?: boolean
+  }
+
+  export type MemberReviewScoreOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "reviewId" | "memberId" | "rubrikId" | "score" | "maxScore" | "feedback", ExtArgs["result"]["memberReviewScore"]>
+  export type MemberReviewScoreInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    review?: boolean | ReviewDefaultArgs<ExtArgs>
+    member?: boolean | ProjectMemberDefaultArgs<ExtArgs>
+    rubrik?: boolean | RubrikPenilaianDefaultArgs<ExtArgs>
+  }
+  export type MemberReviewScoreIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    review?: boolean | ReviewDefaultArgs<ExtArgs>
+    member?: boolean | ProjectMemberDefaultArgs<ExtArgs>
+    rubrik?: boolean | RubrikPenilaianDefaultArgs<ExtArgs>
+  }
+  export type MemberReviewScoreIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    review?: boolean | ReviewDefaultArgs<ExtArgs>
+    member?: boolean | ProjectMemberDefaultArgs<ExtArgs>
+    rubrik?: boolean | RubrikPenilaianDefaultArgs<ExtArgs>
+  }
+
+  export type $MemberReviewScorePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MemberReviewScore"
+    objects: {
+      review: Prisma.$ReviewPayload<ExtArgs>
+      member: Prisma.$ProjectMemberPayload<ExtArgs>
+      rubrik: Prisma.$RubrikPenilaianPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      reviewId: string
+      memberId: string
+      rubrikId: string
+      score: number
+      maxScore: number
+      feedback: string | null
+    }, ExtArgs["result"]["memberReviewScore"]>
+    composites: {}
+  }
+
+  type MemberReviewScoreGetPayload<S extends boolean | null | undefined | MemberReviewScoreDefaultArgs> = $Result.GetResult<Prisma.$MemberReviewScorePayload, S>
+
+  type MemberReviewScoreCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MemberReviewScoreFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MemberReviewScoreCountAggregateInputType | true
+    }
+
+  export interface MemberReviewScoreDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MemberReviewScore'], meta: { name: 'MemberReviewScore' } }
+    /**
+     * Find zero or one MemberReviewScore that matches the filter.
+     * @param {MemberReviewScoreFindUniqueArgs} args - Arguments to find a MemberReviewScore
+     * @example
+     * // Get one MemberReviewScore
+     * const memberReviewScore = await prisma.memberReviewScore.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MemberReviewScoreFindUniqueArgs>(args: SelectSubset<T, MemberReviewScoreFindUniqueArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MemberReviewScore that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MemberReviewScoreFindUniqueOrThrowArgs} args - Arguments to find a MemberReviewScore
+     * @example
+     * // Get one MemberReviewScore
+     * const memberReviewScore = await prisma.memberReviewScore.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MemberReviewScoreFindUniqueOrThrowArgs>(args: SelectSubset<T, MemberReviewScoreFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MemberReviewScore that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberReviewScoreFindFirstArgs} args - Arguments to find a MemberReviewScore
+     * @example
+     * // Get one MemberReviewScore
+     * const memberReviewScore = await prisma.memberReviewScore.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MemberReviewScoreFindFirstArgs>(args?: SelectSubset<T, MemberReviewScoreFindFirstArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MemberReviewScore that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberReviewScoreFindFirstOrThrowArgs} args - Arguments to find a MemberReviewScore
+     * @example
+     * // Get one MemberReviewScore
+     * const memberReviewScore = await prisma.memberReviewScore.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MemberReviewScoreFindFirstOrThrowArgs>(args?: SelectSubset<T, MemberReviewScoreFindFirstOrThrowArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MemberReviewScores that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberReviewScoreFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MemberReviewScores
+     * const memberReviewScores = await prisma.memberReviewScore.findMany()
+     * 
+     * // Get first 10 MemberReviewScores
+     * const memberReviewScores = await prisma.memberReviewScore.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const memberReviewScoreWithIdOnly = await prisma.memberReviewScore.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MemberReviewScoreFindManyArgs>(args?: SelectSubset<T, MemberReviewScoreFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MemberReviewScore.
+     * @param {MemberReviewScoreCreateArgs} args - Arguments to create a MemberReviewScore.
+     * @example
+     * // Create one MemberReviewScore
+     * const MemberReviewScore = await prisma.memberReviewScore.create({
+     *   data: {
+     *     // ... data to create a MemberReviewScore
+     *   }
+     * })
+     * 
+     */
+    create<T extends MemberReviewScoreCreateArgs>(args: SelectSubset<T, MemberReviewScoreCreateArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MemberReviewScores.
+     * @param {MemberReviewScoreCreateManyArgs} args - Arguments to create many MemberReviewScores.
+     * @example
+     * // Create many MemberReviewScores
+     * const memberReviewScore = await prisma.memberReviewScore.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MemberReviewScoreCreateManyArgs>(args?: SelectSubset<T, MemberReviewScoreCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MemberReviewScores and returns the data saved in the database.
+     * @param {MemberReviewScoreCreateManyAndReturnArgs} args - Arguments to create many MemberReviewScores.
+     * @example
+     * // Create many MemberReviewScores
+     * const memberReviewScore = await prisma.memberReviewScore.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MemberReviewScores and only return the `id`
+     * const memberReviewScoreWithIdOnly = await prisma.memberReviewScore.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MemberReviewScoreCreateManyAndReturnArgs>(args?: SelectSubset<T, MemberReviewScoreCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MemberReviewScore.
+     * @param {MemberReviewScoreDeleteArgs} args - Arguments to delete one MemberReviewScore.
+     * @example
+     * // Delete one MemberReviewScore
+     * const MemberReviewScore = await prisma.memberReviewScore.delete({
+     *   where: {
+     *     // ... filter to delete one MemberReviewScore
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MemberReviewScoreDeleteArgs>(args: SelectSubset<T, MemberReviewScoreDeleteArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MemberReviewScore.
+     * @param {MemberReviewScoreUpdateArgs} args - Arguments to update one MemberReviewScore.
+     * @example
+     * // Update one MemberReviewScore
+     * const memberReviewScore = await prisma.memberReviewScore.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MemberReviewScoreUpdateArgs>(args: SelectSubset<T, MemberReviewScoreUpdateArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MemberReviewScores.
+     * @param {MemberReviewScoreDeleteManyArgs} args - Arguments to filter MemberReviewScores to delete.
+     * @example
+     * // Delete a few MemberReviewScores
+     * const { count } = await prisma.memberReviewScore.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MemberReviewScoreDeleteManyArgs>(args?: SelectSubset<T, MemberReviewScoreDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MemberReviewScores.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberReviewScoreUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MemberReviewScores
+     * const memberReviewScore = await prisma.memberReviewScore.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MemberReviewScoreUpdateManyArgs>(args: SelectSubset<T, MemberReviewScoreUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MemberReviewScores and returns the data updated in the database.
+     * @param {MemberReviewScoreUpdateManyAndReturnArgs} args - Arguments to update many MemberReviewScores.
+     * @example
+     * // Update many MemberReviewScores
+     * const memberReviewScore = await prisma.memberReviewScore.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MemberReviewScores and only return the `id`
+     * const memberReviewScoreWithIdOnly = await prisma.memberReviewScore.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MemberReviewScoreUpdateManyAndReturnArgs>(args: SelectSubset<T, MemberReviewScoreUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MemberReviewScore.
+     * @param {MemberReviewScoreUpsertArgs} args - Arguments to update or create a MemberReviewScore.
+     * @example
+     * // Update or create a MemberReviewScore
+     * const memberReviewScore = await prisma.memberReviewScore.upsert({
+     *   create: {
+     *     // ... data to create a MemberReviewScore
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MemberReviewScore we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MemberReviewScoreUpsertArgs>(args: SelectSubset<T, MemberReviewScoreUpsertArgs<ExtArgs>>): Prisma__MemberReviewScoreClient<$Result.GetResult<Prisma.$MemberReviewScorePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MemberReviewScores.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberReviewScoreCountArgs} args - Arguments to filter MemberReviewScores to count.
+     * @example
+     * // Count the number of MemberReviewScores
+     * const count = await prisma.memberReviewScore.count({
+     *   where: {
+     *     // ... the filter for the MemberReviewScores we want to count
+     *   }
+     * })
+    **/
+    count<T extends MemberReviewScoreCountArgs>(
+      args?: Subset<T, MemberReviewScoreCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MemberReviewScoreCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MemberReviewScore.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberReviewScoreAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MemberReviewScoreAggregateArgs>(args: Subset<T, MemberReviewScoreAggregateArgs>): Prisma.PrismaPromise<GetMemberReviewScoreAggregateType<T>>
+
+    /**
+     * Group by MemberReviewScore.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MemberReviewScoreGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MemberReviewScoreGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MemberReviewScoreGroupByArgs['orderBy'] }
+        : { orderBy?: MemberReviewScoreGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MemberReviewScoreGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMemberReviewScoreGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MemberReviewScore model
+   */
+  readonly fields: MemberReviewScoreFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MemberReviewScore.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MemberReviewScoreClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    review<T extends ReviewDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ReviewDefaultArgs<ExtArgs>>): Prisma__ReviewClient<$Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    member<T extends ProjectMemberDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectMemberDefaultArgs<ExtArgs>>): Prisma__ProjectMemberClient<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    rubrik<T extends RubrikPenilaianDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RubrikPenilaianDefaultArgs<ExtArgs>>): Prisma__RubrikPenilaianClient<$Result.GetResult<Prisma.$RubrikPenilaianPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MemberReviewScore model
+   */
+  interface MemberReviewScoreFieldRefs {
+    readonly id: FieldRef<"MemberReviewScore", 'String'>
+    readonly reviewId: FieldRef<"MemberReviewScore", 'String'>
+    readonly memberId: FieldRef<"MemberReviewScore", 'String'>
+    readonly rubrikId: FieldRef<"MemberReviewScore", 'String'>
+    readonly score: FieldRef<"MemberReviewScore", 'Float'>
+    readonly maxScore: FieldRef<"MemberReviewScore", 'Float'>
+    readonly feedback: FieldRef<"MemberReviewScore", 'String'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MemberReviewScore findUnique
+   */
+  export type MemberReviewScoreFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberReviewScore to fetch.
+     */
+    where: MemberReviewScoreWhereUniqueInput
+  }
+
+  /**
+   * MemberReviewScore findUniqueOrThrow
+   */
+  export type MemberReviewScoreFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberReviewScore to fetch.
+     */
+    where: MemberReviewScoreWhereUniqueInput
+  }
+
+  /**
+   * MemberReviewScore findFirst
+   */
+  export type MemberReviewScoreFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberReviewScore to fetch.
+     */
+    where?: MemberReviewScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberReviewScores to fetch.
+     */
+    orderBy?: MemberReviewScoreOrderByWithRelationInput | MemberReviewScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MemberReviewScores.
+     */
+    cursor?: MemberReviewScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberReviewScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberReviewScores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MemberReviewScores.
+     */
+    distinct?: MemberReviewScoreScalarFieldEnum | MemberReviewScoreScalarFieldEnum[]
+  }
+
+  /**
+   * MemberReviewScore findFirstOrThrow
+   */
+  export type MemberReviewScoreFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberReviewScore to fetch.
+     */
+    where?: MemberReviewScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberReviewScores to fetch.
+     */
+    orderBy?: MemberReviewScoreOrderByWithRelationInput | MemberReviewScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MemberReviewScores.
+     */
+    cursor?: MemberReviewScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberReviewScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberReviewScores.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MemberReviewScores.
+     */
+    distinct?: MemberReviewScoreScalarFieldEnum | MemberReviewScoreScalarFieldEnum[]
+  }
+
+  /**
+   * MemberReviewScore findMany
+   */
+  export type MemberReviewScoreFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * Filter, which MemberReviewScores to fetch.
+     */
+    where?: MemberReviewScoreWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MemberReviewScores to fetch.
+     */
+    orderBy?: MemberReviewScoreOrderByWithRelationInput | MemberReviewScoreOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MemberReviewScores.
+     */
+    cursor?: MemberReviewScoreWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MemberReviewScores from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MemberReviewScores.
+     */
+    skip?: number
+    distinct?: MemberReviewScoreScalarFieldEnum | MemberReviewScoreScalarFieldEnum[]
+  }
+
+  /**
+   * MemberReviewScore create
+   */
+  export type MemberReviewScoreCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * The data needed to create a MemberReviewScore.
+     */
+    data: XOR<MemberReviewScoreCreateInput, MemberReviewScoreUncheckedCreateInput>
+  }
+
+  /**
+   * MemberReviewScore createMany
+   */
+  export type MemberReviewScoreCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MemberReviewScores.
+     */
+    data: MemberReviewScoreCreateManyInput | MemberReviewScoreCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MemberReviewScore createManyAndReturn
+   */
+  export type MemberReviewScoreCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * The data used to create many MemberReviewScores.
+     */
+    data: MemberReviewScoreCreateManyInput | MemberReviewScoreCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MemberReviewScore update
+   */
+  export type MemberReviewScoreUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * The data needed to update a MemberReviewScore.
+     */
+    data: XOR<MemberReviewScoreUpdateInput, MemberReviewScoreUncheckedUpdateInput>
+    /**
+     * Choose, which MemberReviewScore to update.
+     */
+    where: MemberReviewScoreWhereUniqueInput
+  }
+
+  /**
+   * MemberReviewScore updateMany
+   */
+  export type MemberReviewScoreUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MemberReviewScores.
+     */
+    data: XOR<MemberReviewScoreUpdateManyMutationInput, MemberReviewScoreUncheckedUpdateManyInput>
+    /**
+     * Filter which MemberReviewScores to update
+     */
+    where?: MemberReviewScoreWhereInput
+    /**
+     * Limit how many MemberReviewScores to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MemberReviewScore updateManyAndReturn
+   */
+  export type MemberReviewScoreUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * The data used to update MemberReviewScores.
+     */
+    data: XOR<MemberReviewScoreUpdateManyMutationInput, MemberReviewScoreUncheckedUpdateManyInput>
+    /**
+     * Filter which MemberReviewScores to update
+     */
+    where?: MemberReviewScoreWhereInput
+    /**
+     * Limit how many MemberReviewScores to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * MemberReviewScore upsert
+   */
+  export type MemberReviewScoreUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * The filter to search for the MemberReviewScore to update in case it exists.
+     */
+    where: MemberReviewScoreWhereUniqueInput
+    /**
+     * In case the MemberReviewScore found by the `where` argument doesn't exist, create a new MemberReviewScore with this data.
+     */
+    create: XOR<MemberReviewScoreCreateInput, MemberReviewScoreUncheckedCreateInput>
+    /**
+     * In case the MemberReviewScore was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MemberReviewScoreUpdateInput, MemberReviewScoreUncheckedUpdateInput>
+  }
+
+  /**
+   * MemberReviewScore delete
+   */
+  export type MemberReviewScoreDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
+    /**
+     * Filter which MemberReviewScore to delete.
+     */
+    where: MemberReviewScoreWhereUniqueInput
+  }
+
+  /**
+   * MemberReviewScore deleteMany
+   */
+  export type MemberReviewScoreDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MemberReviewScores to delete
+     */
+    where?: MemberReviewScoreWhereInput
+    /**
+     * Limit how many MemberReviewScores to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MemberReviewScore without action
+   */
+  export type MemberReviewScoreDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MemberReviewScore
+     */
+    select?: MemberReviewScoreSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MemberReviewScore
+     */
+    omit?: MemberReviewScoreOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MemberReviewScoreInclude<ExtArgs> | null
   }
 
 
@@ -21922,10 +23299,24 @@ export namespace Prisma {
     kategori: 'kategori',
     bobotMax: 'bobotMax',
     isActive: 'isActive',
-    urutan: 'urutan'
+    urutan: 'urutan',
+    tipe: 'tipe'
   };
 
   export type RubrikPenilaianScalarFieldEnum = (typeof RubrikPenilaianScalarFieldEnum)[keyof typeof RubrikPenilaianScalarFieldEnum]
+
+
+  export const MemberReviewScoreScalarFieldEnum: {
+    id: 'id',
+    reviewId: 'reviewId',
+    memberId: 'memberId',
+    rubrikId: 'rubrikId',
+    score: 'score',
+    maxScore: 'maxScore',
+    feedback: 'feedback'
+  };
+
+  export type MemberReviewScoreScalarFieldEnum = (typeof MemberReviewScoreScalarFieldEnum)[keyof typeof MemberReviewScoreScalarFieldEnum]
 
 
   export const ProjectAssignmentScalarFieldEnum: {
@@ -22539,6 +23930,7 @@ export namespace Prisma {
     joinedAt?: DateTimeFilter<"ProjectMember"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    reviewScores?: MemberReviewScoreListRelationFilter
   }
 
   export type ProjectMemberOrderByWithRelationInput = {
@@ -22553,6 +23945,7 @@ export namespace Prisma {
     joinedAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
     user?: UserOrderByWithRelationInput
+    reviewScores?: MemberReviewScoreOrderByRelationAggregateInput
   }
 
   export type ProjectMemberWhereUniqueInput = Prisma.AtLeast<{
@@ -22572,6 +23965,7 @@ export namespace Prisma {
     joinedAt?: DateTimeFilter<"ProjectMember"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+    reviewScores?: MemberReviewScoreListRelationFilter
   }, "id" | "projectId_userId" | "projectId_githubUsername">
 
   export type ProjectMemberOrderByWithAggregationInput = {
@@ -23161,6 +24555,7 @@ export namespace Prisma {
     reviewer?: XOR<UserScalarRelationFilter, UserWhereInput>
     scores?: ReviewScoreListRelationFilter
     comments?: ReviewCommentListRelationFilter
+    memberScores?: MemberReviewScoreListRelationFilter
   }
 
   export type ReviewOrderByWithRelationInput = {
@@ -23177,6 +24572,7 @@ export namespace Prisma {
     reviewer?: UserOrderByWithRelationInput
     scores?: ReviewScoreOrderByRelationAggregateInput
     comments?: ReviewCommentOrderByRelationAggregateInput
+    memberScores?: MemberReviewScoreOrderByRelationAggregateInput
   }
 
   export type ReviewWhereUniqueInput = Prisma.AtLeast<{
@@ -23197,6 +24593,7 @@ export namespace Prisma {
     reviewer?: XOR<UserScalarRelationFilter, UserWhereInput>
     scores?: ReviewScoreListRelationFilter
     comments?: ReviewCommentListRelationFilter
+    memberScores?: MemberReviewScoreListRelationFilter
   }, "id" | "projectId_reviewerId">
 
   export type ReviewOrderByWithAggregationInput = {
@@ -23380,7 +24777,9 @@ export namespace Prisma {
     bobotMax?: FloatFilter<"RubrikPenilaian"> | number
     isActive?: BoolFilter<"RubrikPenilaian"> | boolean
     urutan?: IntFilter<"RubrikPenilaian"> | number
+    tipe?: StringFilter<"RubrikPenilaian"> | string
     scores?: ReviewScoreListRelationFilter
+    memberScores?: MemberReviewScoreListRelationFilter
   }
 
   export type RubrikPenilaianOrderByWithRelationInput = {
@@ -23391,7 +24790,9 @@ export namespace Prisma {
     bobotMax?: SortOrder
     isActive?: SortOrder
     urutan?: SortOrder
+    tipe?: SortOrder
     scores?: ReviewScoreOrderByRelationAggregateInput
+    memberScores?: MemberReviewScoreOrderByRelationAggregateInput
   }
 
   export type RubrikPenilaianWhereUniqueInput = Prisma.AtLeast<{
@@ -23405,7 +24806,9 @@ export namespace Prisma {
     bobotMax?: FloatFilter<"RubrikPenilaian"> | number
     isActive?: BoolFilter<"RubrikPenilaian"> | boolean
     urutan?: IntFilter<"RubrikPenilaian"> | number
+    tipe?: StringFilter<"RubrikPenilaian"> | string
     scores?: ReviewScoreListRelationFilter
+    memberScores?: MemberReviewScoreListRelationFilter
   }, "id">
 
   export type RubrikPenilaianOrderByWithAggregationInput = {
@@ -23416,6 +24819,7 @@ export namespace Prisma {
     bobotMax?: SortOrder
     isActive?: SortOrder
     urutan?: SortOrder
+    tipe?: SortOrder
     _count?: RubrikPenilaianCountOrderByAggregateInput
     _avg?: RubrikPenilaianAvgOrderByAggregateInput
     _max?: RubrikPenilaianMaxOrderByAggregateInput
@@ -23434,6 +24838,81 @@ export namespace Prisma {
     bobotMax?: FloatWithAggregatesFilter<"RubrikPenilaian"> | number
     isActive?: BoolWithAggregatesFilter<"RubrikPenilaian"> | boolean
     urutan?: IntWithAggregatesFilter<"RubrikPenilaian"> | number
+    tipe?: StringWithAggregatesFilter<"RubrikPenilaian"> | string
+  }
+
+  export type MemberReviewScoreWhereInput = {
+    AND?: MemberReviewScoreWhereInput | MemberReviewScoreWhereInput[]
+    OR?: MemberReviewScoreWhereInput[]
+    NOT?: MemberReviewScoreWhereInput | MemberReviewScoreWhereInput[]
+    id?: StringFilter<"MemberReviewScore"> | string
+    reviewId?: StringFilter<"MemberReviewScore"> | string
+    memberId?: StringFilter<"MemberReviewScore"> | string
+    rubrikId?: StringFilter<"MemberReviewScore"> | string
+    score?: FloatFilter<"MemberReviewScore"> | number
+    maxScore?: FloatFilter<"MemberReviewScore"> | number
+    feedback?: StringNullableFilter<"MemberReviewScore"> | string | null
+    review?: XOR<ReviewScalarRelationFilter, ReviewWhereInput>
+    member?: XOR<ProjectMemberScalarRelationFilter, ProjectMemberWhereInput>
+    rubrik?: XOR<RubrikPenilaianScalarRelationFilter, RubrikPenilaianWhereInput>
+  }
+
+  export type MemberReviewScoreOrderByWithRelationInput = {
+    id?: SortOrder
+    reviewId?: SortOrder
+    memberId?: SortOrder
+    rubrikId?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    feedback?: SortOrderInput | SortOrder
+    review?: ReviewOrderByWithRelationInput
+    member?: ProjectMemberOrderByWithRelationInput
+    rubrik?: RubrikPenilaianOrderByWithRelationInput
+  }
+
+  export type MemberReviewScoreWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    reviewId_memberId_rubrikId?: MemberReviewScoreReviewIdMemberIdRubrikIdCompoundUniqueInput
+    AND?: MemberReviewScoreWhereInput | MemberReviewScoreWhereInput[]
+    OR?: MemberReviewScoreWhereInput[]
+    NOT?: MemberReviewScoreWhereInput | MemberReviewScoreWhereInput[]
+    reviewId?: StringFilter<"MemberReviewScore"> | string
+    memberId?: StringFilter<"MemberReviewScore"> | string
+    rubrikId?: StringFilter<"MemberReviewScore"> | string
+    score?: FloatFilter<"MemberReviewScore"> | number
+    maxScore?: FloatFilter<"MemberReviewScore"> | number
+    feedback?: StringNullableFilter<"MemberReviewScore"> | string | null
+    review?: XOR<ReviewScalarRelationFilter, ReviewWhereInput>
+    member?: XOR<ProjectMemberScalarRelationFilter, ProjectMemberWhereInput>
+    rubrik?: XOR<RubrikPenilaianScalarRelationFilter, RubrikPenilaianWhereInput>
+  }, "id" | "reviewId_memberId_rubrikId">
+
+  export type MemberReviewScoreOrderByWithAggregationInput = {
+    id?: SortOrder
+    reviewId?: SortOrder
+    memberId?: SortOrder
+    rubrikId?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    feedback?: SortOrderInput | SortOrder
+    _count?: MemberReviewScoreCountOrderByAggregateInput
+    _avg?: MemberReviewScoreAvgOrderByAggregateInput
+    _max?: MemberReviewScoreMaxOrderByAggregateInput
+    _min?: MemberReviewScoreMinOrderByAggregateInput
+    _sum?: MemberReviewScoreSumOrderByAggregateInput
+  }
+
+  export type MemberReviewScoreScalarWhereWithAggregatesInput = {
+    AND?: MemberReviewScoreScalarWhereWithAggregatesInput | MemberReviewScoreScalarWhereWithAggregatesInput[]
+    OR?: MemberReviewScoreScalarWhereWithAggregatesInput[]
+    NOT?: MemberReviewScoreScalarWhereWithAggregatesInput | MemberReviewScoreScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MemberReviewScore"> | string
+    reviewId?: StringWithAggregatesFilter<"MemberReviewScore"> | string
+    memberId?: StringWithAggregatesFilter<"MemberReviewScore"> | string
+    rubrikId?: StringWithAggregatesFilter<"MemberReviewScore"> | string
+    score?: FloatWithAggregatesFilter<"MemberReviewScore"> | number
+    maxScore?: FloatWithAggregatesFilter<"MemberReviewScore"> | number
+    feedback?: StringNullableWithAggregatesFilter<"MemberReviewScore"> | string | null
   }
 
   export type ProjectAssignmentWhereInput = {
@@ -24119,6 +25598,7 @@ export namespace Prisma {
     joinedAt?: Date | string
     project: ProjectCreateNestedOneWithoutMembersInput
     user?: UserCreateNestedOneWithoutTeamMembershipsInput
+    reviewScores?: MemberReviewScoreCreateNestedManyWithoutMemberInput
   }
 
   export type ProjectMemberUncheckedCreateInput = {
@@ -24131,6 +25611,7 @@ export namespace Prisma {
     name?: string | null
     role?: string
     joinedAt?: Date | string
+    reviewScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutMemberInput
   }
 
   export type ProjectMemberUpdateInput = {
@@ -24143,6 +25624,7 @@ export namespace Prisma {
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutMembersNestedInput
     user?: UserUpdateOneWithoutTeamMembershipsNestedInput
+    reviewScores?: MemberReviewScoreUpdateManyWithoutMemberNestedInput
   }
 
   export type ProjectMemberUncheckedUpdateInput = {
@@ -24155,6 +25637,7 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewScores?: MemberReviewScoreUncheckedUpdateManyWithoutMemberNestedInput
   }
 
   export type ProjectMemberCreateManyInput = {
@@ -24826,6 +26309,7 @@ export namespace Prisma {
     reviewer: UserCreateNestedOneWithoutReviewsInput
     scores?: ReviewScoreCreateNestedManyWithoutReviewInput
     comments?: ReviewCommentCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewUncheckedCreateInput = {
@@ -24840,6 +26324,7 @@ export namespace Prisma {
     completedAt?: Date | string | null
     scores?: ReviewScoreUncheckedCreateNestedManyWithoutReviewInput
     comments?: ReviewCommentUncheckedCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewUpdateInput = {
@@ -24854,6 +26339,7 @@ export namespace Prisma {
     reviewer?: UserUpdateOneRequiredWithoutReviewsNestedInput
     scores?: ReviewScoreUpdateManyWithoutReviewNestedInput
     comments?: ReviewCommentUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewUncheckedUpdateInput = {
@@ -24868,6 +26354,7 @@ export namespace Prisma {
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scores?: ReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
     comments?: ReviewCommentUncheckedUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewCreateManyInput = {
@@ -25049,7 +26536,9 @@ export namespace Prisma {
     bobotMax: number
     isActive?: boolean
     urutan?: number
+    tipe?: string
     scores?: ReviewScoreCreateNestedManyWithoutRubrikInput
+    memberScores?: MemberReviewScoreCreateNestedManyWithoutRubrikInput
   }
 
   export type RubrikPenilaianUncheckedCreateInput = {
@@ -25060,7 +26549,9 @@ export namespace Prisma {
     bobotMax: number
     isActive?: boolean
     urutan?: number
+    tipe?: string
     scores?: ReviewScoreUncheckedCreateNestedManyWithoutRubrikInput
+    memberScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutRubrikInput
   }
 
   export type RubrikPenilaianUpdateInput = {
@@ -25071,7 +26562,9 @@ export namespace Prisma {
     bobotMax?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
     scores?: ReviewScoreUpdateManyWithoutRubrikNestedInput
+    memberScores?: MemberReviewScoreUpdateManyWithoutRubrikNestedInput
   }
 
   export type RubrikPenilaianUncheckedUpdateInput = {
@@ -25082,7 +26575,9 @@ export namespace Prisma {
     bobotMax?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
     scores?: ReviewScoreUncheckedUpdateManyWithoutRubrikNestedInput
+    memberScores?: MemberReviewScoreUncheckedUpdateManyWithoutRubrikNestedInput
   }
 
   export type RubrikPenilaianCreateManyInput = {
@@ -25093,6 +26588,7 @@ export namespace Prisma {
     bobotMax: number
     isActive?: boolean
     urutan?: number
+    tipe?: string
   }
 
   export type RubrikPenilaianUpdateManyMutationInput = {
@@ -25103,6 +26599,7 @@ export namespace Prisma {
     bobotMax?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
   }
 
   export type RubrikPenilaianUncheckedUpdateManyInput = {
@@ -25113,6 +26610,74 @@ export namespace Prisma {
     bobotMax?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type MemberReviewScoreCreateInput = {
+    id?: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+    review: ReviewCreateNestedOneWithoutMemberScoresInput
+    member: ProjectMemberCreateNestedOneWithoutReviewScoresInput
+    rubrik: RubrikPenilaianCreateNestedOneWithoutMemberScoresInput
+  }
+
+  export type MemberReviewScoreUncheckedCreateInput = {
+    id?: string
+    reviewId: string
+    memberId: string
+    rubrikId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+  }
+
+  export type MemberReviewScoreUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+    review?: ReviewUpdateOneRequiredWithoutMemberScoresNestedInput
+    member?: ProjectMemberUpdateOneRequiredWithoutReviewScoresNestedInput
+    rubrik?: RubrikPenilaianUpdateOneRequiredWithoutMemberScoresNestedInput
+  }
+
+  export type MemberReviewScoreUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewId?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
+    rubrikId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberReviewScoreCreateManyInput = {
+    id?: string
+    reviewId: string
+    memberId: string
+    rubrikId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+  }
+
+  export type MemberReviewScoreUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberReviewScoreUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewId?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
+    rubrikId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ProjectAssignmentCreateInput = {
@@ -25823,6 +27388,16 @@ export namespace Prisma {
     isNot?: UserWhereInput | null
   }
 
+  export type MemberReviewScoreListRelationFilter = {
+    every?: MemberReviewScoreWhereInput
+    some?: MemberReviewScoreWhereInput
+    none?: MemberReviewScoreWhereInput
+  }
+
+  export type MemberReviewScoreOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type ProjectMemberProjectIdUserIdCompoundUniqueInput = {
     projectId: string
     userId: string
@@ -26482,6 +28057,7 @@ export namespace Prisma {
     bobotMax?: SortOrder
     isActive?: SortOrder
     urutan?: SortOrder
+    tipe?: SortOrder
   }
 
   export type RubrikPenilaianAvgOrderByAggregateInput = {
@@ -26497,6 +28073,7 @@ export namespace Prisma {
     bobotMax?: SortOrder
     isActive?: SortOrder
     urutan?: SortOrder
+    tipe?: SortOrder
   }
 
   export type RubrikPenilaianMinOrderByAggregateInput = {
@@ -26507,11 +28084,63 @@ export namespace Prisma {
     bobotMax?: SortOrder
     isActive?: SortOrder
     urutan?: SortOrder
+    tipe?: SortOrder
   }
 
   export type RubrikPenilaianSumOrderByAggregateInput = {
     bobotMax?: SortOrder
     urutan?: SortOrder
+  }
+
+  export type ProjectMemberScalarRelationFilter = {
+    is?: ProjectMemberWhereInput
+    isNot?: ProjectMemberWhereInput
+  }
+
+  export type MemberReviewScoreReviewIdMemberIdRubrikIdCompoundUniqueInput = {
+    reviewId: string
+    memberId: string
+    rubrikId: string
+  }
+
+  export type MemberReviewScoreCountOrderByAggregateInput = {
+    id?: SortOrder
+    reviewId?: SortOrder
+    memberId?: SortOrder
+    rubrikId?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    feedback?: SortOrder
+  }
+
+  export type MemberReviewScoreAvgOrderByAggregateInput = {
+    score?: SortOrder
+    maxScore?: SortOrder
+  }
+
+  export type MemberReviewScoreMaxOrderByAggregateInput = {
+    id?: SortOrder
+    reviewId?: SortOrder
+    memberId?: SortOrder
+    rubrikId?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    feedback?: SortOrder
+  }
+
+  export type MemberReviewScoreMinOrderByAggregateInput = {
+    id?: SortOrder
+    reviewId?: SortOrder
+    memberId?: SortOrder
+    rubrikId?: SortOrder
+    score?: SortOrder
+    maxScore?: SortOrder
+    feedback?: SortOrder
+  }
+
+  export type MemberReviewScoreSumOrderByAggregateInput = {
+    score?: SortOrder
+    maxScore?: SortOrder
   }
 
   export type ProjectAssignmentProjectIdDosenIdCompoundUniqueInput = {
@@ -27344,6 +28973,20 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
+  export type MemberReviewScoreCreateNestedManyWithoutMemberInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutMemberInput, MemberReviewScoreUncheckedCreateWithoutMemberInput> | MemberReviewScoreCreateWithoutMemberInput[] | MemberReviewScoreUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutMemberInput | MemberReviewScoreCreateOrConnectWithoutMemberInput[]
+    createMany?: MemberReviewScoreCreateManyMemberInputEnvelope
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+  }
+
+  export type MemberReviewScoreUncheckedCreateNestedManyWithoutMemberInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutMemberInput, MemberReviewScoreUncheckedCreateWithoutMemberInput> | MemberReviewScoreCreateWithoutMemberInput[] | MemberReviewScoreUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutMemberInput | MemberReviewScoreCreateOrConnectWithoutMemberInput[]
+    createMany?: MemberReviewScoreCreateManyMemberInputEnvelope
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+  }
+
   export type ProjectUpdateOneRequiredWithoutMembersNestedInput = {
     create?: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutMembersInput
@@ -27360,6 +29003,34 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutTeamMembershipsInput, UserUpdateWithoutTeamMembershipsInput>, UserUncheckedUpdateWithoutTeamMembershipsInput>
+  }
+
+  export type MemberReviewScoreUpdateManyWithoutMemberNestedInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutMemberInput, MemberReviewScoreUncheckedCreateWithoutMemberInput> | MemberReviewScoreCreateWithoutMemberInput[] | MemberReviewScoreUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutMemberInput | MemberReviewScoreCreateOrConnectWithoutMemberInput[]
+    upsert?: MemberReviewScoreUpsertWithWhereUniqueWithoutMemberInput | MemberReviewScoreUpsertWithWhereUniqueWithoutMemberInput[]
+    createMany?: MemberReviewScoreCreateManyMemberInputEnvelope
+    set?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    disconnect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    delete?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    update?: MemberReviewScoreUpdateWithWhereUniqueWithoutMemberInput | MemberReviewScoreUpdateWithWhereUniqueWithoutMemberInput[]
+    updateMany?: MemberReviewScoreUpdateManyWithWhereWithoutMemberInput | MemberReviewScoreUpdateManyWithWhereWithoutMemberInput[]
+    deleteMany?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
+  }
+
+  export type MemberReviewScoreUncheckedUpdateManyWithoutMemberNestedInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutMemberInput, MemberReviewScoreUncheckedCreateWithoutMemberInput> | MemberReviewScoreCreateWithoutMemberInput[] | MemberReviewScoreUncheckedCreateWithoutMemberInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutMemberInput | MemberReviewScoreCreateOrConnectWithoutMemberInput[]
+    upsert?: MemberReviewScoreUpsertWithWhereUniqueWithoutMemberInput | MemberReviewScoreUpsertWithWhereUniqueWithoutMemberInput[]
+    createMany?: MemberReviewScoreCreateManyMemberInputEnvelope
+    set?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    disconnect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    delete?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    update?: MemberReviewScoreUpdateWithWhereUniqueWithoutMemberInput | MemberReviewScoreUpdateWithWhereUniqueWithoutMemberInput[]
+    updateMany?: MemberReviewScoreUpdateManyWithWhereWithoutMemberInput | MemberReviewScoreUpdateManyWithWhereWithoutMemberInput[]
+    deleteMany?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutInvitationsInput = {
@@ -27502,6 +29173,13 @@ export namespace Prisma {
     connect?: ReviewCommentWhereUniqueInput | ReviewCommentWhereUniqueInput[]
   }
 
+  export type MemberReviewScoreCreateNestedManyWithoutReviewInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutReviewInput, MemberReviewScoreUncheckedCreateWithoutReviewInput> | MemberReviewScoreCreateWithoutReviewInput[] | MemberReviewScoreUncheckedCreateWithoutReviewInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutReviewInput | MemberReviewScoreCreateOrConnectWithoutReviewInput[]
+    createMany?: MemberReviewScoreCreateManyReviewInputEnvelope
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+  }
+
   export type ReviewScoreUncheckedCreateNestedManyWithoutReviewInput = {
     create?: XOR<ReviewScoreCreateWithoutReviewInput, ReviewScoreUncheckedCreateWithoutReviewInput> | ReviewScoreCreateWithoutReviewInput[] | ReviewScoreUncheckedCreateWithoutReviewInput[]
     connectOrCreate?: ReviewScoreCreateOrConnectWithoutReviewInput | ReviewScoreCreateOrConnectWithoutReviewInput[]
@@ -27514,6 +29192,13 @@ export namespace Prisma {
     connectOrCreate?: ReviewCommentCreateOrConnectWithoutReviewInput | ReviewCommentCreateOrConnectWithoutReviewInput[]
     createMany?: ReviewCommentCreateManyReviewInputEnvelope
     connect?: ReviewCommentWhereUniqueInput | ReviewCommentWhereUniqueInput[]
+  }
+
+  export type MemberReviewScoreUncheckedCreateNestedManyWithoutReviewInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutReviewInput, MemberReviewScoreUncheckedCreateWithoutReviewInput> | MemberReviewScoreCreateWithoutReviewInput[] | MemberReviewScoreUncheckedCreateWithoutReviewInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutReviewInput | MemberReviewScoreCreateOrConnectWithoutReviewInput[]
+    createMany?: MemberReviewScoreCreateManyReviewInputEnvelope
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
   }
 
   export type EnumReviewStatusFieldUpdateOperationsInput = {
@@ -27572,6 +29257,20 @@ export namespace Prisma {
     deleteMany?: ReviewCommentScalarWhereInput | ReviewCommentScalarWhereInput[]
   }
 
+  export type MemberReviewScoreUpdateManyWithoutReviewNestedInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutReviewInput, MemberReviewScoreUncheckedCreateWithoutReviewInput> | MemberReviewScoreCreateWithoutReviewInput[] | MemberReviewScoreUncheckedCreateWithoutReviewInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutReviewInput | MemberReviewScoreCreateOrConnectWithoutReviewInput[]
+    upsert?: MemberReviewScoreUpsertWithWhereUniqueWithoutReviewInput | MemberReviewScoreUpsertWithWhereUniqueWithoutReviewInput[]
+    createMany?: MemberReviewScoreCreateManyReviewInputEnvelope
+    set?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    disconnect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    delete?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    update?: MemberReviewScoreUpdateWithWhereUniqueWithoutReviewInput | MemberReviewScoreUpdateWithWhereUniqueWithoutReviewInput[]
+    updateMany?: MemberReviewScoreUpdateManyWithWhereWithoutReviewInput | MemberReviewScoreUpdateManyWithWhereWithoutReviewInput[]
+    deleteMany?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
+  }
+
   export type ReviewScoreUncheckedUpdateManyWithoutReviewNestedInput = {
     create?: XOR<ReviewScoreCreateWithoutReviewInput, ReviewScoreUncheckedCreateWithoutReviewInput> | ReviewScoreCreateWithoutReviewInput[] | ReviewScoreUncheckedCreateWithoutReviewInput[]
     connectOrCreate?: ReviewScoreCreateOrConnectWithoutReviewInput | ReviewScoreCreateOrConnectWithoutReviewInput[]
@@ -27598,6 +29297,20 @@ export namespace Prisma {
     update?: ReviewCommentUpdateWithWhereUniqueWithoutReviewInput | ReviewCommentUpdateWithWhereUniqueWithoutReviewInput[]
     updateMany?: ReviewCommentUpdateManyWithWhereWithoutReviewInput | ReviewCommentUpdateManyWithWhereWithoutReviewInput[]
     deleteMany?: ReviewCommentScalarWhereInput | ReviewCommentScalarWhereInput[]
+  }
+
+  export type MemberReviewScoreUncheckedUpdateManyWithoutReviewNestedInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutReviewInput, MemberReviewScoreUncheckedCreateWithoutReviewInput> | MemberReviewScoreCreateWithoutReviewInput[] | MemberReviewScoreUncheckedCreateWithoutReviewInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutReviewInput | MemberReviewScoreCreateOrConnectWithoutReviewInput[]
+    upsert?: MemberReviewScoreUpsertWithWhereUniqueWithoutReviewInput | MemberReviewScoreUpsertWithWhereUniqueWithoutReviewInput[]
+    createMany?: MemberReviewScoreCreateManyReviewInputEnvelope
+    set?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    disconnect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    delete?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    update?: MemberReviewScoreUpdateWithWhereUniqueWithoutReviewInput | MemberReviewScoreUpdateWithWhereUniqueWithoutReviewInput[]
+    updateMany?: MemberReviewScoreUpdateManyWithWhereWithoutReviewInput | MemberReviewScoreUpdateManyWithWhereWithoutReviewInput[]
+    deleteMany?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
   }
 
   export type ReviewCreateNestedOneWithoutScoresInput = {
@@ -27657,11 +29370,25 @@ export namespace Prisma {
     connect?: ReviewScoreWhereUniqueInput | ReviewScoreWhereUniqueInput[]
   }
 
+  export type MemberReviewScoreCreateNestedManyWithoutRubrikInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutRubrikInput, MemberReviewScoreUncheckedCreateWithoutRubrikInput> | MemberReviewScoreCreateWithoutRubrikInput[] | MemberReviewScoreUncheckedCreateWithoutRubrikInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutRubrikInput | MemberReviewScoreCreateOrConnectWithoutRubrikInput[]
+    createMany?: MemberReviewScoreCreateManyRubrikInputEnvelope
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+  }
+
   export type ReviewScoreUncheckedCreateNestedManyWithoutRubrikInput = {
     create?: XOR<ReviewScoreCreateWithoutRubrikInput, ReviewScoreUncheckedCreateWithoutRubrikInput> | ReviewScoreCreateWithoutRubrikInput[] | ReviewScoreUncheckedCreateWithoutRubrikInput[]
     connectOrCreate?: ReviewScoreCreateOrConnectWithoutRubrikInput | ReviewScoreCreateOrConnectWithoutRubrikInput[]
     createMany?: ReviewScoreCreateManyRubrikInputEnvelope
     connect?: ReviewScoreWhereUniqueInput | ReviewScoreWhereUniqueInput[]
+  }
+
+  export type MemberReviewScoreUncheckedCreateNestedManyWithoutRubrikInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutRubrikInput, MemberReviewScoreUncheckedCreateWithoutRubrikInput> | MemberReviewScoreCreateWithoutRubrikInput[] | MemberReviewScoreUncheckedCreateWithoutRubrikInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutRubrikInput | MemberReviewScoreCreateOrConnectWithoutRubrikInput[]
+    createMany?: MemberReviewScoreCreateManyRubrikInputEnvelope
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
   }
 
   export type ReviewScoreUpdateManyWithoutRubrikNestedInput = {
@@ -27678,6 +29405,20 @@ export namespace Prisma {
     deleteMany?: ReviewScoreScalarWhereInput | ReviewScoreScalarWhereInput[]
   }
 
+  export type MemberReviewScoreUpdateManyWithoutRubrikNestedInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutRubrikInput, MemberReviewScoreUncheckedCreateWithoutRubrikInput> | MemberReviewScoreCreateWithoutRubrikInput[] | MemberReviewScoreUncheckedCreateWithoutRubrikInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutRubrikInput | MemberReviewScoreCreateOrConnectWithoutRubrikInput[]
+    upsert?: MemberReviewScoreUpsertWithWhereUniqueWithoutRubrikInput | MemberReviewScoreUpsertWithWhereUniqueWithoutRubrikInput[]
+    createMany?: MemberReviewScoreCreateManyRubrikInputEnvelope
+    set?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    disconnect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    delete?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    update?: MemberReviewScoreUpdateWithWhereUniqueWithoutRubrikInput | MemberReviewScoreUpdateWithWhereUniqueWithoutRubrikInput[]
+    updateMany?: MemberReviewScoreUpdateManyWithWhereWithoutRubrikInput | MemberReviewScoreUpdateManyWithWhereWithoutRubrikInput[]
+    deleteMany?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
+  }
+
   export type ReviewScoreUncheckedUpdateManyWithoutRubrikNestedInput = {
     create?: XOR<ReviewScoreCreateWithoutRubrikInput, ReviewScoreUncheckedCreateWithoutRubrikInput> | ReviewScoreCreateWithoutRubrikInput[] | ReviewScoreUncheckedCreateWithoutRubrikInput[]
     connectOrCreate?: ReviewScoreCreateOrConnectWithoutRubrikInput | ReviewScoreCreateOrConnectWithoutRubrikInput[]
@@ -27690,6 +29431,62 @@ export namespace Prisma {
     update?: ReviewScoreUpdateWithWhereUniqueWithoutRubrikInput | ReviewScoreUpdateWithWhereUniqueWithoutRubrikInput[]
     updateMany?: ReviewScoreUpdateManyWithWhereWithoutRubrikInput | ReviewScoreUpdateManyWithWhereWithoutRubrikInput[]
     deleteMany?: ReviewScoreScalarWhereInput | ReviewScoreScalarWhereInput[]
+  }
+
+  export type MemberReviewScoreUncheckedUpdateManyWithoutRubrikNestedInput = {
+    create?: XOR<MemberReviewScoreCreateWithoutRubrikInput, MemberReviewScoreUncheckedCreateWithoutRubrikInput> | MemberReviewScoreCreateWithoutRubrikInput[] | MemberReviewScoreUncheckedCreateWithoutRubrikInput[]
+    connectOrCreate?: MemberReviewScoreCreateOrConnectWithoutRubrikInput | MemberReviewScoreCreateOrConnectWithoutRubrikInput[]
+    upsert?: MemberReviewScoreUpsertWithWhereUniqueWithoutRubrikInput | MemberReviewScoreUpsertWithWhereUniqueWithoutRubrikInput[]
+    createMany?: MemberReviewScoreCreateManyRubrikInputEnvelope
+    set?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    disconnect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    delete?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    connect?: MemberReviewScoreWhereUniqueInput | MemberReviewScoreWhereUniqueInput[]
+    update?: MemberReviewScoreUpdateWithWhereUniqueWithoutRubrikInput | MemberReviewScoreUpdateWithWhereUniqueWithoutRubrikInput[]
+    updateMany?: MemberReviewScoreUpdateManyWithWhereWithoutRubrikInput | MemberReviewScoreUpdateManyWithWhereWithoutRubrikInput[]
+    deleteMany?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
+  }
+
+  export type ReviewCreateNestedOneWithoutMemberScoresInput = {
+    create?: XOR<ReviewCreateWithoutMemberScoresInput, ReviewUncheckedCreateWithoutMemberScoresInput>
+    connectOrCreate?: ReviewCreateOrConnectWithoutMemberScoresInput
+    connect?: ReviewWhereUniqueInput
+  }
+
+  export type ProjectMemberCreateNestedOneWithoutReviewScoresInput = {
+    create?: XOR<ProjectMemberCreateWithoutReviewScoresInput, ProjectMemberUncheckedCreateWithoutReviewScoresInput>
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutReviewScoresInput
+    connect?: ProjectMemberWhereUniqueInput
+  }
+
+  export type RubrikPenilaianCreateNestedOneWithoutMemberScoresInput = {
+    create?: XOR<RubrikPenilaianCreateWithoutMemberScoresInput, RubrikPenilaianUncheckedCreateWithoutMemberScoresInput>
+    connectOrCreate?: RubrikPenilaianCreateOrConnectWithoutMemberScoresInput
+    connect?: RubrikPenilaianWhereUniqueInput
+  }
+
+  export type ReviewUpdateOneRequiredWithoutMemberScoresNestedInput = {
+    create?: XOR<ReviewCreateWithoutMemberScoresInput, ReviewUncheckedCreateWithoutMemberScoresInput>
+    connectOrCreate?: ReviewCreateOrConnectWithoutMemberScoresInput
+    upsert?: ReviewUpsertWithoutMemberScoresInput
+    connect?: ReviewWhereUniqueInput
+    update?: XOR<XOR<ReviewUpdateToOneWithWhereWithoutMemberScoresInput, ReviewUpdateWithoutMemberScoresInput>, ReviewUncheckedUpdateWithoutMemberScoresInput>
+  }
+
+  export type ProjectMemberUpdateOneRequiredWithoutReviewScoresNestedInput = {
+    create?: XOR<ProjectMemberCreateWithoutReviewScoresInput, ProjectMemberUncheckedCreateWithoutReviewScoresInput>
+    connectOrCreate?: ProjectMemberCreateOrConnectWithoutReviewScoresInput
+    upsert?: ProjectMemberUpsertWithoutReviewScoresInput
+    connect?: ProjectMemberWhereUniqueInput
+    update?: XOR<XOR<ProjectMemberUpdateToOneWithWhereWithoutReviewScoresInput, ProjectMemberUpdateWithoutReviewScoresInput>, ProjectMemberUncheckedUpdateWithoutReviewScoresInput>
+  }
+
+  export type RubrikPenilaianUpdateOneRequiredWithoutMemberScoresNestedInput = {
+    create?: XOR<RubrikPenilaianCreateWithoutMemberScoresInput, RubrikPenilaianUncheckedCreateWithoutMemberScoresInput>
+    connectOrCreate?: RubrikPenilaianCreateOrConnectWithoutMemberScoresInput
+    upsert?: RubrikPenilaianUpsertWithoutMemberScoresInput
+    connect?: RubrikPenilaianWhereUniqueInput
+    update?: XOR<XOR<RubrikPenilaianUpdateToOneWithWhereWithoutMemberScoresInput, RubrikPenilaianUpdateWithoutMemberScoresInput>, RubrikPenilaianUncheckedUpdateWithoutMemberScoresInput>
   }
 
   export type ProjectCreateNestedOneWithoutAssignmentsInput = {
@@ -28127,6 +29924,7 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutReviewsInput
     scores?: ReviewScoreCreateNestedManyWithoutReviewInput
     comments?: ReviewCommentCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewUncheckedCreateWithoutReviewerInput = {
@@ -28140,6 +29938,7 @@ export namespace Prisma {
     completedAt?: Date | string | null
     scores?: ReviewScoreUncheckedCreateNestedManyWithoutReviewInput
     comments?: ReviewCommentUncheckedCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewCreateOrConnectWithoutReviewerInput = {
@@ -28251,6 +30050,7 @@ export namespace Prisma {
     role?: string
     joinedAt?: Date | string
     project: ProjectCreateNestedOneWithoutMembersInput
+    reviewScores?: MemberReviewScoreCreateNestedManyWithoutMemberInput
   }
 
   export type ProjectMemberUncheckedCreateWithoutUserInput = {
@@ -28262,6 +30062,7 @@ export namespace Prisma {
     name?: string | null
     role?: string
     joinedAt?: Date | string
+    reviewScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutMemberInput
   }
 
   export type ProjectMemberCreateOrConnectWithoutUserInput = {
@@ -28835,6 +30636,7 @@ export namespace Prisma {
     reviewer: UserCreateNestedOneWithoutReviewsInput
     scores?: ReviewScoreCreateNestedManyWithoutReviewInput
     comments?: ReviewCommentCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewUncheckedCreateWithoutProjectInput = {
@@ -28848,6 +30650,7 @@ export namespace Prisma {
     completedAt?: Date | string | null
     scores?: ReviewScoreUncheckedCreateNestedManyWithoutReviewInput
     comments?: ReviewCommentUncheckedCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewCreateOrConnectWithoutProjectInput = {
@@ -28891,6 +30694,7 @@ export namespace Prisma {
     role?: string
     joinedAt?: Date | string
     user?: UserCreateNestedOneWithoutTeamMembershipsInput
+    reviewScores?: MemberReviewScoreCreateNestedManyWithoutMemberInput
   }
 
   export type ProjectMemberUncheckedCreateWithoutProjectInput = {
@@ -28902,6 +30706,7 @@ export namespace Prisma {
     name?: string | null
     role?: string
     joinedAt?: Date | string
+    reviewScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutMemberInput
   }
 
   export type ProjectMemberCreateOrConnectWithoutProjectInput = {
@@ -29542,6 +31347,34 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutTeamMembershipsInput, UserUncheckedCreateWithoutTeamMembershipsInput>
   }
 
+  export type MemberReviewScoreCreateWithoutMemberInput = {
+    id?: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+    review: ReviewCreateNestedOneWithoutMemberScoresInput
+    rubrik: RubrikPenilaianCreateNestedOneWithoutMemberScoresInput
+  }
+
+  export type MemberReviewScoreUncheckedCreateWithoutMemberInput = {
+    id?: string
+    reviewId: string
+    rubrikId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+  }
+
+  export type MemberReviewScoreCreateOrConnectWithoutMemberInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    create: XOR<MemberReviewScoreCreateWithoutMemberInput, MemberReviewScoreUncheckedCreateWithoutMemberInput>
+  }
+
+  export type MemberReviewScoreCreateManyMemberInputEnvelope = {
+    data: MemberReviewScoreCreateManyMemberInput | MemberReviewScoreCreateManyMemberInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProjectUpsertWithoutMembersInput = {
     update: XOR<ProjectUpdateWithoutMembersInput, ProjectUncheckedUpdateWithoutMembersInput>
     create: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
@@ -29680,6 +31513,35 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+  }
+
+  export type MemberReviewScoreUpsertWithWhereUniqueWithoutMemberInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    update: XOR<MemberReviewScoreUpdateWithoutMemberInput, MemberReviewScoreUncheckedUpdateWithoutMemberInput>
+    create: XOR<MemberReviewScoreCreateWithoutMemberInput, MemberReviewScoreUncheckedCreateWithoutMemberInput>
+  }
+
+  export type MemberReviewScoreUpdateWithWhereUniqueWithoutMemberInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    data: XOR<MemberReviewScoreUpdateWithoutMemberInput, MemberReviewScoreUncheckedUpdateWithoutMemberInput>
+  }
+
+  export type MemberReviewScoreUpdateManyWithWhereWithoutMemberInput = {
+    where: MemberReviewScoreScalarWhereInput
+    data: XOR<MemberReviewScoreUpdateManyMutationInput, MemberReviewScoreUncheckedUpdateManyWithoutMemberInput>
+  }
+
+  export type MemberReviewScoreScalarWhereInput = {
+    AND?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
+    OR?: MemberReviewScoreScalarWhereInput[]
+    NOT?: MemberReviewScoreScalarWhereInput | MemberReviewScoreScalarWhereInput[]
+    id?: StringFilter<"MemberReviewScore"> | string
+    reviewId?: StringFilter<"MemberReviewScore"> | string
+    memberId?: StringFilter<"MemberReviewScore"> | string
+    rubrikId?: StringFilter<"MemberReviewScore"> | string
+    score?: FloatFilter<"MemberReviewScore"> | number
+    maxScore?: FloatFilter<"MemberReviewScore"> | number
+    feedback?: StringNullableFilter<"MemberReviewScore"> | string | null
   }
 
   export type ProjectCreateWithoutInvitationsInput = {
@@ -30774,6 +32636,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MemberReviewScoreCreateWithoutReviewInput = {
+    id?: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+    member: ProjectMemberCreateNestedOneWithoutReviewScoresInput
+    rubrik: RubrikPenilaianCreateNestedOneWithoutMemberScoresInput
+  }
+
+  export type MemberReviewScoreUncheckedCreateWithoutReviewInput = {
+    id?: string
+    memberId: string
+    rubrikId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+  }
+
+  export type MemberReviewScoreCreateOrConnectWithoutReviewInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    create: XOR<MemberReviewScoreCreateWithoutReviewInput, MemberReviewScoreUncheckedCreateWithoutReviewInput>
+  }
+
+  export type MemberReviewScoreCreateManyReviewInputEnvelope = {
+    data: MemberReviewScoreCreateManyReviewInput | MemberReviewScoreCreateManyReviewInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProjectUpsertWithoutReviewsInput = {
     update: XOR<ProjectUpdateWithoutReviewsInput, ProjectUncheckedUpdateWithoutReviewsInput>
     create: XOR<ProjectCreateWithoutReviewsInput, ProjectUncheckedCreateWithoutReviewsInput>
@@ -30972,6 +32862,22 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"ReviewComment"> | Date | string
   }
 
+  export type MemberReviewScoreUpsertWithWhereUniqueWithoutReviewInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    update: XOR<MemberReviewScoreUpdateWithoutReviewInput, MemberReviewScoreUncheckedUpdateWithoutReviewInput>
+    create: XOR<MemberReviewScoreCreateWithoutReviewInput, MemberReviewScoreUncheckedCreateWithoutReviewInput>
+  }
+
+  export type MemberReviewScoreUpdateWithWhereUniqueWithoutReviewInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    data: XOR<MemberReviewScoreUpdateWithoutReviewInput, MemberReviewScoreUncheckedUpdateWithoutReviewInput>
+  }
+
+  export type MemberReviewScoreUpdateManyWithWhereWithoutReviewInput = {
+    where: MemberReviewScoreScalarWhereInput
+    data: XOR<MemberReviewScoreUpdateManyMutationInput, MemberReviewScoreUncheckedUpdateManyWithoutReviewInput>
+  }
+
   export type ReviewCreateWithoutScoresInput = {
     id?: string
     status?: $Enums.ReviewStatus
@@ -30983,6 +32889,7 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutReviewsInput
     reviewer: UserCreateNestedOneWithoutReviewsInput
     comments?: ReviewCommentCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewUncheckedCreateWithoutScoresInput = {
@@ -30996,6 +32903,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     completedAt?: Date | string | null
     comments?: ReviewCommentUncheckedCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewCreateOrConnectWithoutScoresInput = {
@@ -31011,6 +32919,8 @@ export namespace Prisma {
     bobotMax: number
     isActive?: boolean
     urutan?: number
+    tipe?: string
+    memberScores?: MemberReviewScoreCreateNestedManyWithoutRubrikInput
   }
 
   export type RubrikPenilaianUncheckedCreateWithoutScoresInput = {
@@ -31021,6 +32931,8 @@ export namespace Prisma {
     bobotMax: number
     isActive?: boolean
     urutan?: number
+    tipe?: string
+    memberScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutRubrikInput
   }
 
   export type RubrikPenilaianCreateOrConnectWithoutScoresInput = {
@@ -31050,6 +32962,7 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutReviewsNestedInput
     reviewer?: UserUpdateOneRequiredWithoutReviewsNestedInput
     comments?: ReviewCommentUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutScoresInput = {
@@ -31063,6 +32976,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     comments?: ReviewCommentUncheckedUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
   }
 
   export type RubrikPenilaianUpsertWithoutScoresInput = {
@@ -31084,6 +32998,8 @@ export namespace Prisma {
     bobotMax?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
+    memberScores?: MemberReviewScoreUpdateManyWithoutRubrikNestedInput
   }
 
   export type RubrikPenilaianUncheckedUpdateWithoutScoresInput = {
@@ -31094,6 +33010,8 @@ export namespace Prisma {
     bobotMax?: FloatFieldUpdateOperationsInput | number
     isActive?: BoolFieldUpdateOperationsInput | boolean
     urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
+    memberScores?: MemberReviewScoreUncheckedUpdateManyWithoutRubrikNestedInput
   }
 
   export type ReviewCreateWithoutCommentsInput = {
@@ -31107,6 +33025,7 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutReviewsInput
     reviewer: UserCreateNestedOneWithoutReviewsInput
     scores?: ReviewScoreCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewUncheckedCreateWithoutCommentsInput = {
@@ -31120,6 +33039,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     completedAt?: Date | string | null
     scores?: ReviewScoreUncheckedCreateNestedManyWithoutReviewInput
+    memberScores?: MemberReviewScoreUncheckedCreateNestedManyWithoutReviewInput
   }
 
   export type ReviewCreateOrConnectWithoutCommentsInput = {
@@ -31149,6 +33069,7 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutReviewsNestedInput
     reviewer?: UserUpdateOneRequiredWithoutReviewsNestedInput
     scores?: ReviewScoreUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutCommentsInput = {
@@ -31162,6 +33083,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scores?: ReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewScoreCreateWithoutRubrikInput = {
@@ -31190,6 +33112,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type MemberReviewScoreCreateWithoutRubrikInput = {
+    id?: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+    review: ReviewCreateNestedOneWithoutMemberScoresInput
+    member: ProjectMemberCreateNestedOneWithoutReviewScoresInput
+  }
+
+  export type MemberReviewScoreUncheckedCreateWithoutRubrikInput = {
+    id?: string
+    reviewId: string
+    memberId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+  }
+
+  export type MemberReviewScoreCreateOrConnectWithoutRubrikInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    create: XOR<MemberReviewScoreCreateWithoutRubrikInput, MemberReviewScoreUncheckedCreateWithoutRubrikInput>
+  }
+
+  export type MemberReviewScoreCreateManyRubrikInputEnvelope = {
+    data: MemberReviewScoreCreateManyRubrikInput | MemberReviewScoreCreateManyRubrikInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ReviewScoreUpsertWithWhereUniqueWithoutRubrikInput = {
     where: ReviewScoreWhereUniqueInput
     update: XOR<ReviewScoreUpdateWithoutRubrikInput, ReviewScoreUncheckedUpdateWithoutRubrikInput>
@@ -31204,6 +33154,222 @@ export namespace Prisma {
   export type ReviewScoreUpdateManyWithWhereWithoutRubrikInput = {
     where: ReviewScoreScalarWhereInput
     data: XOR<ReviewScoreUpdateManyMutationInput, ReviewScoreUncheckedUpdateManyWithoutRubrikInput>
+  }
+
+  export type MemberReviewScoreUpsertWithWhereUniqueWithoutRubrikInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    update: XOR<MemberReviewScoreUpdateWithoutRubrikInput, MemberReviewScoreUncheckedUpdateWithoutRubrikInput>
+    create: XOR<MemberReviewScoreCreateWithoutRubrikInput, MemberReviewScoreUncheckedCreateWithoutRubrikInput>
+  }
+
+  export type MemberReviewScoreUpdateWithWhereUniqueWithoutRubrikInput = {
+    where: MemberReviewScoreWhereUniqueInput
+    data: XOR<MemberReviewScoreUpdateWithoutRubrikInput, MemberReviewScoreUncheckedUpdateWithoutRubrikInput>
+  }
+
+  export type MemberReviewScoreUpdateManyWithWhereWithoutRubrikInput = {
+    where: MemberReviewScoreScalarWhereInput
+    data: XOR<MemberReviewScoreUpdateManyMutationInput, MemberReviewScoreUncheckedUpdateManyWithoutRubrikInput>
+  }
+
+  export type ReviewCreateWithoutMemberScoresInput = {
+    id?: string
+    status?: $Enums.ReviewStatus
+    overallScore?: number | null
+    overallComment?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+    project: ProjectCreateNestedOneWithoutReviewsInput
+    reviewer: UserCreateNestedOneWithoutReviewsInput
+    scores?: ReviewScoreCreateNestedManyWithoutReviewInput
+    comments?: ReviewCommentCreateNestedManyWithoutReviewInput
+  }
+
+  export type ReviewUncheckedCreateWithoutMemberScoresInput = {
+    id?: string
+    projectId: string
+    reviewerId: string
+    status?: $Enums.ReviewStatus
+    overallScore?: number | null
+    overallComment?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    completedAt?: Date | string | null
+    scores?: ReviewScoreUncheckedCreateNestedManyWithoutReviewInput
+    comments?: ReviewCommentUncheckedCreateNestedManyWithoutReviewInput
+  }
+
+  export type ReviewCreateOrConnectWithoutMemberScoresInput = {
+    where: ReviewWhereUniqueInput
+    create: XOR<ReviewCreateWithoutMemberScoresInput, ReviewUncheckedCreateWithoutMemberScoresInput>
+  }
+
+  export type ProjectMemberCreateWithoutReviewScoresInput = {
+    id?: string
+    githubUsername?: string | null
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    joinedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutMembersInput
+    user?: UserCreateNestedOneWithoutTeamMembershipsInput
+  }
+
+  export type ProjectMemberUncheckedCreateWithoutReviewScoresInput = {
+    id?: string
+    projectId: string
+    userId?: string | null
+    githubUsername?: string | null
+    githubId?: string | null
+    githubAvatarUrl?: string | null
+    name?: string | null
+    role?: string
+    joinedAt?: Date | string
+  }
+
+  export type ProjectMemberCreateOrConnectWithoutReviewScoresInput = {
+    where: ProjectMemberWhereUniqueInput
+    create: XOR<ProjectMemberCreateWithoutReviewScoresInput, ProjectMemberUncheckedCreateWithoutReviewScoresInput>
+  }
+
+  export type RubrikPenilaianCreateWithoutMemberScoresInput = {
+    id?: string
+    name: string
+    description?: string | null
+    kategori: string
+    bobotMax: number
+    isActive?: boolean
+    urutan?: number
+    tipe?: string
+    scores?: ReviewScoreCreateNestedManyWithoutRubrikInput
+  }
+
+  export type RubrikPenilaianUncheckedCreateWithoutMemberScoresInput = {
+    id?: string
+    name: string
+    description?: string | null
+    kategori: string
+    bobotMax: number
+    isActive?: boolean
+    urutan?: number
+    tipe?: string
+    scores?: ReviewScoreUncheckedCreateNestedManyWithoutRubrikInput
+  }
+
+  export type RubrikPenilaianCreateOrConnectWithoutMemberScoresInput = {
+    where: RubrikPenilaianWhereUniqueInput
+    create: XOR<RubrikPenilaianCreateWithoutMemberScoresInput, RubrikPenilaianUncheckedCreateWithoutMemberScoresInput>
+  }
+
+  export type ReviewUpsertWithoutMemberScoresInput = {
+    update: XOR<ReviewUpdateWithoutMemberScoresInput, ReviewUncheckedUpdateWithoutMemberScoresInput>
+    create: XOR<ReviewCreateWithoutMemberScoresInput, ReviewUncheckedCreateWithoutMemberScoresInput>
+    where?: ReviewWhereInput
+  }
+
+  export type ReviewUpdateToOneWithWhereWithoutMemberScoresInput = {
+    where?: ReviewWhereInput
+    data: XOR<ReviewUpdateWithoutMemberScoresInput, ReviewUncheckedUpdateWithoutMemberScoresInput>
+  }
+
+  export type ReviewUpdateWithoutMemberScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    status?: EnumReviewStatusFieldUpdateOperationsInput | $Enums.ReviewStatus
+    overallScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    overallComment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    project?: ProjectUpdateOneRequiredWithoutReviewsNestedInput
+    reviewer?: UserUpdateOneRequiredWithoutReviewsNestedInput
+    scores?: ReviewScoreUpdateManyWithoutReviewNestedInput
+    comments?: ReviewCommentUpdateManyWithoutReviewNestedInput
+  }
+
+  export type ReviewUncheckedUpdateWithoutMemberScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    reviewerId?: StringFieldUpdateOperationsInput | string
+    status?: EnumReviewStatusFieldUpdateOperationsInput | $Enums.ReviewStatus
+    overallScore?: NullableFloatFieldUpdateOperationsInput | number | null
+    overallComment?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scores?: ReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
+    comments?: ReviewCommentUncheckedUpdateManyWithoutReviewNestedInput
+  }
+
+  export type ProjectMemberUpsertWithoutReviewScoresInput = {
+    update: XOR<ProjectMemberUpdateWithoutReviewScoresInput, ProjectMemberUncheckedUpdateWithoutReviewScoresInput>
+    create: XOR<ProjectMemberCreateWithoutReviewScoresInput, ProjectMemberUncheckedCreateWithoutReviewScoresInput>
+    where?: ProjectMemberWhereInput
+  }
+
+  export type ProjectMemberUpdateToOneWithWhereWithoutReviewScoresInput = {
+    where?: ProjectMemberWhereInput
+    data: XOR<ProjectMemberUpdateWithoutReviewScoresInput, ProjectMemberUncheckedUpdateWithoutReviewScoresInput>
+  }
+
+  export type ProjectMemberUpdateWithoutReviewScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutMembersNestedInput
+    user?: UserUpdateOneWithoutTeamMembershipsNestedInput
+  }
+
+  export type ProjectMemberUncheckedUpdateWithoutReviewScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubAvatarUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RubrikPenilaianUpsertWithoutMemberScoresInput = {
+    update: XOR<RubrikPenilaianUpdateWithoutMemberScoresInput, RubrikPenilaianUncheckedUpdateWithoutMemberScoresInput>
+    create: XOR<RubrikPenilaianCreateWithoutMemberScoresInput, RubrikPenilaianUncheckedCreateWithoutMemberScoresInput>
+    where?: RubrikPenilaianWhereInput
+  }
+
+  export type RubrikPenilaianUpdateToOneWithWhereWithoutMemberScoresInput = {
+    where?: RubrikPenilaianWhereInput
+    data: XOR<RubrikPenilaianUpdateWithoutMemberScoresInput, RubrikPenilaianUncheckedUpdateWithoutMemberScoresInput>
+  }
+
+  export type RubrikPenilaianUpdateWithoutMemberScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    kategori?: StringFieldUpdateOperationsInput | string
+    bobotMax?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
+    scores?: ReviewScoreUpdateManyWithoutRubrikNestedInput
+  }
+
+  export type RubrikPenilaianUncheckedUpdateWithoutMemberScoresInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    kategori?: StringFieldUpdateOperationsInput | string
+    bobotMax?: FloatFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    urutan?: IntFieldUpdateOperationsInput | number
+    tipe?: StringFieldUpdateOperationsInput | string
+    scores?: ReviewScoreUncheckedUpdateManyWithoutRubrikNestedInput
   }
 
   export type ProjectCreateWithoutAssignmentsInput = {
@@ -31797,6 +33963,7 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutReviewsNestedInput
     scores?: ReviewScoreUpdateManyWithoutReviewNestedInput
     comments?: ReviewCommentUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutReviewerInput = {
@@ -31810,6 +33977,7 @@ export namespace Prisma {
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scores?: ReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
     comments?: ReviewCommentUncheckedUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewUncheckedUpdateManyWithoutReviewerInput = {
@@ -31922,6 +34090,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutMembersNestedInput
+    reviewScores?: MemberReviewScoreUpdateManyWithoutMemberNestedInput
   }
 
   export type ProjectMemberUncheckedUpdateWithoutUserInput = {
@@ -31933,6 +34102,7 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewScores?: MemberReviewScoreUncheckedUpdateManyWithoutMemberNestedInput
   }
 
   export type ProjectMemberUncheckedUpdateManyWithoutUserInput = {
@@ -32140,6 +34310,7 @@ export namespace Prisma {
     reviewer?: UserUpdateOneRequiredWithoutReviewsNestedInput
     scores?: ReviewScoreUpdateManyWithoutReviewNestedInput
     comments?: ReviewCommentUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewUncheckedUpdateWithoutProjectInput = {
@@ -32153,6 +34324,7 @@ export namespace Prisma {
     completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     scores?: ReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
     comments?: ReviewCommentUncheckedUpdateManyWithoutReviewNestedInput
+    memberScores?: MemberReviewScoreUncheckedUpdateManyWithoutReviewNestedInput
   }
 
   export type ReviewUncheckedUpdateManyWithoutProjectInput = {
@@ -32193,6 +34365,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneWithoutTeamMembershipsNestedInput
+    reviewScores?: MemberReviewScoreUpdateManyWithoutMemberNestedInput
   }
 
   export type ProjectMemberUncheckedUpdateWithoutProjectInput = {
@@ -32204,6 +34377,7 @@ export namespace Prisma {
     name?: NullableStringFieldUpdateOperationsInput | string | null
     role?: StringFieldUpdateOperationsInput | string
     joinedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    reviewScores?: MemberReviewScoreUncheckedUpdateManyWithoutMemberNestedInput
   }
 
   export type ProjectMemberUncheckedUpdateManyWithoutProjectInput = {
@@ -32346,6 +34520,42 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MemberReviewScoreCreateManyMemberInput = {
+    id?: string
+    reviewId: string
+    rubrikId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+  }
+
+  export type MemberReviewScoreUpdateWithoutMemberInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+    review?: ReviewUpdateOneRequiredWithoutMemberScoresNestedInput
+    rubrik?: RubrikPenilaianUpdateOneRequiredWithoutMemberScoresNestedInput
+  }
+
+  export type MemberReviewScoreUncheckedUpdateWithoutMemberInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewId?: StringFieldUpdateOperationsInput | string
+    rubrikId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberReviewScoreUncheckedUpdateManyWithoutMemberInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewId?: StringFieldUpdateOperationsInput | string
+    rubrikId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type ReviewScoreCreateManyReviewInput = {
     id?: string
     rubrikId: string
@@ -32362,6 +34572,15 @@ export namespace Prisma {
     lineEnd?: number | null
     content: string
     createdAt?: Date | string
+  }
+
+  export type MemberReviewScoreCreateManyReviewInput = {
+    id?: string
+    memberId: string
+    rubrikId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
   }
 
   export type ReviewScoreUpdateWithoutReviewInput = {
@@ -32418,9 +34637,45 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MemberReviewScoreUpdateWithoutReviewInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+    member?: ProjectMemberUpdateOneRequiredWithoutReviewScoresNestedInput
+    rubrik?: RubrikPenilaianUpdateOneRequiredWithoutMemberScoresNestedInput
+  }
+
+  export type MemberReviewScoreUncheckedUpdateWithoutReviewInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
+    rubrikId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberReviewScoreUncheckedUpdateManyWithoutReviewInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
+    rubrikId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
   export type ReviewScoreCreateManyRubrikInput = {
     id?: string
     reviewId: string
+    score: number
+    maxScore: number
+    feedback?: string | null
+  }
+
+  export type MemberReviewScoreCreateManyRubrikInput = {
+    id?: string
+    reviewId: string
+    memberId: string
     score: number
     maxScore: number
     feedback?: string | null
@@ -32445,6 +34700,33 @@ export namespace Prisma {
   export type ReviewScoreUncheckedUpdateManyWithoutRubrikInput = {
     id?: StringFieldUpdateOperationsInput | string
     reviewId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberReviewScoreUpdateWithoutRubrikInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+    review?: ReviewUpdateOneRequiredWithoutMemberScoresNestedInput
+    member?: ProjectMemberUpdateOneRequiredWithoutReviewScoresNestedInput
+  }
+
+  export type MemberReviewScoreUncheckedUpdateWithoutRubrikInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewId?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
+    score?: FloatFieldUpdateOperationsInput | number
+    maxScore?: FloatFieldUpdateOperationsInput | number
+    feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MemberReviewScoreUncheckedUpdateManyWithoutRubrikInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    reviewId?: StringFieldUpdateOperationsInput | string
+    memberId?: StringFieldUpdateOperationsInput | string
     score?: FloatFieldUpdateOperationsInput | number
     maxScore?: FloatFieldUpdateOperationsInput | number
     feedback?: NullableStringFieldUpdateOperationsInput | string | null

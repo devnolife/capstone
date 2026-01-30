@@ -42,6 +42,11 @@ import {
   Camera,
   IdCard,
   File,
+  Users,
+  Crown,
+  UserCheck,
+  CheckCircle2,
+  ChevronRight,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -68,6 +73,21 @@ interface Project {
     username: string; // username is NIM for mahasiswa
     image: string | null;
   };
+  members: Array<{
+    id: string;
+    userId: string | null;
+    name: string | null;
+    role: string;
+    githubUsername: string | null;
+    githubAvatarUrl: string | null;
+    user: {
+      id: string;
+      name: string;
+      username: string;
+      nim: string | null;
+      image: string | null;
+    } | null;
+  }>;
   documents: Array<{
     id: string;
     type: string;
@@ -103,6 +123,19 @@ interface Project {
         bobotMax: number;
       };
     }>;
+    memberScores?: Array<{
+      id: string;
+      memberId: string;
+      score: number;
+      maxScore: number;
+      feedback: string | null;
+      rubrik: {
+        id: string;
+        name: string;
+        kategori: string;
+        bobotMax: number;
+      };
+    }>;
   }>;
 }
 
@@ -113,6 +146,12 @@ interface Rubrik {
   kategori: string;
   bobotMax: number;
   urutan: number;
+  tipe?: string;
+}
+
+interface MemberScoreData {
+  memberId: string;
+  scores: Record<string, { score: number; feedback: string }>;
 }
 
 interface StakeholderDocument {
@@ -214,6 +253,11 @@ export default function ReviewPage({
   >([]);
   const [stakeholderDocs, setStakeholderDocs] = useState<StakeholderDocument[]>([]);
   const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
+  
+  // Individual assessment state
+  const [individualRubriks, setIndividualRubriks] = useState<Rubrik[]>([]);
+  const [memberScores, setMemberScores] = useState<MemberScoreData[]>([]);
+  const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -224,8 +268,8 @@ export default function ReviewPage({
         const projectData = await projectRes.json();
         setProject(projectData);
 
-        // Fetch rubriks
-        const rubrikRes = await fetch('/api/rubrik');
+        // Fetch rubriks for kelompok (group assessment)
+        const rubrikRes = await fetch('/api/rubrik?tipe=kelompok');
         if (rubrikRes.ok) {
           const rubrikData = await rubrikRes.json();
           setRubriks(rubrikData);
@@ -239,6 +283,30 @@ export default function ReviewPage({
             initialScores[r.id] = { score: 0, feedback: '' };
           });
           setScores(initialScores);
+        }
+
+        // Fetch rubriks for individu (individual assessment)
+        const individualRubrikRes = await fetch('/api/rubrik?tipe=individu');
+        if (individualRubrikRes.ok) {
+          const individualRubrikData = await individualRubrikRes.json();
+          setIndividualRubriks(individualRubrikData);
+
+          // Initialize member scores for each project member
+          if (projectData.members && projectData.members.length > 0) {
+            const initialMemberScores: MemberScoreData[] = projectData.members.map(
+              (member: { id: string }) => {
+                const memberScoreRecord: Record<string, { score: number; feedback: string }> = {};
+                individualRubrikData.forEach((r: Rubrik) => {
+                  memberScoreRecord[r.id] = { score: 0, feedback: '' };
+                });
+                return {
+                  memberId: member.id,
+                  scores: memberScoreRecord,
+                };
+              }
+            );
+            setMemberScores(initialMemberScores);
+          }
         }
 
         // Check if review exists
@@ -286,6 +354,30 @@ export default function ReviewPage({
               ),
             );
           }
+
+          // Populate existing member scores
+          if (myReview.memberScores && myReview.memberScores.length > 0) {
+            setMemberScores((prev) => {
+              const updated = [...prev];
+              myReview.memberScores.forEach(
+                (ms: {
+                  memberId: string;
+                  score: number;
+                  feedback: string | null;
+                  rubrik: { id: string };
+                }) => {
+                  const memberIndex = updated.findIndex((m) => m.memberId === ms.memberId);
+                  if (memberIndex !== -1) {
+                    updated[memberIndex].scores[ms.rubrik.id] = {
+                      score: ms.score,
+                      feedback: ms.feedback || '',
+                    };
+                  }
+                }
+              );
+              return updated;
+            });
+          }
         }
 
         // Fetch stakeholder documents
@@ -328,6 +420,20 @@ export default function ReviewPage({
     setError('');
 
     try {
+      // Prepare member scores for API
+      const formattedMemberScores = memberScores.map((ms) => ({
+        memberId: ms.memberId,
+        scores: Object.entries(ms.scores).map(([rubrikId, data]) => {
+          const rubrik = individualRubriks.find((r) => r.id === rubrikId);
+          return {
+            rubrikId,
+            score: data.score,
+            maxScore: rubrik?.bobotMax || 0,
+            feedback: data.feedback,
+          };
+        }),
+      }));
+
       // Create or update review
       const reviewPayload = {
         projectId,
@@ -344,6 +450,7 @@ export default function ReviewPage({
           lineStart: c.lineStart,
           lineEnd: c.lineEnd,
         })),
+        memberScores: formattedMemberScores,
         status: submit ? 'COMPLETED' : 'IN_PROGRESS',
       };
 
@@ -380,6 +487,65 @@ export default function ReviewPage({
       setComments([...comments, { content: newComment.trim() }]);
       setNewComment('');
     }
+  };
+
+  // Calculate individual score for a specific member
+  const calculateMemberScore = (memberId: string) => {
+    const memberData = memberScores.find((ms) => ms.memberId === memberId);
+    if (!memberData) return 0;
+
+    let total = 0;
+    let maxTotal = 0;
+
+    individualRubriks.forEach((rubrik) => {
+      total += memberData.scores[rubrik.id]?.score || 0;
+      maxTotal += rubrik.bobotMax;
+    });
+
+    return maxTotal > 0 ? Math.round((total / maxTotal) * 100) : 0;
+  };
+
+  // Update member score
+  const updateMemberScore = (memberId: string, rubrikId: string, field: 'score' | 'feedback', value: number | string) => {
+    setMemberScores((prev) => {
+      return prev.map((ms) => {
+        if (ms.memberId === memberId) {
+          return {
+            ...ms,
+            scores: {
+              ...ms.scores,
+              [rubrikId]: {
+                ...ms.scores[rubrikId],
+                [field]: value,
+              },
+            },
+          };
+        }
+        return ms;
+      });
+    });
+  };
+
+  // Get member display info
+  const getMemberDisplayInfo = (member: Project['members'][0]) => {
+    const name = member.user?.name || member.name || member.githubUsername || 'Unknown';
+    const nim = member.user?.nim || member.user?.username || '';
+    const avatar = member.user?.image || member.githubAvatarUrl || undefined;
+    const isLeader = member.role === 'leader';
+    return { name, nim, avatar, isLeader };
+  };
+
+  // Check if a member has any scores filled
+  const isMemberScored = (memberId: string) => {
+    const memberData = memberScores.find((ms) => ms.memberId === memberId);
+    if (!memberData) return false;
+    return Object.values(memberData.scores).some((s) => s.score > 0);
+  };
+
+  // Get selected member data
+  const getSelectedMember = () => {
+    if (!selectedMemberId || !project) return null;
+    return project.members.find((m) => m.id === selectedMemberId);
   };
 
   if (isLoading) {
@@ -1040,9 +1206,316 @@ export default function ReviewPage({
                         Belum ada screenshot aplikasi
                       </p>
                     </div>
-                  )}
+                )}
                 </CardBody>
               </Tab>
+
+              {/* Tab Penilaian Individu */}
+              {project.members && project.members.length > 0 && (
+                <Tab
+                  key="individual"
+                  title={
+                    <div className="flex items-center gap-2">
+                      <Users size={16} />
+                      <span>Penilaian Individu</span>
+                      <Chip size="sm" variant="flat" color="secondary">{project.members.length}</Chip>
+                    </div>
+                  }
+                >
+                  <CardBody className="pt-4 space-y-6">
+                    {individualRubriks.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                          <Users size={28} className="text-amber-500" />
+                        </div>
+                        <p className="text-default-500 mb-2">
+                          Belum ada rubrik penilaian individu yang tersedia
+                        </p>
+                        <p className="text-xs text-default-400">
+                          Admin perlu menambahkan rubrik dengan tipe &quot;individu&quot; terlebih dahulu
+                        </p>
+                      </div>
+                    ) : selectedMemberId === null ? (
+                      /* Member Selection View - List Style */
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
+                              <Users size={16} className="text-violet-600 dark:text-violet-400" />
+                            </div>
+                            <div>
+                              <p className="font-semibold">Pilih Anggota untuk Dinilai</p>
+                              <p className="text-xs text-default-500">
+                                {project.members.filter(m => isMemberScored(m.id)).length} dari {project.members.length} sudah dinilai
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Member List */}
+                        <div className="border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden divide-y divide-zinc-200 dark:divide-zinc-700">
+                          {project.members.map((member, memberIndex) => {
+                            const { name, nim, avatar, isLeader } = getMemberDisplayInfo(member);
+                            const memberScore = calculateMemberScore(member.id);
+                            const hasScores = isMemberScored(member.id);
+                            
+                            return (
+                              <motion.div
+                                key={member.id}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: memberIndex * 0.05 }}
+                                onClick={() => setSelectedMemberId(member.id)}
+                                className={`flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${
+                                  isLeader ? 'bg-amber-50/50 dark:bg-amber-950/20' : ''
+                                }`}
+                              >
+                                {/* Avatar */}
+                                <div className="relative flex-shrink-0">
+                                  <Avatar
+                                    name={name}
+                                    src={avatar}
+                                    size="sm"
+                                    className={isLeader ? 'ring-2 ring-amber-400' : ''}
+                                  />
+                                  {hasScores && (
+                                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
+                                      <CheckCircle2 size={10} className="text-white" />
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-medium truncate">{name}</p>
+                                    {isLeader && (
+                                      <Crown size={14} className="text-amber-500 flex-shrink-0" />
+                                    )}
+                                  </div>
+                                  {nim && <p className="text-xs text-default-500">{nim}</p>}
+                                </div>
+
+                                {/* Score */}
+                                <div className="flex items-center gap-3 flex-shrink-0">
+                                  <div className="text-right">
+                                    <div className="flex items-baseline gap-0.5">
+                                      <span className={`font-bold ${hasScores ? 'text-primary' : 'text-default-400'}`}>
+                                        {memberScore}
+                                      </span>
+                                      <span className="text-xs text-default-400">/100</span>
+                                    </div>
+                                    <p className={`text-xs ${hasScores ? 'text-emerald-600 dark:text-emerald-400' : 'text-default-400'}`}>
+                                      {hasScores ? 'Sudah dinilai' : 'Belum dinilai'}
+                                    </p>
+                                  </div>
+                                  <ChevronRight size={18} className="text-default-400" />
+                                </div>
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ) : (
+                      /* Individual Assessment Form View */
+                      (() => {
+                        const selectedMember = getSelectedMember();
+                        if (!selectedMember) return null;
+                        
+                        const { name, nim, avatar, isLeader } = getMemberDisplayInfo(selectedMember);
+                        const memberScore = calculateMemberScore(selectedMember.id);
+                        
+                        return (
+                          <div className="space-y-6">
+                            {/* Back Button & Member Info Header */}
+                            <div className="flex items-center gap-4">
+                              <Button
+                                variant="flat"
+                                size="sm"
+                                startContent={<ArrowLeft size={16} />}
+                                onPress={() => setSelectedMemberId(null)}
+                              >
+                                Kembali
+                              </Button>
+                              <Divider orientation="vertical" className="h-8" />
+                              <div className="flex items-center gap-3 flex-1">
+                                <Avatar
+                                  name={name}
+                                  src={avatar}
+                                  size="md"
+                                  className={isLeader ? 'ring-2 ring-amber-400' : ''}
+                                />
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <p className="font-semibold">{name}</p>
+                                    {isLeader ? (
+                                      <Chip size="sm" color="warning" variant="flat" startContent={<Crown size={10} />}>
+                                        Ketua
+                                      </Chip>
+                                    ) : (
+                                      <Chip size="sm" color="default" variant="flat" startContent={<UserCheck size={10} />}>
+                                        Anggota
+                                      </Chip>
+                                    )}
+                                  </div>
+                                  {nim && <p className="text-xs text-default-500">NIM: {nim}</p>}
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-primary">{memberScore}</div>
+                                <div className="text-xs text-default-500">Skor Sementara</div>
+                              </div>
+                            </div>
+
+                            <Divider />
+
+                            {/* Rubrik Assessment Form */}
+                            <div className="space-y-4">
+                              {individualRubriks.map((rubrik, rubrikIndex) => {
+                                const memberData = memberScores.find((ms) => ms.memberId === selectedMember.id);
+                                const currentScore = memberData?.scores[rubrik.id]?.score || 0;
+                                const currentFeedback = memberData?.scores[rubrik.id]?.feedback || '';
+
+                                return (
+                                  <motion.div
+                                    key={rubrik.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: rubrikIndex * 0.05 }}
+                                    className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 space-y-3 hover:border-primary/30 transition-colors"
+                                  >
+                                    <div className="flex justify-between items-start gap-4">
+                                      <div className="flex-1">
+                                        <div className="flex items-center gap-2 mb-1">
+                                          <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                                            {rubrikIndex + 1}
+                                          </span>
+                                          <p className="font-semibold">{rubrik.name}</p>
+                                        </div>
+                                        <Chip size="sm" variant="flat" color="secondary" className="mb-2">
+                                          {rubrik.kategori}
+                                        </Chip>
+                                        {rubrik.description && (
+                                          <p className="text-xs text-default-400 mt-1">{rubrik.description}</p>
+                                        )}
+                                      </div>
+                                      <div className="text-right">
+                                        <div className="text-2xl font-bold text-primary">{currentScore}</div>
+                                        <div className="text-xs text-default-500">dari {rubrik.bobotMax}</div>
+                                      </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                      <div className="flex items-center justify-between text-xs text-default-500">
+                                        <span>0</span>
+                                        <span>{rubrik.bobotMax}</span>
+                                      </div>
+                                      <Slider
+                                        size="md"
+                                        step={1}
+                                        maxValue={rubrik.bobotMax}
+                                        minValue={0}
+                                        value={currentScore}
+                                        onChange={(value) =>
+                                          updateMemberScore(selectedMember.id, rubrik.id, 'score', value as number)
+                                        }
+                                        color={getScoreColor(currentScore, rubrik.bobotMax)}
+                                        className="max-w-full"
+                                        showTooltip
+                                      />
+                                    </div>
+
+                                    <Textarea
+                                      placeholder={`Berikan feedback untuk ${name} pada kriteria ini...`}
+                                      variant="bordered"
+                                      value={currentFeedback}
+                                      onChange={(e) =>
+                                        updateMemberScore(selectedMember.id, rubrik.id, 'feedback', e.target.value)
+                                      }
+                                      minRows={2}
+                                      classNames={{
+                                        inputWrapper: "border-zinc-200 dark:border-zinc-700"
+                                      }}
+                                    />
+                                  </motion.div>
+                                );
+                              })}
+                            </div>
+
+                            {/* Member Total Score Card */}
+                            <div className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl border border-primary/20">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-white">
+                                    <Award size={24} />
+                                  </div>
+                                  <div>
+                                    <p className="font-semibold text-lg">Total Nilai {name}</p>
+                                    <p className="text-xs text-default-500">{isLeader ? 'Ketua Kelompok' : 'Anggota'}</p>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <span className="text-4xl font-bold text-primary">{memberScore}</span>
+                                  <span className="text-lg text-default-500">/100</span>
+                                </div>
+                              </div>
+                              <Progress
+                                value={memberScore}
+                                color={getScoreColor(memberScore, 100)}
+                                className="mt-4"
+                                size="md"
+                              />
+                            </div>
+
+                            {/* Navigation Buttons */}
+                            <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                              <Button
+                                variant="flat"
+                                startContent={<ArrowLeft size={16} />}
+                                onPress={() => setSelectedMemberId(null)}
+                              >
+                                Kembali ke Daftar
+                              </Button>
+                              <div className="flex items-center gap-2">
+                                {(() => {
+                                  const currentIndex = project.members.findIndex(m => m.id === selectedMemberId);
+                                  const prevMember = currentIndex > 0 ? project.members[currentIndex - 1] : null;
+                                  const nextMember = currentIndex < project.members.length - 1 ? project.members[currentIndex + 1] : null;
+                                  
+                                  return (
+                                    <>
+                                      {prevMember && (
+                                        <Button
+                                          variant="flat"
+                                          size="sm"
+                                          startContent={<ArrowLeft size={14} />}
+                                          onPress={() => setSelectedMemberId(prevMember.id)}
+                                        >
+                                          Sebelumnya
+                                        </Button>
+                                      )}
+                                      {nextMember && (
+                                        <Button
+                                          color="primary"
+                                          size="sm"
+                                          endContent={<ChevronRight size={14} />}
+                                          onPress={() => setSelectedMemberId(nextMember.id)}
+                                        >
+                                          Selanjutnya
+                                        </Button>
+                                      )}
+                                    </>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })()
+                    )}
+                  </CardBody>
+                </Tab>
+              )}
 
               {project.githubRepoUrl && (
                 <Tab

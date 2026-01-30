@@ -44,7 +44,10 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { name, description, kategori, bobotMax, urutan, isActive } = body;
+    const { name, description, kategori, bobotMax, urutan, isActive, tipe } = body;
+
+    // Validate tipe if provided
+    const validTipe = tipe === 'individu' ? 'individu' : tipe === 'kelompok' ? 'kelompok' : undefined;
 
     const rubrik = await prisma.rubrikPenilaian.update({
       where: { id },
@@ -55,6 +58,7 @@ export async function PUT(
         bobotMax,
         urutan,
         isActive,
+        ...(validTipe && { tipe: validTipe }),
       },
     });
 
@@ -85,12 +89,16 @@ export async function DELETE(
 
     const { id } = await params;
 
-    // Check if rubrik has scores
+    // Check if rubrik has scores (both group and individual)
     const scoresCount = await prisma.reviewScore.count({
       where: { rubrikId: id },
     });
 
-    if (scoresCount > 0) {
+    const memberScoresCount = await prisma.memberReviewScore.count({
+      where: { rubrikId: id },
+    });
+
+    if (scoresCount > 0 || memberScoresCount > 0) {
       return NextResponse.json(
         {
           error:

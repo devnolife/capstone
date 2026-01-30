@@ -29,6 +29,19 @@ export async function GET(
                 username: true,
               },
             },
+            members: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    nim: true,
+                    image: true,
+                  },
+                },
+              },
+            },
           },
         },
         reviewer: {
@@ -41,6 +54,24 @@ export async function GET(
         comments: true,
         scores: {
           include: {
+            rubrik: true,
+          },
+        },
+        memberScores: {
+          include: {
+            member: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    nim: true,
+                    image: true,
+                  },
+                },
+              },
+            },
             rubrik: true,
           },
         },
@@ -90,7 +121,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { overallComment, overallScore, scores, comments, status } = body;
+    const { overallComment, overallScore, scores, comments, status, memberScores } = body;
 
     // Get existing review
     const existingReview = await prisma.review.findUnique({
@@ -169,6 +200,35 @@ export async function PUT(
       });
     }
 
+    // Update member scores (individual assessment)
+    if (memberScores && memberScores.length > 0) {
+      // Delete existing member scores and recreate
+      await prisma.memberReviewScore.deleteMany({
+        where: { reviewId: id },
+      });
+
+      const memberScoreData = memberScores.flatMap(
+        (ms: {
+          memberId: string;
+          scores: Array<{ rubrikId: string; score: number; maxScore: number; feedback?: string }>;
+        }) =>
+          ms.scores.map((s) => ({
+            reviewId: id,
+            memberId: ms.memberId,
+            rubrikId: s.rubrikId,
+            score: s.score,
+            maxScore: s.maxScore,
+            feedback: s.feedback,
+          })),
+      );
+
+      if (memberScoreData.length > 0) {
+        await prisma.memberReviewScore.createMany({
+          data: memberScoreData,
+        });
+      }
+    }
+
     // Update project status if review is completed
     if (status === 'COMPLETED') {
       await prisma.project.update({
@@ -185,6 +245,24 @@ export async function PUT(
           include: { rubrik: true },
         },
         comments: true,
+        memberScores: {
+          include: {
+            member: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    username: true,
+                    nim: true,
+                    image: true,
+                  },
+                },
+              },
+            },
+            rubrik: true,
+          },
+        },
       },
     });
 
