@@ -260,6 +260,10 @@ export default function AdminProjectDetailPage({
   } | null>(null);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
+  // Screenshot modal state
+  const [isScreenshotModalOpen, setIsScreenshotModalOpen] = useState(false);
+  const [selectedScreenshot, setSelectedScreenshot] = useState<ProjectScreenshot | null>(null);
+
   const fetchProject = async () => {
     try {
       const response = await fetch(`/api/projects/${projectId}`);
@@ -301,13 +305,13 @@ export default function AdminProjectDetailPage({
 
       if (response.ok) {
         const data = await response.json();
-        setScreenshots(prev => 
+        setScreenshots(prev =>
           prev.map(s => s.id === screenshotId ? { ...s, isFeatured: data.screenshot.isFeatured } : s)
         );
         addToast({
           title: 'Berhasil',
-          description: data.screenshot.isFeatured 
-            ? 'Screenshot ditambahkan ke showcase landing page' 
+          description: data.screenshot.isFeatured
+            ? 'Screenshot ditambahkan ke showcase landing page'
             : 'Screenshot dihapus dari showcase',
           color: 'success',
         });
@@ -531,7 +535,7 @@ export default function AdminProjectDetailPage({
       const result = await response.json();
       setUrlCheckResult({
         valid: result.valid,
-        message: result.valid 
+        message: result.valid
           ? `URL aktif (${result.responseTime}ms)${result.title ? ` - ${result.title}` : ''}`
           : result.error || 'URL tidak dapat diakses',
       });
@@ -568,14 +572,14 @@ export default function AdminProjectDetailPage({
   // Open production URL with auto-fill (using URL params or bookmarklet approach)
   const openWithCredentials = () => {
     if (!project?.requirements?.productionUrl) return;
-    
+
     const url = project.requirements.productionUrl;
     const username = project.requirements.testingUsername || '';
     const password = project.requirements.testingPassword || '';
-    
+
     // Open the URL in a new tab
     const newWindow = window.open(url, '_blank');
-    
+
     // Show toast with credentials to copy
     if (username || password) {
       addToast({
@@ -1015,70 +1019,7 @@ export default function AdminProjectDetailPage({
             </motion.div>
           )}
 
-          {/* Documents Card */}
-          <motion.div variants={itemVariants}>
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30 border-b border-zinc-100 dark:border-zinc-800">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <FileText size={18} className="text-emerald-600 dark:text-emerald-400" />
-                    <h3 className="font-semibold">Dokumen Project</h3>
-                  </div>
-                  <Chip size="sm" variant="flat" color="success">
-                    {project.documents.length} file
-                  </Chip>
-                </div>
-              </div>
-              <CardBody className="p-4">
-                {project.documents.length === 0 ? (
-                  <div className="text-center py-8">
-                    <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                      <FileText size={24} className="text-zinc-400" />
-                    </div>
-                    <p className="text-sm text-default-500">Belum ada dokumen yang diupload</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {project.documents.map((doc) => (
-                      <div
-                        key={doc.id}
-                        className="flex items-center justify-between p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700"
-                      >
-                        <div className="flex items-center gap-3 min-w-0">
-                          <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-                            <FileText size={16} className="text-emerald-600 dark:text-emerald-400" />
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-medium text-sm truncate">{doc.fileName}</p>
-                            <div className="flex items-center gap-2 text-xs text-default-500">
-                              <span>{getDocumentTypeLabel(doc.type)}</span>
-                              <span>-</span>
-                              <span>{formatFileSize(doc.fileSize)}</span>
-                              <span>-</span>
-                              <span>{formatDateTime(doc.uploadedAt)}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <Button
-                          as="a"
-                          href={doc.filePath}
-                          target="_blank"
-                          size="sm"
-                          variant="flat"
-                          color="primary"
-                          startContent={<Download size={14} />}
-                        >
-                          Unduh
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardBody>
-            </Card>
-          </motion.div>
-
-          {/* Screenshots Card with Featured Toggle */}
+          {/* Screenshots Card with Featured Toggle - Compact Gallery View */}
           <motion.div variants={itemVariants}>
             <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
               <div className="p-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 border-b border-zinc-100 dark:border-zinc-800">
@@ -1113,96 +1054,195 @@ export default function AdminProjectDetailPage({
                     <p className="text-sm text-default-500">Belum ada screenshot</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3">
-                    {screenshots.map((screenshot) => (
-                      <div
-                        key={screenshot.id}
-                        className={`relative group rounded-xl overflow-hidden border-2 transition-all ${
-                          screenshot.isFeatured 
-                            ? 'border-amber-400 dark:border-amber-500 shadow-lg shadow-amber-500/20' 
-                            : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
-                        }`}
-                      >
-                        {/* Featured Badge */}
-                        {screenshot.isFeatured && (
-                          <div className="absolute top-2 left-2 z-10">
-                            <Chip 
-                              size="sm" 
-                              color="warning" 
-                              variant="solid"
-                              startContent={<Sparkles size={10} />}
-                              className="text-xs font-semibold"
-                            >
-                              Featured
-                            </Chip>
-                          </div>
-                        )}
-                        
-                        {/* Image */}
-                        <div className="aspect-video bg-zinc-100 dark:bg-zinc-800">
-                          <img
-                            src={screenshot.fileUrl}
-                            alt={screenshot.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        
-                        {/* Info Overlay */}
-                        <div className="p-3 bg-white dark:bg-zinc-900">
-                          <p className="font-medium text-sm truncate">{screenshot.title}</p>
-                          {screenshot.category && (
-                            <p className="text-xs text-default-500">{screenshot.category}</p>
+                  <>
+                    {/* Compact Thumbnail Grid - 4 columns */}
+                    <div className="grid grid-cols-4 gap-2">
+                      {screenshots.slice(0, 8).map((screenshot) => (
+                        <div
+                          key={screenshot.id}
+                          className={`relative group rounded-lg overflow-hidden cursor-pointer border-2 transition-all hover:scale-105 ${screenshot.isFeatured
+                            ? 'border-amber-400 dark:border-amber-500 ring-2 ring-amber-400/30'
+                            : 'border-zinc-200 dark:border-zinc-700 hover:border-purple-400'
+                            }`}
+                          onClick={() => {
+                            // Open modal with this screenshot
+                            setSelectedScreenshot(screenshot);
+                            setIsScreenshotModalOpen(true);
+                          }}
+                        >
+                          {/* Featured indicator */}
+                          {screenshot.isFeatured && (
+                            <div className="absolute top-1 right-1 z-10">
+                              <div className="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center shadow-lg">
+                                <Sparkles size={10} className="text-white" />
+                              </div>
+                            </div>
                           )}
-                          
-                          {/* Toggle Featured Button */}
-                          <div className="mt-2 flex items-center justify-between">
-                            <a
-                              href={screenshot.fileUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-xs text-primary hover:underline flex items-center gap-1"
-                            >
-                              <Eye size={12} />
-                              Lihat
-                            </a>
-                            <Button
-                              size="sm"
-                              variant={screenshot.isFeatured ? "solid" : "flat"}
-                              color={screenshot.isFeatured ? "warning" : "default"}
-                              onPress={() => handleToggleFeatured(screenshot.id, screenshot.isFeatured)}
-                              isLoading={togglingFeatured === screenshot.id}
-                              startContent={togglingFeatured !== screenshot.id && <Sparkles size={12} />}
-                              className="text-xs h-7"
-                            >
-                              {screenshot.isFeatured ? 'Unfeatured' : 'Feature'}
-                            </Button>
+
+                          {/* Thumbnail */}
+                          <div className="aspect-video bg-zinc-100 dark:bg-zinc-800">
+                            <img
+                              src={screenshot.fileUrl}
+                              alt={screenshot.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+
+                          {/* Hover overlay */}
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
+                            <Eye size={20} className="text-white" />
                           </div>
                         </div>
+                      ))}
+                    </div>
+
+                    {/* Show more indicator */}
+                    {screenshots.length > 8 && (
+                      <div className="mt-3 text-center">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          color="secondary"
+                          onPress={() => {
+                            setSelectedScreenshot(screenshots[0]);
+                            setIsScreenshotModalOpen(true);
+                          }}
+                        >
+                          Lihat semua {screenshots.length} screenshot
+                        </Button>
                       </div>
-                    ))}
-                  </div>
-                )}
-                
-                {/* Info about featured screenshots */}
-                {screenshots.length > 0 && (
-                  <div className="mt-4 p-3 bg-amber-50/50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30 rounded-lg">
-                    <p className="text-xs text-amber-700 dark:text-amber-300 flex items-center gap-2">
-                      <Sparkles size={14} />
-                      <span>
-                        Screenshot dengan status <strong>Featured</strong> akan ditampilkan di gallery landing page.
-                        {project.status !== 'APPROVED' && (
-                          <span className="text-amber-600 dark:text-amber-400">
-                            {' '}(Hanya screenshot dari project APPROVED yang akan tampil)
-                          </span>
-                        )}
-                      </span>
-                    </p>
-                  </div>
+                    )}
+
+                    {/* Quick stats bar */}
+                    <div className="mt-3 flex items-center justify-between text-xs text-default-500">
+                      <span>{screenshots.filter(s => s.isFeatured).length} featured untuk landing page</span>
+                      <span>Klik thumbnail untuk detail</span>
+                    </div>
+                  </>
                 )}
               </CardBody>
             </Card>
           </motion.div>
         </div>
+
+        {/* Screenshot Detail Modal */}
+        <Modal
+          isOpen={isScreenshotModalOpen}
+          onClose={() => {
+            setIsScreenshotModalOpen(false);
+            setSelectedScreenshot(null);
+          }}
+          size="5xl"
+          scrollBehavior="inside"
+        >
+          <ModalContent>
+            <ModalHeader className="border-b border-zinc-200 dark:border-zinc-700">
+              <div className="flex items-center gap-2">
+                <ImageIcon size={20} className="text-purple-500" />
+                <span>Screenshot Gallery ({screenshots.length} gambar)</span>
+              </div>
+            </ModalHeader>
+            <ModalBody className="p-6">
+              {selectedScreenshot && (
+                <div className="flex gap-6">
+                  {/* Main image view */}
+                  <div className="flex-1">
+                    <div className="relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                      <img
+                        src={selectedScreenshot.fileUrl}
+                        alt={selectedScreenshot.title}
+                        className="w-full h-auto max-h-[60vh] object-contain"
+                      />
+                      {selectedScreenshot.isFeatured && (
+                        <div className="absolute top-3 left-3">
+                          <Chip color="warning" variant="solid" startContent={<Sparkles size={12} />}>
+                            Featured
+                          </Chip>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Image info */}
+                    <div className="mt-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                      <h4 className="font-semibold text-lg">{selectedScreenshot.title}</h4>
+                      {selectedScreenshot.category && (
+                        <p className="text-sm text-default-500 mt-1">Kategori: {selectedScreenshot.category}</p>
+                      )}
+                      <div className="mt-3 flex items-center gap-3">
+                        <Button
+                          as="a"
+                          href={selectedScreenshot.fileUrl}
+                          target="_blank"
+                          size="sm"
+                          variant="flat"
+                          color="primary"
+                          startContent={<ExternalLink size={14} />}
+                        >
+                          Buka Full Size
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant={selectedScreenshot.isFeatured ? "solid" : "flat"}
+                          color={selectedScreenshot.isFeatured ? "warning" : "default"}
+                          onPress={() => handleToggleFeatured(selectedScreenshot.id, selectedScreenshot.isFeatured)}
+                          isLoading={togglingFeatured === selectedScreenshot.id}
+                          startContent={togglingFeatured !== selectedScreenshot.id && <Sparkles size={14} />}
+                        >
+                          {selectedScreenshot.isFeatured ? 'Remove from Featured' : 'Add to Featured'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Thumbnail sidebar */}
+                  <div className="w-48 flex-shrink-0">
+                    <p className="text-sm font-medium text-default-600 mb-3">Semua Screenshot</p>
+                    <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                      {screenshots.map((screenshot) => (
+                        <div
+                          key={screenshot.id}
+                          onClick={() => setSelectedScreenshot(screenshot)}
+                          className={`relative rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${selectedScreenshot.id === screenshot.id
+                              ? 'border-purple-500 ring-2 ring-purple-500/30'
+                              : screenshot.isFeatured
+                                ? 'border-amber-400'
+                                : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-400'
+                            }`}
+                        >
+                          {screenshot.isFeatured && (
+                            <div className="absolute top-1 right-1 z-10">
+                              <div className="w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center">
+                                <Sparkles size={8} className="text-white" />
+                              </div>
+                            </div>
+                          )}
+                          <div className="aspect-video bg-zinc-100 dark:bg-zinc-800">
+                            <img
+                              src={screenshot.fileUrl}
+                              alt={screenshot.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </ModalBody>
+            <ModalFooter className="border-t border-zinc-200 dark:border-zinc-700">
+              <div className="flex items-center justify-between w-full">
+                <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  <Sparkles size={12} />
+                  Screenshot featured akan tampil di landing page
+                </p>
+                <Button variant="flat" onPress={() => setIsScreenshotModalOpen(false)}>
+                  Tutup
+                </Button>
+              </div>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
 
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
@@ -1377,21 +1417,20 @@ export default function AdminProjectDetailPage({
                         {copiedField === 'url' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
                       </Button>
                     </div>
-                    
+
                     {/* URL Check Result */}
                     {urlCheckResult && (
-                      <div className={`p-2 rounded-lg text-xs ${
-                        urlCheckResult.valid 
-                          ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
-                          : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
-                      }`}>
+                      <div className={`p-2 rounded-lg text-xs ${urlCheckResult.valid
+                        ? 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400'
+                        : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                        }`}>
                         <div className="flex items-center gap-1.5">
                           {urlCheckResult.valid ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
                           {urlCheckResult.message}
                         </div>
                       </div>
                     )}
-                    
+
                     <div className="flex gap-2">
                       <Button
                         size="sm"
@@ -1423,7 +1462,7 @@ export default function AdminProjectDetailPage({
                         <KeyRound size={12} />
                         Akun Testing
                       </p>
-                      
+
                       {project.requirements.testingUsername && (
                         <div className="flex items-center gap-2">
                           <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">
@@ -1443,7 +1482,7 @@ export default function AdminProjectDetailPage({
                           </Button>
                         </div>
                       )}
-                      
+
                       {project.requirements.testingPassword && (
                         <div className="flex items-center gap-2">
                           <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">

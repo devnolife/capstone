@@ -47,6 +47,11 @@ import {
   UserCheck,
   CheckCircle2,
   ChevronRight,
+  Globe,
+  KeyRound,
+  Copy,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -123,20 +128,13 @@ interface Project {
         bobotMax: number;
       };
     }>;
-    memberScores?: Array<{
-      id: string;
-      memberId: string;
-      score: number;
-      maxScore: number;
-      feedback: string | null;
-      rubrik: {
-        id: string;
-        name: string;
-        kategori: string;
-        bobotMax: number;
-      };
-    }>;
   }>;
+  requirements?: {
+    productionUrl?: string | null;
+    testingUsername?: string | null;
+    testingPassword?: string | null;
+    testingNotes?: string | null;
+  } | null;
 }
 
 interface Rubrik {
@@ -253,6 +251,25 @@ export default function ReviewPage({
   >([]);
   const [stakeholderDocs, setStakeholderDocs] = useState<StakeholderDocument[]>([]);
   const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
+
+  // Copy to clipboard function
+  const copyToClipboard = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch {
+      console.error('Failed to copy');
+    }
+  };
+
+  // Open production URL with credentials hint
+  const openWithCredentials = () => {
+    if (!project?.requirements?.productionUrl) return;
+    const url = project.requirements.productionUrl;
+    window.open(url, '_blank');
+  };
   
   // Individual assessment state
   const [individualRubriks, setIndividualRubriks] = useState<Rubrik[]>([]);
@@ -1639,6 +1656,103 @@ export default function ReviewPage({
               )}
             </CardBody>
           </Card>
+
+          {/* Production URL & Testing Credentials Card */}
+          {project.requirements?.productionUrl && (
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-gradient-to-r from-cyan-50 to-blue-50 dark:from-cyan-950/30 dark:to-blue-950/30 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-2">
+                  <Globe size={18} className="text-cyan-600 dark:text-cyan-400" />
+                  <h3 className="font-semibold">Production URL & Testing</h3>
+                </div>
+              </div>
+              <CardBody className="p-4 space-y-4">
+                {/* Production URL */}
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-default-500">URL Production</p>
+                  <div className="flex gap-2">
+                    <div className="flex-1 p-2.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700 truncate text-xs font-mono">
+                      {project.requirements.productionUrl}
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="flat"
+                      isIconOnly
+                      onPress={() => copyToClipboard(project.requirements!.productionUrl!, 'url')}
+                    >
+                      {copiedField === 'url' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                    </Button>
+                  </div>
+
+                  <Button
+                    size="sm"
+                    color="primary"
+                    className="w-full"
+                    onPress={openWithCredentials}
+                    startContent={<ExternalLink size={14} />}
+                  >
+                    Buka & Test Aplikasi
+                  </Button>
+                </div>
+
+                {/* Testing Credentials */}
+                {(project.requirements.testingUsername || project.requirements.testingPassword) && (
+                  <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
+                    <p className="text-xs font-medium text-default-500 flex items-center gap-1.5">
+                      <KeyRound size={12} />
+                      Akun Testing
+                    </p>
+
+                    {project.requirements.testingUsername && (
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0 p-2 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg">
+                          <p className="text-xs text-default-400">Username</p>
+                          <p className="text-sm font-mono truncate">{project.requirements.testingUsername}</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="light"
+                          isIconOnly
+                          onPress={() => copyToClipboard(project.requirements!.testingUsername!, 'username')}
+                        >
+                          {copiedField === 'username' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                        </Button>
+                      </div>
+                    )}
+
+                    {project.requirements.testingPassword && (
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 min-w-0 p-2 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg">
+                          <p className="text-xs text-default-400">Password</p>
+                          <p className="text-sm font-mono truncate">{project.requirements.testingPassword}</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="light"
+                          isIconOnly
+                          onPress={() => copyToClipboard(project.requirements!.testingPassword!, 'password')}
+                        >
+                          {copiedField === 'password' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Testing Notes */}
+                {project.requirements.testingNotes && (
+                  <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800">
+                    <p className="text-xs font-medium text-default-500 mb-2">Catatan Testing</p>
+                    <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800/50">
+                      <p className="text-xs text-amber-800 dark:text-amber-200 whitespace-pre-wrap">
+                        {project.requirements.testingNotes}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </CardBody>
+            </Card>
+          )}
 
           {/* Quick Stats */}
           <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
