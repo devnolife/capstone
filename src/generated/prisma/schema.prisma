@@ -30,6 +30,7 @@ enum ProjectStatus {
 enum DocumentType {
   PRESENTATION
   SOURCE_CODE
+  CONSENT_AGREEMENT // Surat persetujuan penggunaan project
   OTHER
 }
 

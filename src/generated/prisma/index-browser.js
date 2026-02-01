@@ -406,6 +406,7 @@ exports.StakeholderDocumentType = exports.$Enums.StakeholderDocumentType = {
 exports.DocumentType = exports.$Enums.DocumentType = {
   PRESENTATION: 'PRESENTATION',
   SOURCE_CODE: 'SOURCE_CODE',
+  CONSENT_AGREEMENT: 'CONSENT_AGREEMENT',
   OTHER: 'OTHER'
 };
 

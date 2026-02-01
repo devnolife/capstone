@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, use } from 'react';
+import { useState, useEffect, useMemo, useCallback, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
@@ -64,10 +64,15 @@ import {
   X,
   Plus,
   Edit3,
+  ExternalLink,
+  User,
+  KeyRound,
+  XCircle,
 } from 'lucide-react';
 import Link from 'next/link';
 import { GitHubRepoSelector } from '@/components/github/repo-selector';
-import TeamMembers from '@/components/mahasiswa/team-members';
+import TeamMembersNimNew from '@/components/mahasiswa/team-members-nim-new';
+import ConsentFileUpload from '@/components/mahasiswa/consent-file-upload';
 
 interface Semester {
   id: string;
@@ -87,13 +92,30 @@ interface SelectedRepo {
   updated_at?: string;
 }
 
+interface PendingMember {
+  id: string;
+  name: string;
+  nim: string;
+  prodi?: string;
+  image?: string;
+  githubUsername: string;
+}
+
 interface ProjectMember {
   id: string;
-  githubUsername: string;
+  githubUsername: string | null;
   githubId?: string;
   githubAvatarUrl?: string;
-  name?: string;
+  name?: string | null;
   role: string;
+  userId?: string | null;
+  user?: {
+    id: string;
+    name: string;
+    username: string;
+    nim: string | null;
+    image: string | null;
+  } | null;
 }
 
 interface ProjectData {
@@ -111,7 +133,19 @@ interface ProjectData {
   expectedOutcome?: string;
   technologies?: string[];
   isPublic?: boolean;
+  productionUrl?: string;
+  testingUsername?: string;
+  testingPassword?: string;
+  testingNotes?: string;
   members?: ProjectMember[];
+  documents?: Array<{
+    id: string;
+    type: string;
+    fileName: string;
+    filePath: string;
+    fileSize: number;
+    mimeType?: string;
+  }>;
 }
 
 // Project categories with icons
@@ -170,12 +204,43 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
   const [isRepoSelectorOpen, setIsRepoSelectorOpen] = useState(false);
   const [selectedRepo, setSelectedRepo] = useState<SelectedRepo | null>(null);
   const [selectedTechs, setSelectedTechs] = useState<string[]>([]);
-  const [teamMembers, setTeamMembers] = useState<ProjectMember[]>([]);
+  const [pendingTeamMembers, setPendingTeamMembers] = useState<PendingMember[]>([]);
   const [showPreview, setShowPreview] = useState(true);
   const [isPublic, setIsPublic] = useState(true);
   const [techSearch, setTechSearch] = useState('');
   const [showOptional, setShowOptional] = useState(false);
   const [originalProject, setOriginalProject] = useState<ProjectData | null>(null);
+
+  // Consent document state
+  const [consentDocument, setConsentDocument] = useState<{
+    id?: string;
+    fileName: string;
+    fileKey?: string;
+    fileUrl: string;
+    fileSize: number;
+    mimeType: string;
+  } | null>(null);
+
+  // URL Validation state
+  const [urlValidation, setUrlValidation] = useState<{
+    status: 'idle' | 'checking' | 'valid' | 'invalid';
+    message?: string;
+    responseTime?: number;
+  }>({ status: 'idle' });
+
+  // Testing credentials state
+  const [testingCredentials, setTestingCredentials] = useState({
+    username: '',
+    password: '',
+    notes: '',
+  });
+
+  // GitHub status - fetched from API to ensure accuracy (session might be stale)
+  const [githubStatus, setGithubStatus] = useState<{
+    isConnected: boolean;
+    username: string | null;
+    isLoading: boolean;
+  }>({ isConnected: false, username: null, isLoading: true });
 
   const [formData, setFormData] = useState({
     title: '',
@@ -188,11 +253,35 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     objectives: '',
     methodology: '',
     expectedOutcome: '',
+    productionUrl: '',
   });
 
-  // Check if user has GitHub connected
-  const hasGitHubConnected = !!(session?.user as { githubUsername?: string })?.githubUsername;
-  const githubUsername = (session?.user as { githubUsername?: string })?.githubUsername;
+  // Fetch GitHub status from API (session might be stale after linking GitHub)
+  useEffect(() => {
+    const fetchGitHubStatus = async () => {
+      try {
+        const response = await fetch('/api/profile');
+        if (response.ok) {
+          const data = await response.json();
+          setGithubStatus({
+            isConnected: !!data.githubUsername,
+            username: data.githubUsername,
+            isLoading: false,
+          });
+        } else {
+          setGithubStatus(prev => ({ ...prev, isLoading: false }));
+        }
+      } catch (error) {
+        console.error('Error fetching profile:', error);
+        setGithubStatus(prev => ({ ...prev, isLoading: false }));
+      }
+    };
+    fetchGitHubStatus();
+  }, []);
+
+  // Use API data for GitHub status (more reliable than session)
+  const hasGitHubConnected = githubStatus.isConnected;
+  const githubUsername = githubStatus.username;
 
   // Fetch project data
   useEffect(() => {
@@ -227,6 +316,14 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           objectives: project.objectives || '',
           methodology: project.methodology || '',
           expectedOutcome: project.expectedOutcome || '',
+          productionUrl: project.productionUrl || '',
+        });
+        
+        // Set testing credentials
+        setTestingCredentials({
+          username: project.testingUsername || '',
+          password: project.testingPassword || '',
+          notes: project.testingNotes || '',
         });
         
         if (project.technologies) {
@@ -235,8 +332,19 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         if (project.isPublic !== undefined) {
           setIsPublic(project.isPublic);
         }
-        if (project.members) {
-          setTeamMembers(project.members);
+        // Convert existing members to pendingTeamMembers format
+        if (project.members && project.members.length > 0) {
+          const convertedMembers: PendingMember[] = project.members
+            .filter(m => m.role !== 'OWNER') // Exclude owner
+            .map(m => ({
+              id: m.id,
+              name: m.user?.name || m.name || '',
+              nim: m.user?.nim || '',
+              prodi: '',
+              image: m.user?.image || m.githubAvatarUrl || '',
+              githubUsername: m.user?.username || m.githubUsername || '',
+            }));
+          setPendingTeamMembers(convertedMembers);
         }
         if (project.githubRepoUrl && project.githubRepoName) {
           setSelectedRepo({
@@ -246,6 +354,19 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             html_url: project.githubRepoUrl,
             description: null,
           });
+        }
+        // Load consent document if exists
+        if (project.documents) {
+          const consentDoc = project.documents.find(d => d.type === 'CONSENT_AGREEMENT');
+          if (consentDoc) {
+            setConsentDocument({
+              id: consentDoc.id,
+              fileName: consentDoc.fileName,
+              fileUrl: consentDoc.filePath,
+              fileSize: consentDoc.fileSize,
+              mimeType: consentDoc.mimeType || 'application/octet-stream',
+            });
+          }
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Gagal memuat project');
@@ -272,21 +393,25 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       { name: 'Teknologi', filled: selectedTechs.length > 0 },
       { name: 'Tujuan', filled: formData.objectives.length > 0 },
       { name: 'GitHub', filled: !!(formData.githubRepoUrl || selectedRepo) },
+      { name: 'URL Production', filled: formData.productionUrl.length > 0 },
+      { name: 'Surat Persetujuan', filled: !!consentDocument },
     ];
     
     const filledCount = fields.filter(f => f.filled).length;
     const percentage = Math.round((filledCount / fields.length) * 100);
     
     return { fields, filledCount, total: fields.length, percentage };
-  }, [formData, selectedTechs, selectedRepo]);
+  }, [formData, selectedTechs, selectedRepo, consentDocument]);
 
   // Form validation
   const isFormValid = useMemo(() => {
     return formData.title.length >= 5 && 
            formData.description.length >= 20 && 
            formData.semester && 
-           formData.category;
-  }, [formData]);
+           formData.category &&
+           formData.productionUrl.length > 0 &&
+           !!consentDocument;
+  }, [formData, consentDocument]);
 
   useEffect(() => {
     const fetchSemesters = async () => {
@@ -332,6 +457,60 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     setSelectedTechs(selectedTechs.filter(t => t !== tech));
   };
 
+  // Validate Production URL
+  const validateProductionUrl = useCallback(async (url: string) => {
+    if (!url) {
+      setUrlValidation({ status: 'idle' });
+      return;
+    }
+
+    // Basic URL format check
+    const urlPattern = /^https?:\/\/.+\..+/;
+    if (!urlPattern.test(url)) {
+      setUrlValidation({ status: 'idle' });
+      return;
+    }
+
+    setUrlValidation({ status: 'checking' });
+
+    try {
+      const response = await fetch('/api/validate-url', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        setUrlValidation({
+          status: 'valid',
+          message: `URL aktif (${data.responseTime}ms)`,
+          responseTime: data.responseTime,
+        });
+      } else {
+        setUrlValidation({
+          status: 'invalid',
+          message: data.error || 'URL tidak dapat diakses',
+        });
+      }
+    } catch {
+      setUrlValidation({
+        status: 'invalid',
+        message: 'Gagal memeriksa URL',
+      });
+    }
+  }, []);
+
+  // Auto-validate URL with debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      validateProductionUrl(formData.productionUrl);
+    }, 800); // 800ms debounce
+
+    return () => clearTimeout(timeoutId);
+  }, [formData.productionUrl, validateProductionUrl]);
+
   const handleSubmit = async () => {
     setIsLoading(true);
     setError('');
@@ -343,8 +522,12 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         body: JSON.stringify({
           ...formData,
           technologies: selectedTechs,
-          teamMembers: teamMembers,
+          pendingTeamMembers: pendingTeamMembers,
           isPublic,
+          testingUsername: testingCredentials.username || null,
+          testingPassword: testingCredentials.password || null,
+          testingNotes: testingCredentials.notes || null,
+          consentDocument: consentDocument,
         }),
       });
 
@@ -916,16 +1099,164 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             </Card>
 
             {/* Team Members */}
-            <TeamMembers
-              members={teamMembers}
-              onMembersChange={setTeamMembers}
-              ownerGithubUsername={githubUsername}
+            <TeamMembersNimNew
+              pendingMembers={pendingTeamMembers}
+              onPendingMembersChange={setPendingTeamMembers}
+              ownerGithubUsername={githubUsername ?? undefined}
               ownerName={session?.user?.name || ''}
               ownerImage={session?.user?.image || ''}
+              ownerNim={(session?.user as { nim?: string })?.nim}
               maxMembers={3}
               isEditable={true}
             />
           </div>
+
+          {/* Production URL & Testing Credentials - di bawah GitHub & Team */}
+          <Card className="border border-default-100 shadow-sm">
+            <CardBody className="p-5">
+              <div className="space-y-5">
+                {/* Production URL */}
+                <div>
+                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Globe size={16} className="text-primary" />
+                    URL Production/Demo
+                    <span className="text-danger">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <Input
+                      size="sm"
+                      variant="bordered"
+                      placeholder="https://your-app.vercel.app"
+                      value={formData.productionUrl}
+                      onChange={(e) => setFormData({ ...formData, productionUrl: e.target.value })}
+                      startContent={<Globe size={14} className="text-default-400" />}
+                      endContent={
+                        urlValidation.status === 'checking' ? (
+                          <Spinner size="sm" className="w-4 h-4" />
+                        ) : urlValidation.status === 'valid' ? (
+                          <CheckCircle2 size={16} className="text-success" />
+                        ) : urlValidation.status === 'invalid' ? (
+                          <XCircle size={16} className="text-danger" />
+                        ) : null
+                      }
+                      isRequired
+                      className="flex-1"
+                      classNames={{
+                        inputWrapper: `border-default-200 hover:border-primary data-[focused=true]:border-primary ${
+                          urlValidation.status === 'valid' ? 'border-success' : 
+                          urlValidation.status === 'invalid' ? 'border-danger' : ''
+                        }`,
+                      }}
+                    />
+                    {formData.productionUrl && urlValidation.status !== 'checking' && (
+                      <Tooltip content="Buka di tab baru">
+                        <Button
+                          size="sm"
+                          variant="flat"
+                          isIconOnly
+                          as="a"
+                          href={formData.productionUrl.startsWith('http') ? formData.productionUrl : `https://${formData.productionUrl}`}
+                          target="_blank"
+                          className="h-10 w-10"
+                        >
+                          <ExternalLink size={16} />
+                        </Button>
+                      </Tooltip>
+                    )}
+                  </div>
+                  {urlValidation.status === 'checking' && (
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-default-400">
+                      <Spinner size="sm" className="w-3 h-3" />
+                      Memeriksa URL...
+                    </p>
+                  )}
+                  {urlValidation.status === 'valid' && (
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-success">
+                      <CheckCircle2 size={12} />
+                      {urlValidation.message}
+                    </p>
+                  )}
+                  {urlValidation.status === 'invalid' && (
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-danger">
+                      <XCircle size={12} />
+                      {urlValidation.message}
+                    </p>
+                  )}
+                  {urlValidation.status === 'idle' && (
+                    <p className="text-xs text-default-400 mt-1.5">URL aplikasi yang sudah di-deploy dan bisa diakses publik</p>
+                  )}
+                </div>
+
+                <Divider />
+
+                {/* Testing Credentials */}
+                <div>
+                  <div className="flex items-center gap-2 mb-4">
+                    <KeyRound size={16} className="text-warning" />
+                    <span className="text-sm font-medium">Akun Testing</span>
+                    <Chip size="sm" variant="flat" color="warning" classNames={{ base: 'h-5 text-[10px]' }}>
+                      Untuk Penguji
+                    </Chip>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Input
+                      size="sm"
+                      variant="bordered"
+                      label="Username/Email"
+                      labelPlacement="outside"
+                      placeholder="user@example.com"
+                      value={testingCredentials.username}
+                      onChange={(e) => setTestingCredentials({ ...testingCredentials, username: e.target.value })}
+                      startContent={<User size={14} className="text-default-400" />}
+                      classNames={{
+                        label: 'text-xs font-medium',
+                        inputWrapper: 'border-default-200 hover:border-primary',
+                      }}
+                    />
+                    <Input
+                      size="sm"
+                      variant="bordered"
+                      label="Password"
+                      labelPlacement="outside"
+                      placeholder="password123"
+                      value={testingCredentials.password}
+                      onChange={(e) => setTestingCredentials({ ...testingCredentials, password: e.target.value })}
+                      startContent={<KeyRound size={14} className="text-default-400" />}
+                      classNames={{
+                        label: 'text-xs font-medium',
+                        inputWrapper: 'border-default-200 hover:border-primary',
+                      }}
+                    />
+                  </div>
+                  
+                  <Textarea
+                    size="sm"
+                    variant="bordered"
+                    label="Catatan Testing (Opsional)"
+                    labelPlacement="outside"
+                    placeholder="Langkah-langkah login, fitur utama yang bisa dicoba, atau informasi tambahan untuk penguji..."
+                    value={testingCredentials.notes}
+                    onChange={(e) => setTestingCredentials({ ...testingCredentials, notes: e.target.value })}
+                    minRows={2}
+                    className="mt-4"
+                    classNames={{
+                      label: 'text-xs font-medium',
+                      inputWrapper: 'border-default-200 hover:border-primary',
+                    }}
+                  />
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+
+          {/* Card: Consent Document Upload */}
+          <ConsentFileUpload
+            projectId={id}
+            document={consentDocument}
+            onDocumentChange={setConsentDocument}
+            isRequired={true}
+          />
 
           {/* Card 4: Optional Fields (Collapsible) */}
           <Card className="border border-default-100 shadow-sm">
@@ -1085,7 +1416,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                     <div className="grid grid-cols-4 gap-2">
                       <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
                         <Users size={16} className="mx-auto mb-1 text-blue-500" />
-                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">{teamMembers.length + 1}</p>
+                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">{pendingTeamMembers.length + 1}</p>
                         <p className="text-[10px] text-zinc-400">Tim</p>
                       </div>
                       <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">

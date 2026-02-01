@@ -11,6 +11,11 @@ import {
   Chip,
   Progress,
   Divider,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  addToast,
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import {
@@ -26,6 +31,12 @@ import {
   Edit3,
   Calendar,
   Target,
+  Download,
+  FileSignature,
+  FileCheck,
+  ScrollText,
+  ChevronDown,
+  Loader2,
 } from 'lucide-react';
 
 interface ProjectWithRequirements {
@@ -57,6 +68,55 @@ const statusConfig: Record<string, { label: string; color: 'default' | 'primary'
 
 export function DocumentsListContent({ projects }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [downloadingTemplate, setDownloadingTemplate] = useState<string | null>(null);
+
+  // Download template function
+  const handleDownloadTemplate = async (projectId: string, templateType: 'license' | 'handover' | 'declaration') => {
+    setDownloadingTemplate(`${projectId}-${templateType}`);
+    try {
+      const response = await fetch(`/api/documents/template?projectId=${projectId}&type=${templateType}`);
+      
+      if (!response.ok) {
+        throw new Error('Gagal mengunduh template');
+      }
+
+      // Get filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      let filename = `template_${templateType}.html`;
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+        if (filenameMatch) {
+          filename = filenameMatch[1];
+        }
+      }
+
+      // Create blob and download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      addToast({
+        title: 'Berhasil',
+        description: 'Template berhasil diunduh. Buka file dan klik "Cetak" untuk menyimpan sebagai PDF.',
+        color: 'success',
+      });
+    } catch (error) {
+      console.error('Download error:', error);
+      addToast({
+        title: 'Gagal',
+        description: 'Gagal mengunduh template. Silakan coba lagi.',
+        color: 'danger',
+      });
+    } finally {
+      setDownloadingTemplate(null);
+    }
+  };
 
   const filteredProjects = projects.filter((project) =>
     project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -167,6 +227,173 @@ export function DocumentsListContent({ projects }: Props) {
           </CardBody>
         </Card>
       </div>
+
+      {/* Template Downloads Section */}
+      {projects.length > 0 && (
+        <Card className="shadow-sm border border-amber-200/50 dark:border-amber-800/30 bg-gradient-to-br from-amber-50/50 to-orange-50/30 dark:from-amber-950/20 dark:to-orange-950/10">
+          <CardBody className="p-5">
+            <div className="flex items-start gap-4">
+              <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25">
+                <Download size={22} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-bold text-lg text-amber-900 dark:text-amber-100">
+                  Download Template Dokumen
+                </h3>
+                <p className="text-sm text-amber-700/70 dark:text-amber-300/60 mt-1 mb-4">
+                  Template surat pernyataan hak cipta, serah terima, dan keaslian karya untuk project capstone.
+                  Project dapat dimodifikasi oleh mahasiswa angkatan selanjutnya dengan ketentuan yang berlaku.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {/* Template Cards */}
+                  <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
+                        <FileSignature size={18} className="text-violet-600 dark:text-violet-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-sm">Surat Hak Cipta & Lisensi</h4>
+                        <p className="text-xs text-default-400">Izin modifikasi untuk mahasiswa</p>
+                      </div>
+                    </div>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button 
+                          size="sm" 
+                          color="secondary" 
+                          variant="flat" 
+                          className="w-full"
+                          endContent={<ChevronDown size={14} />}
+                        >
+                          Pilih Proyek
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu 
+                        aria-label="Pilih proyek untuk template hak cipta"
+                        onAction={(key) => handleDownloadTemplate(key as string, 'license')}
+                      >
+                        {projects.map((p) => (
+                          <DropdownItem 
+                            key={p.id}
+                            description={p.semester}
+                            startContent={
+                              downloadingTemplate === `${p.id}-license` ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <FileText size={14} />
+                              )
+                            }
+                          >
+                            {p.title.length > 30 ? p.title.substring(0, 30) + '...' : p.title}
+                          </DropdownItem>
+                        ))}
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
+                        <FileCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-sm">Berita Acara Serah Terima</h4>
+                        <p className="text-xs text-default-400">Penyerahan project ke prodi</p>
+                      </div>
+                    </div>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button 
+                          size="sm" 
+                          color="success" 
+                          variant="flat" 
+                          className="w-full"
+                          endContent={<ChevronDown size={14} />}
+                        >
+                          Pilih Proyek
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu 
+                        aria-label="Pilih proyek untuk template serah terima"
+                        onAction={(key) => handleDownloadTemplate(key as string, 'handover')}
+                      >
+                        {projects.map((p) => (
+                          <DropdownItem 
+                            key={p.id}
+                            description={p.semester}
+                            startContent={
+                              downloadingTemplate === `${p.id}-handover` ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <FileText size={14} />
+                              )
+                            }
+                          >
+                            {p.title.length > 30 ? p.title.substring(0, 30) + '...' : p.title}
+                          </DropdownItem>
+                        ))}
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+
+                  <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
+                        <ScrollText size={18} className="text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-sm">Pernyataan Keaslian Karya</h4>
+                        <p className="text-xs text-default-400">Surat bebas plagiarisme</p>
+                      </div>
+                    </div>
+                    <Dropdown>
+                      <DropdownTrigger>
+                        <Button 
+                          size="sm" 
+                          color="primary" 
+                          variant="flat" 
+                          className="w-full"
+                          endContent={<ChevronDown size={14} />}
+                        >
+                          Pilih Proyek
+                        </Button>
+                      </DropdownTrigger>
+                      <DropdownMenu 
+                        aria-label="Pilih proyek untuk template keaslian"
+                        onAction={(key) => handleDownloadTemplate(key as string, 'declaration')}
+                      >
+                        {projects.map((p) => (
+                          <DropdownItem 
+                            key={p.id}
+                            description={p.semester}
+                            startContent={
+                              downloadingTemplate === `${p.id}-declaration` ? (
+                                <Loader2 size={14} className="animate-spin" />
+                              ) : (
+                                <FileText size={14} />
+                              )
+                            }
+                          >
+                            {p.title.length > 30 ? p.title.substring(0, 30) + '...' : p.title}
+                          </DropdownItem>
+                        ))}
+                      </DropdownMenu>
+                    </Dropdown>
+                  </div>
+                </div>
+
+                <div className="mt-4 p-3 rounded-lg bg-amber-100/50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30">
+                  <p className="text-xs text-amber-800 dark:text-amber-300">
+                    <strong>💡 Petunjuk:</strong> Setelah download, buka file HTML di browser lalu klik tombol &quot;Cetak / Simpan PDF&quot; untuk menyimpan sebagai PDF. 
+                    Pastikan data project sudah lengkap sebelum mencetak dokumen resmi.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      )}
 
       {/* Search */}
       <Card className="shadow-sm">

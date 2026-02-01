@@ -21,6 +21,20 @@ export default async function MahasiswaReviewsPage() {
           id: true,
           title: true,
           status: true,
+          members: {
+            select: {
+              id: true,
+              name: true,
+              role: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                },
+              },
+            },
+          },
         },
       },
       reviewer: {
@@ -38,6 +52,33 @@ export default async function MahasiswaReviewsPage() {
       comments: {
         orderBy: { createdAt: 'desc' },
         take: 5,
+      },
+      memberScores: {
+        include: {
+          member: {
+            select: {
+              id: true,
+              name: true,
+              role: true,
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  username: true,
+                },
+              },
+            },
+          },
+          rubrik: {
+            select: {
+              id: true,
+              name: true,
+              kategori: true,
+              bobotMax: true,
+              tipe: true,
+            },
+          },
+        },
       },
     },
     orderBy: { updatedAt: 'desc' },

@@ -198,6 +198,16 @@ export async function POST(request: Request) {
       );
     }
 
+    // Get rubriks to determine maxScore for group scores
+    const rubrikIds = scores?.map((s: { rubrikId: string }) => s.rubrikId) || [];
+    const rubriks = rubrikIds.length > 0 
+      ? await prisma.rubrikPenilaian.findMany({
+          where: { id: { in: rubrikIds } },
+          select: { id: true, bobotMax: true },
+        })
+      : [];
+    const rubrikMap = new Map(rubriks.map((r) => [r.id, r.bobotMax]));
+
     // Create review with scores and comments
     const review = await prisma.review.create({
       data: {
@@ -210,9 +220,10 @@ export async function POST(request: Request) {
         scores: {
           create:
             scores?.map(
-              (s: { rubrikId: string; score: number; feedback?: string }) => ({
+              (s: { rubrikId: string; score: number; feedback?: string; maxScore?: number }) => ({
                 rubrikId: s.rubrikId,
                 score: s.score,
+                maxScore: s.maxScore || rubrikMap.get(s.rubrikId) || 0,
                 feedback: s.feedback,
               }),
             ) || [],

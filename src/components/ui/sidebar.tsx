@@ -26,6 +26,7 @@ import {
   Menu,
   Mail,
   Bot,
+  BarChart3,
 } from 'lucide-react';
 import { cn, getSimakPhotoUrl } from '@/lib/utils';
 
@@ -78,6 +79,11 @@ const dosenMenuItems: SidebarItem[] = [
     title: 'Review',
     href: '/dosen/reviews',
     icon: <ClipboardCheck size={20} />,
+  },
+  {
+    title: 'Statistik',
+    href: '/dosen/statistics',
+    icon: <BarChart3 size={20} />,
   },
   {
     title: 'Auto Review',

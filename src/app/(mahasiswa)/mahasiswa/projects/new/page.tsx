@@ -73,6 +73,7 @@ import {
 import Link from 'next/link';
 import { GitHubRepoSelector } from '@/components/github/repo-selector';
 import TeamMembersNimNew from '@/components/mahasiswa/team-members-nim-new';
+import ConsentFileUpload from '@/components/mahasiswa/consent-file-upload';
 
 interface Semester {
   id: string;
@@ -161,6 +162,15 @@ export default function NewProjectPage() {
   const [techSearch, setTechSearch] = useState('');
   const [showOptional, setShowOptional] = useState(false);
 
+  // Consent document state
+  const [consentDocument, setConsentDocument] = useState<{
+    fileName: string;
+    fileKey?: string;
+    fileUrl: string;
+    fileSize: number;
+    mimeType: string;
+  } | null>(null);
+
   // URL Validation state
   const [urlValidation, setUrlValidation] = useState<{
     status: 'idle' | 'checking' | 'valid' | 'invalid';
@@ -234,13 +244,14 @@ export default function NewProjectPage() {
       { name: 'Tujuan', filled: formData.objectives.length > 0 },
       { name: 'GitHub', filled: !!(formData.githubRepoUrl || selectedRepo) },
       { name: 'URL Production', filled: formData.productionUrl.length > 0 },
+      { name: 'Surat Persetujuan', filled: !!consentDocument },
     ];
 
     const filledCount = fields.filter(f => f.filled).length;
     const percentage = Math.round((filledCount / fields.length) * 100);
 
     return { fields, filledCount, total: fields.length, percentage };
-  }, [formData, selectedTechs, selectedRepo]);
+  }, [formData, selectedTechs, selectedRepo, consentDocument]);
 
   // Form validation
   const isFormValid = useMemo(() => {
@@ -248,8 +259,9 @@ export default function NewProjectPage() {
       formData.description.length >= 20 &&
       formData.semester &&
       formData.category &&
-      formData.productionUrl.length > 0;
-  }, [formData]);
+      formData.productionUrl.length > 0 &&
+      !!consentDocument;
+  }, [formData, consentDocument]);
 
   useEffect(() => {
     const fetchSemesters = async () => {
@@ -373,6 +385,7 @@ export default function NewProjectPage() {
           testingUsername: testingCredentials.username || null,
           testingPassword: testingCredentials.password || null,
           testingNotes: testingCredentials.notes || null,
+          consentDocument: consentDocument,
         }),
       });
 
@@ -1070,6 +1083,13 @@ export default function NewProjectPage() {
               </div>
             </CardBody>
           </Card>
+
+          {/* Card: Consent Document Upload */}
+          <ConsentFileUpload
+            document={consentDocument}
+            onDocumentChange={setConsentDocument}
+            isRequired={true}
+          />
 
           {/* Card 4: Optional Fields (Collapsible) */}
           <Card className="border border-default-100 shadow-sm">

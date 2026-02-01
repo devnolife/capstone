@@ -26,6 +26,7 @@ import {
   FileText,
   Eye,
   GraduationCap,
+  BarChart3,
 } from 'lucide-react';
 import { RecentActivity } from '@/components/dashboard/recent-activity';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
@@ -162,6 +163,13 @@ const QUICK_ACTIONS = [
     icon: FileSearch,
     gradient: 'from-emerald-500 to-green-500',
     description: 'Project yang sudah direview',
+  },
+  {
+    label: 'Statistik',
+    href: '/dosen/statistics',
+    icon: BarChart3,
+    gradient: 'from-violet-500 to-purple-500',
+    description: 'Analisis data review',
   },
 ];
 

@@ -196,6 +196,7 @@ export async function POST(request: Request) {
       testingUsername,
       testingPassword,
       testingNotes,
+      consentDocument,
     } = body;
 
     // Use provided repo name or extract from URL
@@ -280,6 +281,20 @@ export async function POST(request: Request) {
             testingUsername: testingUsername || null,
             testingPassword: testingPassword || null,
             testingNotes: testingNotes || null,
+          },
+        });
+      }
+
+      // 6. Create consent document if provided
+      if (consentDocument && consentDocument.fileUrl) {
+        await tx.document.create({
+          data: {
+            projectId: newProject.id,
+            type: 'CONSENT_AGREEMENT',
+            fileName: consentDocument.fileName,
+            filePath: consentDocument.fileUrl,
+            fileSize: consentDocument.fileSize,
+            mimeType: consentDocument.mimeType || null,
           },
         });
       }

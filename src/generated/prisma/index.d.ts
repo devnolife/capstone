@@ -127,6 +127,7 @@ export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 export const DocumentType: {
   PRESENTATION: 'PRESENTATION',
   SOURCE_CODE: 'SOURCE_CODE',
+  CONSENT_AGREEMENT: 'CONSENT_AGREEMENT',
   OTHER: 'OTHER'
 };
 

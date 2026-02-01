@@ -53,6 +53,24 @@ export async function GET(
                 rubrik: true,
               },
             },
+            memberScores: {
+              include: {
+                member: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        username: true,
+                        nim: true,
+                        image: true,
+                      },
+                    },
+                  },
+                },
+                rubrik: true,
+              },
+            },
           },
         },
         assignments: {
@@ -234,6 +252,22 @@ export async function PUT(
     const { title, description, githubRepoUrl, semester, tahunAkademik } =
       validatedData.data;
 
+    // Extract additional fields from body
+    const {
+      technologies,
+      category,
+      objectives,
+      methodology,
+      expectedOutcome,
+      isPublic,
+      productionUrl,
+      testingUsername,
+      testingPassword,
+      testingNotes,
+      consentDocument,
+      pendingTeamMembers,
+    } = body;
+
     // Extract GitHub repo name if URL provided
     let githubRepoName = existingProject.githubRepoName;
     if (githubRepoUrl) {
@@ -243,16 +277,118 @@ export async function PUT(
       }
     }
 
-    const project = await prisma.project.update({
-      where: { id },
-      data: {
-        title,
-        description,
-        githubRepoUrl: githubRepoUrl || null,
-        githubRepoName,
-        semester,
-        tahunAkademik,
-      },
+    // Use transaction to update project and related data
+    const project = await prisma.$transaction(async (tx) => {
+      // 1. Update the project
+      const updatedProject = await tx.project.update({
+        where: { id },
+        data: {
+          title,
+          description,
+          githubRepoUrl: githubRepoUrl || null,
+          githubRepoName,
+          semester,
+          tahunAkademik,
+        },
+      });
+
+      // 2. Update or create project requirements
+      if (objectives || methodology || expectedOutcome || technologies || category || productionUrl || testingUsername || testingPassword) {
+        await tx.projectRequirements.upsert({
+          where: { projectId: id },
+          create: {
+            projectId: id,
+            judulProyek: title,
+            tujuanProyek: objectives || null,
+            metodologi: methodology || null,
+            teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
+            ruangLingkup: category || null,
+            productionUrl: productionUrl || null,
+            testingUsername: testingUsername || null,
+            testingPassword: testingPassword || null,
+            testingNotes: testingNotes || null,
+          },
+          update: {
+            judulProyek: title,
+            tujuanProyek: objectives || null,
+            metodologi: methodology || null,
+            teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
+            ruangLingkup: category || null,
+            productionUrl: productionUrl || null,
+            testingUsername: testingUsername || null,
+            testingPassword: testingPassword || null,
+            testingNotes: testingNotes || null,
+          },
+        });
+      }
+
+      // 3. Handle consent document
+      if (consentDocument) {
+        // Delete existing consent document if any
+        await tx.document.deleteMany({
+          where: {
+            projectId: id,
+            type: 'CONSENT_AGREEMENT',
+          },
+        });
+
+        // Create new consent document
+        if (consentDocument.fileUrl) {
+          await tx.document.create({
+            data: {
+              projectId: id,
+              type: 'CONSENT_AGREEMENT',
+              fileName: consentDocument.fileName,
+              filePath: consentDocument.fileUrl,
+              fileSize: consentDocument.fileSize,
+              mimeType: consentDocument.mimeType || null,
+            },
+          });
+        }
+      }
+
+      // 4. Handle team invitations for pending members
+      if (pendingTeamMembers && Array.isArray(pendingTeamMembers) && pendingTeamMembers.length > 0) {
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 7);
+
+        for (const member of pendingTeamMembers) {
+          // Check if invitation already exists
+          const existingInvitation = await tx.teamInvitation.findUnique({
+            where: {
+              projectId_inviteeId: {
+                projectId: id,
+                inviteeId: member.id,
+              },
+            },
+          });
+
+          if (!existingInvitation) {
+            await tx.teamInvitation.create({
+              data: {
+                projectId: id,
+                inviterId: session.user.id,
+                inviteeId: member.id,
+                status: 'pending',
+                expiresAt,
+              },
+            });
+
+            // Create notification
+            await tx.notification.create({
+              data: {
+                userId: member.id,
+                title: 'Undangan Tim Project',
+                message: `${session.user.name} mengundang Anda untuk bergabung dalam project "${title}"`,
+                type: 'invitation',
+                link: `/mahasiswa/invitations`,
+              },
+            });
+          }
+        }
+      }
+
+      return updatedProject;
     });
 
     return NextResponse.json({

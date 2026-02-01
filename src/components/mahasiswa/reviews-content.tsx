@@ -36,8 +36,13 @@ import {
   Code,
   FolderGit2,
   Zap,
+  Users,
+  User,
+  Download,
+  FileDown,
 } from 'lucide-react';
 import { formatDate, formatDateTime } from '@/lib/utils';
+import { addToast } from '@heroui/react';
 
 interface ReviewScore {
   id: string;
@@ -60,6 +65,32 @@ interface ReviewComment {
   createdAt: Date;
 }
 
+interface ProjectMemberInfo {
+  id: string;
+  name: string | null;
+  role: string;
+  user: {
+    id: string;
+    name: string | null;
+    username: string;
+  } | null;
+}
+
+interface MemberReviewScore {
+  id: string;
+  score: number;
+  maxScore: number;
+  feedback: string | null;
+  member: ProjectMemberInfo;
+  rubrik: {
+    id: string;
+    name: string;
+    kategori: string;
+    bobotMax: number;
+    tipe: string;
+  };
+}
+
 interface Review {
   id: string;
   status: string;
@@ -72,6 +103,7 @@ interface Review {
     id: string;
     title: string;
     status: string;
+    members?: ProjectMemberInfo[];
   };
   reviewer: {
     id: string;
@@ -80,6 +112,7 @@ interface Review {
   };
   scores: ReviewScore[];
   comments: ReviewComment[];
+  memberScores?: MemberReviewScore[];
 }
 
 interface ReviewsContentProps {
@@ -185,8 +218,39 @@ function getScoreGrade(score: number): { label: string; color: string; bgColor: 
   return { label: 'Needs Work', color: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-50 dark:bg-red-900/20' };
 }
 
+// Helper to get member display name
+function getMemberDisplayName(member: ProjectMemberInfo): string {
+  if (member.user?.name) return member.user.name;
+  if (member.name) return member.name;
+  if (member.user?.username) return member.user.username;
+  return 'Anggota';
+}
+
+// Helper to group member scores by member
+function groupScoresByMember(memberScores: MemberReviewScore[]): Map<string, { member: ProjectMemberInfo; scores: MemberReviewScore[]; totalScore: number; maxScore: number }> {
+  const grouped = new Map<string, { member: ProjectMemberInfo; scores: MemberReviewScore[]; totalScore: number; maxScore: number }>();
+  
+  memberScores.forEach((ms) => {
+    const existing = grouped.get(ms.member.id);
+    if (existing) {
+      existing.scores.push(ms);
+      existing.totalScore += ms.score;
+      existing.maxScore += ms.maxScore;
+    } else {
+      grouped.set(ms.member.id, {
+        member: ms.member,
+        scores: [ms],
+        totalScore: ms.score,
+        maxScore: ms.maxScore,
+      });
+    }
+  });
+  
+  return grouped;
+}
+
 // Modern Review Card
-function ReviewCard({ review, index }: { review: Review; index: number }) {
+function ReviewCard({ review, index, onExport, isExporting }: { review: Review; index: number; onExport?: (reviewId: string) => void; isExporting?: boolean }) {
   const grade = review.overallScore ? getScoreGrade(review.overallScore) : null;
 
   return (
@@ -337,6 +401,111 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
               </Accordion>
             )}
 
+            {/* Individual Member Scores */}
+            {review.memberScores && review.memberScores.length > 0 && (() => {
+              const groupedScores = groupScoresByMember(review.memberScores);
+              const membersArray = Array.from(groupedScores.values());
+              
+              return (
+                <Accordion variant="bordered" className="px-0">
+                  <AccordionItem
+                    key="member-scores"
+                    aria-label="Lihat Nilai Individu per Anggota"
+                    title={
+                      <div className="flex items-center gap-2">
+                        <Users size={16} className="text-violet-500" />
+                        <span className="text-sm font-medium">
+                          Nilai Individu per Anggota ({membersArray.length} anggota)
+                        </span>
+                      </div>
+                    }
+                    classNames={{
+                      content: 'pt-0 pb-4',
+                    }}
+                  >
+                    <div className="space-y-4">
+                      {membersArray.map(({ member, scores, totalScore, maxScore }) => {
+                        const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+                        const memberGrade = getScoreGrade(percentage);
+                        
+                        return (
+                          <div 
+                            key={member.id} 
+                            className="p-4 rounded-xl bg-gradient-to-br from-violet-50/50 to-purple-50/50 dark:from-violet-900/20 dark:to-purple-900/20 border border-violet-100 dark:border-violet-800/30"
+                          >
+                            {/* Member Header */}
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/40">
+                                  <User size={16} className="text-violet-600 dark:text-violet-400" />
+                                </div>
+                                <div>
+                                  <p className="font-semibold text-sm">{getMemberDisplayName(member)}</p>
+                                  <div className="flex items-center gap-2">
+                                    <Chip 
+                                      size="sm" 
+                                      variant="flat" 
+                                      className="h-5 text-[10px]"
+                                      color={member.role === 'leader' ? 'primary' : 'default'}
+                                    >
+                                      {member.role === 'leader' ? 'Ketua' : 'Anggota'}
+                                    </Chip>
+                                    {member.user?.username && (
+                                      <span className="text-xs text-default-400">@{member.user.username}</span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <div className={`px-3 py-1 rounded-full ${memberGrade.bgColor}`}>
+                                  <span className={`text-xs font-bold ${memberGrade.color}`}>
+                                    {totalScore.toFixed(1)}/{maxScore.toFixed(1)}
+                                  </span>
+                                </div>
+                                <p className={`text-xs mt-1 ${memberGrade.color}`}>{memberGrade.label}</p>
+                              </div>
+                            </div>
+                            
+                            {/* Member's Individual Scores */}
+                            <div className="space-y-2">
+                              {scores.map((score) => (
+                                <div 
+                                  key={score.id} 
+                                  className="p-2.5 rounded-lg bg-white/60 dark:bg-zinc-800/40 border border-violet-100/50 dark:border-violet-800/20"
+                                >
+                                  <div className="flex justify-between items-center mb-1.5">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xs font-medium">{score.rubrik.name}</span>
+                                      <Chip size="sm" variant="flat" className="h-4 text-[9px] px-1">
+                                        {score.rubrik.kategori}
+                                      </Chip>
+                                    </div>
+                                    <span className="text-xs font-bold">
+                                      {score.score}
+                                      <span className="text-default-400 font-normal">/{score.maxScore}</span>
+                                    </span>
+                                  </div>
+                                  <Progress
+                                    value={(score.score / score.maxScore) * 100}
+                                    color={getScoreColor(score.score, score.maxScore)}
+                                    size="sm"
+                                    className="h-1"
+                                  />
+                                  {score.feedback && (
+                                    <p className="text-[10px] text-default-500 mt-1.5 italic">&quot;{score.feedback}&quot;</p>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </AccordionItem>
+                </Accordion>
+              );
+            })()}
+
             {/* Code Comments */}
             {review.comments.length > 0 && (
               <div className="space-y-2">
@@ -370,14 +539,30 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
               </div>
             )}
 
-            {/* Timestamp */}
-            <div className="flex items-center gap-2 pt-2 text-xs text-default-400">
-              <Calendar size={12} />
-              <span>
-                {review.status === 'COMPLETED' && review.completedAt
-                  ? `Selesai: ${formatDateTime(review.completedAt)}`
-                  : `Diperbarui: ${formatDateTime(review.updatedAt)}`}
-              </span>
+            {/* Timestamp and Export */}
+            <div className="flex items-center justify-between pt-2">
+              <div className="flex items-center gap-2 text-xs text-default-400">
+                <Calendar size={12} />
+                <span>
+                  {review.status === 'COMPLETED' && review.completedAt
+                    ? `Selesai: ${formatDateTime(review.completedAt)}`
+                    : `Diperbarui: ${formatDateTime(review.updatedAt)}`}
+                </span>
+              </div>
+              {review.status === 'COMPLETED' && onExport && (
+                <Tooltip content="Download laporan review ini">
+                  <Button
+                    size="sm"
+                    variant="flat"
+                    color="secondary"
+                    isIconOnly
+                    isLoading={isExporting}
+                    onPress={() => onExport(review.id)}
+                  >
+                    <Download size={14} />
+                  </Button>
+                </Tooltip>
+              )}
             </div>
           </div>
         </CardBody>
@@ -389,6 +574,98 @@ function ReviewCard({ review, index }: { review: Review; index: number }) {
 export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Export all completed reviews as report
+  const handleExportAll = async () => {
+    if (stats.completedReviews === 0) {
+      addToast({
+        title: 'Tidak Ada Review Selesai',
+        description: 'Belum ada review yang selesai untuk di-export',
+        color: 'warning',
+      });
+      return;
+    }
+
+    setIsExporting(true);
+    try {
+      const response = await fetch('/api/reviews/export?all=true');
+      if (!response.ok) {
+        throw new Error('Failed to export reviews');
+      }
+
+      // Get filename from Content-Disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filenameMatch = contentDisposition?.match(/filename="(.+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : 'Laporan_Review.html';
+
+      // Download file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      addToast({
+        title: 'Export Berhasil',
+        description: 'Laporan review berhasil di-download. Buka file HTML dan klik "Cetak/Simpan PDF"',
+        color: 'success',
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      addToast({
+        title: 'Export Gagal',
+        description: 'Terjadi kesalahan saat mengexport laporan review',
+        color: 'danger',
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  // Export single review
+  const handleExportSingle = async (reviewId: string) => {
+    setIsExporting(true);
+    try {
+      const response = await fetch(`/api/reviews/export?reviewId=${reviewId}`);
+      if (!response.ok) {
+        throw new Error('Failed to export review');
+      }
+
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filenameMatch = contentDisposition?.match(/filename="(.+)"/);
+      const filename = filenameMatch ? filenameMatch[1] : 'Laporan_Review.html';
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      addToast({
+        title: 'Export Berhasil',
+        description: 'Laporan review berhasil di-download',
+        color: 'success',
+      });
+    } catch (error) {
+      console.error('Export error:', error);
+      addToast({
+        title: 'Export Gagal',
+        description: 'Terjadi kesalahan saat mengexport laporan review',
+        color: 'danger',
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   // Filter reviews
   const filteredReviews = reviews.filter((review) => {
@@ -465,6 +742,39 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
           </div>
         </div>
       </motion.div>
+
+      {/* Export Actions */}
+      {stats.completedReviews > 0 && (
+        <motion.div variants={itemVariants}>
+          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <CardBody className="p-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
+                    <FileDown size={18} className="text-violet-600 dark:text-violet-400" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-sm">Export Laporan Review</p>
+                    <p className="text-xs text-default-500">Download laporan lengkap dengan nilai dan feedback</p>
+                  </div>
+                </div>
+                <Tooltip content="Download laporan semua review yang sudah selesai">
+                  <Button
+                    color="secondary"
+                    variant="flat"
+                    startContent={!isExporting && <Download size={16} />}
+                    isLoading={isExporting}
+                    onPress={handleExportAll}
+                    size="sm"
+                  >
+                    Export Semua ({stats.completedReviews})
+                  </Button>
+                </Tooltip>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
+      )}
 
       {/* Stats Grid */}
       <motion.div variants={itemVariants}>
@@ -594,7 +904,13 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
             {filteredReviews.map((review, index) => (
-              <ReviewCard key={review.id} review={review} index={index} />
+              <ReviewCard 
+                key={review.id} 
+                review={review} 
+                index={index} 
+                onExport={handleExportSingle}
+                isExporting={isExporting}
+              />
             ))}
           </div>
         )}

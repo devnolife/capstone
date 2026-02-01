@@ -127,6 +127,19 @@ interface Project {
         bobotMax: number;
       };
     }>;
+    memberScores?: Array<{
+      id: string;
+      memberId: string;
+      score: number;
+      maxScore: number;
+      feedback: string | null;
+      rubrik: {
+        id: string;
+        name: string;
+        kategori: string;
+        bobotMax: number;
+      };
+    }>;
   }>;
   requirements?: {
     productionUrl?: string | null;

@@ -153,6 +153,17 @@ export const ALLOWED_DOCUMENT_TYPES = [
   'image/webp',
 ];
 
+// Allowed file types for consent/agreement documents (includes Word)
+export const ALLOWED_CONSENT_DOCUMENT_TYPES = [
+  'application/pdf',
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'application/msword', // .doc
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+];
+
 // Max file sizes
 export const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
 export const MAX_DOCUMENT_SIZE = 10 * 1024 * 1024; // 10MB
@@ -164,9 +175,25 @@ export function validateFile(
   maxSize: number
 ): { valid: boolean; error?: string } {
   if (!allowedTypes.includes(file.type)) {
+    // Create user-friendly message based on allowed types
+    const friendlyTypes = allowedTypes.map(type => {
+      switch (type) {
+        case 'application/pdf': return 'PDF';
+        case 'image/jpeg':
+        case 'image/jpg': return 'JPG';
+        case 'image/png': return 'PNG';
+        case 'image/webp': return 'WebP';
+        case 'application/msword': return 'DOC';
+        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': return 'DOCX';
+        default: return type;
+      }
+    });
+    // Remove duplicates (e.g., jpeg and jpg both map to JPG)
+    const uniqueTypes = [...new Set(friendlyTypes)];
+    
     return {
       valid: false,
-      error: `Tipe file tidak didukung. Tipe yang diizinkan: ${allowedTypes.join(', ')}`,
+      error: `Tipe file tidak didukung. Format yang diizinkan: ${uniqueTypes.join(', ')}`,
     };
   }
 

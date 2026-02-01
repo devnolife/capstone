@@ -5,6 +5,7 @@ import {
   generateObjectName,
   validateFile,
   ALLOWED_DOCUMENT_TYPES,
+  ALLOWED_CONSENT_DOCUMENT_TYPES,
   MAX_DOCUMENT_SIZE,
 } from "@/lib/minio";
 
@@ -33,10 +34,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate file
+    // Validate file - use different allowed types for consent documents
+    const allowedTypes = prefix === 'consent-agreements' 
+      ? ALLOWED_CONSENT_DOCUMENT_TYPES 
+      : ALLOWED_DOCUMENT_TYPES;
+    
     const validation = validateFile(
       { size: file.size, type: file.type },
-      ALLOWED_DOCUMENT_TYPES,
+      allowedTypes,
       MAX_DOCUMENT_SIZE
     );
 

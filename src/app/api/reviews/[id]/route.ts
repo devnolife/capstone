@@ -168,12 +168,21 @@ export async function PUT(
         where: { reviewId: id },
       });
 
+      // Get rubriks to determine maxScore
+      const rubrikIds = scores.map((s: { rubrikId: string }) => s.rubrikId);
+      const rubriks = await prisma.rubrikPenilaian.findMany({
+        where: { id: { in: rubrikIds } },
+        select: { id: true, bobotMax: true },
+      });
+      const rubrikMap = new Map(rubriks.map((r) => [r.id, r.bobotMax]));
+
       await prisma.reviewScore.createMany({
         data: scores.map(
-          (s: { rubrikId: string; score: number; feedback?: string }) => ({
+          (s: { rubrikId: string; score: number; feedback?: string; maxScore?: number }) => ({
             reviewId: id,
             rubrikId: s.rubrikId,
             score: s.score,
+            maxScore: s.maxScore || rubrikMap.get(s.rubrikId) || 0,
             feedback: s.feedback,
           }),
         ),
