@@ -55,12 +55,32 @@ export async function POST(request: NextRequest) {
       }),
     });
 
+    // Check if response is JSON before parsing
+    const contentType = tokenResponse.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const textResponse = await tokenResponse.text();
+      console.error('[GITHUB-LINK] Non-JSON response from GitHub:', textResponse.substring(0, 200));
+      return NextResponse.json(
+        { error: 'GitHub mengembalikan respons tidak valid. Silakan coba lagi.' },
+        { status: 400 }
+      );
+    }
+
     const tokenData: GitHubTokenResponse = await tokenResponse.json();
 
     if (tokenData.error) {
       console.error('[GITHUB-LINK] Token error:', tokenData.error, tokenData.error_description);
+
+      // Handle specific error cases
+      if (tokenData.error === 'bad_verification_code') {
+        return NextResponse.json(
+          { error: 'Kode otorisasi tidak valid atau sudah kadaluarsa. Silakan coba hubungkan ulang.' },
+          { status: 400 }
+        );
+      }
+
       return NextResponse.json(
-        { error: tokenData.error_description || 'Failed to get access token' },
+        { error: tokenData.error_description || 'Gagal mendapatkan access token dari GitHub' },
         { status: 400 }
       );
     }

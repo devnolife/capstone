@@ -44,6 +44,12 @@ function CallbackContent() {
           body: JSON.stringify({ code }),
         });
 
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server mengembalikan respons tidak valid');
+        }
+
         const data = await response.json();
 
         if (response.ok) {
@@ -55,9 +61,10 @@ function CallbackContent() {
           setMessage(data.error || 'Gagal menghubungkan akun GitHub.');
           setTimeout(() => router.push('/mahasiswa/settings'), 3000);
         }
-      } catch {
+      } catch (err) {
         setStatus('error');
-        setMessage('Terjadi kesalahan. Silakan coba lagi.');
+        const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan';
+        setMessage(`${errorMessage}. Silakan coba lagi.`);
         setTimeout(() => router.push('/mahasiswa/settings'), 3000);
       }
     };

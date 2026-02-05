@@ -88,6 +88,13 @@ export default function TeamMembersNimNew({
 
     try {
       const response = await fetch(`/api/users/search?q=${encodeURIComponent(query)}&requireGithub=true`);
+
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server mengembalikan respons tidak valid');
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -167,11 +174,10 @@ export default function TeamMembersNimNew({
             {Array.from({ length: maxMembers + 1 }).map((_, i) => (
               <div
                 key={i}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  i < totalMembers
+                className={`w-2 h-2 rounded-full transition-colors ${i < totalMembers
                     ? 'bg-violet-500'
                     : 'bg-default-200 dark:bg-default-700'
-                }`}
+                  }`}
               />
             ))}
             <span className="text-xs text-default-400 ml-1">
@@ -232,9 +238,9 @@ export default function TeamMembersNimNew({
                 )}
               </p>
             </div>
-            <Chip 
-              size="sm" 
-              classNames={{ 
+            <Chip
+              size="sm"
+              classNames={{
                 base: 'bg-gradient-to-r from-emerald-500 to-green-500 border-0',
                 content: 'text-white font-medium text-[10px]'
               }}
@@ -278,10 +284,10 @@ export default function TeamMembersNimNew({
                 </div>
                 <div className="flex items-center gap-2">
                   <Tooltip content={`@${member.githubUsername}`}>
-                    <Chip 
-                      size="sm" 
-                      variant="flat" 
-                      color="success" 
+                    <Chip
+                      size="sm"
+                      variant="flat"
+                      color="success"
                       classNames={{ base: 'h-6 gap-1' }}
                       startContent={<Github size={10} />}
                     >
@@ -386,10 +392,10 @@ export default function TeamMembersNimNew({
                                 {user.name || user.username}
                               </p>
                               {user.githubUsername && (
-                                <Chip 
-                                  size="sm" 
-                                  variant="flat" 
-                                  color="success" 
+                                <Chip
+                                  size="sm"
+                                  variant="flat"
+                                  color="success"
                                   classNames={{ base: 'h-5 gap-0.5' }}
                                   startContent={<Github size={10} />}
                                 >

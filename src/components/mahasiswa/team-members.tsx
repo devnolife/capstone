@@ -95,6 +95,13 @@ export default function TeamMembers({
 
     try {
       const response = await fetch(`/api/github/search-user?q=${encodeURIComponent(query)}`);
+
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Server mengembalikan respons tidak valid');
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
@@ -232,10 +239,10 @@ export default function TeamMembers({
 
         {/* Members */}
         {members.map((member) => {
-          const avatarUrl = member.githubAvatarUrl || 
-            (member.githubId ? `https://avatars.githubusercontent.com/u/${member.githubId}?v=4` : 
-             `https://github.com/${member.githubUsername}.png`);
-          
+          const avatarUrl = member.githubAvatarUrl ||
+            (member.githubId ? `https://avatars.githubusercontent.com/u/${member.githubId}?v=4` :
+              `https://github.com/${member.githubUsername}.png`);
+
           return (
             <div key={member.id} className="flex items-center gap-2 group">
               <Avatar
@@ -348,10 +355,10 @@ export default function TeamMembers({
         <AnimatePresence>
           {members.map((member) => {
             // Fallback avatar URL using GitHub ID or username
-            const avatarUrl = member.githubAvatarUrl || 
-              (member.githubId ? `https://avatars.githubusercontent.com/u/${member.githubId}?v=4` : 
-               `https://github.com/${member.githubUsername}.png`);
-            
+            const avatarUrl = member.githubAvatarUrl ||
+              (member.githubId ? `https://avatars.githubusercontent.com/u/${member.githubId}?v=4` :
+                `https://github.com/${member.githubUsername}.png`);
+
             return (
               <motion.div
                 key={member.id}
@@ -407,7 +414,7 @@ export default function TeamMembers({
         {isEditable && canAddMore && (
           <>
             <Divider />
-            
+
             {showSearch ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
