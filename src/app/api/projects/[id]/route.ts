@@ -352,7 +352,29 @@ export async function PUT(
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 7);
 
+        // Get existing project members to skip them
+        const existingMembers = await tx.projectMember.findMany({
+          where: { projectId: id },
+          select: { userId: true },
+        });
+        const existingMemberUserIds = new Set(
+          existingMembers.map(m => m.userId).filter(Boolean)
+        );
+
         for (const member of pendingTeamMembers) {
+          // Skip if member.id is missing or not a valid user
+          if (!member.id) continue;
+
+          // Skip if already a project member
+          if (existingMemberUserIds.has(member.id)) continue;
+
+          // Validate that the user actually exists
+          const userExists = await tx.user.findUnique({
+            where: { id: member.id },
+            select: { id: true },
+          });
+          if (!userExists) continue;
+
           // Check if invitation already exists
           const existingInvitation = await tx.teamInvitation.findUnique({
             where: {

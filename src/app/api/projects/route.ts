@@ -184,14 +184,14 @@ export async function POST(request: Request) {
       validatedData.data;
 
     // Extract additional fields from body (not in schema but sent from frontend)
-    const { 
-      pendingTeamMembers, 
-      technologies, 
-      category, 
-      objectives, 
-      methodology, 
-      expectedOutcome, 
-      isPublic, 
+    const {
+      pendingTeamMembers,
+      technologies,
+      category,
+      objectives,
+      methodology,
+      expectedOutcome,
+      isPublic,
       productionUrl,
       testingUsername,
       testingPassword,
@@ -240,31 +240,48 @@ export async function POST(request: Request) {
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 7);
 
-        const invitationsData = pendingTeamMembers.map((member: { id: string }) => ({
-          projectId: newProject.id,
-          inviterId: session.user.id,
-          inviteeId: member.id,
-          status: 'pending',
-          expiresAt,
-        }));
+        // Validate that all member IDs are actual users
+        const memberIds = pendingTeamMembers
+          .map((member: { id: string }) => member.id)
+          .filter(Boolean);
 
-        await tx.teamInvitation.createMany({
-          data: invitationsData,
-          skipDuplicates: true,
+        const validUsers = await tx.user.findMany({
+          where: { id: { in: memberIds } },
+          select: { id: true },
         });
+        const validUserIds = new Set(validUsers.map(u => u.id));
 
-        // 4. Create notifications for invited members
-        const notificationsData = pendingTeamMembers.map((member: { id: string; name: string }) => ({
-          userId: member.id,
-          title: 'Undangan Tim Project',
-          message: `${session.user.name} mengundang Anda untuk bergabung dalam project "${title}"`,
-          type: 'invitation',
-          link: `/mahasiswa/invitations`,
-        }));
+        const validMembers = pendingTeamMembers.filter(
+          (member: { id: string }) => validUserIds.has(member.id)
+        );
 
-        await tx.notification.createMany({
-          data: notificationsData,
-        });
+        if (validMembers.length > 0) {
+          const invitationsData = validMembers.map((member: { id: string }) => ({
+            projectId: newProject.id,
+            inviterId: session.user.id,
+            inviteeId: member.id,
+            status: 'pending',
+            expiresAt,
+          }));
+
+          await tx.teamInvitation.createMany({
+            data: invitationsData,
+            skipDuplicates: true,
+          });
+
+          // 4. Create notifications for invited members
+          const notificationsData = validMembers.map((member: { id: string; name: string }) => ({
+            userId: member.id,
+            title: 'Undangan Tim Project',
+            message: `${session.user.name} mengundang Anda untuk bergabung dalam project "${title}"`,
+            type: 'invitation',
+            link: `/mahasiswa/invitations`,
+          }));
+
+          await tx.notification.createMany({
+            data: notificationsData,
+          });
+        }
       }
 
       // 5. Create project requirements if additional fields are provided

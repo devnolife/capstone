@@ -173,9 +173,9 @@ const TECH_GROUPS = {
 const ALL_TECHNOLOGIES = Object.values(TECH_GROUPS).flat();
 
 // Section Header Component
-const SectionHeader = ({ icon: Icon, title, subtitle, action }: { 
-  icon: React.ElementType; 
-  title: string; 
+const SectionHeader = ({ icon: Icon, title, subtitle, action }: {
+  icon: React.ElementType;
+  title: string;
   subtitle?: string;
   action?: React.ReactNode;
 }) => (
@@ -292,7 +292,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           throw new Error('Project tidak ditemukan');
         }
         const project: ProjectData = await response.json();
-        
+
         // Check if project can be edited (only DRAFT)
         if (project.status !== 'DRAFT') {
           addToast({
@@ -318,14 +318,14 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           expectedOutcome: project.expectedOutcome || '',
           productionUrl: project.productionUrl || '',
         });
-        
+
         // Set testing credentials
         setTestingCredentials({
           username: project.testingUsername || '',
           password: project.testingPassword || '',
           notes: project.testingNotes || '',
         });
-        
+
         if (project.technologies) {
           setSelectedTechs(project.technologies);
         }
@@ -336,8 +336,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         if (project.members && project.members.length > 0) {
           const convertedMembers: PendingMember[] = project.members
             .filter(m => m.role !== 'OWNER') // Exclude owner
+            .filter((m): m is typeof m & { user: { id: string } } | typeof m & { userId: string } =>
+              !!(m.user?.id || m.userId)
+            ) // Only include members with a valid user ID
             .map(m => ({
-              id: m.id,
+              id: (m.user?.id || m.userId) as string,
               name: m.user?.name || m.name || '',
               nim: m.user?.nim || '',
               prodi: '',
@@ -396,21 +399,21 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       { name: 'URL Production', filled: formData.productionUrl.length > 0 },
       { name: 'Surat Persetujuan', filled: !!consentDocument },
     ];
-    
+
     const filledCount = fields.filter(f => f.filled).length;
     const percentage = Math.round((filledCount / fields.length) * 100);
-    
+
     return { fields, filledCount, total: fields.length, percentage };
   }, [formData, selectedTechs, selectedRepo, consentDocument]);
 
   // Form validation
   const isFormValid = useMemo(() => {
-    return formData.title.length >= 5 && 
-           formData.description.length >= 20 && 
-           formData.semester && 
-           formData.category &&
-           formData.productionUrl.length > 0 &&
-           !!consentDocument;
+    return formData.title.length >= 5 &&
+      formData.description.length >= 20 &&
+      formData.semester &&
+      formData.category &&
+      formData.productionUrl.length > 0 &&
+      !!consentDocument;
   }, [formData, consentDocument]);
 
   useEffect(() => {
@@ -612,49 +615,46 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-2">
           {/* Progress Indicator */}
           <Tooltip content={`${formCompletion.filledCount}/${formCompletion.total} field terisi`}>
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${
-              formCompletion.percentage === 100 
-                ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30' 
-                : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700'
-            }`}>
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${formCompletion.percentage === 100
+              ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30'
+              : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700'
+              }`}>
               {/* Progress Circle */}
               <div className="relative w-7 h-7">
                 <svg className="w-7 h-7 -rotate-90" viewBox="0 0 28 28">
-                  <circle 
-                    cx="14" 
-                    cy="14" 
-                    r="10" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="3" 
-                    className="text-zinc-200 dark:text-zinc-700" 
+                  <circle
+                    cx="14"
+                    cy="14"
+                    r="10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    className="text-zinc-200 dark:text-zinc-700"
                   />
-                  <circle 
-                    cx="14" 
-                    cy="14" 
-                    r="10" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <circle
+                    cx="14"
+                    cy="14"
+                    r="10"
+                    fill="none"
+                    stroke="currentColor"
                     strokeWidth="3"
                     strokeLinecap="round"
                     strokeDasharray={62.8}
                     strokeDashoffset={62.8 - (62.8 * formCompletion.percentage) / 100}
-                    className={`transition-all duration-500 ${
-                      formCompletion.percentage === 100 ? 'text-emerald-500' : 'text-blue-500'
-                    }`}
+                    className={`transition-all duration-500 ${formCompletion.percentage === 100 ? 'text-emerald-500' : 'text-blue-500'
+                      }`}
                   />
                 </svg>
               </div>
               {/* Percentage Text */}
-              <span className={`text-xs font-bold min-w-[32px] text-center ${
-                formCompletion.percentage === 100 
-                  ? 'text-emerald-600 dark:text-emerald-400' 
-                  : 'text-zinc-700 dark:text-zinc-300'
-              }`}>
+              <span className={`text-xs font-bold min-w-[32px] text-center ${formCompletion.percentage === 100
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-zinc-700 dark:text-zinc-300'
+                }`}>
                 {formCompletion.percentage}%
               </span>
             </div>
@@ -711,16 +711,16 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column - Main Form */}
         <div className={`space-y-5 ${showPreview ? 'lg:col-span-8' : 'lg:col-span-12'}`}>
-          
+
           {/* Card 1: Basic Info */}
           <Card className="border border-default-100 shadow-sm">
             <CardBody className="p-5">
-              <SectionHeader 
-                icon={FileText} 
-                title="Informasi Dasar" 
+              <SectionHeader
+                icon={FileText}
+                title="Informasi Dasar"
                 subtitle="Detail utama project"
               />
-              
+
               <div className="space-y-4">
                 {/* Title */}
                 <Input
@@ -851,9 +851,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           {/* Card 2: Category & Tech */}
           <Card className="border border-default-100 shadow-sm">
             <CardBody className="p-5">
-              <SectionHeader 
-                icon={Tag} 
-                title="Kategori & Teknologi" 
+              <SectionHeader
+                icon={Tag}
+                title="Kategori & Teknologi"
                 subtitle="Jenis dan tech stack"
                 action={
                   <Chip size="sm" variant="flat" color="primary">
@@ -861,7 +861,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                   </Chip>
                 }
               />
-              
+
               <div className="space-y-5">
                 {/* Category Grid */}
                 <div>
@@ -881,8 +881,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                             onClick={() => setFormData({ ...formData, category: cat.key })}
                             className={`
                               relative p-2.5 rounded-xl transition-all duration-200 flex flex-col items-center gap-1
-                              ${isSelected 
-                                ? 'bg-primary/10 ring-2 ring-primary ring-offset-1' 
+                              ${isSelected
+                                ? 'bg-primary/10 ring-2 ring-primary ring-offset-1'
                                 : 'bg-default-50 hover:bg-default-100 border border-default-200'
                               }
                             `}
@@ -917,7 +917,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                     <Code2 size={14} />
                     Teknologi <span className="text-danger">*</span>
                   </label>
-                  
+
                   <Autocomplete
                     placeholder="Cari teknologi..."
                     size="sm"
@@ -932,8 +932,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                       base: 'mb-3',
                     }}
                   >
-                    {ALL_TECHNOLOGIES.filter(t => 
-                      !selectedTechs.includes(t) && 
+                    {ALL_TECHNOLOGIES.filter(t =>
+                      !selectedTechs.includes(t) &&
                       t.toLowerCase().includes(techSearch.toLowerCase())
                     ).map((tech) => (
                       <AutocompleteItem key={tech}>{tech}</AutocompleteItem>
@@ -998,8 +998,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
             {/* GitHub Repository */}
             <Card className="border border-default-100 shadow-sm">
               <CardBody className="p-5">
-                <SectionHeader 
-                  icon={Github} 
+                <SectionHeader
+                  icon={Github}
                   title="Repository GitHub"
                   action={
                     hasGitHubConnected && (
@@ -1009,7 +1009,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                     )
                   }
                 />
-                
+
                 {!hasGitHubConnected ? (
                   <div className="p-3 bg-warning-50 rounded-lg border border-warning-100">
                     <div className="flex items-start gap-2">
@@ -1077,7 +1077,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                         <p className="text-xs text-default-400">dari akun GitHub Anda</p>
                       </div>
                     </Button>
-                    
+
                     <div className="relative">
                       <Divider />
                       <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-default-300">
@@ -1142,10 +1142,9 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                       isRequired
                       className="flex-1"
                       classNames={{
-                        inputWrapper: `border-default-200 hover:border-primary data-[focused=true]:border-primary ${
-                          urlValidation.status === 'valid' ? 'border-success' : 
+                        inputWrapper: `border-default-200 hover:border-primary data-[focused=true]:border-primary ${urlValidation.status === 'valid' ? 'border-success' :
                           urlValidation.status === 'invalid' ? 'border-danger' : ''
-                        }`,
+                          }`,
                       }}
                     />
                     {formData.productionUrl && urlValidation.status !== 'checking' && (
@@ -1198,7 +1197,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                       Untuk Penguji
                     </Chip>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                       size="sm"
@@ -1229,7 +1228,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                       }}
                     />
                   </div>
-                  
+
                   <Textarea
                     size="sm"
                     variant="bordered"
@@ -1281,7 +1280,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                   <ChevronDown size={18} className="text-default-400" />
                 </motion.div>
               </button>
-              
+
               <AnimatePresence>
                 {showOptional && (
                   <motion.div
@@ -1483,8 +1482,8 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                       className="mb-4"
                       classNames={{
                         track: 'h-2',
-                        indicator: formCompletion.percentage === 100 
-                          ? 'bg-gradient-to-r from-success to-success-400' 
+                        indicator: formCompletion.percentage === 100
+                          ? 'bg-gradient-to-r from-success to-success-400'
                           : 'bg-gradient-to-r from-primary to-secondary'
                       }}
                     />
@@ -1495,11 +1494,10 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: index * 0.05 }}
-                          className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${
-                            field.filled 
-                              ? 'bg-success-50 border border-success-100' 
-                              : 'bg-default-50 border border-transparent hover:border-default-200'
-                          }`}
+                          className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${field.filled
+                            ? 'bg-success-50 border border-success-100'
+                            : 'bg-default-50 border border-transparent hover:border-default-200'
+                            }`}
                         >
                           <span className={`font-medium ${field.filled ? 'text-success-700' : 'text-default-500'}`}>
                             {field.name}
@@ -1534,10 +1532,10 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
                     <ul className="space-y-2">
                       {[
                         'Judul spesifik memudahkan pencarian',
-                        'Deskripsi lengkap bantu reviewer', 
+                        'Deskripsi lengkap bantu reviewer',
                         'Hubungkan GitHub untuk code review'
                       ].map((tip, index) => (
-                        <motion.li 
+                        <motion.li
                           key={index}
                           initial={{ opacity: 0, x: -10 }}
                           animate={{ opacity: 1, x: 0 }}
