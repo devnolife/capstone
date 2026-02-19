@@ -10,6 +10,8 @@ import {
   Chip,
   Divider,
   ScrollShadow,
+  Select,
+  SelectItem,
 } from '@heroui/react';
 import {
   Folder,
@@ -22,6 +24,8 @@ import {
   Check,
   AlertCircle,
   Home,
+  GitBranch,
+  AlertTriangle,
 } from 'lucide-react';
 import { getLanguageFromPath, isBinaryFile } from '@/lib/github';
 
@@ -49,6 +53,9 @@ interface CodeViewerProps {
     lineStart: number;
     content: string;
   }>;
+  showBranchSelector?: boolean; // Whether to show branch selector
+  availableBranches?: string[]; // List of available branches
+  onBranchChange?: (branch: string) => void; // Callback when branch changes
 }
 
 export function GitHubCodeViewer({
@@ -60,6 +67,9 @@ export function GitHubCodeViewer({
   onAddComment,
   selectedFile: externalSelectedFile,
   comments = [],
+  showBranchSelector = false,
+  availableBranches = [],
+  onBranchChange,
 }: CodeViewerProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
@@ -73,6 +83,22 @@ export function GitHubCodeViewer({
   const [fileContent, setFileContent] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [hoveredLine, setHoveredLine] = useState<number | null>(null);
+  const [currentBranch, setCurrentBranch] = useState(defaultBranch);
+
+  // Check if viewing non-main branch
+  const isNonMainBranch = currentBranch !== 'main' && currentBranch !== 'master';
+
+  // Handle branch change
+  const handleBranchChange = (branch: string) => {
+    setCurrentBranch(branch);
+    setSelectedFile(null);
+    setFileContent(null);
+    setCurrentPath('');
+    setExpandedDirs(new Set());
+    if (onBranchChange) {
+      onBranchChange(branch);
+    }
+  };
 
   // Fetch directory contents
   const fetchContents = useCallback(
@@ -85,7 +111,7 @@ export function GitHubCodeViewer({
           owner,
           repo,
           path,
-          ref: defaultBranch,
+          ref: currentBranch,
         });
 
         // Add projectId if available for token resolution
@@ -109,7 +135,7 @@ export function GitHubCodeViewer({
         setIsLoading(false);
       }
     },
-    [owner, repo, defaultBranch, projectId],
+    [owner, repo, currentBranch, projectId],
   );
 
   // Fetch file content
@@ -128,7 +154,7 @@ export function GitHubCodeViewer({
           owner,
           repo,
           path: filePath,
-          ref: defaultBranch,
+          ref: currentBranch,
           content: 'true',
         });
 
@@ -158,13 +184,18 @@ export function GitHubCodeViewer({
         setIsLoadingFile(false);
       }
     },
-    [owner, repo, defaultBranch, projectId, onFileSelect],
+    [owner, repo, currentBranch, projectId, onFileSelect],
   );
 
   // Initial load
   useEffect(() => {
     fetchContents();
   }, [fetchContents]);
+
+  // Refetch when branch changes
+  useEffect(() => {
+    fetchContents('');
+  }, [currentBranch]);
 
   // Handle external file selection
   useEffect(() => {
@@ -313,7 +344,7 @@ export function GitHubCodeViewer({
           {selectedFile && (
             <Button
               as="a"
-              href={`https://github.com/${owner}/${repo}/blob/${defaultBranch}/${selectedFile}`}
+              href={`https://github.com/${owner}/${repo}/blob/${currentBranch}/${selectedFile}`}
               target="_blank"
               size="sm"
               variant="flat"
@@ -397,17 +428,70 @@ export function GitHubCodeViewer({
 
   return (
     <Card className="overflow-hidden">
+      {/* Branch Warning Banner */}
+      {isNonMainBranch && (
+        <div className="bg-warning-100 border-b border-warning-200 px-4 py-2 flex items-center gap-2">
+          <AlertTriangle size={16} className="text-warning-600" />
+          <span className="text-sm text-warning-700">
+            <strong>Perhatian:</strong> Anda sedang melihat branch <code className="bg-warning-200 px-1 rounded">{currentBranch}</code>. 
+            Hanya kode di branch <code className="bg-warning-200 px-1 rounded">main</code> yang akan dinilai.
+          </span>
+        </div>
+      )}
+
       <CardHeader className="flex justify-between items-center gap-4">
         <div className="flex-1">{renderBreadcrumb()}</div>
-        <Button
-          size="sm"
-          variant="flat"
-          isIconOnly
-          onPress={() => fetchContents(currentPath)}
-          isLoading={isLoading}
-        >
-          <RefreshCw size={14} />
-        </Button>
+        <div className="flex items-center gap-2">
+          {/* Branch Selector */}
+          {showBranchSelector && availableBranches.length > 0 && (
+            <Select
+              size="sm"
+              variant="flat"
+              selectedKeys={[currentBranch]}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0] as string;
+                if (selected) handleBranchChange(selected);
+              }}
+              className="w-40"
+              startContent={<GitBranch size={14} />}
+              aria-label="Pilih branch"
+            >
+              {availableBranches.map((branch) => (
+                <SelectItem key={branch} textValue={branch}>
+                  <div className="flex items-center gap-2">
+                    <span>{branch}</span>
+                    {(branch === 'main' || branch === 'master') && (
+                      <Chip size="sm" color="success" variant="flat">
+                        default
+                      </Chip>
+                    )}
+                  </div>
+                </SelectItem>
+              ))}
+            </Select>
+          )}
+
+          {/* Current branch indicator (when selector is not shown) */}
+          {!showBranchSelector && (
+            <Chip
+              size="sm"
+              variant="flat"
+              startContent={<GitBranch size={12} />}
+            >
+              {currentBranch}
+            </Chip>
+          )}
+
+          <Button
+            size="sm"
+            variant="flat"
+            isIconOnly
+            onPress={() => fetchContents(currentPath)}
+            isLoading={isLoading}
+          >
+            <RefreshCw size={14} />
+          </Button>
+        </div>
       </CardHeader>
 
       <Divider />

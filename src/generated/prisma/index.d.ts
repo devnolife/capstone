@@ -98,6 +98,16 @@ export type Notification = $Result.DefaultSelection<Prisma.$NotificationPayload>
  * 
  */
 export type Semester = $Result.DefaultSelection<Prisma.$SemesterPayload>
+/**
+ * Model PresentationSchedule
+ * 
+ */
+export type PresentationSchedule = $Result.DefaultSelection<Prisma.$PresentationSchedulePayload>
+/**
+ * Model ProjectDiscussion
+ * 
+ */
+export type ProjectDiscussion = $Result.DefaultSelection<Prisma.$ProjectDiscussionPayload>
 
 /**
  * Enums
@@ -117,6 +127,8 @@ export const ProjectStatus: {
   SUBMITTED: 'SUBMITTED',
   IN_REVIEW: 'IN_REVIEW',
   REVISION_NEEDED: 'REVISION_NEEDED',
+  READY_FOR_PRESENTATION: 'READY_FOR_PRESENTATION',
+  PRESENTATION_SCHEDULED: 'PRESENTATION_SCHEDULED',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
 };
@@ -463,6 +475,26 @@ export class PrismaClient<
     * ```
     */
   get semester(): Prisma.SemesterDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.presentationSchedule`: Exposes CRUD operations for the **PresentationSchedule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more PresentationSchedules
+    * const presentationSchedules = await prisma.presentationSchedule.findMany()
+    * ```
+    */
+  get presentationSchedule(): Prisma.PresentationScheduleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.projectDiscussion`: Exposes CRUD operations for the **ProjectDiscussion** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProjectDiscussions
+    * const projectDiscussions = await prisma.projectDiscussion.findMany()
+    * ```
+    */
+  get projectDiscussion(): Prisma.ProjectDiscussionDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -913,7 +945,9 @@ export namespace Prisma {
     MemberReviewScore: 'MemberReviewScore',
     ProjectAssignment: 'ProjectAssignment',
     Notification: 'Notification',
-    Semester: 'Semester'
+    Semester: 'Semester',
+    PresentationSchedule: 'PresentationSchedule',
+    ProjectDiscussion: 'ProjectDiscussion'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -929,7 +963,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectRequirements" | "stakeholderDocument" | "projectScreenshot" | "document" | "review" | "reviewScore" | "reviewComment" | "rubrikPenilaian" | "memberReviewScore" | "projectAssignment" | "notification" | "semester"
+      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectRequirements" | "stakeholderDocument" | "projectScreenshot" | "document" | "review" | "reviewScore" | "reviewComment" | "rubrikPenilaian" | "memberReviewScore" | "projectAssignment" | "notification" | "semester" | "presentationSchedule" | "projectDiscussion"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2191,6 +2225,154 @@ export namespace Prisma {
           }
         }
       }
+      PresentationSchedule: {
+        payload: Prisma.$PresentationSchedulePayload<ExtArgs>
+        fields: Prisma.PresentationScheduleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.PresentationScheduleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.PresentationScheduleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>
+          }
+          findFirst: {
+            args: Prisma.PresentationScheduleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.PresentationScheduleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>
+          }
+          findMany: {
+            args: Prisma.PresentationScheduleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>[]
+          }
+          create: {
+            args: Prisma.PresentationScheduleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>
+          }
+          createMany: {
+            args: Prisma.PresentationScheduleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.PresentationScheduleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>[]
+          }
+          delete: {
+            args: Prisma.PresentationScheduleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>
+          }
+          update: {
+            args: Prisma.PresentationScheduleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>
+          }
+          deleteMany: {
+            args: Prisma.PresentationScheduleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.PresentationScheduleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.PresentationScheduleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>[]
+          }
+          upsert: {
+            args: Prisma.PresentationScheduleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$PresentationSchedulePayload>
+          }
+          aggregate: {
+            args: Prisma.PresentationScheduleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregatePresentationSchedule>
+          }
+          groupBy: {
+            args: Prisma.PresentationScheduleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<PresentationScheduleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.PresentationScheduleCountArgs<ExtArgs>
+            result: $Utils.Optional<PresentationScheduleCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProjectDiscussion: {
+        payload: Prisma.$ProjectDiscussionPayload<ExtArgs>
+        fields: Prisma.ProjectDiscussionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProjectDiscussionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProjectDiscussionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>
+          }
+          findFirst: {
+            args: Prisma.ProjectDiscussionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProjectDiscussionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>
+          }
+          findMany: {
+            args: Prisma.ProjectDiscussionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>[]
+          }
+          create: {
+            args: Prisma.ProjectDiscussionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>
+          }
+          createMany: {
+            args: Prisma.ProjectDiscussionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProjectDiscussionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>[]
+          }
+          delete: {
+            args: Prisma.ProjectDiscussionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>
+          }
+          update: {
+            args: Prisma.ProjectDiscussionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProjectDiscussionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProjectDiscussionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProjectDiscussionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProjectDiscussionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectDiscussionPayload>
+          }
+          aggregate: {
+            args: Prisma.ProjectDiscussionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectDiscussion>
+          }
+          groupBy: {
+            args: Prisma.ProjectDiscussionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectDiscussionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProjectDiscussionCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectDiscussionCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2316,6 +2498,8 @@ export namespace Prisma {
     projectAssignment?: ProjectAssignmentOmit
     notification?: NotificationOmit
     semester?: SemesterOmit
+    presentationSchedule?: PresentationScheduleOmit
+    projectDiscussion?: ProjectDiscussionOmit
   }
 
   /* Types for Logging */
@@ -2404,6 +2588,8 @@ export namespace Prisma {
     teamMemberships: number
     invitationsSent: number
     invitationsReceived: number
+    scheduledPresentations: number
+    discussions: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2415,6 +2601,8 @@ export namespace Prisma {
     teamMemberships?: boolean | UserCountOutputTypeCountTeamMembershipsArgs
     invitationsSent?: boolean | UserCountOutputTypeCountInvitationsSentArgs
     invitationsReceived?: boolean | UserCountOutputTypeCountInvitationsReceivedArgs
+    scheduledPresentations?: boolean | UserCountOutputTypeCountScheduledPresentationsArgs
+    discussions?: boolean | UserCountOutputTypeCountDiscussionsArgs
   }
 
   // Custom InputTypes
@@ -2484,6 +2672,20 @@ export namespace Prisma {
     where?: TeamInvitationWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountScheduledPresentationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PresentationScheduleWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDiscussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectDiscussionWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2497,6 +2699,7 @@ export namespace Prisma {
     invitations: number
     stakeholderDocuments: number
     screenshots: number
+    discussions: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2507,6 +2710,7 @@ export namespace Prisma {
     invitations?: boolean | ProjectCountOutputTypeCountInvitationsArgs
     stakeholderDocuments?: boolean | ProjectCountOutputTypeCountStakeholderDocumentsArgs
     screenshots?: boolean | ProjectCountOutputTypeCountScreenshotsArgs
+    discussions?: boolean | ProjectCountOutputTypeCountDiscussionsArgs
   }
 
   // Custom InputTypes
@@ -2567,6 +2771,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountScreenshotsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectScreenshotWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountDiscussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectDiscussionWhereInput
   }
 
 
@@ -2687,6 +2898,37 @@ export namespace Prisma {
    */
   export type RubrikPenilaianCountOutputTypeCountMemberScoresArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: MemberReviewScoreWhereInput
+  }
+
+
+  /**
+   * Count Type ProjectDiscussionCountOutputType
+   */
+
+  export type ProjectDiscussionCountOutputType = {
+    replies: number
+  }
+
+  export type ProjectDiscussionCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replies?: boolean | ProjectDiscussionCountOutputTypeCountRepliesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * ProjectDiscussionCountOutputType without action
+   */
+  export type ProjectDiscussionCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussionCountOutputType
+     */
+    select?: ProjectDiscussionCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * ProjectDiscussionCountOutputType without action
+   */
+  export type ProjectDiscussionCountOutputTypeCountRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectDiscussionWhereInput
   }
 
 
@@ -3002,6 +3244,8 @@ export namespace Prisma {
     teamMemberships?: boolean | User$teamMembershipsArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
     invitationsReceived?: boolean | User$invitationsReceivedArgs<ExtArgs>
+    scheduledPresentations?: boolean | User$scheduledPresentationsArgs<ExtArgs>
+    discussions?: boolean | User$discussionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3090,6 +3334,8 @@ export namespace Prisma {
     teamMemberships?: boolean | User$teamMembershipsArgs<ExtArgs>
     invitationsSent?: boolean | User$invitationsSentArgs<ExtArgs>
     invitationsReceived?: boolean | User$invitationsReceivedArgs<ExtArgs>
+    scheduledPresentations?: boolean | User$scheduledPresentationsArgs<ExtArgs>
+    discussions?: boolean | User$discussionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3106,6 +3352,8 @@ export namespace Prisma {
       teamMemberships: Prisma.$ProjectMemberPayload<ExtArgs>[]
       invitationsSent: Prisma.$TeamInvitationPayload<ExtArgs>[]
       invitationsReceived: Prisma.$TeamInvitationPayload<ExtArgs>[]
+      scheduledPresentations: Prisma.$PresentationSchedulePayload<ExtArgs>[]
+      discussions: Prisma.$ProjectDiscussionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3532,6 +3780,8 @@ export namespace Prisma {
     teamMemberships<T extends User$teamMembershipsArgs<ExtArgs> = {}>(args?: Subset<T, User$teamMembershipsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitationsSent<T extends User$invitationsSentArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsSentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invitationsReceived<T extends User$invitationsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    scheduledPresentations<T extends User$scheduledPresentationsArgs<ExtArgs> = {}>(args?: Subset<T, User$scheduledPresentationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    discussions<T extends User$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, User$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4160,6 +4410,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: TeamInvitationScalarFieldEnum | TeamInvitationScalarFieldEnum[]
+  }
+
+  /**
+   * User.scheduledPresentations
+   */
+  export type User$scheduledPresentationsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    where?: PresentationScheduleWhereInput
+    orderBy?: PresentationScheduleOrderByWithRelationInput | PresentationScheduleOrderByWithRelationInput[]
+    cursor?: PresentationScheduleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PresentationScheduleScalarFieldEnum | PresentationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * User.discussions
+   */
+  export type User$discussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    where?: ProjectDiscussionWhereInput
+    orderBy?: ProjectDiscussionOrderByWithRelationInput | ProjectDiscussionOrderByWithRelationInput[]
+    cursor?: ProjectDiscussionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectDiscussionScalarFieldEnum | ProjectDiscussionScalarFieldEnum[]
   }
 
   /**
@@ -5633,6 +5931,8 @@ export namespace Prisma {
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
     screenshots?: boolean | Project$screenshotsArgs<ExtArgs>
+    presentationSchedule?: boolean | Project$presentationScheduleArgs<ExtArgs>
+    discussions?: boolean | Project$discussionsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -5709,6 +6009,8 @@ export namespace Prisma {
     requirements?: boolean | Project$requirementsArgs<ExtArgs>
     stakeholderDocuments?: boolean | Project$stakeholderDocumentsArgs<ExtArgs>
     screenshots?: boolean | Project$screenshotsArgs<ExtArgs>
+    presentationSchedule?: boolean | Project$presentationScheduleArgs<ExtArgs>
+    discussions?: boolean | Project$discussionsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -5730,6 +6032,8 @@ export namespace Prisma {
       requirements: Prisma.$ProjectRequirementsPayload<ExtArgs> | null
       stakeholderDocuments: Prisma.$StakeholderDocumentPayload<ExtArgs>[]
       screenshots: Prisma.$ProjectScreenshotPayload<ExtArgs>[]
+      presentationSchedule: Prisma.$PresentationSchedulePayload<ExtArgs> | null
+      discussions: Prisma.$ProjectDiscussionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6152,6 +6456,8 @@ export namespace Prisma {
     requirements<T extends Project$requirementsArgs<ExtArgs> = {}>(args?: Subset<T, Project$requirementsArgs<ExtArgs>>): Prisma__ProjectRequirementsClient<$Result.GetResult<Prisma.$ProjectRequirementsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     stakeholderDocuments<T extends Project$stakeholderDocumentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$stakeholderDocumentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$StakeholderDocumentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     screenshots<T extends Project$screenshotsArgs<ExtArgs> = {}>(args?: Subset<T, Project$screenshotsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    presentationSchedule<T extends Project$presentationScheduleArgs<ExtArgs> = {}>(args?: Subset<T, Project$presentationScheduleArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    discussions<T extends Project$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, Project$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6778,6 +7084,49 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProjectScreenshotScalarFieldEnum | ProjectScreenshotScalarFieldEnum[]
+  }
+
+  /**
+   * Project.presentationSchedule
+   */
+  export type Project$presentationScheduleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    where?: PresentationScheduleWhereInput
+  }
+
+  /**
+   * Project.discussions
+   */
+  export type Project$discussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    where?: ProjectDiscussionWhereInput
+    orderBy?: ProjectDiscussionOrderByWithRelationInput | ProjectDiscussionOrderByWithRelationInput[]
+    cursor?: ProjectDiscussionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectDiscussionScalarFieldEnum | ProjectDiscussionScalarFieldEnum[]
   }
 
   /**
@@ -23050,6 +23399,2325 @@ export namespace Prisma {
 
 
   /**
+   * Model PresentationSchedule
+   */
+
+  export type AggregatePresentationSchedule = {
+    _count: PresentationScheduleCountAggregateOutputType | null
+    _min: PresentationScheduleMinAggregateOutputType | null
+    _max: PresentationScheduleMaxAggregateOutputType | null
+  }
+
+  export type PresentationScheduleMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    scheduledDate: Date | null
+    startTime: string | null
+    endTime: string | null
+    location: string | null
+    notes: string | null
+    presentationStatus: string | null
+    completedAt: Date | null
+    scheduledById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PresentationScheduleMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    scheduledDate: Date | null
+    startTime: string | null
+    endTime: string | null
+    location: string | null
+    notes: string | null
+    presentationStatus: string | null
+    completedAt: Date | null
+    scheduledById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type PresentationScheduleCountAggregateOutputType = {
+    id: number
+    projectId: number
+    scheduledDate: number
+    startTime: number
+    endTime: number
+    location: number
+    notes: number
+    presentationStatus: number
+    completedAt: number
+    scheduledById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type PresentationScheduleMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    scheduledDate?: true
+    startTime?: true
+    endTime?: true
+    location?: true
+    notes?: true
+    presentationStatus?: true
+    completedAt?: true
+    scheduledById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PresentationScheduleMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    scheduledDate?: true
+    startTime?: true
+    endTime?: true
+    location?: true
+    notes?: true
+    presentationStatus?: true
+    completedAt?: true
+    scheduledById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type PresentationScheduleCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    scheduledDate?: true
+    startTime?: true
+    endTime?: true
+    location?: true
+    notes?: true
+    presentationStatus?: true
+    completedAt?: true
+    scheduledById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type PresentationScheduleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PresentationSchedule to aggregate.
+     */
+    where?: PresentationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PresentationSchedules to fetch.
+     */
+    orderBy?: PresentationScheduleOrderByWithRelationInput | PresentationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: PresentationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PresentationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PresentationSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned PresentationSchedules
+    **/
+    _count?: true | PresentationScheduleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: PresentationScheduleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: PresentationScheduleMaxAggregateInputType
+  }
+
+  export type GetPresentationScheduleAggregateType<T extends PresentationScheduleAggregateArgs> = {
+        [P in keyof T & keyof AggregatePresentationSchedule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregatePresentationSchedule[P]>
+      : GetScalarType<T[P], AggregatePresentationSchedule[P]>
+  }
+
+
+
+
+  export type PresentationScheduleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PresentationScheduleWhereInput
+    orderBy?: PresentationScheduleOrderByWithAggregationInput | PresentationScheduleOrderByWithAggregationInput[]
+    by: PresentationScheduleScalarFieldEnum[] | PresentationScheduleScalarFieldEnum
+    having?: PresentationScheduleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: PresentationScheduleCountAggregateInputType | true
+    _min?: PresentationScheduleMinAggregateInputType
+    _max?: PresentationScheduleMaxAggregateInputType
+  }
+
+  export type PresentationScheduleGroupByOutputType = {
+    id: string
+    projectId: string
+    scheduledDate: Date
+    startTime: string
+    endTime: string | null
+    location: string | null
+    notes: string | null
+    presentationStatus: string
+    completedAt: Date | null
+    scheduledById: string
+    createdAt: Date
+    updatedAt: Date
+    _count: PresentationScheduleCountAggregateOutputType | null
+    _min: PresentationScheduleMinAggregateOutputType | null
+    _max: PresentationScheduleMaxAggregateOutputType | null
+  }
+
+  type GetPresentationScheduleGroupByPayload<T extends PresentationScheduleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<PresentationScheduleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof PresentationScheduleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], PresentationScheduleGroupByOutputType[P]>
+            : GetScalarType<T[P], PresentationScheduleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type PresentationScheduleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    scheduledDate?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    location?: boolean
+    notes?: boolean
+    presentationStatus?: boolean
+    completedAt?: boolean
+    scheduledById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["presentationSchedule"]>
+
+  export type PresentationScheduleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    scheduledDate?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    location?: boolean
+    notes?: boolean
+    presentationStatus?: boolean
+    completedAt?: boolean
+    scheduledById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["presentationSchedule"]>
+
+  export type PresentationScheduleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    scheduledDate?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    location?: boolean
+    notes?: boolean
+    presentationStatus?: boolean
+    completedAt?: boolean
+    scheduledById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["presentationSchedule"]>
+
+  export type PresentationScheduleSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    scheduledDate?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    location?: boolean
+    notes?: boolean
+    presentationStatus?: boolean
+    completedAt?: boolean
+    scheduledById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type PresentationScheduleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "scheduledDate" | "startTime" | "endTime" | "location" | "notes" | "presentationStatus" | "completedAt" | "scheduledById" | "createdAt" | "updatedAt", ExtArgs["result"]["presentationSchedule"]>
+  export type PresentationScheduleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type PresentationScheduleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+  export type PresentationScheduleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    scheduledBy?: boolean | UserDefaultArgs<ExtArgs>
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+  }
+
+  export type $PresentationSchedulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "PresentationSchedule"
+    objects: {
+      scheduledBy: Prisma.$UserPayload<ExtArgs>
+      project: Prisma.$ProjectPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      scheduledDate: Date
+      startTime: string
+      endTime: string | null
+      location: string | null
+      notes: string | null
+      presentationStatus: string
+      completedAt: Date | null
+      scheduledById: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["presentationSchedule"]>
+    composites: {}
+  }
+
+  type PresentationScheduleGetPayload<S extends boolean | null | undefined | PresentationScheduleDefaultArgs> = $Result.GetResult<Prisma.$PresentationSchedulePayload, S>
+
+  type PresentationScheduleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<PresentationScheduleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: PresentationScheduleCountAggregateInputType | true
+    }
+
+  export interface PresentationScheduleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PresentationSchedule'], meta: { name: 'PresentationSchedule' } }
+    /**
+     * Find zero or one PresentationSchedule that matches the filter.
+     * @param {PresentationScheduleFindUniqueArgs} args - Arguments to find a PresentationSchedule
+     * @example
+     * // Get one PresentationSchedule
+     * const presentationSchedule = await prisma.presentationSchedule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends PresentationScheduleFindUniqueArgs>(args: SelectSubset<T, PresentationScheduleFindUniqueArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one PresentationSchedule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {PresentationScheduleFindUniqueOrThrowArgs} args - Arguments to find a PresentationSchedule
+     * @example
+     * // Get one PresentationSchedule
+     * const presentationSchedule = await prisma.presentationSchedule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends PresentationScheduleFindUniqueOrThrowArgs>(args: SelectSubset<T, PresentationScheduleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PresentationSchedule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PresentationScheduleFindFirstArgs} args - Arguments to find a PresentationSchedule
+     * @example
+     * // Get one PresentationSchedule
+     * const presentationSchedule = await prisma.presentationSchedule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends PresentationScheduleFindFirstArgs>(args?: SelectSubset<T, PresentationScheduleFindFirstArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first PresentationSchedule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PresentationScheduleFindFirstOrThrowArgs} args - Arguments to find a PresentationSchedule
+     * @example
+     * // Get one PresentationSchedule
+     * const presentationSchedule = await prisma.presentationSchedule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends PresentationScheduleFindFirstOrThrowArgs>(args?: SelectSubset<T, PresentationScheduleFindFirstOrThrowArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more PresentationSchedules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PresentationScheduleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all PresentationSchedules
+     * const presentationSchedules = await prisma.presentationSchedule.findMany()
+     * 
+     * // Get first 10 PresentationSchedules
+     * const presentationSchedules = await prisma.presentationSchedule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const presentationScheduleWithIdOnly = await prisma.presentationSchedule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends PresentationScheduleFindManyArgs>(args?: SelectSubset<T, PresentationScheduleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a PresentationSchedule.
+     * @param {PresentationScheduleCreateArgs} args - Arguments to create a PresentationSchedule.
+     * @example
+     * // Create one PresentationSchedule
+     * const PresentationSchedule = await prisma.presentationSchedule.create({
+     *   data: {
+     *     // ... data to create a PresentationSchedule
+     *   }
+     * })
+     * 
+     */
+    create<T extends PresentationScheduleCreateArgs>(args: SelectSubset<T, PresentationScheduleCreateArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many PresentationSchedules.
+     * @param {PresentationScheduleCreateManyArgs} args - Arguments to create many PresentationSchedules.
+     * @example
+     * // Create many PresentationSchedules
+     * const presentationSchedule = await prisma.presentationSchedule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends PresentationScheduleCreateManyArgs>(args?: SelectSubset<T, PresentationScheduleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many PresentationSchedules and returns the data saved in the database.
+     * @param {PresentationScheduleCreateManyAndReturnArgs} args - Arguments to create many PresentationSchedules.
+     * @example
+     * // Create many PresentationSchedules
+     * const presentationSchedule = await prisma.presentationSchedule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many PresentationSchedules and only return the `id`
+     * const presentationScheduleWithIdOnly = await prisma.presentationSchedule.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends PresentationScheduleCreateManyAndReturnArgs>(args?: SelectSubset<T, PresentationScheduleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a PresentationSchedule.
+     * @param {PresentationScheduleDeleteArgs} args - Arguments to delete one PresentationSchedule.
+     * @example
+     * // Delete one PresentationSchedule
+     * const PresentationSchedule = await prisma.presentationSchedule.delete({
+     *   where: {
+     *     // ... filter to delete one PresentationSchedule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends PresentationScheduleDeleteArgs>(args: SelectSubset<T, PresentationScheduleDeleteArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one PresentationSchedule.
+     * @param {PresentationScheduleUpdateArgs} args - Arguments to update one PresentationSchedule.
+     * @example
+     * // Update one PresentationSchedule
+     * const presentationSchedule = await prisma.presentationSchedule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends PresentationScheduleUpdateArgs>(args: SelectSubset<T, PresentationScheduleUpdateArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more PresentationSchedules.
+     * @param {PresentationScheduleDeleteManyArgs} args - Arguments to filter PresentationSchedules to delete.
+     * @example
+     * // Delete a few PresentationSchedules
+     * const { count } = await prisma.presentationSchedule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends PresentationScheduleDeleteManyArgs>(args?: SelectSubset<T, PresentationScheduleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PresentationSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PresentationScheduleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many PresentationSchedules
+     * const presentationSchedule = await prisma.presentationSchedule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends PresentationScheduleUpdateManyArgs>(args: SelectSubset<T, PresentationScheduleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more PresentationSchedules and returns the data updated in the database.
+     * @param {PresentationScheduleUpdateManyAndReturnArgs} args - Arguments to update many PresentationSchedules.
+     * @example
+     * // Update many PresentationSchedules
+     * const presentationSchedule = await prisma.presentationSchedule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more PresentationSchedules and only return the `id`
+     * const presentationScheduleWithIdOnly = await prisma.presentationSchedule.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends PresentationScheduleUpdateManyAndReturnArgs>(args: SelectSubset<T, PresentationScheduleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one PresentationSchedule.
+     * @param {PresentationScheduleUpsertArgs} args - Arguments to update or create a PresentationSchedule.
+     * @example
+     * // Update or create a PresentationSchedule
+     * const presentationSchedule = await prisma.presentationSchedule.upsert({
+     *   create: {
+     *     // ... data to create a PresentationSchedule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the PresentationSchedule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends PresentationScheduleUpsertArgs>(args: SelectSubset<T, PresentationScheduleUpsertArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of PresentationSchedules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PresentationScheduleCountArgs} args - Arguments to filter PresentationSchedules to count.
+     * @example
+     * // Count the number of PresentationSchedules
+     * const count = await prisma.presentationSchedule.count({
+     *   where: {
+     *     // ... the filter for the PresentationSchedules we want to count
+     *   }
+     * })
+    **/
+    count<T extends PresentationScheduleCountArgs>(
+      args?: Subset<T, PresentationScheduleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], PresentationScheduleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a PresentationSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PresentationScheduleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends PresentationScheduleAggregateArgs>(args: Subset<T, PresentationScheduleAggregateArgs>): Prisma.PrismaPromise<GetPresentationScheduleAggregateType<T>>
+
+    /**
+     * Group by PresentationSchedule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {PresentationScheduleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends PresentationScheduleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: PresentationScheduleGroupByArgs['orderBy'] }
+        : { orderBy?: PresentationScheduleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, PresentationScheduleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPresentationScheduleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the PresentationSchedule model
+   */
+  readonly fields: PresentationScheduleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for PresentationSchedule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__PresentationScheduleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    scheduledBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the PresentationSchedule model
+   */
+  interface PresentationScheduleFieldRefs {
+    readonly id: FieldRef<"PresentationSchedule", 'String'>
+    readonly projectId: FieldRef<"PresentationSchedule", 'String'>
+    readonly scheduledDate: FieldRef<"PresentationSchedule", 'DateTime'>
+    readonly startTime: FieldRef<"PresentationSchedule", 'String'>
+    readonly endTime: FieldRef<"PresentationSchedule", 'String'>
+    readonly location: FieldRef<"PresentationSchedule", 'String'>
+    readonly notes: FieldRef<"PresentationSchedule", 'String'>
+    readonly presentationStatus: FieldRef<"PresentationSchedule", 'String'>
+    readonly completedAt: FieldRef<"PresentationSchedule", 'DateTime'>
+    readonly scheduledById: FieldRef<"PresentationSchedule", 'String'>
+    readonly createdAt: FieldRef<"PresentationSchedule", 'DateTime'>
+    readonly updatedAt: FieldRef<"PresentationSchedule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * PresentationSchedule findUnique
+   */
+  export type PresentationScheduleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which PresentationSchedule to fetch.
+     */
+    where: PresentationScheduleWhereUniqueInput
+  }
+
+  /**
+   * PresentationSchedule findUniqueOrThrow
+   */
+  export type PresentationScheduleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which PresentationSchedule to fetch.
+     */
+    where: PresentationScheduleWhereUniqueInput
+  }
+
+  /**
+   * PresentationSchedule findFirst
+   */
+  export type PresentationScheduleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which PresentationSchedule to fetch.
+     */
+    where?: PresentationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PresentationSchedules to fetch.
+     */
+    orderBy?: PresentationScheduleOrderByWithRelationInput | PresentationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PresentationSchedules.
+     */
+    cursor?: PresentationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PresentationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PresentationSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PresentationSchedules.
+     */
+    distinct?: PresentationScheduleScalarFieldEnum | PresentationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * PresentationSchedule findFirstOrThrow
+   */
+  export type PresentationScheduleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which PresentationSchedule to fetch.
+     */
+    where?: PresentationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PresentationSchedules to fetch.
+     */
+    orderBy?: PresentationScheduleOrderByWithRelationInput | PresentationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for PresentationSchedules.
+     */
+    cursor?: PresentationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PresentationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PresentationSchedules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of PresentationSchedules.
+     */
+    distinct?: PresentationScheduleScalarFieldEnum | PresentationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * PresentationSchedule findMany
+   */
+  export type PresentationScheduleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter, which PresentationSchedules to fetch.
+     */
+    where?: PresentationScheduleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of PresentationSchedules to fetch.
+     */
+    orderBy?: PresentationScheduleOrderByWithRelationInput | PresentationScheduleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing PresentationSchedules.
+     */
+    cursor?: PresentationScheduleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` PresentationSchedules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` PresentationSchedules.
+     */
+    skip?: number
+    distinct?: PresentationScheduleScalarFieldEnum | PresentationScheduleScalarFieldEnum[]
+  }
+
+  /**
+   * PresentationSchedule create
+   */
+  export type PresentationScheduleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a PresentationSchedule.
+     */
+    data: XOR<PresentationScheduleCreateInput, PresentationScheduleUncheckedCreateInput>
+  }
+
+  /**
+   * PresentationSchedule createMany
+   */
+  export type PresentationScheduleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many PresentationSchedules.
+     */
+    data: PresentationScheduleCreateManyInput | PresentationScheduleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * PresentationSchedule createManyAndReturn
+   */
+  export type PresentationScheduleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * The data used to create many PresentationSchedules.
+     */
+    data: PresentationScheduleCreateManyInput | PresentationScheduleCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PresentationSchedule update
+   */
+  export type PresentationScheduleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a PresentationSchedule.
+     */
+    data: XOR<PresentationScheduleUpdateInput, PresentationScheduleUncheckedUpdateInput>
+    /**
+     * Choose, which PresentationSchedule to update.
+     */
+    where: PresentationScheduleWhereUniqueInput
+  }
+
+  /**
+   * PresentationSchedule updateMany
+   */
+  export type PresentationScheduleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update PresentationSchedules.
+     */
+    data: XOR<PresentationScheduleUpdateManyMutationInput, PresentationScheduleUncheckedUpdateManyInput>
+    /**
+     * Filter which PresentationSchedules to update
+     */
+    where?: PresentationScheduleWhereInput
+    /**
+     * Limit how many PresentationSchedules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * PresentationSchedule updateManyAndReturn
+   */
+  export type PresentationScheduleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * The data used to update PresentationSchedules.
+     */
+    data: XOR<PresentationScheduleUpdateManyMutationInput, PresentationScheduleUncheckedUpdateManyInput>
+    /**
+     * Filter which PresentationSchedules to update
+     */
+    where?: PresentationScheduleWhereInput
+    /**
+     * Limit how many PresentationSchedules to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * PresentationSchedule upsert
+   */
+  export type PresentationScheduleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the PresentationSchedule to update in case it exists.
+     */
+    where: PresentationScheduleWhereUniqueInput
+    /**
+     * In case the PresentationSchedule found by the `where` argument doesn't exist, create a new PresentationSchedule with this data.
+     */
+    create: XOR<PresentationScheduleCreateInput, PresentationScheduleUncheckedCreateInput>
+    /**
+     * In case the PresentationSchedule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<PresentationScheduleUpdateInput, PresentationScheduleUncheckedUpdateInput>
+  }
+
+  /**
+   * PresentationSchedule delete
+   */
+  export type PresentationScheduleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+    /**
+     * Filter which PresentationSchedule to delete.
+     */
+    where: PresentationScheduleWhereUniqueInput
+  }
+
+  /**
+   * PresentationSchedule deleteMany
+   */
+  export type PresentationScheduleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which PresentationSchedules to delete
+     */
+    where?: PresentationScheduleWhereInput
+    /**
+     * Limit how many PresentationSchedules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * PresentationSchedule without action
+   */
+  export type PresentationScheduleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the PresentationSchedule
+     */
+    select?: PresentationScheduleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the PresentationSchedule
+     */
+    omit?: PresentationScheduleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PresentationScheduleInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProjectDiscussion
+   */
+
+  export type AggregateProjectDiscussion = {
+    _count: ProjectDiscussionCountAggregateOutputType | null
+    _min: ProjectDiscussionMinAggregateOutputType | null
+    _max: ProjectDiscussionMaxAggregateOutputType | null
+  }
+
+  export type ProjectDiscussionMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    authorId: string | null
+    parentId: string | null
+    content: string | null
+    isEdited: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectDiscussionMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    authorId: string | null
+    parentId: string | null
+    content: string | null
+    isEdited: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectDiscussionCountAggregateOutputType = {
+    id: number
+    projectId: number
+    authorId: number
+    parentId: number
+    content: number
+    isEdited: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProjectDiscussionMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    authorId?: true
+    parentId?: true
+    content?: true
+    isEdited?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectDiscussionMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    authorId?: true
+    parentId?: true
+    content?: true
+    isEdited?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectDiscussionCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    authorId?: true
+    parentId?: true
+    content?: true
+    isEdited?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProjectDiscussionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectDiscussion to aggregate.
+     */
+    where?: ProjectDiscussionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectDiscussions to fetch.
+     */
+    orderBy?: ProjectDiscussionOrderByWithRelationInput | ProjectDiscussionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProjectDiscussionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectDiscussions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectDiscussions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProjectDiscussions
+    **/
+    _count?: true | ProjectDiscussionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProjectDiscussionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProjectDiscussionMaxAggregateInputType
+  }
+
+  export type GetProjectDiscussionAggregateType<T extends ProjectDiscussionAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectDiscussion]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProjectDiscussion[P]>
+      : GetScalarType<T[P], AggregateProjectDiscussion[P]>
+  }
+
+
+
+
+  export type ProjectDiscussionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectDiscussionWhereInput
+    orderBy?: ProjectDiscussionOrderByWithAggregationInput | ProjectDiscussionOrderByWithAggregationInput[]
+    by: ProjectDiscussionScalarFieldEnum[] | ProjectDiscussionScalarFieldEnum
+    having?: ProjectDiscussionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProjectDiscussionCountAggregateInputType | true
+    _min?: ProjectDiscussionMinAggregateInputType
+    _max?: ProjectDiscussionMaxAggregateInputType
+  }
+
+  export type ProjectDiscussionGroupByOutputType = {
+    id: string
+    projectId: string
+    authorId: string
+    parentId: string | null
+    content: string
+    isEdited: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: ProjectDiscussionCountAggregateOutputType | null
+    _min: ProjectDiscussionMinAggregateOutputType | null
+    _max: ProjectDiscussionMaxAggregateOutputType | null
+  }
+
+  type GetProjectDiscussionGroupByPayload<T extends ProjectDiscussionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProjectDiscussionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProjectDiscussionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProjectDiscussionGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectDiscussionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProjectDiscussionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    parentId?: boolean
+    content?: boolean
+    isEdited?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ProjectDiscussion$parentArgs<ExtArgs>
+    replies?: boolean | ProjectDiscussion$repliesArgs<ExtArgs>
+    _count?: boolean | ProjectDiscussionCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectDiscussion"]>
+
+  export type ProjectDiscussionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    parentId?: boolean
+    content?: boolean
+    isEdited?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ProjectDiscussion$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["projectDiscussion"]>
+
+  export type ProjectDiscussionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    parentId?: boolean
+    content?: boolean
+    isEdited?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ProjectDiscussion$parentArgs<ExtArgs>
+  }, ExtArgs["result"]["projectDiscussion"]>
+
+  export type ProjectDiscussionSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    parentId?: boolean
+    content?: boolean
+    isEdited?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProjectDiscussionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "authorId" | "parentId" | "content" | "isEdited" | "createdAt" | "updatedAt", ExtArgs["result"]["projectDiscussion"]>
+  export type ProjectDiscussionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ProjectDiscussion$parentArgs<ExtArgs>
+    replies?: boolean | ProjectDiscussion$repliesArgs<ExtArgs>
+    _count?: boolean | ProjectDiscussionCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type ProjectDiscussionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ProjectDiscussion$parentArgs<ExtArgs>
+  }
+  export type ProjectDiscussionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+    parent?: boolean | ProjectDiscussion$parentArgs<ExtArgs>
+  }
+
+  export type $ProjectDiscussionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectDiscussion"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs>
+      parent: Prisma.$ProjectDiscussionPayload<ExtArgs> | null
+      replies: Prisma.$ProjectDiscussionPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      authorId: string
+      parentId: string | null
+      content: string
+      isEdited: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["projectDiscussion"]>
+    composites: {}
+  }
+
+  type ProjectDiscussionGetPayload<S extends boolean | null | undefined | ProjectDiscussionDefaultArgs> = $Result.GetResult<Prisma.$ProjectDiscussionPayload, S>
+
+  type ProjectDiscussionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectDiscussionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectDiscussionCountAggregateInputType | true
+    }
+
+  export interface ProjectDiscussionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectDiscussion'], meta: { name: 'ProjectDiscussion' } }
+    /**
+     * Find zero or one ProjectDiscussion that matches the filter.
+     * @param {ProjectDiscussionFindUniqueArgs} args - Arguments to find a ProjectDiscussion
+     * @example
+     * // Get one ProjectDiscussion
+     * const projectDiscussion = await prisma.projectDiscussion.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProjectDiscussionFindUniqueArgs>(args: SelectSubset<T, ProjectDiscussionFindUniqueArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProjectDiscussion that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProjectDiscussionFindUniqueOrThrowArgs} args - Arguments to find a ProjectDiscussion
+     * @example
+     * // Get one ProjectDiscussion
+     * const projectDiscussion = await prisma.projectDiscussion.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProjectDiscussionFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectDiscussionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectDiscussion that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectDiscussionFindFirstArgs} args - Arguments to find a ProjectDiscussion
+     * @example
+     * // Get one ProjectDiscussion
+     * const projectDiscussion = await prisma.projectDiscussion.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProjectDiscussionFindFirstArgs>(args?: SelectSubset<T, ProjectDiscussionFindFirstArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectDiscussion that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectDiscussionFindFirstOrThrowArgs} args - Arguments to find a ProjectDiscussion
+     * @example
+     * // Get one ProjectDiscussion
+     * const projectDiscussion = await prisma.projectDiscussion.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProjectDiscussionFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectDiscussionFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProjectDiscussions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectDiscussionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProjectDiscussions
+     * const projectDiscussions = await prisma.projectDiscussion.findMany()
+     * 
+     * // Get first 10 ProjectDiscussions
+     * const projectDiscussions = await prisma.projectDiscussion.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const projectDiscussionWithIdOnly = await prisma.projectDiscussion.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProjectDiscussionFindManyArgs>(args?: SelectSubset<T, ProjectDiscussionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProjectDiscussion.
+     * @param {ProjectDiscussionCreateArgs} args - Arguments to create a ProjectDiscussion.
+     * @example
+     * // Create one ProjectDiscussion
+     * const ProjectDiscussion = await prisma.projectDiscussion.create({
+     *   data: {
+     *     // ... data to create a ProjectDiscussion
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProjectDiscussionCreateArgs>(args: SelectSubset<T, ProjectDiscussionCreateArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProjectDiscussions.
+     * @param {ProjectDiscussionCreateManyArgs} args - Arguments to create many ProjectDiscussions.
+     * @example
+     * // Create many ProjectDiscussions
+     * const projectDiscussion = await prisma.projectDiscussion.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProjectDiscussionCreateManyArgs>(args?: SelectSubset<T, ProjectDiscussionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProjectDiscussions and returns the data saved in the database.
+     * @param {ProjectDiscussionCreateManyAndReturnArgs} args - Arguments to create many ProjectDiscussions.
+     * @example
+     * // Create many ProjectDiscussions
+     * const projectDiscussion = await prisma.projectDiscussion.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProjectDiscussions and only return the `id`
+     * const projectDiscussionWithIdOnly = await prisma.projectDiscussion.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProjectDiscussionCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectDiscussionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProjectDiscussion.
+     * @param {ProjectDiscussionDeleteArgs} args - Arguments to delete one ProjectDiscussion.
+     * @example
+     * // Delete one ProjectDiscussion
+     * const ProjectDiscussion = await prisma.projectDiscussion.delete({
+     *   where: {
+     *     // ... filter to delete one ProjectDiscussion
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProjectDiscussionDeleteArgs>(args: SelectSubset<T, ProjectDiscussionDeleteArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProjectDiscussion.
+     * @param {ProjectDiscussionUpdateArgs} args - Arguments to update one ProjectDiscussion.
+     * @example
+     * // Update one ProjectDiscussion
+     * const projectDiscussion = await prisma.projectDiscussion.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProjectDiscussionUpdateArgs>(args: SelectSubset<T, ProjectDiscussionUpdateArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProjectDiscussions.
+     * @param {ProjectDiscussionDeleteManyArgs} args - Arguments to filter ProjectDiscussions to delete.
+     * @example
+     * // Delete a few ProjectDiscussions
+     * const { count } = await prisma.projectDiscussion.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProjectDiscussionDeleteManyArgs>(args?: SelectSubset<T, ProjectDiscussionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectDiscussions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectDiscussionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProjectDiscussions
+     * const projectDiscussion = await prisma.projectDiscussion.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProjectDiscussionUpdateManyArgs>(args: SelectSubset<T, ProjectDiscussionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectDiscussions and returns the data updated in the database.
+     * @param {ProjectDiscussionUpdateManyAndReturnArgs} args - Arguments to update many ProjectDiscussions.
+     * @example
+     * // Update many ProjectDiscussions
+     * const projectDiscussion = await prisma.projectDiscussion.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProjectDiscussions and only return the `id`
+     * const projectDiscussionWithIdOnly = await prisma.projectDiscussion.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProjectDiscussionUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectDiscussionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProjectDiscussion.
+     * @param {ProjectDiscussionUpsertArgs} args - Arguments to update or create a ProjectDiscussion.
+     * @example
+     * // Update or create a ProjectDiscussion
+     * const projectDiscussion = await prisma.projectDiscussion.upsert({
+     *   create: {
+     *     // ... data to create a ProjectDiscussion
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProjectDiscussion we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProjectDiscussionUpsertArgs>(args: SelectSubset<T, ProjectDiscussionUpsertArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProjectDiscussions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectDiscussionCountArgs} args - Arguments to filter ProjectDiscussions to count.
+     * @example
+     * // Count the number of ProjectDiscussions
+     * const count = await prisma.projectDiscussion.count({
+     *   where: {
+     *     // ... the filter for the ProjectDiscussions we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProjectDiscussionCountArgs>(
+      args?: Subset<T, ProjectDiscussionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProjectDiscussionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProjectDiscussion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectDiscussionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProjectDiscussionAggregateArgs>(args: Subset<T, ProjectDiscussionAggregateArgs>): Prisma.PrismaPromise<GetProjectDiscussionAggregateType<T>>
+
+    /**
+     * Group by ProjectDiscussion.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectDiscussionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProjectDiscussionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProjectDiscussionGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectDiscussionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProjectDiscussionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectDiscussionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProjectDiscussion model
+   */
+  readonly fields: ProjectDiscussionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProjectDiscussion.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProjectDiscussionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    parent<T extends ProjectDiscussion$parentArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDiscussion$parentArgs<ExtArgs>>): Prisma__ProjectDiscussionClient<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    replies<T extends ProjectDiscussion$repliesArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDiscussion$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProjectDiscussion model
+   */
+  interface ProjectDiscussionFieldRefs {
+    readonly id: FieldRef<"ProjectDiscussion", 'String'>
+    readonly projectId: FieldRef<"ProjectDiscussion", 'String'>
+    readonly authorId: FieldRef<"ProjectDiscussion", 'String'>
+    readonly parentId: FieldRef<"ProjectDiscussion", 'String'>
+    readonly content: FieldRef<"ProjectDiscussion", 'String'>
+    readonly isEdited: FieldRef<"ProjectDiscussion", 'Boolean'>
+    readonly createdAt: FieldRef<"ProjectDiscussion", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProjectDiscussion", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProjectDiscussion findUnique
+   */
+  export type ProjectDiscussionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectDiscussion to fetch.
+     */
+    where: ProjectDiscussionWhereUniqueInput
+  }
+
+  /**
+   * ProjectDiscussion findUniqueOrThrow
+   */
+  export type ProjectDiscussionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectDiscussion to fetch.
+     */
+    where: ProjectDiscussionWhereUniqueInput
+  }
+
+  /**
+   * ProjectDiscussion findFirst
+   */
+  export type ProjectDiscussionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectDiscussion to fetch.
+     */
+    where?: ProjectDiscussionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectDiscussions to fetch.
+     */
+    orderBy?: ProjectDiscussionOrderByWithRelationInput | ProjectDiscussionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectDiscussions.
+     */
+    cursor?: ProjectDiscussionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectDiscussions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectDiscussions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectDiscussions.
+     */
+    distinct?: ProjectDiscussionScalarFieldEnum | ProjectDiscussionScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectDiscussion findFirstOrThrow
+   */
+  export type ProjectDiscussionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectDiscussion to fetch.
+     */
+    where?: ProjectDiscussionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectDiscussions to fetch.
+     */
+    orderBy?: ProjectDiscussionOrderByWithRelationInput | ProjectDiscussionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectDiscussions.
+     */
+    cursor?: ProjectDiscussionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectDiscussions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectDiscussions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectDiscussions.
+     */
+    distinct?: ProjectDiscussionScalarFieldEnum | ProjectDiscussionScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectDiscussion findMany
+   */
+  export type ProjectDiscussionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectDiscussions to fetch.
+     */
+    where?: ProjectDiscussionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectDiscussions to fetch.
+     */
+    orderBy?: ProjectDiscussionOrderByWithRelationInput | ProjectDiscussionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProjectDiscussions.
+     */
+    cursor?: ProjectDiscussionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectDiscussions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectDiscussions.
+     */
+    skip?: number
+    distinct?: ProjectDiscussionScalarFieldEnum | ProjectDiscussionScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectDiscussion create
+   */
+  export type ProjectDiscussionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProjectDiscussion.
+     */
+    data: XOR<ProjectDiscussionCreateInput, ProjectDiscussionUncheckedCreateInput>
+  }
+
+  /**
+   * ProjectDiscussion createMany
+   */
+  export type ProjectDiscussionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProjectDiscussions.
+     */
+    data: ProjectDiscussionCreateManyInput | ProjectDiscussionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProjectDiscussion createManyAndReturn
+   */
+  export type ProjectDiscussionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProjectDiscussions.
+     */
+    data: ProjectDiscussionCreateManyInput | ProjectDiscussionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectDiscussion update
+   */
+  export type ProjectDiscussionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProjectDiscussion.
+     */
+    data: XOR<ProjectDiscussionUpdateInput, ProjectDiscussionUncheckedUpdateInput>
+    /**
+     * Choose, which ProjectDiscussion to update.
+     */
+    where: ProjectDiscussionWhereUniqueInput
+  }
+
+  /**
+   * ProjectDiscussion updateMany
+   */
+  export type ProjectDiscussionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProjectDiscussions.
+     */
+    data: XOR<ProjectDiscussionUpdateManyMutationInput, ProjectDiscussionUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectDiscussions to update
+     */
+    where?: ProjectDiscussionWhereInput
+    /**
+     * Limit how many ProjectDiscussions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectDiscussion updateManyAndReturn
+   */
+  export type ProjectDiscussionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * The data used to update ProjectDiscussions.
+     */
+    data: XOR<ProjectDiscussionUpdateManyMutationInput, ProjectDiscussionUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectDiscussions to update
+     */
+    where?: ProjectDiscussionWhereInput
+    /**
+     * Limit how many ProjectDiscussions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectDiscussion upsert
+   */
+  export type ProjectDiscussionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProjectDiscussion to update in case it exists.
+     */
+    where: ProjectDiscussionWhereUniqueInput
+    /**
+     * In case the ProjectDiscussion found by the `where` argument doesn't exist, create a new ProjectDiscussion with this data.
+     */
+    create: XOR<ProjectDiscussionCreateInput, ProjectDiscussionUncheckedCreateInput>
+    /**
+     * In case the ProjectDiscussion was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProjectDiscussionUpdateInput, ProjectDiscussionUncheckedUpdateInput>
+  }
+
+  /**
+   * ProjectDiscussion delete
+   */
+  export type ProjectDiscussionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    /**
+     * Filter which ProjectDiscussion to delete.
+     */
+    where: ProjectDiscussionWhereUniqueInput
+  }
+
+  /**
+   * ProjectDiscussion deleteMany
+   */
+  export type ProjectDiscussionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectDiscussions to delete
+     */
+    where?: ProjectDiscussionWhereInput
+    /**
+     * Limit how many ProjectDiscussions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectDiscussion.parent
+   */
+  export type ProjectDiscussion$parentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    where?: ProjectDiscussionWhereInput
+  }
+
+  /**
+   * ProjectDiscussion.replies
+   */
+  export type ProjectDiscussion$repliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+    where?: ProjectDiscussionWhereInput
+    orderBy?: ProjectDiscussionOrderByWithRelationInput | ProjectDiscussionOrderByWithRelationInput[]
+    cursor?: ProjectDiscussionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectDiscussionScalarFieldEnum | ProjectDiscussionScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectDiscussion without action
+   */
+  export type ProjectDiscussionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectDiscussion
+     */
+    select?: ProjectDiscussionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectDiscussion
+     */
+    omit?: ProjectDiscussionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectDiscussionInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -23358,6 +26026,38 @@ export namespace Prisma {
   export type SemesterScalarFieldEnum = (typeof SemesterScalarFieldEnum)[keyof typeof SemesterScalarFieldEnum]
 
 
+  export const PresentationScheduleScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    scheduledDate: 'scheduledDate',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    location: 'location',
+    notes: 'notes',
+    presentationStatus: 'presentationStatus',
+    completedAt: 'completedAt',
+    scheduledById: 'scheduledById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type PresentationScheduleScalarFieldEnum = (typeof PresentationScheduleScalarFieldEnum)[keyof typeof PresentationScheduleScalarFieldEnum]
+
+
+  export const ProjectDiscussionScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    authorId: 'authorId',
+    parentId: 'parentId',
+    content: 'content',
+    isEdited: 'isEdited',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProjectDiscussionScalarFieldEnum = (typeof ProjectDiscussionScalarFieldEnum)[keyof typeof ProjectDiscussionScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -23557,6 +26257,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberListRelationFilter
     invitationsSent?: TeamInvitationListRelationFilter
     invitationsReceived?: TeamInvitationListRelationFilter
+    scheduledPresentations?: PresentationScheduleListRelationFilter
+    discussions?: ProjectDiscussionListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -23590,6 +26292,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberOrderByRelationAggregateInput
     invitationsSent?: TeamInvitationOrderByRelationAggregateInput
     invitationsReceived?: TeamInvitationOrderByRelationAggregateInput
+    scheduledPresentations?: PresentationScheduleOrderByRelationAggregateInput
+    discussions?: ProjectDiscussionOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -23626,6 +26330,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberListRelationFilter
     invitationsSent?: TeamInvitationListRelationFilter
     invitationsReceived?: TeamInvitationListRelationFilter
+    scheduledPresentations?: PresentationScheduleListRelationFilter
+    discussions?: ProjectDiscussionListRelationFilter
   }, "id" | "username" | "email" | "githubId" | "nim" | "nip">
 
   export type UserOrderByWithAggregationInput = {
@@ -23807,6 +26513,8 @@ export namespace Prisma {
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     stakeholderDocuments?: StakeholderDocumentListRelationFilter
     screenshots?: ProjectScreenshotListRelationFilter
+    presentationSchedule?: XOR<PresentationScheduleNullableScalarRelationFilter, PresentationScheduleWhereInput> | null
+    discussions?: ProjectDiscussionListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -23836,6 +26544,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsOrderByWithRelationInput
     stakeholderDocuments?: StakeholderDocumentOrderByRelationAggregateInput
     screenshots?: ProjectScreenshotOrderByRelationAggregateInput
+    presentationSchedule?: PresentationScheduleOrderByWithRelationInput
+    discussions?: ProjectDiscussionOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -23868,6 +26578,8 @@ export namespace Prisma {
     requirements?: XOR<ProjectRequirementsNullableScalarRelationFilter, ProjectRequirementsWhereInput> | null
     stakeholderDocuments?: StakeholderDocumentListRelationFilter
     screenshots?: ProjectScreenshotListRelationFilter
+    presentationSchedule?: XOR<PresentationScheduleNullableScalarRelationFilter, PresentationScheduleWhereInput> | null
+    discussions?: ProjectDiscussionListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -25107,6 +27819,178 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Semester"> | Date | string
   }
 
+  export type PresentationScheduleWhereInput = {
+    AND?: PresentationScheduleWhereInput | PresentationScheduleWhereInput[]
+    OR?: PresentationScheduleWhereInput[]
+    NOT?: PresentationScheduleWhereInput | PresentationScheduleWhereInput[]
+    id?: StringFilter<"PresentationSchedule"> | string
+    projectId?: StringFilter<"PresentationSchedule"> | string
+    scheduledDate?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    startTime?: StringFilter<"PresentationSchedule"> | string
+    endTime?: StringNullableFilter<"PresentationSchedule"> | string | null
+    location?: StringNullableFilter<"PresentationSchedule"> | string | null
+    notes?: StringNullableFilter<"PresentationSchedule"> | string | null
+    presentationStatus?: StringFilter<"PresentationSchedule"> | string
+    completedAt?: DateTimeNullableFilter<"PresentationSchedule"> | Date | string | null
+    scheduledById?: StringFilter<"PresentationSchedule"> | string
+    createdAt?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    scheduledBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }
+
+  export type PresentationScheduleOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    scheduledDate?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    presentationStatus?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    scheduledById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    scheduledBy?: UserOrderByWithRelationInput
+    project?: ProjectOrderByWithRelationInput
+  }
+
+  export type PresentationScheduleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    projectId?: string
+    AND?: PresentationScheduleWhereInput | PresentationScheduleWhereInput[]
+    OR?: PresentationScheduleWhereInput[]
+    NOT?: PresentationScheduleWhereInput | PresentationScheduleWhereInput[]
+    scheduledDate?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    startTime?: StringFilter<"PresentationSchedule"> | string
+    endTime?: StringNullableFilter<"PresentationSchedule"> | string | null
+    location?: StringNullableFilter<"PresentationSchedule"> | string | null
+    notes?: StringNullableFilter<"PresentationSchedule"> | string | null
+    presentationStatus?: StringFilter<"PresentationSchedule"> | string
+    completedAt?: DateTimeNullableFilter<"PresentationSchedule"> | Date | string | null
+    scheduledById?: StringFilter<"PresentationSchedule"> | string
+    createdAt?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    scheduledBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+  }, "id" | "projectId">
+
+  export type PresentationScheduleOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    scheduledDate?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrderInput | SortOrder
+    location?: SortOrderInput | SortOrder
+    notes?: SortOrderInput | SortOrder
+    presentationStatus?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    scheduledById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: PresentationScheduleCountOrderByAggregateInput
+    _max?: PresentationScheduleMaxOrderByAggregateInput
+    _min?: PresentationScheduleMinOrderByAggregateInput
+  }
+
+  export type PresentationScheduleScalarWhereWithAggregatesInput = {
+    AND?: PresentationScheduleScalarWhereWithAggregatesInput | PresentationScheduleScalarWhereWithAggregatesInput[]
+    OR?: PresentationScheduleScalarWhereWithAggregatesInput[]
+    NOT?: PresentationScheduleScalarWhereWithAggregatesInput | PresentationScheduleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"PresentationSchedule"> | string
+    projectId?: StringWithAggregatesFilter<"PresentationSchedule"> | string
+    scheduledDate?: DateTimeWithAggregatesFilter<"PresentationSchedule"> | Date | string
+    startTime?: StringWithAggregatesFilter<"PresentationSchedule"> | string
+    endTime?: StringNullableWithAggregatesFilter<"PresentationSchedule"> | string | null
+    location?: StringNullableWithAggregatesFilter<"PresentationSchedule"> | string | null
+    notes?: StringNullableWithAggregatesFilter<"PresentationSchedule"> | string | null
+    presentationStatus?: StringWithAggregatesFilter<"PresentationSchedule"> | string
+    completedAt?: DateTimeNullableWithAggregatesFilter<"PresentationSchedule"> | Date | string | null
+    scheduledById?: StringWithAggregatesFilter<"PresentationSchedule"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"PresentationSchedule"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"PresentationSchedule"> | Date | string
+  }
+
+  export type ProjectDiscussionWhereInput = {
+    AND?: ProjectDiscussionWhereInput | ProjectDiscussionWhereInput[]
+    OR?: ProjectDiscussionWhereInput[]
+    NOT?: ProjectDiscussionWhereInput | ProjectDiscussionWhereInput[]
+    id?: StringFilter<"ProjectDiscussion"> | string
+    projectId?: StringFilter<"ProjectDiscussion"> | string
+    authorId?: StringFilter<"ProjectDiscussion"> | string
+    parentId?: StringNullableFilter<"ProjectDiscussion"> | string | null
+    content?: StringFilter<"ProjectDiscussion"> | string
+    isEdited?: BoolFilter<"ProjectDiscussion"> | boolean
+    createdAt?: DateTimeFilter<"ProjectDiscussion"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectDiscussion"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    parent?: XOR<ProjectDiscussionNullableScalarRelationFilter, ProjectDiscussionWhereInput> | null
+    replies?: ProjectDiscussionListRelationFilter
+  }
+
+  export type ProjectDiscussionOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    content?: SortOrder
+    isEdited?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    author?: UserOrderByWithRelationInput
+    parent?: ProjectDiscussionOrderByWithRelationInput
+    replies?: ProjectDiscussionOrderByRelationAggregateInput
+  }
+
+  export type ProjectDiscussionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProjectDiscussionWhereInput | ProjectDiscussionWhereInput[]
+    OR?: ProjectDiscussionWhereInput[]
+    NOT?: ProjectDiscussionWhereInput | ProjectDiscussionWhereInput[]
+    projectId?: StringFilter<"ProjectDiscussion"> | string
+    authorId?: StringFilter<"ProjectDiscussion"> | string
+    parentId?: StringNullableFilter<"ProjectDiscussion"> | string | null
+    content?: StringFilter<"ProjectDiscussion"> | string
+    isEdited?: BoolFilter<"ProjectDiscussion"> | boolean
+    createdAt?: DateTimeFilter<"ProjectDiscussion"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectDiscussion"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+    parent?: XOR<ProjectDiscussionNullableScalarRelationFilter, ProjectDiscussionWhereInput> | null
+    replies?: ProjectDiscussionListRelationFilter
+  }, "id">
+
+  export type ProjectDiscussionOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    parentId?: SortOrderInput | SortOrder
+    content?: SortOrder
+    isEdited?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProjectDiscussionCountOrderByAggregateInput
+    _max?: ProjectDiscussionMaxOrderByAggregateInput
+    _min?: ProjectDiscussionMinOrderByAggregateInput
+  }
+
+  export type ProjectDiscussionScalarWhereWithAggregatesInput = {
+    AND?: ProjectDiscussionScalarWhereWithAggregatesInput | ProjectDiscussionScalarWhereWithAggregatesInput[]
+    OR?: ProjectDiscussionScalarWhereWithAggregatesInput[]
+    NOT?: ProjectDiscussionScalarWhereWithAggregatesInput | ProjectDiscussionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectDiscussion"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectDiscussion"> | string
+    authorId?: StringWithAggregatesFilter<"ProjectDiscussion"> | string
+    parentId?: StringNullableWithAggregatesFilter<"ProjectDiscussion"> | string | null
+    content?: StringWithAggregatesFilter<"ProjectDiscussion"> | string
+    isEdited?: BoolWithAggregatesFilter<"ProjectDiscussion"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"ProjectDiscussion"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProjectDiscussion"> | Date | string
+  }
+
   export type UserCreateInput = {
     id?: string
     username: string
@@ -25138,6 +28022,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -25171,6 +28057,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUpdateInput = {
@@ -25204,6 +28092,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -25237,6 +28127,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -25444,6 +28336,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -25472,6 +28366,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -25500,6 +28396,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -25528,6 +28426,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -26455,7 +29355,7 @@ export namespace Prisma {
 
   export type ReviewCommentCreateInput = {
     id?: string
-    section: string
+    section?: string
     filePath?: string | null
     lineStart?: number | null
     lineEnd?: number | null
@@ -26467,7 +29367,7 @@ export namespace Prisma {
   export type ReviewCommentUncheckedCreateInput = {
     id?: string
     reviewId: string
-    section: string
+    section?: string
     filePath?: string | null
     lineStart?: number | null
     lineEnd?: number | null
@@ -26500,7 +29400,7 @@ export namespace Prisma {
   export type ReviewCommentCreateManyInput = {
     id?: string
     reviewId: string
-    section: string
+    section?: string
     filePath?: string | null
     lineStart?: number | null
     lineEnd?: number | null
@@ -26881,6 +29781,187 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type PresentationScheduleCreateInput = {
+    id?: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scheduledBy: UserCreateNestedOneWithoutScheduledPresentationsInput
+    project: ProjectCreateNestedOneWithoutPresentationScheduleInput
+  }
+
+  export type PresentationScheduleUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    scheduledById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PresentationScheduleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledBy?: UserUpdateOneRequiredWithoutScheduledPresentationsNestedInput
+    project?: ProjectUpdateOneRequiredWithoutPresentationScheduleNestedInput
+  }
+
+  export type PresentationScheduleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PresentationScheduleCreateManyInput = {
+    id?: string
+    projectId: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    scheduledById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PresentationScheduleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PresentationScheduleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectDiscussionCreateInput = {
+    id?: string
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutDiscussionsInput
+    author: UserCreateNestedOneWithoutDiscussionsInput
+    parent?: ProjectDiscussionCreateNestedOneWithoutRepliesInput
+    replies?: ProjectDiscussionCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    authorId: string
+    parentId?: string | null
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: ProjectDiscussionUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutDiscussionsNestedInput
+    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
+    parent?: ProjectDiscussionUpdateOneWithoutRepliesNestedInput
+    replies?: ProjectDiscussionUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: ProjectDiscussionUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionCreateManyInput = {
+    id?: string
+    projectId: string
+    authorId: string
+    parentId?: string | null
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectDiscussionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectDiscussionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -26987,6 +30068,18 @@ export namespace Prisma {
     none?: TeamInvitationWhereInput
   }
 
+  export type PresentationScheduleListRelationFilter = {
+    every?: PresentationScheduleWhereInput
+    some?: PresentationScheduleWhereInput
+    none?: PresentationScheduleWhereInput
+  }
+
+  export type ProjectDiscussionListRelationFilter = {
+    every?: ProjectDiscussionWhereInput
+    some?: ProjectDiscussionWhereInput
+    none?: ProjectDiscussionWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -27017,6 +30110,14 @@ export namespace Prisma {
   }
 
   export type TeamInvitationOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type PresentationScheduleOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProjectDiscussionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -27295,6 +30396,11 @@ export namespace Prisma {
     every?: ProjectScreenshotWhereInput
     some?: ProjectScreenshotWhereInput
     none?: ProjectScreenshotWhereInput
+  }
+
+  export type PresentationScheduleNullableScalarRelationFilter = {
+    is?: PresentationScheduleWhereInput | null
+    isNot?: PresentationScheduleWhereInput | null
   }
 
   export type DocumentOrderByRelationAggregateInput = {
@@ -28236,6 +31342,89 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type PresentationScheduleCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    scheduledDate?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    location?: SortOrder
+    notes?: SortOrder
+    presentationStatus?: SortOrder
+    completedAt?: SortOrder
+    scheduledById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PresentationScheduleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    scheduledDate?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    location?: SortOrder
+    notes?: SortOrder
+    presentationStatus?: SortOrder
+    completedAt?: SortOrder
+    scheduledById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type PresentationScheduleMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    scheduledDate?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    location?: SortOrder
+    notes?: SortOrder
+    presentationStatus?: SortOrder
+    completedAt?: SortOrder
+    scheduledById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectDiscussionNullableScalarRelationFilter = {
+    is?: ProjectDiscussionWhereInput | null
+    isNot?: ProjectDiscussionWhereInput | null
+  }
+
+  export type ProjectDiscussionCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    parentId?: SortOrder
+    content?: SortOrder
+    isEdited?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectDiscussionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    parentId?: SortOrder
+    content?: SortOrder
+    isEdited?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectDiscussionMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    parentId?: SortOrder
+    content?: SortOrder
+    isEdited?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
   export type ProjectCreateNestedManyWithoutMahasiswaInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -28292,6 +31481,20 @@ export namespace Prisma {
     connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
   }
 
+  export type PresentationScheduleCreateNestedManyWithoutScheduledByInput = {
+    create?: XOR<PresentationScheduleCreateWithoutScheduledByInput, PresentationScheduleUncheckedCreateWithoutScheduledByInput> | PresentationScheduleCreateWithoutScheduledByInput[] | PresentationScheduleUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutScheduledByInput | PresentationScheduleCreateOrConnectWithoutScheduledByInput[]
+    createMany?: PresentationScheduleCreateManyScheduledByInputEnvelope
+    connect?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+  }
+
+  export type ProjectDiscussionCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutAuthorInput, ProjectDiscussionUncheckedCreateWithoutAuthorInput> | ProjectDiscussionCreateWithoutAuthorInput[] | ProjectDiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutAuthorInput | ProjectDiscussionCreateOrConnectWithoutAuthorInput[]
+    createMany?: ProjectDiscussionCreateManyAuthorInputEnvelope
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+  }
+
   export type ProjectUncheckedCreateNestedManyWithoutMahasiswaInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -28346,6 +31549,20 @@ export namespace Prisma {
     connectOrCreate?: TeamInvitationCreateOrConnectWithoutInviteeInput | TeamInvitationCreateOrConnectWithoutInviteeInput[]
     createMany?: TeamInvitationCreateManyInviteeInputEnvelope
     connect?: TeamInvitationWhereUniqueInput | TeamInvitationWhereUniqueInput[]
+  }
+
+  export type PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput = {
+    create?: XOR<PresentationScheduleCreateWithoutScheduledByInput, PresentationScheduleUncheckedCreateWithoutScheduledByInput> | PresentationScheduleCreateWithoutScheduledByInput[] | PresentationScheduleUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutScheduledByInput | PresentationScheduleCreateOrConnectWithoutScheduledByInput[]
+    createMany?: PresentationScheduleCreateManyScheduledByInputEnvelope
+    connect?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+  }
+
+  export type ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutAuthorInput, ProjectDiscussionUncheckedCreateWithoutAuthorInput> | ProjectDiscussionCreateWithoutAuthorInput[] | ProjectDiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutAuthorInput | ProjectDiscussionCreateOrConnectWithoutAuthorInput[]
+    createMany?: ProjectDiscussionCreateManyAuthorInputEnvelope
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -28484,6 +31701,34 @@ export namespace Prisma {
     deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
   }
 
+  export type PresentationScheduleUpdateManyWithoutScheduledByNestedInput = {
+    create?: XOR<PresentationScheduleCreateWithoutScheduledByInput, PresentationScheduleUncheckedCreateWithoutScheduledByInput> | PresentationScheduleCreateWithoutScheduledByInput[] | PresentationScheduleUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutScheduledByInput | PresentationScheduleCreateOrConnectWithoutScheduledByInput[]
+    upsert?: PresentationScheduleUpsertWithWhereUniqueWithoutScheduledByInput | PresentationScheduleUpsertWithWhereUniqueWithoutScheduledByInput[]
+    createMany?: PresentationScheduleCreateManyScheduledByInputEnvelope
+    set?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    disconnect?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    delete?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    connect?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    update?: PresentationScheduleUpdateWithWhereUniqueWithoutScheduledByInput | PresentationScheduleUpdateWithWhereUniqueWithoutScheduledByInput[]
+    updateMany?: PresentationScheduleUpdateManyWithWhereWithoutScheduledByInput | PresentationScheduleUpdateManyWithWhereWithoutScheduledByInput[]
+    deleteMany?: PresentationScheduleScalarWhereInput | PresentationScheduleScalarWhereInput[]
+  }
+
+  export type ProjectDiscussionUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutAuthorInput, ProjectDiscussionUncheckedCreateWithoutAuthorInput> | ProjectDiscussionCreateWithoutAuthorInput[] | ProjectDiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutAuthorInput | ProjectDiscussionCreateOrConnectWithoutAuthorInput[]
+    upsert?: ProjectDiscussionUpsertWithWhereUniqueWithoutAuthorInput | ProjectDiscussionUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ProjectDiscussionCreateManyAuthorInputEnvelope
+    set?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    disconnect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    delete?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    update?: ProjectDiscussionUpdateWithWhereUniqueWithoutAuthorInput | ProjectDiscussionUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ProjectDiscussionUpdateManyWithWhereWithoutAuthorInput | ProjectDiscussionUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
+  }
+
   export type ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -28596,6 +31841,34 @@ export namespace Prisma {
     deleteMany?: TeamInvitationScalarWhereInput | TeamInvitationScalarWhereInput[]
   }
 
+  export type PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput = {
+    create?: XOR<PresentationScheduleCreateWithoutScheduledByInput, PresentationScheduleUncheckedCreateWithoutScheduledByInput> | PresentationScheduleCreateWithoutScheduledByInput[] | PresentationScheduleUncheckedCreateWithoutScheduledByInput[]
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutScheduledByInput | PresentationScheduleCreateOrConnectWithoutScheduledByInput[]
+    upsert?: PresentationScheduleUpsertWithWhereUniqueWithoutScheduledByInput | PresentationScheduleUpsertWithWhereUniqueWithoutScheduledByInput[]
+    createMany?: PresentationScheduleCreateManyScheduledByInputEnvelope
+    set?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    disconnect?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    delete?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    connect?: PresentationScheduleWhereUniqueInput | PresentationScheduleWhereUniqueInput[]
+    update?: PresentationScheduleUpdateWithWhereUniqueWithoutScheduledByInput | PresentationScheduleUpdateWithWhereUniqueWithoutScheduledByInput[]
+    updateMany?: PresentationScheduleUpdateManyWithWhereWithoutScheduledByInput | PresentationScheduleUpdateManyWithWhereWithoutScheduledByInput[]
+    deleteMany?: PresentationScheduleScalarWhereInput | PresentationScheduleScalarWhereInput[]
+  }
+
+  export type ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutAuthorInput, ProjectDiscussionUncheckedCreateWithoutAuthorInput> | ProjectDiscussionCreateWithoutAuthorInput[] | ProjectDiscussionUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutAuthorInput | ProjectDiscussionCreateOrConnectWithoutAuthorInput[]
+    upsert?: ProjectDiscussionUpsertWithWhereUniqueWithoutAuthorInput | ProjectDiscussionUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ProjectDiscussionCreateManyAuthorInputEnvelope
+    set?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    disconnect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    delete?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    update?: ProjectDiscussionUpdateWithWhereUniqueWithoutAuthorInput | ProjectDiscussionUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ProjectDiscussionUpdateManyWithWhereWithoutAuthorInput | ProjectDiscussionUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutAccountsInput = {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
@@ -28679,6 +31952,19 @@ export namespace Prisma {
     connect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
   }
 
+  export type PresentationScheduleCreateNestedOneWithoutProjectInput = {
+    create?: XOR<PresentationScheduleCreateWithoutProjectInput, PresentationScheduleUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutProjectInput
+    connect?: PresentationScheduleWhereUniqueInput
+  }
+
+  export type ProjectDiscussionCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutProjectInput, ProjectDiscussionUncheckedCreateWithoutProjectInput> | ProjectDiscussionCreateWithoutProjectInput[] | ProjectDiscussionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutProjectInput | ProjectDiscussionCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectDiscussionCreateManyProjectInputEnvelope
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+  }
+
   export type DocumentUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -28732,6 +32018,19 @@ export namespace Prisma {
     connectOrCreate?: ProjectScreenshotCreateOrConnectWithoutProjectInput | ProjectScreenshotCreateOrConnectWithoutProjectInput[]
     createMany?: ProjectScreenshotCreateManyProjectInputEnvelope
     connect?: ProjectScreenshotWhereUniqueInput | ProjectScreenshotWhereUniqueInput[]
+  }
+
+  export type PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput = {
+    create?: XOR<PresentationScheduleCreateWithoutProjectInput, PresentationScheduleUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutProjectInput
+    connect?: PresentationScheduleWhereUniqueInput
+  }
+
+  export type ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutProjectInput, ProjectDiscussionUncheckedCreateWithoutProjectInput> | ProjectDiscussionCreateWithoutProjectInput[] | ProjectDiscussionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutProjectInput | ProjectDiscussionCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectDiscussionCreateManyProjectInputEnvelope
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
   }
 
   export type EnumProjectStatusFieldUpdateOperationsInput = {
@@ -28854,6 +32153,30 @@ export namespace Prisma {
     deleteMany?: ProjectScreenshotScalarWhereInput | ProjectScreenshotScalarWhereInput[]
   }
 
+  export type PresentationScheduleUpdateOneWithoutProjectNestedInput = {
+    create?: XOR<PresentationScheduleCreateWithoutProjectInput, PresentationScheduleUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutProjectInput
+    upsert?: PresentationScheduleUpsertWithoutProjectInput
+    disconnect?: PresentationScheduleWhereInput | boolean
+    delete?: PresentationScheduleWhereInput | boolean
+    connect?: PresentationScheduleWhereUniqueInput
+    update?: XOR<XOR<PresentationScheduleUpdateToOneWithWhereWithoutProjectInput, PresentationScheduleUpdateWithoutProjectInput>, PresentationScheduleUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectDiscussionUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutProjectInput, ProjectDiscussionUncheckedCreateWithoutProjectInput> | ProjectDiscussionCreateWithoutProjectInput[] | ProjectDiscussionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutProjectInput | ProjectDiscussionCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectDiscussionUpsertWithWhereUniqueWithoutProjectInput | ProjectDiscussionUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectDiscussionCreateManyProjectInputEnvelope
+    set?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    disconnect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    delete?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    update?: ProjectDiscussionUpdateWithWhereUniqueWithoutProjectInput | ProjectDiscussionUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectDiscussionUpdateManyWithWhereWithoutProjectInput | ProjectDiscussionUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
+  }
+
   export type DocumentUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -28960,6 +32283,30 @@ export namespace Prisma {
     update?: ProjectScreenshotUpdateWithWhereUniqueWithoutProjectInput | ProjectScreenshotUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: ProjectScreenshotUpdateManyWithWhereWithoutProjectInput | ProjectScreenshotUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: ProjectScreenshotScalarWhereInput | ProjectScreenshotScalarWhereInput[]
+  }
+
+  export type PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput = {
+    create?: XOR<PresentationScheduleCreateWithoutProjectInput, PresentationScheduleUncheckedCreateWithoutProjectInput>
+    connectOrCreate?: PresentationScheduleCreateOrConnectWithoutProjectInput
+    upsert?: PresentationScheduleUpsertWithoutProjectInput
+    disconnect?: PresentationScheduleWhereInput | boolean
+    delete?: PresentationScheduleWhereInput | boolean
+    connect?: PresentationScheduleWhereUniqueInput
+    update?: XOR<XOR<PresentationScheduleUpdateToOneWithWhereWithoutProjectInput, PresentationScheduleUpdateWithoutProjectInput>, PresentationScheduleUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutProjectInput, ProjectDiscussionUncheckedCreateWithoutProjectInput> | ProjectDiscussionCreateWithoutProjectInput[] | ProjectDiscussionUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutProjectInput | ProjectDiscussionCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectDiscussionUpsertWithWhereUniqueWithoutProjectInput | ProjectDiscussionUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectDiscussionCreateManyProjectInputEnvelope
+    set?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    disconnect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    delete?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    update?: ProjectDiscussionUpdateWithWhereUniqueWithoutProjectInput | ProjectDiscussionUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectDiscussionUpdateManyWithWhereWithoutProjectInput | ProjectDiscussionUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutMembersInput = {
@@ -29532,6 +32879,120 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
+  export type UserCreateNestedOneWithoutScheduledPresentationsInput = {
+    create?: XOR<UserCreateWithoutScheduledPresentationsInput, UserUncheckedCreateWithoutScheduledPresentationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutScheduledPresentationsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectCreateNestedOneWithoutPresentationScheduleInput = {
+    create?: XOR<ProjectCreateWithoutPresentationScheduleInput, ProjectUncheckedCreateWithoutPresentationScheduleInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutPresentationScheduleInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutScheduledPresentationsNestedInput = {
+    create?: XOR<UserCreateWithoutScheduledPresentationsInput, UserUncheckedCreateWithoutScheduledPresentationsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutScheduledPresentationsInput
+    upsert?: UserUpsertWithoutScheduledPresentationsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutScheduledPresentationsInput, UserUpdateWithoutScheduledPresentationsInput>, UserUncheckedUpdateWithoutScheduledPresentationsInput>
+  }
+
+  export type ProjectUpdateOneRequiredWithoutPresentationScheduleNestedInput = {
+    create?: XOR<ProjectCreateWithoutPresentationScheduleInput, ProjectUncheckedCreateWithoutPresentationScheduleInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutPresentationScheduleInput
+    upsert?: ProjectUpsertWithoutPresentationScheduleInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutPresentationScheduleInput, ProjectUpdateWithoutPresentationScheduleInput>, ProjectUncheckedUpdateWithoutPresentationScheduleInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutDiscussionsInput = {
+    create?: XOR<ProjectCreateWithoutDiscussionsInput, ProjectUncheckedCreateWithoutDiscussionsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutDiscussionsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutDiscussionsInput = {
+    create?: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDiscussionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectDiscussionCreateNestedOneWithoutRepliesInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutRepliesInput, ProjectDiscussionUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutRepliesInput
+    connect?: ProjectDiscussionWhereUniqueInput
+  }
+
+  export type ProjectDiscussionCreateNestedManyWithoutParentInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutParentInput, ProjectDiscussionUncheckedCreateWithoutParentInput> | ProjectDiscussionCreateWithoutParentInput[] | ProjectDiscussionUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutParentInput | ProjectDiscussionCreateOrConnectWithoutParentInput[]
+    createMany?: ProjectDiscussionCreateManyParentInputEnvelope
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+  }
+
+  export type ProjectDiscussionUncheckedCreateNestedManyWithoutParentInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutParentInput, ProjectDiscussionUncheckedCreateWithoutParentInput> | ProjectDiscussionCreateWithoutParentInput[] | ProjectDiscussionUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutParentInput | ProjectDiscussionCreateOrConnectWithoutParentInput[]
+    createMany?: ProjectDiscussionCreateManyParentInputEnvelope
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+  }
+
+  export type ProjectUpdateOneRequiredWithoutDiscussionsNestedInput = {
+    create?: XOR<ProjectCreateWithoutDiscussionsInput, ProjectUncheckedCreateWithoutDiscussionsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutDiscussionsInput
+    upsert?: ProjectUpsertWithoutDiscussionsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutDiscussionsInput, ProjectUpdateWithoutDiscussionsInput>, ProjectUncheckedUpdateWithoutDiscussionsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutDiscussionsNestedInput = {
+    create?: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDiscussionsInput
+    upsert?: UserUpsertWithoutDiscussionsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDiscussionsInput, UserUpdateWithoutDiscussionsInput>, UserUncheckedUpdateWithoutDiscussionsInput>
+  }
+
+  export type ProjectDiscussionUpdateOneWithoutRepliesNestedInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutRepliesInput, ProjectDiscussionUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutRepliesInput
+    upsert?: ProjectDiscussionUpsertWithoutRepliesInput
+    disconnect?: ProjectDiscussionWhereInput | boolean
+    delete?: ProjectDiscussionWhereInput | boolean
+    connect?: ProjectDiscussionWhereUniqueInput
+    update?: XOR<XOR<ProjectDiscussionUpdateToOneWithWhereWithoutRepliesInput, ProjectDiscussionUpdateWithoutRepliesInput>, ProjectDiscussionUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type ProjectDiscussionUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutParentInput, ProjectDiscussionUncheckedCreateWithoutParentInput> | ProjectDiscussionCreateWithoutParentInput[] | ProjectDiscussionUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutParentInput | ProjectDiscussionCreateOrConnectWithoutParentInput[]
+    upsert?: ProjectDiscussionUpsertWithWhereUniqueWithoutParentInput | ProjectDiscussionUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ProjectDiscussionCreateManyParentInputEnvelope
+    set?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    disconnect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    delete?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    update?: ProjectDiscussionUpdateWithWhereUniqueWithoutParentInput | ProjectDiscussionUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ProjectDiscussionUpdateManyWithWhereWithoutParentInput | ProjectDiscussionUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
+  }
+
+  export type ProjectDiscussionUncheckedUpdateManyWithoutParentNestedInput = {
+    create?: XOR<ProjectDiscussionCreateWithoutParentInput, ProjectDiscussionUncheckedCreateWithoutParentInput> | ProjectDiscussionCreateWithoutParentInput[] | ProjectDiscussionUncheckedCreateWithoutParentInput[]
+    connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutParentInput | ProjectDiscussionCreateOrConnectWithoutParentInput[]
+    upsert?: ProjectDiscussionUpsertWithWhereUniqueWithoutParentInput | ProjectDiscussionUpsertWithWhereUniqueWithoutParentInput[]
+    createMany?: ProjectDiscussionCreateManyParentInputEnvelope
+    set?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    disconnect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    delete?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+    update?: ProjectDiscussionUpdateWithWhereUniqueWithoutParentInput | ProjectDiscussionUpdateWithWhereUniqueWithoutParentInput[]
+    updateMany?: ProjectDiscussionUpdateManyWithWhereWithoutParentInput | ProjectDiscussionUpdateManyWithWhereWithoutParentInput[]
+    deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -29875,6 +33336,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMahasiswaInput = {
@@ -29902,6 +33365,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMahasiswaInput = {
@@ -30144,6 +33609,76 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PresentationScheduleCreateWithoutScheduledByInput = {
+    id?: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutPresentationScheduleInput
+  }
+
+  export type PresentationScheduleUncheckedCreateWithoutScheduledByInput = {
+    id?: string
+    projectId: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PresentationScheduleCreateOrConnectWithoutScheduledByInput = {
+    where: PresentationScheduleWhereUniqueInput
+    create: XOR<PresentationScheduleCreateWithoutScheduledByInput, PresentationScheduleUncheckedCreateWithoutScheduledByInput>
+  }
+
+  export type PresentationScheduleCreateManyScheduledByInputEnvelope = {
+    data: PresentationScheduleCreateManyScheduledByInput | PresentationScheduleCreateManyScheduledByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectDiscussionCreateWithoutAuthorInput = {
+    id?: string
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutDiscussionsInput
+    parent?: ProjectDiscussionCreateNestedOneWithoutRepliesInput
+    replies?: ProjectDiscussionCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionUncheckedCreateWithoutAuthorInput = {
+    id?: string
+    projectId: string
+    parentId?: string | null
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: ProjectDiscussionUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionCreateOrConnectWithoutAuthorInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    create: XOR<ProjectDiscussionCreateWithoutAuthorInput, ProjectDiscussionUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type ProjectDiscussionCreateManyAuthorInputEnvelope = {
+    data: ProjectDiscussionCreateManyAuthorInput | ProjectDiscussionCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProjectUpsertWithWhereUniqueWithoutMahasiswaInput = {
     where: ProjectWhereUniqueInput
     update: XOR<ProjectUpdateWithoutMahasiswaInput, ProjectUncheckedUpdateWithoutMahasiswaInput>
@@ -30383,6 +33918,70 @@ export namespace Prisma {
     data: XOR<TeamInvitationUpdateManyMutationInput, TeamInvitationUncheckedUpdateManyWithoutInviteeInput>
   }
 
+  export type PresentationScheduleUpsertWithWhereUniqueWithoutScheduledByInput = {
+    where: PresentationScheduleWhereUniqueInput
+    update: XOR<PresentationScheduleUpdateWithoutScheduledByInput, PresentationScheduleUncheckedUpdateWithoutScheduledByInput>
+    create: XOR<PresentationScheduleCreateWithoutScheduledByInput, PresentationScheduleUncheckedCreateWithoutScheduledByInput>
+  }
+
+  export type PresentationScheduleUpdateWithWhereUniqueWithoutScheduledByInput = {
+    where: PresentationScheduleWhereUniqueInput
+    data: XOR<PresentationScheduleUpdateWithoutScheduledByInput, PresentationScheduleUncheckedUpdateWithoutScheduledByInput>
+  }
+
+  export type PresentationScheduleUpdateManyWithWhereWithoutScheduledByInput = {
+    where: PresentationScheduleScalarWhereInput
+    data: XOR<PresentationScheduleUpdateManyMutationInput, PresentationScheduleUncheckedUpdateManyWithoutScheduledByInput>
+  }
+
+  export type PresentationScheduleScalarWhereInput = {
+    AND?: PresentationScheduleScalarWhereInput | PresentationScheduleScalarWhereInput[]
+    OR?: PresentationScheduleScalarWhereInput[]
+    NOT?: PresentationScheduleScalarWhereInput | PresentationScheduleScalarWhereInput[]
+    id?: StringFilter<"PresentationSchedule"> | string
+    projectId?: StringFilter<"PresentationSchedule"> | string
+    scheduledDate?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    startTime?: StringFilter<"PresentationSchedule"> | string
+    endTime?: StringNullableFilter<"PresentationSchedule"> | string | null
+    location?: StringNullableFilter<"PresentationSchedule"> | string | null
+    notes?: StringNullableFilter<"PresentationSchedule"> | string | null
+    presentationStatus?: StringFilter<"PresentationSchedule"> | string
+    completedAt?: DateTimeNullableFilter<"PresentationSchedule"> | Date | string | null
+    scheduledById?: StringFilter<"PresentationSchedule"> | string
+    createdAt?: DateTimeFilter<"PresentationSchedule"> | Date | string
+    updatedAt?: DateTimeFilter<"PresentationSchedule"> | Date | string
+  }
+
+  export type ProjectDiscussionUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    update: XOR<ProjectDiscussionUpdateWithoutAuthorInput, ProjectDiscussionUncheckedUpdateWithoutAuthorInput>
+    create: XOR<ProjectDiscussionCreateWithoutAuthorInput, ProjectDiscussionUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type ProjectDiscussionUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    data: XOR<ProjectDiscussionUpdateWithoutAuthorInput, ProjectDiscussionUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type ProjectDiscussionUpdateManyWithWhereWithoutAuthorInput = {
+    where: ProjectDiscussionScalarWhereInput
+    data: XOR<ProjectDiscussionUpdateManyMutationInput, ProjectDiscussionUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type ProjectDiscussionScalarWhereInput = {
+    AND?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
+    OR?: ProjectDiscussionScalarWhereInput[]
+    NOT?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
+    id?: StringFilter<"ProjectDiscussion"> | string
+    projectId?: StringFilter<"ProjectDiscussion"> | string
+    authorId?: StringFilter<"ProjectDiscussion"> | string
+    parentId?: StringNullableFilter<"ProjectDiscussion"> | string | null
+    content?: StringFilter<"ProjectDiscussion"> | string
+    isEdited?: BoolFilter<"ProjectDiscussion"> | boolean
+    createdAt?: DateTimeFilter<"ProjectDiscussion"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectDiscussion"> | Date | string
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     username: string
@@ -30413,6 +34012,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -30445,6 +34046,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -30493,6 +34096,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -30525,6 +34130,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -30557,6 +34164,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -30589,6 +34198,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -30905,6 +34516,71 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type PresentationScheduleCreateWithoutProjectInput = {
+    id?: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    scheduledBy: UserCreateNestedOneWithoutScheduledPresentationsInput
+  }
+
+  export type PresentationScheduleUncheckedCreateWithoutProjectInput = {
+    id?: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    scheduledById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type PresentationScheduleCreateOrConnectWithoutProjectInput = {
+    where: PresentationScheduleWhereUniqueInput
+    create: XOR<PresentationScheduleCreateWithoutProjectInput, PresentationScheduleUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectDiscussionCreateWithoutProjectInput = {
+    id?: string
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutDiscussionsInput
+    parent?: ProjectDiscussionCreateNestedOneWithoutRepliesInput
+    replies?: ProjectDiscussionCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionUncheckedCreateWithoutProjectInput = {
+    id?: string
+    authorId: string
+    parentId?: string | null
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: ProjectDiscussionUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionCreateOrConnectWithoutProjectInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    create: XOR<ProjectDiscussionCreateWithoutProjectInput, ProjectDiscussionUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectDiscussionCreateManyProjectInputEnvelope = {
+    data: ProjectDiscussionCreateManyProjectInput | ProjectDiscussionCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -30946,6 +34622,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -30978,6 +34656,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutProjectInput = {
@@ -31220,6 +34900,61 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ProjectScreenshot"> | Date | string
   }
 
+  export type PresentationScheduleUpsertWithoutProjectInput = {
+    update: XOR<PresentationScheduleUpdateWithoutProjectInput, PresentationScheduleUncheckedUpdateWithoutProjectInput>
+    create: XOR<PresentationScheduleCreateWithoutProjectInput, PresentationScheduleUncheckedCreateWithoutProjectInput>
+    where?: PresentationScheduleWhereInput
+  }
+
+  export type PresentationScheduleUpdateToOneWithWhereWithoutProjectInput = {
+    where?: PresentationScheduleWhereInput
+    data: XOR<PresentationScheduleUpdateWithoutProjectInput, PresentationScheduleUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type PresentationScheduleUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    scheduledBy?: UserUpdateOneRequiredWithoutScheduledPresentationsNestedInput
+  }
+
+  export type PresentationScheduleUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    scheduledById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectDiscussionUpsertWithWhereUniqueWithoutProjectInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    update: XOR<ProjectDiscussionUpdateWithoutProjectInput, ProjectDiscussionUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectDiscussionCreateWithoutProjectInput, ProjectDiscussionUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectDiscussionUpdateWithWhereUniqueWithoutProjectInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    data: XOR<ProjectDiscussionUpdateWithoutProjectInput, ProjectDiscussionUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectDiscussionUpdateManyWithWhereWithoutProjectInput = {
+    where: ProjectDiscussionScalarWhereInput
+    data: XOR<ProjectDiscussionUpdateManyMutationInput, ProjectDiscussionUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutMembersInput = {
     id?: string
     title: string
@@ -31245,6 +34980,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -31272,6 +35009,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -31309,6 +35048,8 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutTeamMembershipsInput = {
@@ -31341,6 +35082,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutTeamMembershipsInput = {
@@ -31412,6 +35155,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -31439,6 +35184,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTeamMembershipsInput = {
@@ -31482,6 +35229,8 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTeamMembershipsInput = {
@@ -31514,6 +35263,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type MemberReviewScoreUpsertWithWhereUniqueWithoutMemberInput = {
@@ -31570,6 +35321,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutInvitationsInput = {
@@ -31597,6 +35350,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutInvitationsInput = {
@@ -31634,6 +35389,8 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutInvitationsSentInput = {
@@ -31666,6 +35423,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutInvitationsSentInput = {
@@ -31703,6 +35462,8 @@ export namespace Prisma {
     accounts?: AccountCreateNestedManyWithoutUserInput
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutInvitationsReceivedInput = {
@@ -31735,6 +35496,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutInvitationsReceivedInput = {
@@ -31778,6 +35541,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutInvitationsInput = {
@@ -31805,6 +35570,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -31848,6 +35615,8 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInvitationsSentInput = {
@@ -31880,6 +35649,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUpsertWithoutInvitationsReceivedInput = {
@@ -31923,6 +35694,8 @@ export namespace Prisma {
     accounts?: AccountUpdateManyWithoutUserNestedInput
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInvitationsReceivedInput = {
@@ -31955,6 +35728,8 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type ProjectCreateWithoutRequirementsInput = {
@@ -31982,6 +35757,8 @@ export namespace Prisma {
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutRequirementsInput = {
@@ -32009,6 +35786,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutRequirementsInput = {
@@ -32052,6 +35831,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutRequirementsInput = {
@@ -32079,6 +35860,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutStakeholderDocumentsInput = {
@@ -32106,6 +35889,8 @@ export namespace Prisma {
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutStakeholderDocumentsInput = {
@@ -32133,6 +35918,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutStakeholderDocumentsInput = {
@@ -32176,6 +35963,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutStakeholderDocumentsInput = {
@@ -32203,6 +35992,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutScreenshotsInput = {
@@ -32230,6 +36021,8 @@ export namespace Prisma {
     invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutScreenshotsInput = {
@@ -32257,6 +36050,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutScreenshotsInput = {
@@ -32300,6 +36095,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutScreenshotsInput = {
@@ -32327,6 +36124,8 @@ export namespace Prisma {
     invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutDocumentsInput = {
@@ -32354,6 +36153,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDocumentsInput = {
@@ -32381,6 +36182,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDocumentsInput = {
@@ -32424,6 +36227,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDocumentsInput = {
@@ -32451,6 +36256,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutReviewsInput = {
@@ -32478,6 +36285,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutReviewsInput = {
@@ -32505,6 +36314,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutReviewsInput = {
@@ -32542,6 +36353,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
@@ -32574,6 +36387,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -32609,7 +36424,7 @@ export namespace Prisma {
 
   export type ReviewCommentCreateWithoutReviewInput = {
     id?: string
-    section: string
+    section?: string
     filePath?: string | null
     lineStart?: number | null
     lineEnd?: number | null
@@ -32619,7 +36434,7 @@ export namespace Prisma {
 
   export type ReviewCommentUncheckedCreateWithoutReviewInput = {
     id?: string
-    section: string
+    section?: string
     filePath?: string | null
     lineStart?: number | null
     lineEnd?: number | null
@@ -32701,6 +36516,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutReviewsInput = {
@@ -32728,6 +36545,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutReviewsInput = {
@@ -32771,6 +36590,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -32803,6 +36624,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type ReviewScoreUpsertWithWhereUniqueWithoutReviewInput = {
@@ -33398,6 +37221,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutAssignmentsInput = {
@@ -33425,6 +37250,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutAssignmentsInput = {
@@ -33462,6 +37289,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProjectsInput = {
@@ -33494,6 +37323,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProjectsInput = {
@@ -33537,6 +37368,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutAssignmentsInput = {
@@ -33564,6 +37397,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutAssignedProjectsInput = {
@@ -33607,6 +37442,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProjectsInput = {
@@ -33639,6 +37476,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -33671,6 +37510,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -33703,6 +37544,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -33751,6 +37594,8 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -33783,6 +37628,684 @@ export namespace Prisma {
     teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserCreateWithoutScheduledPresentationsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutScheduledPresentationsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutScheduledPresentationsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutScheduledPresentationsInput, UserUncheckedCreateWithoutScheduledPresentationsInput>
+  }
+
+  export type ProjectCreateWithoutPresentationScheduleInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutPresentationScheduleInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutPresentationScheduleInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutPresentationScheduleInput, ProjectUncheckedCreateWithoutPresentationScheduleInput>
+  }
+
+  export type UserUpsertWithoutScheduledPresentationsInput = {
+    update: XOR<UserUpdateWithoutScheduledPresentationsInput, UserUncheckedUpdateWithoutScheduledPresentationsInput>
+    create: XOR<UserCreateWithoutScheduledPresentationsInput, UserUncheckedCreateWithoutScheduledPresentationsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutScheduledPresentationsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutScheduledPresentationsInput, UserUncheckedUpdateWithoutScheduledPresentationsInput>
+  }
+
+  export type UserUpdateWithoutScheduledPresentationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutScheduledPresentationsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type ProjectUpsertWithoutPresentationScheduleInput = {
+    update: XOR<ProjectUpdateWithoutPresentationScheduleInput, ProjectUncheckedUpdateWithoutPresentationScheduleInput>
+    create: XOR<ProjectCreateWithoutPresentationScheduleInput, ProjectUncheckedCreateWithoutPresentationScheduleInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutPresentationScheduleInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutPresentationScheduleInput, ProjectUncheckedUpdateWithoutPresentationScheduleInput>
+  }
+
+  export type ProjectUpdateWithoutPresentationScheduleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutPresentationScheduleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectCreateWithoutDiscussionsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutDiscussionsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutDiscussionsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutDiscussionsInput, ProjectUncheckedCreateWithoutDiscussionsInput>
+  }
+
+  export type UserCreateWithoutDiscussionsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+  }
+
+  export type UserUncheckedCreateWithoutDiscussionsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+  }
+
+  export type UserCreateOrConnectWithoutDiscussionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+  }
+
+  export type ProjectDiscussionCreateWithoutRepliesInput = {
+    id?: string
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutDiscussionsInput
+    author: UserCreateNestedOneWithoutDiscussionsInput
+    parent?: ProjectDiscussionCreateNestedOneWithoutRepliesInput
+  }
+
+  export type ProjectDiscussionUncheckedCreateWithoutRepliesInput = {
+    id?: string
+    projectId: string
+    authorId: string
+    parentId?: string | null
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectDiscussionCreateOrConnectWithoutRepliesInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    create: XOR<ProjectDiscussionCreateWithoutRepliesInput, ProjectDiscussionUncheckedCreateWithoutRepliesInput>
+  }
+
+  export type ProjectDiscussionCreateWithoutParentInput = {
+    id?: string
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutDiscussionsInput
+    author: UserCreateNestedOneWithoutDiscussionsInput
+    replies?: ProjectDiscussionCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionUncheckedCreateWithoutParentInput = {
+    id?: string
+    projectId: string
+    authorId: string
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    replies?: ProjectDiscussionUncheckedCreateNestedManyWithoutParentInput
+  }
+
+  export type ProjectDiscussionCreateOrConnectWithoutParentInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    create: XOR<ProjectDiscussionCreateWithoutParentInput, ProjectDiscussionUncheckedCreateWithoutParentInput>
+  }
+
+  export type ProjectDiscussionCreateManyParentInputEnvelope = {
+    data: ProjectDiscussionCreateManyParentInput | ProjectDiscussionCreateManyParentInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectUpsertWithoutDiscussionsInput = {
+    update: XOR<ProjectUpdateWithoutDiscussionsInput, ProjectUncheckedUpdateWithoutDiscussionsInput>
+    create: XOR<ProjectCreateWithoutDiscussionsInput, ProjectUncheckedCreateWithoutDiscussionsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutDiscussionsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutDiscussionsInput, ProjectUncheckedUpdateWithoutDiscussionsInput>
+  }
+
+  export type ProjectUpdateWithoutDiscussionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutDiscussionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutDiscussionsInput = {
+    update: XOR<UserUpdateWithoutDiscussionsInput, UserUncheckedUpdateWithoutDiscussionsInput>
+    create: XOR<UserCreateWithoutDiscussionsInput, UserUncheckedCreateWithoutDiscussionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDiscussionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDiscussionsInput, UserUncheckedUpdateWithoutDiscussionsInput>
+  }
+
+  export type UserUpdateWithoutDiscussionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDiscussionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+  }
+
+  export type ProjectDiscussionUpsertWithoutRepliesInput = {
+    update: XOR<ProjectDiscussionUpdateWithoutRepliesInput, ProjectDiscussionUncheckedUpdateWithoutRepliesInput>
+    create: XOR<ProjectDiscussionCreateWithoutRepliesInput, ProjectDiscussionUncheckedCreateWithoutRepliesInput>
+    where?: ProjectDiscussionWhereInput
+  }
+
+  export type ProjectDiscussionUpdateToOneWithWhereWithoutRepliesInput = {
+    where?: ProjectDiscussionWhereInput
+    data: XOR<ProjectDiscussionUpdateWithoutRepliesInput, ProjectDiscussionUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type ProjectDiscussionUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutDiscussionsNestedInput
+    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
+    parent?: ProjectDiscussionUpdateOneWithoutRepliesNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectDiscussionUpsertWithWhereUniqueWithoutParentInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    update: XOR<ProjectDiscussionUpdateWithoutParentInput, ProjectDiscussionUncheckedUpdateWithoutParentInput>
+    create: XOR<ProjectDiscussionCreateWithoutParentInput, ProjectDiscussionUncheckedCreateWithoutParentInput>
+  }
+
+  export type ProjectDiscussionUpdateWithWhereUniqueWithoutParentInput = {
+    where: ProjectDiscussionWhereUniqueInput
+    data: XOR<ProjectDiscussionUpdateWithoutParentInput, ProjectDiscussionUncheckedUpdateWithoutParentInput>
+  }
+
+  export type ProjectDiscussionUpdateManyWithWhereWithoutParentInput = {
+    where: ProjectDiscussionScalarWhereInput
+    data: XOR<ProjectDiscussionUpdateManyMutationInput, ProjectDiscussionUncheckedUpdateManyWithoutParentInput>
   }
 
   export type ProjectCreateManyMahasiswaInput = {
@@ -33880,6 +38403,30 @@ export namespace Prisma {
     respondedAt?: Date | string | null
   }
 
+  export type PresentationScheduleCreateManyScheduledByInput = {
+    id?: string
+    projectId: string
+    scheduledDate: Date | string
+    startTime: string
+    endTime?: string | null
+    location?: string | null
+    notes?: string | null
+    presentationStatus?: string
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectDiscussionCreateManyAuthorInput = {
+    id?: string
+    projectId: string
+    parentId?: string | null
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ProjectUpdateWithoutMahasiswaInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -33905,6 +38452,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMahasiswaInput = {
@@ -33932,6 +38481,8 @@ export namespace Prisma {
     requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutMahasiswaInput = {
@@ -34189,6 +38740,80 @@ export namespace Prisma {
     respondedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
+  export type PresentationScheduleUpdateWithoutScheduledByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutPresentationScheduleNestedInput
+  }
+
+  export type PresentationScheduleUncheckedUpdateWithoutScheduledByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type PresentationScheduleUncheckedUpdateManyWithoutScheduledByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    scheduledDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    startTime?: StringFieldUpdateOperationsInput | string
+    endTime?: NullableStringFieldUpdateOperationsInput | string | null
+    location?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    presentationStatus?: StringFieldUpdateOperationsInput | string
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectDiscussionUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutDiscussionsNestedInput
+    parent?: ProjectDiscussionUpdateOneWithoutRepliesNestedInput
+    replies?: ProjectDiscussionUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: ProjectDiscussionUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateManyWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type DocumentCreateManyProjectInput = {
     id?: string
     type: $Enums.DocumentType
@@ -34266,6 +38891,16 @@ export namespace Prisma {
     mimeType: string
     orderIndex?: number
     isFeatured?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectDiscussionCreateManyProjectInput = {
+    id?: string
+    authorId: string
+    parentId?: string | null
+    content: string
+    isEdited?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -34521,6 +39156,38 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ProjectDiscussionUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
+    parent?: ProjectDiscussionUpdateOneWithoutRepliesNestedInput
+    replies?: ProjectDiscussionUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: ProjectDiscussionUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type MemberReviewScoreCreateManyMemberInput = {
     id?: string
     reviewId: string
@@ -34567,7 +39234,7 @@ export namespace Prisma {
 
   export type ReviewCommentCreateManyReviewInput = {
     id?: string
-    section: string
+    section?: string
     filePath?: string | null
     lineStart?: number | null
     lineEnd?: number | null
@@ -34731,6 +39398,48 @@ export namespace Prisma {
     score?: FloatFieldUpdateOperationsInput | number
     maxScore?: FloatFieldUpdateOperationsInput | number
     feedback?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type ProjectDiscussionCreateManyParentInput = {
+    id?: string
+    projectId: string
+    authorId: string
+    content: string
+    isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectDiscussionUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutDiscussionsNestedInput
+    author?: UserUpdateOneRequiredWithoutDiscussionsNestedInput
+    replies?: ProjectDiscussionUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replies?: ProjectDiscussionUncheckedUpdateManyWithoutParentNestedInput
+  }
+
+  export type ProjectDiscussionUncheckedUpdateManyWithoutParentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

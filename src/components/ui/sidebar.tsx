@@ -27,6 +27,7 @@ import {
   Mail,
   Bot,
   BarChart3,
+  CalendarCheck,
 } from 'lucide-react';
 import { cn, getSimakPhotoUrl } from '@/lib/utils';
 
@@ -102,6 +103,11 @@ const adminMenuItems: SidebarItem[] = [
     title: 'Semua Project',
     href: '/admin/projects',
     icon: <FolderGit2 size={20} />,
+  },
+  {
+    title: 'Jadwal Presentasi',
+    href: '/admin/presentations',
+    icon: <CalendarCheck size={20} />,
   },
   {
     title: 'Manajemen User',

@@ -118,6 +118,29 @@ interface ProjectMember {
   } | null;
 }
 
+interface ProjectRequirementsData {
+  id?: string;
+  projectId?: string;
+  judulProyek?: string | null;
+  targetPengguna?: string | null;
+  latarBelakangMasalah?: string | null;
+  tujuanProyek?: string | null;
+  manfaatProyek?: string | null;
+  integrasiMatakuliah?: string | null;
+  metodologi?: string | null;
+  penulisanLaporan?: string | null;
+  ruangLingkup?: string | null;
+  sumberDayaBatasan?: string | null;
+  teknologi?: string | null;
+  fiturUtama?: string | null;
+  productionUrl?: string | null;
+  productionUrlStatus?: string | null;
+  testingUsername?: string | null;
+  testingPassword?: string | null;
+  testingNotes?: string | null;
+  completionPercent?: number;
+}
+
 interface ProjectData {
   id: string;
   title: string;
@@ -127,16 +150,9 @@ interface ProjectData {
   semester: string;
   tahunAkademik: string;
   status: string;
-  category?: string;
-  objectives?: string;
-  methodology?: string;
-  expectedOutcome?: string;
-  technologies?: string[];
-  isPublic?: boolean;
   productionUrl?: string;
-  testingUsername?: string;
-  testingPassword?: string;
-  testingNotes?: string;
+  isPublic?: boolean;
+  requirements?: ProjectRequirementsData | null;
   members?: ProjectMember[];
   documents?: Array<{
     id: string;
@@ -293,11 +309,11 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         }
         const project: ProjectData = await response.json();
 
-        // Check if project can be edited (only DRAFT)
-        if (project.status !== 'DRAFT') {
+        // Check if project can be edited (DRAFT or REVISION_NEEDED)
+        if (project.status !== 'DRAFT' && project.status !== 'REVISION_NEEDED') {
           addToast({
             title: 'Tidak dapat mengedit',
-            description: 'Hanya project dengan status DRAFT yang dapat diedit',
+            description: 'Hanya project dengan status DRAFT atau REVISION_NEEDED yang dapat diedit',
             color: 'warning',
           });
           router.push(`/mahasiswa/projects/${id}`);
@@ -305,6 +321,7 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
         }
 
         setOriginalProject(project);
+        const req = project.requirements;
         setFormData({
           title: project.title || '',
           description: project.description || '',
@@ -312,22 +329,23 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
           githubRepoName: project.githubRepoName || '',
           semester: project.semester || '',
           tahunAkademik: project.tahunAkademik || '',
-          category: project.category || '',
-          objectives: project.objectives || '',
-          methodology: project.methodology || '',
-          expectedOutcome: project.expectedOutcome || '',
-          productionUrl: project.productionUrl || '',
+          category: req?.ruangLingkup || '',
+          objectives: req?.tujuanProyek || '',
+          methodology: req?.metodologi || '',
+          expectedOutcome: req?.manfaatProyek || '',
+          productionUrl: project.productionUrl || req?.productionUrl || '',
         });
 
         // Set testing credentials
         setTestingCredentials({
-          username: project.testingUsername || '',
-          password: project.testingPassword || '',
-          notes: project.testingNotes || '',
+          username: req?.testingUsername || '',
+          password: req?.testingPassword || '',
+          notes: req?.testingNotes || '',
         });
 
-        if (project.technologies) {
-          setSelectedTechs(project.technologies);
+        if (req?.teknologi) {
+          // teknologi is stored as comma-separated string in DB
+          setSelectedTechs(req.teknologi.split(', ').filter(Boolean));
         }
         if (project.isPublic !== undefined) {
           setIsPublic(project.isPublic);
@@ -406,15 +424,13 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     return { fields, filledCount, total: fields.length, percentage };
   }, [formData, selectedTechs, selectedRepo, consentDocument]);
 
-  // Form validation
+  // Form validation - only require essential fields for saving
+  // productionUrl and consentDocument are tracked in completeness but not required for save
   const isFormValid = useMemo(() => {
     return formData.title.length >= 5 &&
       formData.description.length >= 20 &&
-      formData.semester &&
-      formData.category &&
-      formData.productionUrl.length > 0 &&
-      !!consentDocument;
-  }, [formData, consentDocument]);
+      formData.semester.length > 0;
+  }, [formData]);
 
   useEffect(() => {
     const fetchSemesters = async () => {
@@ -546,7 +562,13 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
       router.push(`/mahasiswa/projects/${id}`);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Terjadi kesalahan');
+      const errorMessage = err instanceof Error ? err.message : 'Terjadi kesalahan';
+      setError(errorMessage);
+      addToast({
+        title: 'Gagal Menyimpan',
+        description: errorMessage,
+        color: 'danger',
+      });
     } finally {
       setIsLoading(false);
     }

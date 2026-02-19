@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
 import {
   Card,
@@ -17,6 +18,7 @@ import {
   Tab,
   Spinner,
   Progress,
+  addToast,
 } from '@heroui/react';
 import {
   ArrowLeft,
@@ -51,6 +53,8 @@ import {
   KeyRound,
   Copy,
   XCircle,
+  ThumbsUp,
+  RotateCcw,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -112,6 +116,7 @@ interface Project {
     comments: Array<{
       id: string;
       content: string;
+      section: string;
       filePath: string | null;
       lineStart: number | null;
       lineEnd: number | null;
@@ -142,6 +147,21 @@ interface Project {
     }>;
   }>;
   requirements?: {
+    integrasiMatakuliah?: string | null;
+    metodologi?: string | null;
+    ruangLingkup?: string | null;
+    sumberDayaBatasan?: string | null;
+    fiturUtama?: string | null;
+    analisisTemuan?: string | null;
+    presentasiUjian?: string | null;
+    stakeholder?: string | null;
+    kepatuhanEtika?: string | null;
+    tujuanProyek?: string | null;
+    manfaatProyek?: string | null;
+    latarBelakangMasalah?: string | null;
+    targetPengguna?: string | null;
+    teknologi?: string | null;
+    penulisanLaporan?: string | null;
     productionUrl?: string | null;
     testingUsername?: string | null;
     testingPassword?: string | null;
@@ -238,6 +258,8 @@ const getScoreColor = (score: number, max: number) => {
   return 'danger';
 };
 
+
+
 export default function ReviewPage({
   params,
 }: {
@@ -245,6 +267,7 @@ export default function ReviewPage({
 }) {
   const { id: projectId } = use(params);
   const router = useRouter();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [project, setProject] = useState<Project | null>(null);
@@ -259,11 +282,16 @@ export default function ReviewPage({
   >({});
   const [newComment, setNewComment] = useState('');
   const [comments, setComments] = useState<
-    Array<{ content: string; filePath?: string; lineStart?: number; lineEnd?: number }>
+    Array<{ content: string; section?: string; filePath?: string; lineStart?: number; lineEnd?: number }>
   >([]);
   const [stakeholderDocs, setStakeholderDocs] = useState<StakeholderDocument[]>([]);
   const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [isApproving, setIsApproving] = useState(false);
+
+  // Sub-tab state for grouped tabs
+  const [penilaianSubTab, setPenilaianSubTab] = useState<'kelompok' | 'individu'>('kelompok');
+  const [referensiSubTab, setReferensiSubTab] = useState<'dokumen' | 'screenshot'>('dokumen');
 
   // Copy to clipboard function
   const copyToClipboard = async (text: string, field: string) => {
@@ -338,8 +366,12 @@ export default function ReviewPage({
           }
         }
 
-        // Check if review exists
-        const myReview = projectData.reviews?.[0];
+        // Check if review exists for current reviewer
+        const myReview = session?.user?.id
+          ? projectData.reviews?.find(
+              (r: { reviewer: { id: string } }) => r.reviewer.id === session.user.id
+            )
+          : projectData.reviews?.[0];
         if (myReview) {
           setReviewId(myReview.id);
           setOverallComment(myReview.overallComment || '');
@@ -371,11 +403,13 @@ export default function ReviewPage({
               myReview.comments.map(
                 (c: {
                   content: string;
+                  section: string;
                   filePath: string | null;
                   lineStart: number | null;
                   lineEnd: number | null;
                 }) => ({
                   content: c.content,
+                  section: c.section || 'general',
                   filePath: c.filePath || undefined,
                   lineStart: c.lineStart || undefined,
                   lineEnd: c.lineEnd || undefined,
@@ -430,7 +464,7 @@ export default function ReviewPage({
     };
 
     fetchData();
-  }, [projectId]);
+  }, [projectId, session?.user?.id]);
 
   const calculateTotalScore = () => {
     let total = 0;
@@ -475,6 +509,7 @@ export default function ReviewPage({
         })),
         comments: comments.map((c) => ({
           content: c.content,
+          section: c.section || 'general',
           filePath: c.filePath,
           lineStart: c.lineStart,
           lineEnd: c.lineEnd,
@@ -501,11 +536,28 @@ export default function ReviewPage({
       setReviewId(data.review?.id || reviewId);
 
       if (submit) {
+        addToast({
+          title: 'Review Disubmit',
+          description: 'Review berhasil disubmit.',
+          color: 'success',
+        });
         router.push('/dosen/projects');
         router.refresh();
+      } else {
+        addToast({
+          title: 'Draft Tersimpan',
+          description: 'Review berhasil disimpan sebagai draft.',
+          color: 'success',
+        });
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error saving review');
+      const errorMsg = err instanceof Error ? err.message : 'Error saving review';
+      setError(errorMsg);
+      addToast({
+        title: 'Gagal Menyimpan',
+        description: errorMsg,
+        color: 'danger',
+      });
     } finally {
       setIsSaving(false);
     }
@@ -513,8 +565,106 @@ export default function ReviewPage({
 
   const addComment = () => {
     if (newComment.trim()) {
-      setComments([...comments, { content: newComment.trim() }]);
+      setComments([...comments, { content: newComment.trim(), section: 'general' }]);
       setNewComment('');
+    }
+  };
+
+  // Handle approve project for presentation (ACC)
+  const handleApproveForPresentation = async () => {
+    if (!project) return;
+    
+    // Check if review has been submitted (either existing COMPLETED review or current review is being saved)
+    const existingCompletedReview = project.reviews.find(
+      (r) => r.status === 'COMPLETED'
+    );
+    
+    if (!existingCompletedReview) {
+      addToast({
+        title: 'Review Belum Selesai',
+        description: 'Harap submit review terlebih dahulu sebelum menyetujui project untuk presentasi.',
+        color: 'warning',
+      });
+      return;
+    }
+
+    setIsApproving(true);
+    setError('');
+
+    try {
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'READY_FOR_PRESENTATION' }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Gagal menyetujui project untuk presentasi');
+      }
+
+      // Update local state
+      setProject((prev) => prev ? { ...prev, status: 'READY_FOR_PRESENTATION' } : null);
+      
+      addToast({
+        title: 'Project Disetujui',
+        description: 'Project telah disetujui untuk presentasi. Admin akan menjadwalkan presentasi.',
+        color: 'success',
+      });
+      
+      // Show success and redirect
+      router.push('/dosen/projects');
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Gagal menyetujui project');
+      addToast({
+        title: 'Gagal',
+        description: err instanceof Error ? err.message : 'Gagal menyetujui project',
+        color: 'danger',
+      });
+    } finally {
+      setIsApproving(false);
+    }
+  };
+
+  // Handle request revision
+  const handleRequestRevision = async () => {
+    if (!project) return;
+
+    setIsApproving(true);
+    setError('');
+
+    try {
+      const response = await fetch(`/api/projects/${projectId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'REVISION_NEEDED' }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Gagal mengubah status');
+      }
+
+      setProject((prev) => prev ? { ...prev, status: 'REVISION_NEEDED' } : null);
+      
+      addToast({
+        title: 'Revisi Diminta',
+        description: 'Mahasiswa akan diberitahu untuk melakukan revisi pada project.',
+        color: 'warning',
+      });
+      
+      router.push('/dosen/projects');
+      router.refresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Gagal mengubah status');
+      addToast({
+        title: 'Gagal',
+        description: err instanceof Error ? err.message : 'Gagal mengubah status',
+        color: 'danger',
+      });
+    } finally {
+      setIsApproving(false);
     }
   };
 
@@ -651,7 +801,7 @@ export default function ReviewPage({
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <Button
                   variant="flat"
                   className="bg-white/20 text-white hover:bg-white/30"
@@ -669,6 +819,30 @@ export default function ReviewPage({
                 >
                   Submit Review
                 </Button>
+                
+                {/* ACC & Revision buttons - only show when project is IN_REVIEW */}
+                {project.status === 'IN_REVIEW' && (
+                  <>
+                    <Divider orientation="vertical" className="h-8 bg-white/30" />
+                    <Button
+                      variant="flat"
+                      className="bg-amber-500/80 text-white hover:bg-amber-500"
+                      startContent={<RotateCcw size={18} />}
+                      onPress={handleRequestRevision}
+                      isLoading={isApproving}
+                    >
+                      Minta Revisi
+                    </Button>
+                    <Button
+                      className="bg-green-500 text-white font-semibold hover:bg-green-600"
+                      startContent={<ThumbsUp size={18} />}
+                      onPress={handleApproveForPresentation}
+                      isLoading={isApproving}
+                    >
+                      ACC Presentasi
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </CardBody>
@@ -747,14 +921,15 @@ export default function ReviewPage({
               color="primary"
               variant="underlined"
               classNames={{
-                tabList: "px-4 pt-4 gap-4",
+                tabList: "px-4 pt-4 gap-6",
                 cursor: "bg-primary",
                 tab: "px-0 h-10",
                 tabContent: "group-data-[selected=true]:text-primary font-medium"
               }}
             >
+              {/* === TAB 1: PENILAIAN (Kelompok + Individu) === */}
               <Tab
-                key="scoring"
+                key="penilaian"
                 title={
                   <div className="flex items-center gap-2">
                     <Star size={16} />
@@ -763,134 +938,461 @@ export default function ReviewPage({
                 }
               >
                 <CardBody className="space-y-6 pt-4">
-                  {rubriks.length === 0 ? (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
-                        <Star size={28} className="text-amber-500" />
-                      </div>
-                      <p className="text-default-500">
-                        Belum ada rubrik penilaian yang tersedia
-                      </p>
-                    </div>
-                  ) : (
-                    rubriks.map((rubrik, index) => (
-                      <motion.div
-                        key={rubrik.id}
-                        className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 space-y-4 hover:border-primary/50 transition-colors"
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: index * 0.05 }}
+                  {/* Sub-tab toggle: Kelompok / Individu */}
+                  {project.members && project.members.length > 0 && (
+                    <div className="flex gap-2 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg w-fit">
+                      <Button
+                        size="sm"
+                        variant={penilaianSubTab === 'kelompok' ? 'solid' : 'light'}
+                        color={penilaianSubTab === 'kelompok' ? 'primary' : 'default'}
+                        onPress={() => setPenilaianSubTab('kelompok')}
+                        startContent={<Star size={14} />}
                       >
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
-                                {index + 1}
-                              </span>
-                              <p className="font-semibold">{rubrik.name}</p>
-                            </div>
-                            <Chip size="sm" variant="flat" color="secondary" className="mb-2">
-                              {rubrik.kategori}
-                            </Chip>
-                            {rubrik.description && (
-                              <p className="text-xs text-default-400 mt-1">
-                                {rubrik.description}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-primary">
-                              {scores[rubrik.id]?.score || 0}
-                            </div>
-                            <div className="text-xs text-default-500">
-                              dari {rubrik.bobotMax}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-xs text-default-500">
-                            <span>0</span>
-                            <span>{rubrik.bobotMax}</span>
-                          </div>
-                          <Slider
-                            size="md"
-                            step={1}
-                            maxValue={rubrik.bobotMax}
-                            minValue={0}
-                            value={scores[rubrik.id]?.score || 0}
-                            onChange={(value) =>
-                              setScores((prev) => ({
-                                ...prev,
-                                [rubrik.id]: {
-                                  ...prev[rubrik.id],
-                                  score: value as number,
-                                },
-                              }))
-                            }
-                            color={getScoreColor(scores[rubrik.id]?.score || 0, rubrik.bobotMax)}
-                            className="max-w-full"
-                            showTooltip
-                          />
-                        </div>
-
-                        <Textarea
-                          placeholder="Berikan feedback untuk kategori ini..."
-                          variant="bordered"
-                          value={scores[rubrik.id]?.feedback || ''}
-                          onChange={(e) =>
-                            setScores((prev) => ({
-                              ...prev,
-                              [rubrik.id]: {
-                                ...prev[rubrik.id],
-                                feedback: e.target.value,
-                              },
-                            }))
-                          }
-                          minRows={2}
-                          classNames={{
-                            inputWrapper: "border-zinc-200 dark:border-zinc-700"
-                          }}
-                        />
-                      </motion.div>
-                    ))
+                        Kelompok
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={penilaianSubTab === 'individu' ? 'solid' : 'light'}
+                        color={penilaianSubTab === 'individu' ? 'primary' : 'default'}
+                        onPress={() => setPenilaianSubTab('individu')}
+                        startContent={<Users size={14} />}
+                      >
+                        Individu
+                        <Chip size="sm" variant="flat" color="secondary" className="ml-1">{project.members.length}</Chip>
+                      </Button>
+                    </div>
                   )}
 
-                  {/* Total Score Card */}
-                  <div className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl border border-primary/20">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-white">
-                          <Award size={24} />
+                  {/* === Sub: Kelompok Scoring === */}
+                  {penilaianSubTab === 'kelompok' && (
+                    <>
+                      {rubriks.length === 0 ? (
+                        <div className="text-center py-8">
+                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                            <Star size={28} className="text-amber-500" />
+                          </div>
+                          <p className="text-default-500">
+                            Belum ada rubrik penilaian yang tersedia
+                          </p>
                         </div>
-                        <div>
-                          <p className="font-semibold text-lg">Total Nilai</p>
-                          <p className="text-xs text-default-500">Nilai keseluruhan project</p>
+                      ) : (
+                        rubriks.map((rubrik, index) => (
+                          <motion.div
+                            key={rubrik.id}
+                            className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 space-y-4 hover:border-primary/50 transition-colors"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.05 }}
+                          >
+                            <div className="flex justify-between items-start gap-4">
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                                    {index + 1}
+                                  </span>
+                                  <p className="font-semibold">{rubrik.name}</p>
+                                </div>
+                                <Chip size="sm" variant="flat" color="secondary" className="mb-2">
+                                  {rubrik.kategori}
+                                </Chip>
+                                {rubrik.description && (
+                                  <p className="text-xs text-default-400 mt-1">
+                                    {rubrik.description}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-primary">
+                                  {scores[rubrik.id]?.score || 0}
+                                </div>
+                                <div className="text-xs text-default-500">
+                                  dari {rubrik.bobotMax}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between text-xs text-default-500">
+                                <span>0</span>
+                                <span>{rubrik.bobotMax}</span>
+                              </div>
+                              <Slider
+                                size="md"
+                                step={1}
+                                maxValue={rubrik.bobotMax}
+                                minValue={0}
+                                value={scores[rubrik.id]?.score || 0}
+                                onChange={(value) =>
+                                  setScores((prev) => ({
+                                    ...prev,
+                                    [rubrik.id]: {
+                                      ...prev[rubrik.id],
+                                      score: value as number,
+                                    },
+                                  }))
+                                }
+                                color={getScoreColor(scores[rubrik.id]?.score || 0, rubrik.bobotMax)}
+                                className="max-w-full"
+                                showTooltip
+                              />
+                            </div>
+
+                            <Textarea
+                              placeholder="Berikan feedback untuk kategori ini..."
+                              variant="bordered"
+                              value={scores[rubrik.id]?.feedback || ''}
+                              onChange={(e) =>
+                                setScores((prev) => ({
+                                  ...prev,
+                                  [rubrik.id]: {
+                                    ...prev[rubrik.id],
+                                    feedback: e.target.value,
+                                  },
+                                }))
+                              }
+                              minRows={2}
+                              classNames={{
+                                inputWrapper: "border-zinc-200 dark:border-zinc-700"
+                              }}
+                            />
+                          </motion.div>
+                        ))
+                      )}
+
+                      {/* Total Score Card */}
+                      <div className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl border border-primary/20">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-white">
+                              <Award size={24} />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-lg">Total Nilai</p>
+                              <p className="text-xs text-default-500">Nilai keseluruhan project</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="text-4xl font-bold text-primary">
+                              {totalScore}
+                            </span>
+                            <span className="text-lg text-default-500">/100</span>
+                          </div>
                         </div>
+                        <Progress
+                          value={totalScore}
+                          color={getScoreColor(totalScore, 100)}
+                          className="mt-4"
+                          size="md"
+                        />
                       </div>
-                      <div className="text-right">
-                        <span className="text-4xl font-bold text-primary">
-                          {totalScore}
-                        </span>
-                        <span className="text-lg text-default-500">/100</span>
-                      </div>
-                    </div>
-                    <Progress
-                      value={totalScore}
-                      color={getScoreColor(totalScore, 100)}
-                      className="mt-4"
-                      size="md"
-                    />
-                  </div>
+                    </>
+                  )}
+
+                  {/* === Sub: Penilaian Individu === */}
+                  {penilaianSubTab === 'individu' && project.members && project.members.length > 0 && (
+                    <>
+                      {individualRubriks.length === 0 ? (
+                        <div className="text-center py-8">
+                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
+                            <Users size={28} className="text-amber-500" />
+                          </div>
+                          <p className="text-default-500 mb-2">
+                            Belum ada rubrik penilaian individu yang tersedia
+                          </p>
+                          <p className="text-xs text-default-400">
+                            Admin perlu menambahkan rubrik dengan tipe &quot;individu&quot; terlebih dahulu
+                          </p>
+                        </div>
+                      ) : selectedMemberId === null ? (
+                        /* Member Selection View - List Style */
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
+                                <Users size={16} className="text-violet-600 dark:text-violet-400" />
+                              </div>
+                              <div>
+                                <p className="font-semibold">Pilih Anggota untuk Dinilai</p>
+                                <p className="text-xs text-default-500">
+                                  {project.members.filter(m => isMemberScored(m.id)).length} dari {project.members.length} sudah dinilai
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Member List */}
+                          <div className="border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden divide-y divide-zinc-200 dark:divide-zinc-700">
+                            {project.members.map((member, memberIndex) => {
+                              const { name, nim, avatar, isLeader } = getMemberDisplayInfo(member);
+                              const memberScore = calculateMemberScore(member.id);
+                              const hasScores = isMemberScored(member.id);
+                              
+                              return (
+                                <motion.div
+                                  key={member.id}
+                                  initial={{ opacity: 0, x: -10 }}
+                                  animate={{ opacity: 1, x: 0 }}
+                                  transition={{ delay: memberIndex * 0.05 }}
+                                  onClick={() => setSelectedMemberId(member.id)}
+                                  className={`flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${
+                                    isLeader ? 'bg-amber-50/50 dark:bg-amber-950/20' : ''
+                                  }`}
+                                >
+                                  {/* Avatar */}
+                                  <div className="relative flex-shrink-0">
+                                    <Avatar
+                                      name={name}
+                                      src={avatar}
+                                      size="sm"
+                                      className={isLeader ? 'ring-2 ring-amber-400' : ''}
+                                    />
+                                    {hasScores && (
+                                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
+                                        <CheckCircle2 size={10} className="text-white" />
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Info */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <p className="font-medium truncate">{name}</p>
+                                      {isLeader && (
+                                        <Crown size={14} className="text-amber-500 flex-shrink-0" />
+                                      )}
+                                    </div>
+                                    {nim && <p className="text-xs text-default-500">{nim}</p>}
+                                  </div>
+
+                                  {/* Score */}
+                                  <div className="flex items-center gap-3 flex-shrink-0">
+                                    <div className="text-right">
+                                      <div className="flex items-baseline gap-0.5">
+                                        <span className={`font-bold ${hasScores ? 'text-primary' : 'text-default-400'}`}>
+                                          {memberScore}
+                                        </span>
+                                        <span className="text-xs text-default-400">/100</span>
+                                      </div>
+                                      <p className={`text-xs ${hasScores ? 'text-emerald-600 dark:text-emerald-400' : 'text-default-400'}`}>
+                                        {hasScores ? 'Sudah dinilai' : 'Belum dinilai'}
+                                      </p>
+                                    </div>
+                                    <ChevronRight size={18} className="text-default-400" />
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        /* Individual Assessment Form View */
+                        (() => {
+                          const selectedMember = getSelectedMember();
+                          if (!selectedMember) return null;
+                          
+                          const { name, nim, avatar, isLeader } = getMemberDisplayInfo(selectedMember);
+                          const memberScore = calculateMemberScore(selectedMember.id);
+                          
+                          return (
+                            <div className="space-y-6">
+                              {/* Back Button & Member Info Header */}
+                              <div className="flex items-center gap-4">
+                                <Button
+                                  variant="flat"
+                                  size="sm"
+                                  startContent={<ArrowLeft size={16} />}
+                                  onPress={() => setSelectedMemberId(null)}
+                                >
+                                  Kembali
+                                </Button>
+                                <Divider orientation="vertical" className="h-8" />
+                                <div className="flex items-center gap-3 flex-1">
+                                  <Avatar
+                                    name={name}
+                                    src={avatar}
+                                    size="md"
+                                    className={isLeader ? 'ring-2 ring-amber-400' : ''}
+                                  />
+                                  <div>
+                                    <div className="flex items-center gap-2">
+                                      <p className="font-semibold">{name}</p>
+                                      {isLeader ? (
+                                        <Chip size="sm" color="warning" variant="flat" startContent={<Crown size={10} />}>
+                                          Ketua
+                                        </Chip>
+                                      ) : (
+                                        <Chip size="sm" color="default" variant="flat" startContent={<UserCheck size={10} />}>
+                                          Anggota
+                                        </Chip>
+                                      )}
+                                    </div>
+                                    {nim && <p className="text-xs text-default-500">NIM: {nim}</p>}
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <div className="text-2xl font-bold text-primary">{memberScore}</div>
+                                  <div className="text-xs text-default-500">Skor Sementara</div>
+                                </div>
+                              </div>
+
+                              <Divider />
+
+                              {/* Rubrik Assessment Form */}
+                              <div className="space-y-4">
+                                {individualRubriks.map((rubrik, rubrikIndex) => {
+                                  const memberData = memberScores.find((ms) => ms.memberId === selectedMember.id);
+                                  const currentScore = memberData?.scores[rubrik.id]?.score || 0;
+                                  const currentFeedback = memberData?.scores[rubrik.id]?.feedback || '';
+
+                                  return (
+                                    <motion.div
+                                      key={rubrik.id}
+                                      initial={{ opacity: 0, y: 10 }}
+                                      animate={{ opacity: 1, y: 0 }}
+                                      transition={{ delay: rubrikIndex * 0.05 }}
+                                      className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 space-y-3 hover:border-primary/30 transition-colors"
+                                    >
+                                      <div className="flex justify-between items-start gap-4">
+                                        <div className="flex-1">
+                                          <div className="flex items-center gap-2 mb-1">
+                                            <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
+                                              {rubrikIndex + 1}
+                                            </span>
+                                            <p className="font-semibold">{rubrik.name}</p>
+                                          </div>
+                                          <Chip size="sm" variant="flat" color="secondary" className="mb-2">
+                                            {rubrik.kategori}
+                                          </Chip>
+                                          {rubrik.description && (
+                                            <p className="text-xs text-default-400 mt-1">{rubrik.description}</p>
+                                          )}
+                                        </div>
+                                        <div className="text-right">
+                                          <div className="text-2xl font-bold text-primary">{currentScore}</div>
+                                          <div className="text-xs text-default-500">dari {rubrik.bobotMax}</div>
+                                        </div>
+                                      </div>
+
+                                      <div className="space-y-2">
+                                        <div className="flex items-center justify-between text-xs text-default-500">
+                                          <span>0</span>
+                                          <span>{rubrik.bobotMax}</span>
+                                        </div>
+                                        <Slider
+                                          size="md"
+                                          step={1}
+                                          maxValue={rubrik.bobotMax}
+                                          minValue={0}
+                                          value={currentScore}
+                                          onChange={(value) =>
+                                            updateMemberScore(selectedMember.id, rubrik.id, 'score', value as number)
+                                          }
+                                          color={getScoreColor(currentScore, rubrik.bobotMax)}
+                                          className="max-w-full"
+                                          showTooltip
+                                        />
+                                      </div>
+
+                                      <Textarea
+                                        placeholder={`Berikan feedback untuk ${name} pada kriteria ini...`}
+                                        variant="bordered"
+                                        value={currentFeedback}
+                                        onChange={(e) =>
+                                          updateMemberScore(selectedMember.id, rubrik.id, 'feedback', e.target.value)
+                                        }
+                                        minRows={2}
+                                        classNames={{
+                                          inputWrapper: "border-zinc-200 dark:border-zinc-700"
+                                        }}
+                                      />
+                                    </motion.div>
+                                  );
+                                })}
+                              </div>
+
+                              {/* Member Total Score Card */}
+                              <div className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl border border-primary/20">
+                                <div className="flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                    <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-white">
+                                      <Award size={24} />
+                                    </div>
+                                    <div>
+                                      <p className="font-semibold text-lg">Total Nilai {name}</p>
+                                      <p className="text-xs text-default-500">{isLeader ? 'Ketua Kelompok' : 'Anggota'}</p>
+                                    </div>
+                                  </div>
+                                  <div className="text-right">
+                                    <span className="text-4xl font-bold text-primary">{memberScore}</span>
+                                    <span className="text-lg text-default-500">/100</span>
+                                  </div>
+                                </div>
+                                <Progress
+                                  value={memberScore}
+                                  color={getScoreColor(memberScore, 100)}
+                                  className="mt-4"
+                                  size="md"
+                                />
+                              </div>
+
+                              {/* Navigation Buttons */}
+                              <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-700">
+                                <Button
+                                  variant="flat"
+                                  startContent={<ArrowLeft size={16} />}
+                                  onPress={() => setSelectedMemberId(null)}
+                                >
+                                  Kembali ke Daftar
+                                </Button>
+                                <div className="flex items-center gap-2">
+                                  {(() => {
+                                    const currentIndex = project.members.findIndex(m => m.id === selectedMemberId);
+                                    const prevMember = currentIndex > 0 ? project.members[currentIndex - 1] : null;
+                                    const nextMember = currentIndex < project.members.length - 1 ? project.members[currentIndex + 1] : null;
+                                    
+                                    return (
+                                      <>
+                                        {prevMember && (
+                                          <Button
+                                            variant="flat"
+                                            size="sm"
+                                            startContent={<ArrowLeft size={14} />}
+                                            onPress={() => setSelectedMemberId(prevMember.id)}
+                                          >
+                                            Sebelumnya
+                                          </Button>
+                                        )}
+                                        {nextMember && (
+                                          <Button
+                                            color="primary"
+                                            size="sm"
+                                            endContent={<ChevronRight size={14} />}
+                                            onPress={() => setSelectedMemberId(nextMember.id)}
+                                          >
+                                            Selanjutnya
+                                          </Button>
+                                        )}
+                                      </>
+                                    );
+                                  })()}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })()
+                      )}
+                    </>
+                  )}
                 </CardBody>
               </Tab>
 
+              {/* === TAB 2: FEEDBACK (Komentar) === */}
               <Tab
-                key="comments"
+                key="feedback"
                 title={
                   <div className="flex items-center gap-2">
                     <MessageSquare size={16} />
-                    <span>Komentar</span>
+                    <span>Feedback</span>
                     {comments.length > 0 && (
                       <Chip size="sm" variant="flat" color="primary">{comments.length}</Chip>
                     )}
@@ -998,554 +1500,271 @@ export default function ReviewPage({
                 </CardBody>
               </Tab>
 
+              {/* === TAB 3: REFERENSI (Dokumen + Screenshot) === */}
               <Tab
-                key="documents"
+                key="referensi"
                 title={
                   <div className="flex items-center gap-2">
                     <FileText size={16} />
-                    <span>Dokumen</span>
-                    {(project.documents.length + stakeholderDocs.length) > 0 && (
-                      <Chip size="sm" variant="flat" color="secondary">{project.documents.length + stakeholderDocs.length}</Chip>
+                    <span>Referensi</span>
+                    {(project.documents.length + stakeholderDocs.length + screenshots.length) > 0 && (
+                      <Chip size="sm" variant="flat" color="secondary">{project.documents.length + stakeholderDocs.length + screenshots.length}</Chip>
                     )}
                   </div>
                 }
               >
                 <CardBody className="pt-4 space-y-6">
-                  {/* Project Documents Section */}
-                  {project.documents.length > 0 && (
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-sm flex items-center gap-2">
-                        <FileText size={16} className="text-blue-600 dark:text-blue-400" />
-                        Dokumen Project ({project.documents.length})
-                      </h4>
-                      <div className="space-y-3">
-                        {project.documents.map((doc, index) => (
-                          <motion.div
-                            key={doc.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.05 }}
-                            className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 hover:border-primary/30 transition-colors group"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
-                                <FileText size={18} />
-                              </div>
-                              <div>
-                                <p className="font-medium">{doc.fileName}</p>
-                                <p className="text-xs text-default-500">
-                                  {getDocumentTypeLabel(doc.type)} • {formatDate(doc.uploadedAt)}
-                                </p>
-                              </div>
-                            </div>
-                            <Button
-                              as="a"
-                              href={doc.filePath}
-                              target="_blank"
-                              size="sm"
-                              variant="flat"
-                              color="primary"
-                              endContent={<ExternalLink size={14} />}
-                            >
-                              Lihat
-                            </Button>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </div>
+                  {/* Sub-tab toggle: Dokumen / Screenshot */}
+                  <div className="flex gap-2 p-1 bg-zinc-100 dark:bg-zinc-800 rounded-lg w-fit">
+                    <Button
+                      size="sm"
+                      variant={referensiSubTab === 'dokumen' ? 'solid' : 'light'}
+                      color={referensiSubTab === 'dokumen' ? 'primary' : 'default'}
+                      onPress={() => setReferensiSubTab('dokumen')}
+                      startContent={<FileText size={14} />}
+                    >
+                      Dokumen
+                      {(project.documents.length + stakeholderDocs.length) > 0 && (
+                        <Chip size="sm" variant="flat" color="secondary" className="ml-1">{project.documents.length + stakeholderDocs.length}</Chip>
+                      )}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={referensiSubTab === 'screenshot' ? 'solid' : 'light'}
+                      color={referensiSubTab === 'screenshot' ? 'primary' : 'default'}
+                      onPress={() => setReferensiSubTab('screenshot')}
+                      startContent={<ImageIcon size={14} />}
+                    >
+                      Screenshot
+                      {screenshots.length > 0 && (
+                        <Chip size="sm" variant="flat" color="primary" className="ml-1">{screenshots.length}</Chip>
+                      )}
+                    </Button>
+                  </div>
+
+                  {/* === Sub: Dokumen === */}
+                  {referensiSubTab === 'dokumen' && (
+                    <>
+                      {/* Project Documents Section */}
+                      {project.documents.length > 0 && (
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-sm flex items-center gap-2">
+                            <FileText size={16} className="text-blue-600 dark:text-blue-400" />
+                            Dokumen Project ({project.documents.length})
+                          </h4>
+                          <div className="space-y-3">
+                            {project.documents.map((doc, index) => (
+                              <motion.div
+                                key={doc.id}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 hover:border-primary/30 transition-colors group"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                                    <FileText size={18} />
+                                  </div>
+                                  <div>
+                                    <p className="font-medium">{doc.fileName}</p>
+                                    <p className="text-xs text-default-500">
+                                      {getDocumentTypeLabel(doc.type)} • {formatDate(doc.uploadedAt)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <Button
+                                  as="a"
+                                  href={doc.filePath}
+                                  target="_blank"
+                                  size="sm"
+                                  variant="flat"
+                                  color="primary"
+                                  endContent={<ExternalLink size={14} />}
+                                >
+                                  Lihat
+                                </Button>
+                              </motion.div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Stakeholder Documents Section */}
+                      {stakeholderDocs.length > 0 && (
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-sm flex items-center gap-2">
+                            <FileSignature size={16} className="text-success" />
+                            Dokumen Stakeholder ({stakeholderDocs.length})
+                          </h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {stakeholderDocs.map((doc, index) => {
+                              const typeConfig = getStakeholderTypeConfig(doc.type);
+                              const TypeIcon = typeConfig.icon;
+                              const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+                              const isImage = imageExtensions.some(ext => doc.fileName.toLowerCase().endsWith(ext));
+
+                              return (
+                                <motion.div
+                                  key={doc.id}
+                                  initial={{ opacity: 0, y: 10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: index * 0.05 }}
+                                  className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:border-primary/50 transition-colors group"
+                                >
+                                  {/* Preview Thumbnail */}
+                                  {isImage ? (
+                                    <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                                      <img
+                                        src={doc.fileUrl}
+                                        alt={doc.fileName}
+                                        className="w-full h-full object-cover"
+                                      />
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <Button
+                                          as="a"
+                                          href={doc.fileUrl}
+                                          target="_blank"
+                                          size="sm"
+                                          variant="flat"
+                                          className="bg-white/20 backdrop-blur-sm text-white"
+                                          endContent={<ExternalLink size={14} />}
+                                        >
+                                          Lihat Full
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="relative h-40 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center">
+                                      <FileText size={48} className="text-zinc-400" />
+                                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <Button
+                                          as="a"
+                                          href={doc.fileUrl}
+                                          target="_blank"
+                                          size="sm"
+                                          variant="flat"
+                                          className="bg-white/20 backdrop-blur-sm text-white"
+                                          endContent={<ExternalLink size={14} />}
+                                        >
+                                          Buka File
+                                        </Button>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Document Info */}
+                                  <div className="p-4 space-y-3">
+                                    <Chip
+                                      size="sm"
+                                      color={typeConfig.color}
+                                      variant="flat"
+                                      startContent={<TypeIcon size={12} />}
+                                    >
+                                      {typeConfig.label}
+                                    </Chip>
+
+                                    <div className="space-y-1">
+                                      <p className="font-medium text-sm">{doc.stakeholderName}</p>
+                                      {doc.stakeholderRole && (
+                                        <p className="text-xs text-default-500">{doc.stakeholderRole}</p>
+                                      )}
+                                      {doc.organization && (
+                                        <p className="text-xs text-default-400">{doc.organization}</p>
+                                      )}
+                                    </div>
+
+                                    {doc.description && (
+                                      <p className="text-xs text-default-500 line-clamp-2">{doc.description}</p>
+                                    )}
+
+                                    <div className="flex items-center justify-between text-xs text-default-400 pt-2 border-t border-zinc-100 dark:border-zinc-700">
+                                      <span className="truncate max-w-[60%]">{doc.fileName}</span>
+                                      <span>{formatDate(doc.uploadedAt)}</span>
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Empty State for Documents */}
+                      {project.documents.length === 0 && stakeholderDocs.length === 0 && (
+                        <div className="text-center py-8">
+                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                            <FileText size={28} className="text-zinc-400" />
+                          </div>
+                          <p className="text-default-500">
+                            Belum ada dokumen yang diupload
+                          </p>
+                        </div>
+                      )}
+                    </>
                   )}
 
-                  {/* Stakeholder Documents Section */}
-                  {stakeholderDocs.length > 0 && (
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-sm flex items-center gap-2">
-                        <FileSignature size={16} className="text-success" />
-                        Dokumen Stakeholder ({stakeholderDocs.length})
-                      </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {stakeholderDocs.map((doc, index) => {
-                          const typeConfig = getStakeholderTypeConfig(doc.type);
-                          const TypeIcon = typeConfig.icon;
-                          // Check if file is image based on extension
-                          const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
-                          const isImage = imageExtensions.some(ext => doc.fileName.toLowerCase().endsWith(ext));
-
-                          return (
+                  {/* === Sub: Screenshot === */}
+                  {referensiSubTab === 'screenshot' && (
+                    <>
+                      {screenshots.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {screenshots.map((screenshot, index) => (
                             <motion.div
-                              key={doc.id}
+                              key={screenshot.id}
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: index * 0.05 }}
                               className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:border-primary/50 transition-colors group"
                             >
-                              {/* Preview Thumbnail */}
-                              {isImage ? (
-                                <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                                  <img
-                                    src={doc.fileUrl}
-                                    alt={doc.fileName}
-                                    className="w-full h-full object-cover"
-                                  />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <Button
-                                      as="a"
-                                      href={doc.fileUrl}
-                                      target="_blank"
-                                      size="sm"
-                                      variant="flat"
-                                      className="bg-white/20 backdrop-blur-sm text-white"
-                                      endContent={<ExternalLink size={14} />}
-                                    >
-                                      Lihat Full
-                                    </Button>
-                                  </div>
+                              <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                                <img
+                                  src={screenshot.fileUrl}
+                                  alt={screenshot.title}
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                  <Button
+                                    as="a"
+                                    href={screenshot.fileUrl}
+                                    target="_blank"
+                                    size="sm"
+                                    variant="flat"
+                                    className="bg-white/20 backdrop-blur-sm text-white"
+                                    endContent={<ExternalLink size={14} />}
+                                  >
+                                    Lihat Full
+                                  </Button>
                                 </div>
-                              ) : (
-                                <div className="relative h-40 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-700 flex items-center justify-center">
-                                  <FileText size={48} className="text-zinc-400" />
-                                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                    <Button
-                                      as="a"
-                                      href={doc.fileUrl}
-                                      target="_blank"
-                                      size="sm"
-                                      variant="flat"
-                                      className="bg-white/20 backdrop-blur-sm text-white"
-                                      endContent={<ExternalLink size={14} />}
-                                    >
-                                      Buka File
-                                    </Button>
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Document Info */}
-                              <div className="p-4 space-y-3">
-                                <Chip
-                                  size="sm"
-                                  color={typeConfig.color}
-                                  variant="flat"
-                                  startContent={<TypeIcon size={12} />}
-                                >
-                                  {typeConfig.label}
-                                </Chip>
-
-                                <div className="space-y-1">
-                                  <p className="font-medium text-sm">{doc.stakeholderName}</p>
-                                  {doc.stakeholderRole && (
-                                    <p className="text-xs text-default-500">{doc.stakeholderRole}</p>
-                                  )}
-                                  {doc.organization && (
-                                    <p className="text-xs text-default-400">{doc.organization}</p>
-                                  )}
-                                </div>
-
-                                {doc.description && (
-                                  <p className="text-xs text-default-500 line-clamp-2">{doc.description}</p>
+                              </div>
+                              <div className="p-3 space-y-1">
+                                <p className="font-medium text-sm truncate">{screenshot.title}</p>
+                                {screenshot.description && (
+                                  <p className="text-xs text-default-500 line-clamp-2">{screenshot.description}</p>
                                 )}
-
-                                <div className="flex items-center justify-between text-xs text-default-400 pt-2 border-t border-zinc-100 dark:border-zinc-700">
-                                  <span className="truncate max-w-[60%]">{doc.fileName}</span>
-                                  <span>{formatDate(doc.uploadedAt)}</span>
-                                </div>
+                                {screenshot.category && (
+                                  <Chip size="sm" variant="flat" color="secondary">{screenshot.category}</Chip>
+                                )}
+                                <p className="text-xs text-default-400">{formatDate(screenshot.createdAt)}</p>
                               </div>
                             </motion.div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Empty State */}
-                  {project.documents.length === 0 && stakeholderDocs.length === 0 && (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                        <FileText size={28} className="text-zinc-400" />
-                      </div>
-                      <p className="text-default-500">
-                        Belum ada dokumen yang diupload
-                      </p>
-                    </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
+                            <ImageIcon size={28} className="text-zinc-400" />
+                          </div>
+                          <p className="text-default-500">
+                            Belum ada screenshot aplikasi
+                          </p>
+                        </div>
+                      )}
+                    </>
                   )}
                 </CardBody>
               </Tab>
 
-              <Tab
-                key="screenshots"
-                title={
-                  <div className="flex items-center gap-2">
-                    <ImageIcon size={16} />
-                    <span>Screenshot</span>
-                    {screenshots.length > 0 && (
-                      <Chip size="sm" variant="flat" color="primary">{screenshots.length}</Chip>
-                    )}
-                  </div>
-                }
-              >
-                <CardBody className="pt-4">
-                  {screenshots.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {screenshots.map((screenshot, index) => (
-                        <motion.div
-                          key={screenshot.id}
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden hover:border-primary/50 transition-colors group"
-                        >
-                          <div className="relative h-40 bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
-                            <img
-                              src={screenshot.fileUrl}
-                              alt={screenshot.title}
-                              className="w-full h-full object-cover"
-                            />
-                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                              <Button
-                                as="a"
-                                href={screenshot.fileUrl}
-                                target="_blank"
-                                size="sm"
-                                variant="flat"
-                                className="bg-white/20 backdrop-blur-sm text-white"
-                                endContent={<ExternalLink size={14} />}
-                              >
-                                Lihat Full
-                              </Button>
-                            </div>
-                          </div>
-                          <div className="p-3 space-y-1">
-                            <p className="font-medium text-sm truncate">{screenshot.title}</p>
-                            {screenshot.description && (
-                              <p className="text-xs text-default-500 line-clamp-2">{screenshot.description}</p>
-                            )}
-                            {screenshot.category && (
-                              <Chip size="sm" variant="flat" color="secondary">{screenshot.category}</Chip>
-                            )}
-                            <p className="text-xs text-default-400">{formatDate(screenshot.createdAt)}</p>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                        <ImageIcon size={28} className="text-zinc-400" />
-                      </div>
-                      <p className="text-default-500">
-                        Belum ada screenshot aplikasi
-                      </p>
-                    </div>
-                )}
-                </CardBody>
-              </Tab>
-
-              {/* Tab Penilaian Individu */}
-              {project.members && project.members.length > 0 && (
-                <Tab
-                  key="individual"
-                  title={
-                    <div className="flex items-center gap-2">
-                      <Users size={16} />
-                      <span>Penilaian Individu</span>
-                      <Chip size="sm" variant="flat" color="secondary">{project.members.length}</Chip>
-                    </div>
-                  }
-                >
-                  <CardBody className="pt-4 space-y-6">
-                    {individualRubriks.length === 0 ? (
-                      <div className="text-center py-8">
-                        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-50 dark:bg-amber-900/20 flex items-center justify-center">
-                          <Users size={28} className="text-amber-500" />
-                        </div>
-                        <p className="text-default-500 mb-2">
-                          Belum ada rubrik penilaian individu yang tersedia
-                        </p>
-                        <p className="text-xs text-default-400">
-                          Admin perlu menambahkan rubrik dengan tipe &quot;individu&quot; terlebih dahulu
-                        </p>
-                      </div>
-                    ) : selectedMemberId === null ? (
-                      /* Member Selection View - List Style */
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-                              <Users size={16} className="text-violet-600 dark:text-violet-400" />
-                            </div>
-                            <div>
-                              <p className="font-semibold">Pilih Anggota untuk Dinilai</p>
-                              <p className="text-xs text-default-500">
-                                {project.members.filter(m => isMemberScored(m.id)).length} dari {project.members.length} sudah dinilai
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Member List */}
-                        <div className="border border-zinc-200 dark:border-zinc-700 rounded-xl overflow-hidden divide-y divide-zinc-200 dark:divide-zinc-700">
-                          {project.members.map((member, memberIndex) => {
-                            const { name, nim, avatar, isLeader } = getMemberDisplayInfo(member);
-                            const memberScore = calculateMemberScore(member.id);
-                            const hasScores = isMemberScored(member.id);
-                            
-                            return (
-                              <motion.div
-                                key={member.id}
-                                initial={{ opacity: 0, x: -10 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: memberIndex * 0.05 }}
-                                onClick={() => setSelectedMemberId(member.id)}
-                                className={`flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${
-                                  isLeader ? 'bg-amber-50/50 dark:bg-amber-950/20' : ''
-                                }`}
-                              >
-                                {/* Avatar */}
-                                <div className="relative flex-shrink-0">
-                                  <Avatar
-                                    name={name}
-                                    src={avatar}
-                                    size="sm"
-                                    className={isLeader ? 'ring-2 ring-amber-400' : ''}
-                                  />
-                                  {hasScores && (
-                                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-emerald-500 flex items-center justify-center">
-                                      <CheckCircle2 size={10} className="text-white" />
-                                    </div>
-                                  )}
-                                </div>
-
-                                {/* Info */}
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <p className="font-medium truncate">{name}</p>
-                                    {isLeader && (
-                                      <Crown size={14} className="text-amber-500 flex-shrink-0" />
-                                    )}
-                                  </div>
-                                  {nim && <p className="text-xs text-default-500">{nim}</p>}
-                                </div>
-
-                                {/* Score */}
-                                <div className="flex items-center gap-3 flex-shrink-0">
-                                  <div className="text-right">
-                                    <div className="flex items-baseline gap-0.5">
-                                      <span className={`font-bold ${hasScores ? 'text-primary' : 'text-default-400'}`}>
-                                        {memberScore}
-                                      </span>
-                                      <span className="text-xs text-default-400">/100</span>
-                                    </div>
-                                    <p className={`text-xs ${hasScores ? 'text-emerald-600 dark:text-emerald-400' : 'text-default-400'}`}>
-                                      {hasScores ? 'Sudah dinilai' : 'Belum dinilai'}
-                                    </p>
-                                  </div>
-                                  <ChevronRight size={18} className="text-default-400" />
-                                </div>
-                              </motion.div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ) : (
-                      /* Individual Assessment Form View */
-                      (() => {
-                        const selectedMember = getSelectedMember();
-                        if (!selectedMember) return null;
-                        
-                        const { name, nim, avatar, isLeader } = getMemberDisplayInfo(selectedMember);
-                        const memberScore = calculateMemberScore(selectedMember.id);
-                        
-                        return (
-                          <div className="space-y-6">
-                            {/* Back Button & Member Info Header */}
-                            <div className="flex items-center gap-4">
-                              <Button
-                                variant="flat"
-                                size="sm"
-                                startContent={<ArrowLeft size={16} />}
-                                onPress={() => setSelectedMemberId(null)}
-                              >
-                                Kembali
-                              </Button>
-                              <Divider orientation="vertical" className="h-8" />
-                              <div className="flex items-center gap-3 flex-1">
-                                <Avatar
-                                  name={name}
-                                  src={avatar}
-                                  size="md"
-                                  className={isLeader ? 'ring-2 ring-amber-400' : ''}
-                                />
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <p className="font-semibold">{name}</p>
-                                    {isLeader ? (
-                                      <Chip size="sm" color="warning" variant="flat" startContent={<Crown size={10} />}>
-                                        Ketua
-                                      </Chip>
-                                    ) : (
-                                      <Chip size="sm" color="default" variant="flat" startContent={<UserCheck size={10} />}>
-                                        Anggota
-                                      </Chip>
-                                    )}
-                                  </div>
-                                  {nim && <p className="text-xs text-default-500">NIM: {nim}</p>}
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <div className="text-2xl font-bold text-primary">{memberScore}</div>
-                                <div className="text-xs text-default-500">Skor Sementara</div>
-                              </div>
-                            </div>
-
-                            <Divider />
-
-                            {/* Rubrik Assessment Form */}
-                            <div className="space-y-4">
-                              {individualRubriks.map((rubrik, rubrikIndex) => {
-                                const memberData = memberScores.find((ms) => ms.memberId === selectedMember.id);
-                                const currentScore = memberData?.scores[rubrik.id]?.score || 0;
-                                const currentFeedback = memberData?.scores[rubrik.id]?.feedback || '';
-
-                                return (
-                                  <motion.div
-                                    key={rubrik.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: rubrikIndex * 0.05 }}
-                                    className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700 space-y-3 hover:border-primary/30 transition-colors"
-                                  >
-                                    <div className="flex justify-between items-start gap-4">
-                                      <div className="flex-1">
-                                        <div className="flex items-center gap-2 mb-1">
-                                          <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center">
-                                            {rubrikIndex + 1}
-                                          </span>
-                                          <p className="font-semibold">{rubrik.name}</p>
-                                        </div>
-                                        <Chip size="sm" variant="flat" color="secondary" className="mb-2">
-                                          {rubrik.kategori}
-                                        </Chip>
-                                        {rubrik.description && (
-                                          <p className="text-xs text-default-400 mt-1">{rubrik.description}</p>
-                                        )}
-                                      </div>
-                                      <div className="text-right">
-                                        <div className="text-2xl font-bold text-primary">{currentScore}</div>
-                                        <div className="text-xs text-default-500">dari {rubrik.bobotMax}</div>
-                                      </div>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                      <div className="flex items-center justify-between text-xs text-default-500">
-                                        <span>0</span>
-                                        <span>{rubrik.bobotMax}</span>
-                                      </div>
-                                      <Slider
-                                        size="md"
-                                        step={1}
-                                        maxValue={rubrik.bobotMax}
-                                        minValue={0}
-                                        value={currentScore}
-                                        onChange={(value) =>
-                                          updateMemberScore(selectedMember.id, rubrik.id, 'score', value as number)
-                                        }
-                                        color={getScoreColor(currentScore, rubrik.bobotMax)}
-                                        className="max-w-full"
-                                        showTooltip
-                                      />
-                                    </div>
-
-                                    <Textarea
-                                      placeholder={`Berikan feedback untuk ${name} pada kriteria ini...`}
-                                      variant="bordered"
-                                      value={currentFeedback}
-                                      onChange={(e) =>
-                                        updateMemberScore(selectedMember.id, rubrik.id, 'feedback', e.target.value)
-                                      }
-                                      minRows={2}
-                                      classNames={{
-                                        inputWrapper: "border-zinc-200 dark:border-zinc-700"
-                                      }}
-                                    />
-                                  </motion.div>
-                                );
-                              })}
-                            </div>
-
-                            {/* Member Total Score Card */}
-                            <div className="p-5 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-xl border border-primary/20">
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-3">
-                                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary to-primary/80 text-white">
-                                    <Award size={24} />
-                                  </div>
-                                  <div>
-                                    <p className="font-semibold text-lg">Total Nilai {name}</p>
-                                    <p className="text-xs text-default-500">{isLeader ? 'Ketua Kelompok' : 'Anggota'}</p>
-                                  </div>
-                                </div>
-                                <div className="text-right">
-                                  <span className="text-4xl font-bold text-primary">{memberScore}</span>
-                                  <span className="text-lg text-default-500">/100</span>
-                                </div>
-                              </div>
-                              <Progress
-                                value={memberScore}
-                                color={getScoreColor(memberScore, 100)}
-                                className="mt-4"
-                                size="md"
-                              />
-                            </div>
-
-                            {/* Navigation Buttons */}
-                            <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-700">
-                              <Button
-                                variant="flat"
-                                startContent={<ArrowLeft size={16} />}
-                                onPress={() => setSelectedMemberId(null)}
-                              >
-                                Kembali ke Daftar
-                              </Button>
-                              <div className="flex items-center gap-2">
-                                {(() => {
-                                  const currentIndex = project.members.findIndex(m => m.id === selectedMemberId);
-                                  const prevMember = currentIndex > 0 ? project.members[currentIndex - 1] : null;
-                                  const nextMember = currentIndex < project.members.length - 1 ? project.members[currentIndex + 1] : null;
-                                  
-                                  return (
-                                    <>
-                                      {prevMember && (
-                                        <Button
-                                          variant="flat"
-                                          size="sm"
-                                          startContent={<ArrowLeft size={14} />}
-                                          onPress={() => setSelectedMemberId(prevMember.id)}
-                                        >
-                                          Sebelumnya
-                                        </Button>
-                                      )}
-                                      {nextMember && (
-                                        <Button
-                                          color="primary"
-                                          size="sm"
-                                          endContent={<ChevronRight size={14} />}
-                                          onPress={() => setSelectedMemberId(nextMember.id)}
-                                        >
-                                          Selanjutnya
-                                        </Button>
-                                      )}
-                                    </>
-                                  );
-                                })()}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })()
-                    )}
-                  </CardBody>
-                </Tab>
-              )}
-
+              {/* === TAB 4: KODE (conditional) === */}
               {project.githubRepoUrl && (
                 <Tab
                   key="code"

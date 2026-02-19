@@ -21,6 +21,9 @@ import {
   Sparkles,
   User,
   ArrowLeft,
+  Shield,
+  BookOpen,
+  UserRound,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -36,6 +39,37 @@ function LoginForm() {
   });
 
   const callbackError = searchParams.get('error');
+
+  const isDev = process.env.NODE_ENV === 'development';
+
+  const devAccounts = [
+    { label: 'Admin', username: 'devnolife', password: 'hanyaAdmin@25', icon: Shield, color: 'danger' as const },
+    { label: 'Dosen', username: 'dosen', password: 'password123', icon: BookOpen, color: 'secondary' as const },
+    { label: 'Mahasiswa', username: 'mahasiswa', password: 'password123', icon: UserRound, color: 'success' as const },
+  ];
+
+  const handleDevLogin = async (username: string, password: string) => {
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const result = await signIn('credentials', {
+        username,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError(`Dev login gagal: ${result.error}`);
+      } else {
+        window.location.href = '/dashboard';
+      }
+    } catch {
+      setError('Terjadi kesalahan saat dev login.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -153,6 +187,46 @@ function LoginForm() {
           {isLoading ? 'Memproses...' : 'Masuk'}
         </Button>
       </form>
+
+      {/* Dev Quick Login Buttons */}
+      {isDev && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="mt-6"
+        >
+          <div className="relative mb-4">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-default-200" />
+            </div>
+            <div className="relative flex justify-center text-xs">
+              <span className="bg-background px-2 text-warning-500 font-medium">
+                DEV MODE
+              </span>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {devAccounts.map((account) => {
+              const Icon = account.icon;
+              return (
+                <Button
+                  key={account.label}
+                  size="sm"
+                  variant="flat"
+                  color={account.color}
+                  isDisabled={isLoading}
+                  onPress={() => handleDevLogin(account.username, account.password)}
+                  className="flex flex-col items-center gap-1 h-auto py-2"
+                >
+                  <Icon size={16} />
+                  <span className="text-xs">{account.label}</span>
+                </Button>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
 
       <div className="mt-6 text-center space-y-3">
         <p className="text-xs text-default-400">

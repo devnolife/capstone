@@ -364,6 +364,32 @@ exports.Prisma.SemesterScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.PresentationScheduleScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  scheduledDate: 'scheduledDate',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  location: 'location',
+  notes: 'notes',
+  presentationStatus: 'presentationStatus',
+  completedAt: 'completedAt',
+  scheduledById: 'scheduledById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProjectDiscussionScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  authorId: 'authorId',
+  parentId: 'parentId',
+  content: 'content',
+  isEdited: 'isEdited',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -389,6 +415,8 @@ exports.ProjectStatus = exports.$Enums.ProjectStatus = {
   SUBMITTED: 'SUBMITTED',
   IN_REVIEW: 'IN_REVIEW',
   REVISION_NEEDED: 'REVISION_NEEDED',
+  READY_FOR_PRESENTATION: 'READY_FOR_PRESENTATION',
+  PRESENTATION_SCHEDULED: 'PRESENTATION_SCHEDULED',
   APPROVED: 'APPROVED',
   REJECTED: 'REJECTED'
 };
@@ -433,7 +461,9 @@ exports.Prisma.ModelName = {
   MemberReviewScore: 'MemberReviewScore',
   ProjectAssignment: 'ProjectAssignment',
   Notification: 'Notification',
-  Semester: 'Semester'
+  Semester: 'Semester',
+  PresentationSchedule: 'PresentationSchedule',
+  ProjectDiscussion: 'ProjectDiscussion'
 };
 
 /**

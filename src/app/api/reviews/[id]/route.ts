@@ -162,55 +162,60 @@ export async function PUT(
     });
 
     // Update scores
-    if (scores && scores.length > 0) {
+    if (scores) {
       // Delete existing scores and recreate
       await prisma.reviewScore.deleteMany({
         where: { reviewId: id },
       });
 
-      // Get rubriks to determine maxScore
-      const rubrikIds = scores.map((s: { rubrikId: string }) => s.rubrikId);
-      const rubriks = await prisma.rubrikPenilaian.findMany({
-        where: { id: { in: rubrikIds } },
-        select: { id: true, bobotMax: true },
-      });
-      const rubrikMap = new Map(rubriks.map((r) => [r.id, r.bobotMax]));
+      if (scores.length > 0) {
+        // Get rubriks to determine maxScore
+        const rubrikIds = scores.map((s: { rubrikId: string }) => s.rubrikId);
+        const rubriks = await prisma.rubrikPenilaian.findMany({
+          where: { id: { in: rubrikIds } },
+          select: { id: true, bobotMax: true },
+        });
+        const rubrikMap = new Map(rubriks.map((r) => [r.id, r.bobotMax]));
 
-      await prisma.reviewScore.createMany({
-        data: scores.map(
-          (s: { rubrikId: string; score: number; feedback?: string; maxScore?: number }) => ({
-            reviewId: id,
-            rubrikId: s.rubrikId,
-            score: s.score,
-            maxScore: s.maxScore || rubrikMap.get(s.rubrikId) || 0,
-            feedback: s.feedback,
-          }),
-        ),
-      });
+        await prisma.reviewScore.createMany({
+          data: scores.map(
+            (s: { rubrikId: string; score: number; feedback?: string; maxScore?: number }) => ({
+              reviewId: id,
+              rubrikId: s.rubrikId,
+              score: s.score,
+              maxScore: s.maxScore || rubrikMap.get(s.rubrikId) || 0,
+              feedback: s.feedback,
+            }),
+          ),
+        });
+      }
     }
 
     // Update comments
-    if (comments && comments.length > 0) {
+    if (comments) {
       // Delete existing comments and recreate
       await prisma.reviewComment.deleteMany({
         where: { reviewId: id },
       });
 
-      await prisma.reviewComment.createMany({
-        data: comments.map(
-          (c: { content: string; filePath?: string; lineStart?: number; lineEnd?: number }) => ({
-            reviewId: id,
-            content: c.content,
-            filePath: c.filePath,
-            lineStart: c.lineStart,
-            lineEnd: c.lineEnd,
-          }),
-        ),
-      });
+      if (comments.length > 0) {
+        await prisma.reviewComment.createMany({
+          data: comments.map(
+            (c: { content: string; section?: string; filePath?: string; lineStart?: number; lineEnd?: number }) => ({
+              reviewId: id,
+              content: c.content,
+              section: c.section || 'general',
+              filePath: c.filePath,
+              lineStart: c.lineStart,
+              lineEnd: c.lineEnd,
+            }),
+          ),
+        });
+      }
     }
 
     // Update member scores (individual assessment)
-    if (memberScores && memberScores.length > 0) {
+    if (memberScores) {
       // Delete existing member scores and recreate
       await prisma.memberReviewScore.deleteMany({
         where: { reviewId: id },

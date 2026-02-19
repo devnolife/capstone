@@ -73,6 +73,23 @@ async function main() {
   
   console.log(`  ✅ Dosen: ${dosen.username} (password: password123)\n`);
 
+  // ==================== CREATE MAHASISWA USER (DEV) ====================
+  console.log('🎓 Creating Mahasiswa user (dev mode)...');
+  
+  const mahasiswaPassword = await hashPassword('password123');
+  
+  const mahasiswa = await prisma.user.create({
+    data: {
+      username: 'mahasiswa',
+      name: 'Mahasiswa Dev',
+      password: mahasiswaPassword,
+      role: Role.MAHASISWA,
+      isActive: true,
+    },
+  });
+  
+  console.log(`  ✅ Mahasiswa: ${mahasiswa.username} (password: password123)\n`);
+
   // ==================== CREATE SEMESTERS ====================
   console.log('📅 Creating Semesters...');
   
@@ -149,7 +166,7 @@ async function main() {
   console.log('═'.repeat(60));
   console.log('🎉 Database seeding completed successfully!\n');
   console.log('📊 Summary:');
-  console.log(`   • Users:            2 (admin, dosen)`);
+  console.log(`   • Users:            3 (admin, dosen, mahasiswa)`);
   console.log(`   • Semesters:        2`);
   console.log(`   • Rubrik Penilaian: ${rubrikList.length}`);
   console.log('═'.repeat(60));
@@ -159,9 +176,9 @@ async function main() {
   console.log('   ├─────────────┼──────────────┼──────────────┼─────────────────┤');
    console.log('   │ Admin       │ devnolife    │ hanyaAdmin@25│ Form (NIM/User) │');
   console.log('   │ Dosen       │ dosen        │ password123  │ Form (NIM/User) │');
-  console.log('   │ Mahasiswa   │ -            │ -            │ GitHub OAuth    │');
+  console.log('   │ Mahasiswa   │ mahasiswa    │ password123  │ Form (NIM/User) │');
   console.log('   └─────────────┴──────────────┴──────────────┴─────────────────┘');
-  console.log('\n   Note: Mahasiswa login via GitHub OAuth (otomatis role MAHASISWA)');
+  console.log('\n   Note: Mahasiswa juga bisa login via GitHub OAuth (otomatis role MAHASISWA)');
   console.log('═'.repeat(60));
 }
 

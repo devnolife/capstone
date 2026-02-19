@@ -128,6 +128,16 @@ export async function GET(
         stakeholderDocuments: {
           orderBy: { uploadedAt: 'desc' },
         },
+        presentationSchedule: {
+          include: {
+            scheduledBy: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -146,7 +156,10 @@ export async function GET(
     const isAdmin = session.user.role === 'ADMIN';
     // Dosen can view all submitted projects (not just assigned ones)
     const isDosen = session.user.role === 'DOSEN_PENGUJI';
-    const isSubmittedProject = ['SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'REVISION_NEEDED'].includes(project.status);
+    const isSubmittedProject = [
+      'SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'REVISION_NEEDED',
+      'READY_FOR_PRESENTATION', 'PRESENTATION_SCHEDULED'
+    ].includes(project.status);
     const dosenCanView = isDosen && isSubmittedProject;
     // Team members can also view
     const isTeamMember = project.members.some((m) => m.userId === session.user.id);
@@ -205,7 +218,11 @@ export async function PUT(
         );
       }
 
-      const validStatuses = ['DRAFT', 'SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 'APPROVED', 'REJECTED'];
+      const validStatuses = [
+        'DRAFT', 'SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 
+        'READY_FOR_PRESENTATION', 'PRESENTATION_SCHEDULED', 
+        'APPROVED', 'REJECTED'
+      ];
       if (!validStatuses.includes(body.status)) {
         return NextResponse.json(
           { error: 'Status tidak valid' },
@@ -213,17 +230,113 @@ export async function PUT(
         );
       }
 
+      // Validate status transitions
+      const currentStatus = existingProject.status;
+      const newStatus = body.status;
+
+      // Define allowed transitions per role
+      const dosenAllowedTransitions: Record<string, string[]> = {
+        'IN_REVIEW': ['READY_FOR_PRESENTATION', 'REVISION_NEEDED'],
+        'REVISION_NEEDED': ['IN_REVIEW'],
+      };
+
+      const adminAllowedTransitions: Record<string, string[]> = {
+        'DRAFT': ['SUBMITTED'],
+        'SUBMITTED': ['IN_REVIEW', 'DRAFT'],
+        'IN_REVIEW': ['READY_FOR_PRESENTATION', 'REVISION_NEEDED', 'REJECTED'],
+        'REVISION_NEEDED': ['SUBMITTED', 'IN_REVIEW', 'REJECTED'],
+        'READY_FOR_PRESENTATION': ['PRESENTATION_SCHEDULED', 'IN_REVIEW', 'REJECTED'],
+        'PRESENTATION_SCHEDULED': ['APPROVED', 'REJECTED', 'READY_FOR_PRESENTATION'],
+        'APPROVED': ['REJECTED'], // Edge case: undo approval
+        'REJECTED': ['DRAFT', 'READY_FOR_PRESENTATION'], // Allow resubmission
+      };
+
+      // Check if transition is allowed based on role
+      let isTransitionAllowed = false;
+      
+      if (session.user.role === 'ADMIN') {
+        const allowedNext = adminAllowedTransitions[currentStatus] || [];
+        isTransitionAllowed = allowedNext.includes(newStatus);
+      } else if (session.user.role === 'DOSEN_PENGUJI') {
+        const allowedNext = dosenAllowedTransitions[currentStatus] || [];
+        isTransitionAllowed = allowedNext.includes(newStatus);
+      }
+
+      if (!isTransitionAllowed) {
+        return NextResponse.json(
+          { 
+            error: `Tidak dapat mengubah status dari ${currentStatus} ke ${newStatus}`,
+            currentStatus,
+            allowedTransitions: session.user.role === 'ADMIN' 
+              ? adminAllowedTransitions[currentStatus] || []
+              : dosenAllowedTransitions[currentStatus] || []
+          },
+          { status: 400 },
+        );
+      }
+
+      // Special handling for certain transitions
+      const updateData: Record<string, unknown> = {
+        status: newStatus,
+      };
+
+      // Set approvedAt when approved
+      if (newStatus === 'APPROVED') {
+        updateData.approvedAt = new Date();
+      }
+      
+      // Clear approvedAt if rejected or reverted
+      if (newStatus === 'REJECTED' || newStatus === 'REVISION_NEEDED') {
+        updateData.approvedAt = null;
+      }
+
       const project = await prisma.project.update({
         where: { id },
-        data: {
-          status: body.status,
-          ...(body.status === 'APPROVED' && { approvedAt: new Date() }),
-          ...(body.status === 'REJECTED' && { approvedAt: null }),
+        data: updateData,
+        include: {
+          mahasiswa: {
+            select: { id: true, name: true },
+          },
         },
       });
 
+      // Create notification for mahasiswa
+      let notificationTitle = '';
+      let notificationMessage = '';
+      
+      switch (newStatus) {
+        case 'READY_FOR_PRESENTATION':
+          notificationTitle = 'Project Disetujui untuk Presentasi';
+          notificationMessage = `Project "${project.title}" telah disetujui dan siap dijadwalkan untuk presentasi.`;
+          break;
+        case 'REVISION_NEEDED':
+          notificationTitle = 'Revisi Diperlukan';
+          notificationMessage = `Project "${project.title}" memerlukan revisi. Silakan periksa komentar reviewer.`;
+          break;
+        case 'APPROVED':
+          notificationTitle = 'Project Disetujui';
+          notificationMessage = `Selamat! Project "${project.title}" telah disetujui setelah presentasi.`;
+          break;
+        case 'REJECTED':
+          notificationTitle = 'Project Ditolak';
+          notificationMessage = `Project "${project.title}" tidak disetujui. Silakan hubungi dosen pembimbing.`;
+          break;
+      }
+
+      if (notificationTitle) {
+        await prisma.notification.create({
+          data: {
+            userId: project.mahasiswa.id,
+            title: notificationTitle,
+            message: notificationMessage,
+            type: 'status_change',
+            link: `/mahasiswa/projects/${id}`,
+          },
+        });
+      }
+
       return NextResponse.json({
-        message: `Status project berhasil diubah ke ${body.status}`,
+        message: `Status project berhasil diubah ke ${newStatus}`,
         project,
       });
     }
@@ -235,6 +348,18 @@ export async function PUT(
     ) {
       return NextResponse.json(
         { error: 'Tidak memiliki akses' },
+        { status: 403 },
+      );
+    }
+
+    // Only allow editing when project is in DRAFT or REVISION_NEEDED status
+    if (
+      existingProject.status !== 'DRAFT' &&
+      existingProject.status !== 'REVISION_NEEDED' &&
+      session.user.role !== 'ADMIN'
+    ) {
+      return NextResponse.json(
+        { error: 'Project hanya dapat diedit saat status DRAFT atau REVISION_NEEDED' },
         { status: 403 },
       );
     }
@@ -289,38 +414,39 @@ export async function PUT(
           githubRepoName,
           semester,
           tahunAkademik,
+          productionUrl: productionUrl || null,
         },
       });
 
       // 2. Update or create project requirements
-      if (objectives || methodology || expectedOutcome || technologies || category || productionUrl || testingUsername || testingPassword) {
-        await tx.projectRequirements.upsert({
-          where: { projectId: id },
-          create: {
-            projectId: id,
-            judulProyek: title,
-            tujuanProyek: objectives || null,
-            metodologi: methodology || null,
-            teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
-            ruangLingkup: category || null,
-            productionUrl: productionUrl || null,
-            testingUsername: testingUsername || null,
-            testingPassword: testingPassword || null,
-            testingNotes: testingNotes || null,
-          },
-          update: {
-            judulProyek: title,
-            tujuanProyek: objectives || null,
-            metodologi: methodology || null,
-            teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
-            ruangLingkup: category || null,
-            productionUrl: productionUrl || null,
-            testingUsername: testingUsername || null,
-            testingPassword: testingPassword || null,
-            testingNotes: testingNotes || null,
-          },
-        });
-      }
+      await tx.projectRequirements.upsert({
+        where: { projectId: id },
+        create: {
+          projectId: id,
+          judulProyek: title,
+          tujuanProyek: objectives || null,
+          manfaatProyek: expectedOutcome || null,
+          metodologi: methodology || null,
+          teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
+          ruangLingkup: category || null,
+          productionUrl: productionUrl || null,
+          testingUsername: testingUsername || null,
+          testingPassword: testingPassword || null,
+          testingNotes: testingNotes || null,
+        },
+        update: {
+          judulProyek: title,
+          tujuanProyek: objectives || null,
+          manfaatProyek: expectedOutcome || null,
+          metodologi: methodology || null,
+          teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
+          ruangLingkup: category || null,
+          productionUrl: productionUrl || null,
+          testingUsername: testingUsername || null,
+          testingPassword: testingPassword || null,
+          testingNotes: testingNotes || null,
+        },
+      });
 
       // 3. Handle consent document
       if (consentDocument) {

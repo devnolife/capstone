@@ -722,6 +722,7 @@ export default function DosenProjectDetailPage({
               </Card>
             </motion.div>
           )}
+
         </div>
 
         {/* Right Column - Sidebar */}

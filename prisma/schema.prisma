@@ -23,6 +23,8 @@ enum ProjectStatus {
   SUBMITTED
   IN_REVIEW
   REVISION_NEEDED
+  READY_FOR_PRESENTATION  // Dosen sudah ACC, siap dijadwalkan presentasi
+  PRESENTATION_SCHEDULED  // Admin sudah jadwalkan presentasi
   APPROVED
   REJECTED
 }
@@ -87,6 +89,8 @@ model User {
   teamMemberships     ProjectMember[]     @relation("TeamMember")
   invitationsSent     TeamInvitation[]    @relation("InvitationsSent")
   invitationsReceived TeamInvitation[]    @relation("InvitationsReceived")
+  scheduledPresentations PresentationSchedule[] @relation("PresentationScheduler")
+  discussions         ProjectDiscussion[] @relation("DiscussionAuthor")
 
   @@map("users")
 }
@@ -146,6 +150,8 @@ model Project {
   requirements          ProjectRequirements?
   stakeholderDocuments  StakeholderDocument[]
   screenshots           ProjectScreenshot[]
+  presentationSchedule  PresentationSchedule?
+  discussions           ProjectDiscussion[]
 
   @@map("projects")
 }
@@ -342,7 +348,7 @@ model ReviewScore {
 model ReviewComment {
   id        String   @id @default(cuid())
   reviewId  String
-  section   String // Bagian yang dikomentari (code, documentation, presentation, dll)
+  section   String   @default("general") // Bagian yang dikomentari (general, code, persyaratan:integrasiMatakuliah, dll)
   filePath  String? // Path file jika komentar untuk kode
   lineStart Int? // Line awal jika komentar untuk kode
   lineEnd   Int? // Line akhir jika komentar untuk kode
@@ -427,4 +433,50 @@ model Semester {
   updatedAt     DateTime @updatedAt
 
   @@map("semesters")
+}
+
+// Jadwal Presentasi Project
+model PresentationSchedule {
+  id            String    @id @default(cuid())
+  projectId     String    @unique
+  scheduledDate DateTime  // Tanggal presentasi
+  startTime     String    // Jam mulai (e.g. "09:00")
+  endTime       String?   // Jam selesai (optional)
+  location      String?   // Ruangan/tempat presentasi
+  notes         String?   @db.Text // Catatan tambahan
+  
+  // Status presentasi
+  presentationStatus String @default("scheduled") // "scheduled", "completed", "cancelled", "rescheduled"
+  completedAt    DateTime? // Kapan presentasi selesai dilaksanakan
+  
+  // Admin yang menjadwalkan
+  scheduledById  String
+  scheduledBy    User      @relation("PresentationScheduler", fields: [scheduledById], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("presentation_schedules")
+}
+
+// Diskusi per Project (threaded)
+model ProjectDiscussion {
+  id        String   @id @default(cuid())
+  projectId String
+  authorId  String
+  parentId  String?  // Null = top-level, non-null = reply
+  content   String   @db.Text
+  isEdited  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author  User               @relation("DiscussionAuthor", fields: [authorId], references: [id])
+  parent  ProjectDiscussion?  @relation("DiscussionReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies ProjectDiscussion[] @relation("DiscussionReplies")
+
+  @@index([projectId, createdAt])
+  @@map("project_discussions")
 }

@@ -99,6 +99,16 @@ export default async function ProjectDetailPage({
       stakeholderDocuments: {
         orderBy: { uploadedAt: 'desc' },
       },
+      presentationSchedule: {
+        include: {
+          scheduledBy: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
   });
 

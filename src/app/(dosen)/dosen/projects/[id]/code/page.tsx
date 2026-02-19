@@ -221,25 +221,6 @@ export default function DosenProjectCodeViewerPage({
             </div>
 
             <div className="flex items-center gap-3">
-              {/* Branch Selector */}
-              {branches.length > 0 && (
-                <Select
-                  size="sm"
-                  label="Branch"
-                  selectedKeys={[selectedBranch]}
-                  onChange={(e) => setSelectedBranch(e.target.value)}
-                  className="w-40"
-                  startContent={<GitBranch size={14} />}
-                  isLoading={isLoadingBranches}
-                >
-                  {branches.map((branch) => (
-                    <SelectItem key={branch.name}>
-                      {branch.name}
-                    </SelectItem>
-                  ))}
-                </Select>
-              )}
-
               <Button
                 as="a"
                 href={project.githubRepoUrl}
@@ -265,6 +246,9 @@ export default function DosenProjectCodeViewerPage({
               repo={githubInfo.repo}
               defaultBranch={selectedBranch}
               projectId={projectId}
+              showBranchSelector={branches.length > 0}
+              availableBranches={branches.map(b => b.name)}
+              onBranchChange={(branch) => setSelectedBranch(branch)}
             />
           </div>
         </CardBody>

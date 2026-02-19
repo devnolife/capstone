@@ -233,11 +233,13 @@ export async function POST(request: Request) {
             comments?.map(
               (c: {
                 content: string;
+                section?: string;
                 filePath?: string;
                 lineStart?: number;
                 lineEnd?: number;
               }) => ({
                 content: c.content,
+                section: c.section || 'general',
                 filePath: c.filePath,
                 lineStart: c.lineStart,
                 lineEnd: c.lineEnd,

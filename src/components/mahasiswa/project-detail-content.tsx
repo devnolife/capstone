@@ -41,6 +41,8 @@ import {
   ChevronUp,
   Eye,
   Crown,
+  MapPin,
+  CalendarCheck,
 } from 'lucide-react';
 import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
@@ -52,6 +54,7 @@ import {
 } from '@/lib/utils';
 import StakeholderUpload from './stakeholder-upload';
 import ProjectScreenshotUpload from './screenshot-upload';
+
 
 interface ReviewComment {
   id: string;
@@ -93,6 +96,21 @@ interface Assignment {
     name: string;
     username: string;
     image: string | null;
+  };
+}
+
+interface PresentationSchedule {
+  id: string;
+  scheduledDate: Date;
+  startTime: string;
+  endTime: string | null;
+  location: string | null;
+  notes: string | null;
+  presentationStatus: string;
+  completedAt: Date | null;
+  scheduledBy: {
+    id: string;
+    name: string;
   };
 }
 
@@ -193,6 +211,7 @@ interface Project {
   reviews: Review[];
   assignments: Assignment[];
   stakeholderDocuments: StakeholderDocumentFromDB[];
+  presentationSchedule?: PresentationSchedule | null;
 }
 
 interface ProjectDetailContentProps {
@@ -871,6 +890,110 @@ export function ProjectDetailContent({
 
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
+          {/* Presentation Schedule Card - Show when status is READY_FOR_PRESENTATION or PRESENTATION_SCHEDULED */}
+          {(project.status === 'READY_FOR_PRESENTATION' || project.status === 'PRESENTATION_SCHEDULED') && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+            >
+              <Card className={`border shadow-sm overflow-hidden ${
+                project.presentationSchedule 
+                  ? 'border-emerald-200 dark:border-emerald-800' 
+                  : 'border-amber-200 dark:border-amber-800'
+              }`}>
+                <div className={`p-4 border-b ${
+                  project.presentationSchedule
+                    ? 'bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-emerald-100 dark:border-emerald-800'
+                    : 'bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 border-amber-100 dark:border-amber-800'
+                }`}>
+                  <div className="flex items-center gap-2">
+                    <CalendarCheck size={18} className={project.presentationSchedule ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'} />
+                    <h3 className="font-semibold">Jadwal Presentasi</h3>
+                  </div>
+                </div>
+                <CardBody className="p-4">
+                  {project.presentationSchedule ? (
+                    <div className="space-y-4">
+                      {/* Scheduled Date & Time */}
+                      <div className="flex items-start gap-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
+                        <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-800">
+                          <Calendar size={16} className="text-emerald-600 dark:text-emerald-400" />
+                        </div>
+                        <div>
+                          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Tanggal & Waktu</p>
+                          <p className="text-sm font-semibold">
+                            {new Date(project.presentationSchedule.scheduledDate).toLocaleDateString('id-ID', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </p>
+                          <p className="text-sm text-default-600">
+                            {project.presentationSchedule.startTime}
+                            {project.presentationSchedule.endTime && ` - ${project.presentationSchedule.endTime}`}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Location */}
+                      {project.presentationSchedule.location && (
+                        <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                          <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-700">
+                            <MapPin size={16} className="text-zinc-600 dark:text-zinc-400" />
+                          </div>
+                          <div>
+                            <p className="text-xs text-default-500 font-medium">Lokasi</p>
+                            <p className="text-sm font-medium">{project.presentationSchedule.location}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Notes */}
+                      {project.presentationSchedule.notes && (
+                        <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+                          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Catatan</p>
+                          <p className="text-sm text-default-600">{project.presentationSchedule.notes}</p>
+                        </div>
+                      )}
+
+                      {/* Status Badge */}
+                      <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                        <span className="text-xs text-default-500">Status</span>
+                        <Chip
+                          size="sm"
+                          color={
+                            project.presentationSchedule.presentationStatus === 'completed' ? 'success' :
+                            project.presentationSchedule.presentationStatus === 'cancelled' ? 'danger' :
+                            project.presentationSchedule.presentationStatus === 'rescheduled' ? 'warning' :
+                            'primary'
+                          }
+                          variant="flat"
+                        >
+                          {project.presentationSchedule.presentationStatus === 'completed' ? 'Selesai' :
+                           project.presentationSchedule.presentationStatus === 'cancelled' ? 'Dibatalkan' :
+                           project.presentationSchedule.presentationStatus === 'rescheduled' ? 'Dijadwalkan Ulang' :
+                           'Terjadwal'}
+                        </Chip>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-6">
+                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+                        <Clock size={24} className="text-amber-500" />
+                      </div>
+                      <p className="text-sm font-medium text-amber-700 dark:text-amber-300">Menunggu Penjadwalan</p>
+                      <p className="text-xs text-default-500 mt-1">
+                        Project Anda sudah di-ACC oleh dosen.<br/>Admin akan segera menjadwalkan presentasi.
+                      </p>
+                    </div>
+                  )}
+                </CardBody>
+              </Card>
+            </motion.div>
+          )}
+
           {/* Progress Timeline Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
