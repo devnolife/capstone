@@ -43,6 +43,8 @@ import {
   Crown,
   MapPin,
   CalendarCheck,
+  Server,
+  Trophy,
 } from 'lucide-react';
 import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
@@ -51,6 +53,11 @@ import {
   formatDateTime,
   getStatusColor,
   getStatusLabel,
+  getDeploymentPlatform,
+  getDeploymentCategoryLabel,
+  getDeploymentCategoryColor,
+  parseDeploymentTools,
+  getToolCategoriesForPlatform,
 } from '@/lib/utils';
 import StakeholderUpload from './stakeholder-upload';
 import ProjectScreenshotUpload from './screenshot-upload';
@@ -155,6 +162,11 @@ interface ProjectRequirements {
   presentasiUjian: string | null;
   stakeholder: string | null;
   kepatuhanEtika: string | null;
+  deploymentPlatform: string | null;
+  deploymentDescription: string | null;
+  deploymentEvidence: string | null;
+  deploymentTools: string | null;
+  deploymentBonusPoints: number;
   completionPercent: number;
 }
 
@@ -761,6 +773,118 @@ export function ProjectDetailContent({
               </CardBody>
             </Card>
           </motion.div>
+
+          {/* Deployment Info Card */}
+          {project.requirements?.deploymentPlatform && (() => {
+            const platform = getDeploymentPlatform(project.requirements.deploymentPlatform);
+            if (!platform) return null;
+            return (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.21 }}
+              >
+                <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+                  <CardBody className="p-5">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="p-2 rounded-xl bg-indigo-100 dark:bg-indigo-900/30">
+                        <Server size={18} className="text-indigo-600 dark:text-indigo-400" />
+                      </div>
+                      <div className="flex-1">
+                        <h2 className="font-semibold text-lg">Deployment Setup</h2>
+                        <p className="text-xs text-default-500">Konfigurasi deployment aplikasi</p>
+                      </div>
+                      <Chip
+                        size="sm"
+                        color={getDeploymentCategoryColor(platform.category)}
+                        variant="flat"
+                      >
+                        {getDeploymentCategoryLabel(platform.category)}
+                      </Chip>
+                    </div>
+
+                    <div className="space-y-3">
+                      {/* Platform Info */}
+                      <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+                        <p className="text-xs text-default-400 mb-1">Platform</p>
+                        <p className="text-sm font-semibold">{platform.label}</p>
+                        <p className="text-xs text-default-500 mt-0.5">{platform.description}</p>
+                      </div>
+
+                      {/* Bonus Points */}
+                      <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800">
+                        <div className="flex items-center gap-2">
+                          <Trophy size={16} className="text-amber-600 dark:text-amber-400" />
+                          <span className="text-sm font-bold text-amber-800 dark:text-amber-300">
+                            +{project.requirements.deploymentBonusPoints} poin bonus deployment
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Deployment Tools */}
+                      {(() => {
+                        const tools = parseDeploymentTools(project.requirements.deploymentTools);
+                        if (tools.length === 0) return null;
+                        const toolCategories = getToolCategoriesForPlatform(platform.category);
+                        const groupedTools = toolCategories
+                          .map((cat) => ({
+                            ...cat,
+                            selected: cat.tools.filter((t) => tools.includes(t.key)),
+                          }))
+                          .filter((cat) => cat.selected.length > 0);
+
+                        return (
+                          <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+                            <p className="text-xs text-default-400 mb-2">Tools & Services ({tools.length})</p>
+                            <div className="space-y-2.5">
+                              {groupedTools.map((cat) => (
+                                <div key={cat.key}>
+                                  <p className="text-xs text-default-500 font-medium mb-1">{cat.label}</p>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {cat.selected.map((tool) => (
+                                      <Chip
+                                        key={tool.key}
+                                        size="sm"
+                                        variant="flat"
+                                        color="primary"
+                                        startContent={<CheckCircle2 size={10} />}
+                                      >
+                                        {tool.label}
+                                      </Chip>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
+                      {/* Description */}
+                      {project.requirements.deploymentDescription && (
+                        <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+                          <p className="text-xs text-default-400 mb-1">Deskripsi Deployment</p>
+                          <p className="text-xs text-default-600 whitespace-pre-wrap">
+                            {project.requirements.deploymentDescription}
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Evidence */}
+                      {project.requirements.deploymentEvidence && (
+                        <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
+                          <p className="text-xs text-default-400 mb-1">Bukti/Evidence</p>
+                          <p className="text-xs text-default-600 whitespace-pre-wrap">
+                            {project.requirements.deploymentEvidence}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </CardBody>
+                </Card>
+              </motion.div>
+            );
+          })()}
 
           {/* Stakeholder Documents Card */}
           <motion.div

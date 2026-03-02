@@ -55,6 +55,8 @@ import {
   XCircle,
   ThumbsUp,
   RotateCcw,
+  Server,
+  Trophy,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -62,6 +64,12 @@ import {
   getStatusColor,
   getStatusLabel,
   getDocumentTypeLabel,
+  getDeploymentPlatform,
+  getDeploymentCategoryLabel,
+  getDeploymentCategoryColor,
+  parseDeploymentTools,
+  getDeploymentTool,
+  getToolCategoriesForPlatform,
 } from '@/lib/utils';
 import { GitHubCodeViewer } from '@/components/github/code-viewer';
 import { parseGitHubUrl } from '@/lib/github';
@@ -166,6 +174,11 @@ interface Project {
     testingUsername?: string | null;
     testingPassword?: string | null;
     testingNotes?: string | null;
+    deploymentPlatform?: string | null;
+    deploymentDescription?: string | null;
+    deploymentEvidence?: string | null;
+    deploymentTools?: string | null;
+    deploymentBonusPoints?: number;
   } | null;
 }
 
@@ -1984,6 +1997,113 @@ export default function ReviewPage({
               </CardBody>
             </Card>
           )}
+
+          {/* Deployment Info Card */}
+          {project.requirements?.deploymentPlatform && (() => {
+            const platform = getDeploymentPlatform(project.requirements.deploymentPlatform);
+            if (!platform) return null;
+            return (
+              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30 border-b border-zinc-100 dark:border-zinc-800">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Server size={18} className="text-indigo-600 dark:text-indigo-400" />
+                      <h3 className="font-semibold">Deployment Setup</h3>
+                    </div>
+                    <Chip
+                      size="sm"
+                      color={getDeploymentCategoryColor(platform.category)}
+                      variant="flat"
+                    >
+                      {getDeploymentCategoryLabel(platform.category)}
+                    </Chip>
+                  </div>
+                </div>
+                <CardBody className="p-4 space-y-4">
+                  {/* Platform */}
+                  <div className="space-y-1">
+                    <p className="text-xs font-medium text-default-500">Platform</p>
+                    <p className="text-sm font-semibold">{platform.label}</p>
+                    <p className="text-xs text-default-400">{platform.description}</p>
+                  </div>
+
+                  {/* Bonus Points */}
+                  <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800">
+                    <div className="flex items-center gap-2">
+                      <Trophy size={16} className="text-amber-600 dark:text-amber-400" />
+                      <span className="text-sm font-bold text-amber-800 dark:text-amber-300">
+                        +{project.requirements.deploymentBonusPoints ?? platform.bonusPoints} poin bonus
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Deployment Tools */}
+                  {(() => {
+                    const tools = parseDeploymentTools(project.requirements.deploymentTools);
+                    if (tools.length === 0) return null;
+                    const toolCategories = getToolCategoriesForPlatform(platform.category);
+                    // Group selected tools by category
+                    const groupedTools = toolCategories
+                      .map((cat) => ({
+                        ...cat,
+                        selected: cat.tools.filter((t) => tools.includes(t.key)),
+                      }))
+                      .filter((cat) => cat.selected.length > 0);
+
+                    return (
+                      <div className="space-y-2">
+                        <p className="text-xs font-medium text-default-500">Tools & Services ({tools.length})</p>
+                        <div className="space-y-3">
+                          {groupedTools.map((cat) => (
+                            <div key={cat.key}>
+                              <p className="text-xs text-default-400 mb-1.5">{cat.label}</p>
+                              <div className="flex flex-wrap gap-1.5">
+                                {cat.selected.map((tool) => (
+                                  <Chip
+                                    key={tool.key}
+                                    size="sm"
+                                    variant="flat"
+                                    color="primary"
+                                    startContent={<CheckCircle2 size={10} />}
+                                  >
+                                    {tool.label}
+                                  </Chip>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Description */}
+                  {project.requirements.deploymentDescription && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-default-500">Deskripsi Deployment</p>
+                      <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                        <p className="text-xs text-default-600 whitespace-pre-wrap">
+                          {project.requirements.deploymentDescription}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Evidence */}
+                  {project.requirements.deploymentEvidence && (
+                    <div className="space-y-1">
+                      <p className="text-xs font-medium text-default-500">Bukti/Evidence</p>
+                      <div className="p-3 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700">
+                        <p className="text-xs text-default-600 whitespace-pre-wrap">
+                          {project.requirements.deploymentEvidence}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </CardBody>
+              </Card>
+            );
+          })()}
 
           {/* Quick Stats */}
           <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">

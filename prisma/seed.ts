@@ -154,6 +154,13 @@ async function main() {
       bobotMax: 20,
       urutan: 5,
     },
+    {
+      name: 'Deployment Bonus',
+      description: 'Bonus poin berdasarkan platform dan kompleksitas deployment. VPS/manual (15 poin), Cloud Service/Shared Hosting (12 poin), Docker (10 poin), Semi-managed (8 poin), Auto-managed (5 poin).',
+      kategori: 'Bonus',
+      bobotMax: 15,
+      urutan: 6,
+    },
   ];
 
   for (const rubrik of rubrikList) {
@@ -168,7 +175,7 @@ async function main() {
   console.log('📊 Summary:');
   console.log(`   • Users:            3 (admin, dosen, mahasiswa)`);
   console.log(`   • Semesters:        2`);
-  console.log(`   • Rubrik Penilaian: ${rubrikList.length}`);
+  console.log(`   • Rubrik Penilaian: ${rubrikList.length} (incl. deployment bonus)`);
   console.log('═'.repeat(60));
   console.log('\n🔐 Login Credentials:\n');
   console.log('   ┌─────────────┬──────────────┬──────────────┬─────────────────┐');

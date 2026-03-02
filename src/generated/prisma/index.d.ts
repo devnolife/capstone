@@ -9467,10 +9467,12 @@ export namespace Prisma {
   }
 
   export type ProjectRequirementsAvgAggregateOutputType = {
+    deploymentBonusPoints: number | null
     completionPercent: number | null
   }
 
   export type ProjectRequirementsSumAggregateOutputType = {
+    deploymentBonusPoints: number | null
     completionPercent: number | null
   }
 
@@ -9495,6 +9497,11 @@ export namespace Prisma {
     testingUsername: string | null
     testingPassword: string | null
     testingNotes: string | null
+    deploymentPlatform: string | null
+    deploymentDescription: string | null
+    deploymentEvidence: string | null
+    deploymentTools: string | null
+    deploymentBonusPoints: number | null
     analisisTemuan: string | null
     presentasiUjian: string | null
     stakeholder: string | null
@@ -9528,6 +9535,11 @@ export namespace Prisma {
     testingUsername: string | null
     testingPassword: string | null
     testingNotes: string | null
+    deploymentPlatform: string | null
+    deploymentDescription: string | null
+    deploymentEvidence: string | null
+    deploymentTools: string | null
+    deploymentBonusPoints: number | null
     analisisTemuan: string | null
     presentasiUjian: string | null
     stakeholder: string | null
@@ -9561,6 +9573,11 @@ export namespace Prisma {
     testingUsername: number
     testingPassword: number
     testingNotes: number
+    deploymentPlatform: number
+    deploymentDescription: number
+    deploymentEvidence: number
+    deploymentTools: number
+    deploymentBonusPoints: number
     analisisTemuan: number
     presentasiUjian: number
     stakeholder: number
@@ -9576,10 +9593,12 @@ export namespace Prisma {
 
 
   export type ProjectRequirementsAvgAggregateInputType = {
+    deploymentBonusPoints?: true
     completionPercent?: true
   }
 
   export type ProjectRequirementsSumAggregateInputType = {
+    deploymentBonusPoints?: true
     completionPercent?: true
   }
 
@@ -9604,6 +9623,11 @@ export namespace Prisma {
     testingUsername?: true
     testingPassword?: true
     testingNotes?: true
+    deploymentPlatform?: true
+    deploymentDescription?: true
+    deploymentEvidence?: true
+    deploymentTools?: true
+    deploymentBonusPoints?: true
     analisisTemuan?: true
     presentasiUjian?: true
     stakeholder?: true
@@ -9637,6 +9661,11 @@ export namespace Prisma {
     testingUsername?: true
     testingPassword?: true
     testingNotes?: true
+    deploymentPlatform?: true
+    deploymentDescription?: true
+    deploymentEvidence?: true
+    deploymentTools?: true
+    deploymentBonusPoints?: true
     analisisTemuan?: true
     presentasiUjian?: true
     stakeholder?: true
@@ -9670,6 +9699,11 @@ export namespace Prisma {
     testingUsername?: true
     testingPassword?: true
     testingNotes?: true
+    deploymentPlatform?: true
+    deploymentDescription?: true
+    deploymentEvidence?: true
+    deploymentTools?: true
+    deploymentBonusPoints?: true
     analisisTemuan?: true
     presentasiUjian?: true
     stakeholder?: true
@@ -9790,6 +9824,11 @@ export namespace Prisma {
     testingUsername: string | null
     testingPassword: string | null
     testingNotes: string | null
+    deploymentPlatform: string | null
+    deploymentDescription: string | null
+    deploymentEvidence: string | null
+    deploymentTools: string | null
+    deploymentBonusPoints: number
     analisisTemuan: string | null
     presentasiUjian: string | null
     stakeholder: string | null
@@ -9842,6 +9881,11 @@ export namespace Prisma {
     testingUsername?: boolean
     testingPassword?: boolean
     testingNotes?: boolean
+    deploymentPlatform?: boolean
+    deploymentDescription?: boolean
+    deploymentEvidence?: boolean
+    deploymentTools?: boolean
+    deploymentBonusPoints?: boolean
     analisisTemuan?: boolean
     presentasiUjian?: boolean
     stakeholder?: boolean
@@ -9876,6 +9920,11 @@ export namespace Prisma {
     testingUsername?: boolean
     testingPassword?: boolean
     testingNotes?: boolean
+    deploymentPlatform?: boolean
+    deploymentDescription?: boolean
+    deploymentEvidence?: boolean
+    deploymentTools?: boolean
+    deploymentBonusPoints?: boolean
     analisisTemuan?: boolean
     presentasiUjian?: boolean
     stakeholder?: boolean
@@ -9910,6 +9959,11 @@ export namespace Prisma {
     testingUsername?: boolean
     testingPassword?: boolean
     testingNotes?: boolean
+    deploymentPlatform?: boolean
+    deploymentDescription?: boolean
+    deploymentEvidence?: boolean
+    deploymentTools?: boolean
+    deploymentBonusPoints?: boolean
     analisisTemuan?: boolean
     presentasiUjian?: boolean
     stakeholder?: boolean
@@ -9944,6 +9998,11 @@ export namespace Prisma {
     testingUsername?: boolean
     testingPassword?: boolean
     testingNotes?: boolean
+    deploymentPlatform?: boolean
+    deploymentDescription?: boolean
+    deploymentEvidence?: boolean
+    deploymentTools?: boolean
+    deploymentBonusPoints?: boolean
     analisisTemuan?: boolean
     presentasiUjian?: boolean
     stakeholder?: boolean
@@ -9956,7 +10015,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ProjectRequirementsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "judulProyek" | "targetPengguna" | "latarBelakangMasalah" | "tujuanProyek" | "manfaatProyek" | "integrasiMatakuliah" | "metodologi" | "penulisanLaporan" | "ruangLingkup" | "sumberDayaBatasan" | "teknologi" | "fiturUtama" | "productionUrl" | "productionUrlStatus" | "productionUrlCheckedAt" | "testingUsername" | "testingPassword" | "testingNotes" | "analisisTemuan" | "presentasiUjian" | "stakeholder" | "kepatuhanEtika" | "timeline" | "kerangkaWaktu" | "deadlineDate" | "completionPercent" | "createdAt" | "updatedAt", ExtArgs["result"]["projectRequirements"]>
+  export type ProjectRequirementsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "judulProyek" | "targetPengguna" | "latarBelakangMasalah" | "tujuanProyek" | "manfaatProyek" | "integrasiMatakuliah" | "metodologi" | "penulisanLaporan" | "ruangLingkup" | "sumberDayaBatasan" | "teknologi" | "fiturUtama" | "productionUrl" | "productionUrlStatus" | "productionUrlCheckedAt" | "testingUsername" | "testingPassword" | "testingNotes" | "deploymentPlatform" | "deploymentDescription" | "deploymentEvidence" | "deploymentTools" | "deploymentBonusPoints" | "analisisTemuan" | "presentasiUjian" | "stakeholder" | "kepatuhanEtika" | "timeline" | "kerangkaWaktu" | "deadlineDate" | "completionPercent" | "createdAt" | "updatedAt", ExtArgs["result"]["projectRequirements"]>
   export type ProjectRequirementsInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
   }
@@ -9993,6 +10052,11 @@ export namespace Prisma {
       testingUsername: string | null
       testingPassword: string | null
       testingNotes: string | null
+      deploymentPlatform: string | null
+      deploymentDescription: string | null
+      deploymentEvidence: string | null
+      deploymentTools: string | null
+      deploymentBonusPoints: number
       analisisTemuan: string | null
       presentasiUjian: string | null
       stakeholder: string | null
@@ -10447,6 +10511,11 @@ export namespace Prisma {
     readonly testingUsername: FieldRef<"ProjectRequirements", 'String'>
     readonly testingPassword: FieldRef<"ProjectRequirements", 'String'>
     readonly testingNotes: FieldRef<"ProjectRequirements", 'String'>
+    readonly deploymentPlatform: FieldRef<"ProjectRequirements", 'String'>
+    readonly deploymentDescription: FieldRef<"ProjectRequirements", 'String'>
+    readonly deploymentEvidence: FieldRef<"ProjectRequirements", 'String'>
+    readonly deploymentTools: FieldRef<"ProjectRequirements", 'String'>
+    readonly deploymentBonusPoints: FieldRef<"ProjectRequirements", 'Int'>
     readonly analisisTemuan: FieldRef<"ProjectRequirements", 'String'>
     readonly presentasiUjian: FieldRef<"ProjectRequirements", 'String'>
     readonly stakeholder: FieldRef<"ProjectRequirements", 'String'>
@@ -25852,6 +25921,11 @@ export namespace Prisma {
     testingUsername: 'testingUsername',
     testingPassword: 'testingPassword',
     testingNotes: 'testingNotes',
+    deploymentPlatform: 'deploymentPlatform',
+    deploymentDescription: 'deploymentDescription',
+    deploymentEvidence: 'deploymentEvidence',
+    deploymentTools: 'deploymentTools',
+    deploymentBonusPoints: 'deploymentBonusPoints',
     analisisTemuan: 'analisisTemuan',
     presentasiUjian: 'presentasiUjian',
     stakeholder: 'stakeholder',
@@ -26822,6 +26896,11 @@ export namespace Prisma {
     testingUsername?: StringNullableFilter<"ProjectRequirements"> | string | null
     testingPassword?: StringNullableFilter<"ProjectRequirements"> | string | null
     testingNotes?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentPlatform?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentDescription?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentEvidence?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentTools?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentBonusPoints?: IntFilter<"ProjectRequirements"> | number
     analisisTemuan?: StringNullableFilter<"ProjectRequirements"> | string | null
     presentasiUjian?: StringNullableFilter<"ProjectRequirements"> | string | null
     stakeholder?: StringNullableFilter<"ProjectRequirements"> | string | null
@@ -26856,6 +26935,11 @@ export namespace Prisma {
     testingUsername?: SortOrderInput | SortOrder
     testingPassword?: SortOrderInput | SortOrder
     testingNotes?: SortOrderInput | SortOrder
+    deploymentPlatform?: SortOrderInput | SortOrder
+    deploymentDescription?: SortOrderInput | SortOrder
+    deploymentEvidence?: SortOrderInput | SortOrder
+    deploymentTools?: SortOrderInput | SortOrder
+    deploymentBonusPoints?: SortOrder
     analisisTemuan?: SortOrderInput | SortOrder
     presentasiUjian?: SortOrderInput | SortOrder
     stakeholder?: SortOrderInput | SortOrder
@@ -26893,6 +26977,11 @@ export namespace Prisma {
     testingUsername?: StringNullableFilter<"ProjectRequirements"> | string | null
     testingPassword?: StringNullableFilter<"ProjectRequirements"> | string | null
     testingNotes?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentPlatform?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentDescription?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentEvidence?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentTools?: StringNullableFilter<"ProjectRequirements"> | string | null
+    deploymentBonusPoints?: IntFilter<"ProjectRequirements"> | number
     analisisTemuan?: StringNullableFilter<"ProjectRequirements"> | string | null
     presentasiUjian?: StringNullableFilter<"ProjectRequirements"> | string | null
     stakeholder?: StringNullableFilter<"ProjectRequirements"> | string | null
@@ -26927,6 +27016,11 @@ export namespace Prisma {
     testingUsername?: SortOrderInput | SortOrder
     testingPassword?: SortOrderInput | SortOrder
     testingNotes?: SortOrderInput | SortOrder
+    deploymentPlatform?: SortOrderInput | SortOrder
+    deploymentDescription?: SortOrderInput | SortOrder
+    deploymentEvidence?: SortOrderInput | SortOrder
+    deploymentTools?: SortOrderInput | SortOrder
+    deploymentBonusPoints?: SortOrder
     analisisTemuan?: SortOrderInput | SortOrder
     presentasiUjian?: SortOrderInput | SortOrder
     stakeholder?: SortOrderInput | SortOrder
@@ -26968,6 +27062,11 @@ export namespace Prisma {
     testingUsername?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
     testingPassword?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
     testingNotes?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    deploymentPlatform?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    deploymentDescription?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    deploymentEvidence?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    deploymentTools?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
+    deploymentBonusPoints?: IntWithAggregatesFilter<"ProjectRequirements"> | number
     analisisTemuan?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
     presentasiUjian?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
     stakeholder?: StringNullableWithAggregatesFilter<"ProjectRequirements"> | string | null
@@ -28683,6 +28782,11 @@ export namespace Prisma {
     testingUsername?: string | null
     testingPassword?: string | null
     testingNotes?: string | null
+    deploymentPlatform?: string | null
+    deploymentDescription?: string | null
+    deploymentEvidence?: string | null
+    deploymentTools?: string | null
+    deploymentBonusPoints?: number
     analisisTemuan?: string | null
     presentasiUjian?: string | null
     stakeholder?: string | null
@@ -28717,6 +28821,11 @@ export namespace Prisma {
     testingUsername?: string | null
     testingPassword?: string | null
     testingNotes?: string | null
+    deploymentPlatform?: string | null
+    deploymentDescription?: string | null
+    deploymentEvidence?: string | null
+    deploymentTools?: string | null
+    deploymentBonusPoints?: number
     analisisTemuan?: string | null
     presentasiUjian?: string | null
     stakeholder?: string | null
@@ -28749,6 +28858,11 @@ export namespace Prisma {
     testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
     testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
     testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentTools?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentBonusPoints?: IntFieldUpdateOperationsInput | number
     analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
     presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
     stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28783,6 +28897,11 @@ export namespace Prisma {
     testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
     testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
     testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentTools?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentBonusPoints?: IntFieldUpdateOperationsInput | number
     analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
     presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
     stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28816,6 +28935,11 @@ export namespace Prisma {
     testingUsername?: string | null
     testingPassword?: string | null
     testingNotes?: string | null
+    deploymentPlatform?: string | null
+    deploymentDescription?: string | null
+    deploymentEvidence?: string | null
+    deploymentTools?: string | null
+    deploymentBonusPoints?: number
     analisisTemuan?: string | null
     presentasiUjian?: string | null
     stakeholder?: string | null
@@ -28848,6 +28972,11 @@ export namespace Prisma {
     testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
     testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
     testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentTools?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentBonusPoints?: IntFieldUpdateOperationsInput | number
     analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
     presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
     stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
@@ -28881,6 +29010,11 @@ export namespace Prisma {
     testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
     testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
     testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentTools?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentBonusPoints?: IntFieldUpdateOperationsInput | number
     analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
     presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
     stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
@@ -30627,6 +30761,11 @@ export namespace Prisma {
     testingUsername?: SortOrder
     testingPassword?: SortOrder
     testingNotes?: SortOrder
+    deploymentPlatform?: SortOrder
+    deploymentDescription?: SortOrder
+    deploymentEvidence?: SortOrder
+    deploymentTools?: SortOrder
+    deploymentBonusPoints?: SortOrder
     analisisTemuan?: SortOrder
     presentasiUjian?: SortOrder
     stakeholder?: SortOrder
@@ -30640,6 +30779,7 @@ export namespace Prisma {
   }
 
   export type ProjectRequirementsAvgOrderByAggregateInput = {
+    deploymentBonusPoints?: SortOrder
     completionPercent?: SortOrder
   }
 
@@ -30664,6 +30804,11 @@ export namespace Prisma {
     testingUsername?: SortOrder
     testingPassword?: SortOrder
     testingNotes?: SortOrder
+    deploymentPlatform?: SortOrder
+    deploymentDescription?: SortOrder
+    deploymentEvidence?: SortOrder
+    deploymentTools?: SortOrder
+    deploymentBonusPoints?: SortOrder
     analisisTemuan?: SortOrder
     presentasiUjian?: SortOrder
     stakeholder?: SortOrder
@@ -30697,6 +30842,11 @@ export namespace Prisma {
     testingUsername?: SortOrder
     testingPassword?: SortOrder
     testingNotes?: SortOrder
+    deploymentPlatform?: SortOrder
+    deploymentDescription?: SortOrder
+    deploymentEvidence?: SortOrder
+    deploymentTools?: SortOrder
+    deploymentBonusPoints?: SortOrder
     analisisTemuan?: SortOrder
     presentasiUjian?: SortOrder
     stakeholder?: SortOrder
@@ -30710,6 +30860,7 @@ export namespace Prisma {
   }
 
   export type ProjectRequirementsSumOrderByAggregateInput = {
+    deploymentBonusPoints?: SortOrder
     completionPercent?: SortOrder
   }
 
@@ -34385,6 +34536,11 @@ export namespace Prisma {
     testingUsername?: string | null
     testingPassword?: string | null
     testingNotes?: string | null
+    deploymentPlatform?: string | null
+    deploymentDescription?: string | null
+    deploymentEvidence?: string | null
+    deploymentTools?: string | null
+    deploymentBonusPoints?: number
     analisisTemuan?: string | null
     presentasiUjian?: string | null
     stakeholder?: string | null
@@ -34417,6 +34573,11 @@ export namespace Prisma {
     testingUsername?: string | null
     testingPassword?: string | null
     testingNotes?: string | null
+    deploymentPlatform?: string | null
+    deploymentDescription?: string | null
+    deploymentEvidence?: string | null
+    deploymentTools?: string | null
+    deploymentBonusPoints?: number
     analisisTemuan?: string | null
     presentasiUjian?: string | null
     stakeholder?: string | null
@@ -34785,6 +34946,11 @@ export namespace Prisma {
     testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
     testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
     testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentTools?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentBonusPoints?: IntFieldUpdateOperationsInput | number
     analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
     presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
     stakeholder?: NullableStringFieldUpdateOperationsInput | string | null
@@ -34817,6 +34983,11 @@ export namespace Prisma {
     testingUsername?: NullableStringFieldUpdateOperationsInput | string | null
     testingPassword?: NullableStringFieldUpdateOperationsInput | string | null
     testingNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentPlatform?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentDescription?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentEvidence?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentTools?: NullableStringFieldUpdateOperationsInput | string | null
+    deploymentBonusPoints?: IntFieldUpdateOperationsInput | number
     analisisTemuan?: NullableStringFieldUpdateOperationsInput | string | null
     presentasiUjian?: NullableStringFieldUpdateOperationsInput | string | null
     stakeholder?: NullableStringFieldUpdateOperationsInput | string | null

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { getDeploymentBonusPoints } from "@/lib/utils";
 
 // Fields that count towards completion percentage (grouped by section)
 const REQUIREMENT_FIELDS = [
@@ -37,6 +38,11 @@ const OPTIONAL_FIELDS = [
   "testingUsername",
   "testingPassword",
   "testingNotes",
+  "deploymentPlatform",
+  "deploymentDescription",
+  "deploymentEvidence",
+  "deploymentTools",
+  "deploymentBonusPoints",
 ] as const;
 
 // Calculate completion percentage based on filled fields
@@ -186,6 +192,9 @@ export async function POST(request: NextRequest) {
       ? new Date(data.deadlineDate)
       : null;
 
+    // Calculate deployment bonus points based on platform
+    const deploymentBonusPoints = getDeploymentBonusPoints(data.deploymentPlatform);
+
     // Upsert requirements
     const requirements = await prisma.projectRequirements.upsert({
       where: { projectId },
@@ -222,6 +231,12 @@ export async function POST(request: NextRequest) {
         testingUsername: data.testingUsername || null,
         testingPassword: data.testingPassword || null,
         testingNotes: data.testingNotes || null,
+        // Deployment Setup
+        deploymentPlatform: data.deploymentPlatform || null,
+        deploymentDescription: data.deploymentDescription || null,
+        deploymentEvidence: data.deploymentEvidence || null,
+        deploymentTools: data.deploymentTools || null,
+        deploymentBonusPoints,
         completionPercent,
       },
       update: {
@@ -256,6 +271,12 @@ export async function POST(request: NextRequest) {
         testingUsername: data.testingUsername || null,
         testingPassword: data.testingPassword || null,
         testingNotes: data.testingNotes || null,
+        // Deployment Setup
+        deploymentPlatform: data.deploymentPlatform || null,
+        deploymentDescription: data.deploymentDescription || null,
+        deploymentEvidence: data.deploymentEvidence || null,
+        deploymentTools: data.deploymentTools || null,
+        deploymentBonusPoints,
         completionPercent,
       },
     });

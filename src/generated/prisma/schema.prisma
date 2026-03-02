@@ -229,6 +229,13 @@ model ProjectRequirements {
   testingPassword        String? // Password untuk testing
   testingNotes           String?   @db.Text // Catatan testing
 
+  // Deployment Setup
+  deploymentPlatform    String? // Platform deployment: "vps_nginx", "vps_apache", "aws", "gcp", "azure", "docker_vps", "railway", "flyio", "vercel", "netlify", "shared_hosting", "other"
+  deploymentDescription String? @db.Text // Deskripsi detail cara deploy (konfigurasi, langkah-langkah)
+  deploymentEvidence    String? @db.Text // Bukti deployment (screenshot, config file, domain setup)
+  deploymentTools       String? @db.Text // JSON array of installed tools/services: ["nginx","certbot","pm2",...]
+  deploymentBonusPoints Int     @default(0) // Poin bonus berdasarkan platform (auto-calculated)
+
   // Analysis
   analisisTemuan  String? @db.Text
   presentasiUjian String? @db.Text

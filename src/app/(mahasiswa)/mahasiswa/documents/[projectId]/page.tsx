@@ -47,8 +47,26 @@ import {
   Loader2,
   XCircle,
   ExternalLink,
+  Server,
+  Cloud,
+  Zap,
+  HardDrive,
+  Container,
+  Trophy,
+  Database,
+  Terminal,
+  Cpu,
+  ShieldCheck,
+  Wrench,
 } from 'lucide-react';
 import Link from 'next/link';
+import { 
+  DEPLOYMENT_PLATFORMS, 
+  getDeploymentPlatform, 
+  getToolCategoriesForPlatform, 
+  getDeploymentTool, 
+  parseDeploymentTools,
+} from '@/lib/utils';
 
 interface ProjectRequirements {
   id: string;
@@ -71,6 +89,12 @@ interface ProjectRequirements {
   testingUsername: string | null;
   testingPassword: string | null;
   testingNotes: string | null;
+  // Deployment Setup
+  deploymentPlatform: string | null;
+  deploymentDescription: string | null;
+  deploymentEvidence: string | null;
+  deploymentTools: string | null;
+  deploymentBonusPoints: number;
   completionPercent: number;
   updatedAt: string;
 }
@@ -96,8 +120,9 @@ interface FieldConfig {
   description: string;
   tips?: string[];
   minRows?: number;
-  type?: 'textarea' | 'input' | 'url' | 'password';
+  type?: 'textarea' | 'input' | 'url' | 'password' | 'select' | 'tools_checklist';
   optional?: boolean;
+  options?: Array<{ key: string; label: string; description: string; bonusPoints?: number }>;
 }
 
 interface SectionConfig {
@@ -108,6 +133,7 @@ interface SectionConfig {
   gradient: string;
   bgColor: string;
   fields: FieldConfig[];
+  conditional?: (formData: Record<string, string>) => boolean;
 }
 
 // Requirements fields grouped by section - UPDATED without removed sections
@@ -315,10 +341,79 @@ const REQUIREMENT_SECTIONS: SectionConfig[] = [
       },
     ],
   },
+  {
+    id: 'deployment-setup',
+    title: 'Deployment Setup',
+    subtitle: 'Konfigurasi dan platform deployment',
+    icon: Server,
+    gradient: 'from-indigo-500 to-violet-500',
+    bgColor: 'bg-gradient-to-br',
+    conditional: (formData) => !!formData.productionUrl?.trim(),
+    fields: [
+      {
+        key: 'deploymentPlatform',
+        label: 'Platform Deployment',
+        icon: Server,
+        placeholder: 'Pilih platform deployment yang digunakan...',
+        description: 'Platform yang digunakan untuk men-deploy aplikasi',
+        type: 'select',
+        optional: true,
+        options: DEPLOYMENT_PLATFORMS.map((p) => ({
+          key: p.key,
+          label: p.label,
+          description: p.description,
+          bonusPoints: p.bonusPoints,
+        })),
+      },
+      {
+        key: 'deploymentTools',
+        label: 'Tools & Services yang Di-install',
+        icon: Wrench,
+        placeholder: '',
+        description: 'Pilih tools/services yang di-install dan dikonfigurasi saat deployment',
+        type: 'tools_checklist',
+        optional: true,
+      },
+      {
+        key: 'deploymentDescription',
+        label: 'Deskripsi Deployment',
+        icon: FileText,
+        placeholder: 'Jelaskan proses deployment yang dilakukan: konfigurasi server, domain setup, SSL, CI/CD pipeline, dll...',
+        description: 'Jelaskan langkah-langkah deployment yang dilakukan',
+        tips: [
+          'Jelaskan konfigurasi server/platform',
+          'Sebutkan domain dan SSL setup jika ada',
+          'Jelaskan CI/CD pipeline jika digunakan',
+          'Sertakan konfigurasi Nginx/Apache jika menggunakan VPS',
+        ],
+        minRows: 4,
+        optional: true,
+      },
+      {
+        key: 'deploymentEvidence',
+        label: 'Bukti/Evidence Deployment',
+        icon: FileCheck,
+        placeholder: 'Link screenshot, dashboard hosting, atau bukti lainnya...',
+        description: 'Link bukti deployment (screenshot dashboard, terminal log, dll)',
+        tips: [
+          'Sertakan link screenshot dashboard hosting',
+          'Atau link ke log deployment',
+          'Bisa juga berupa link Google Drive dengan bukti',
+        ],
+        minRows: 3,
+        optional: true,
+      },
+    ],
+  },
 ];
 
-// Get all field keys for completion calculation
+// Get all field keys for completion calculation (excludes optional/deployment fields)
 const ALL_FIELD_KEYS = REQUIREMENT_SECTIONS.flatMap((section) =>
+  section.fields.filter((field) => !field.optional).map((field) => field.key)
+);
+
+// All field keys including optional ones (for data loading/saving)
+const ALL_DATA_KEYS = REQUIREMENT_SECTIONS.flatMap((section) =>
   section.fields.map((field) => field.key)
 );
 
@@ -338,6 +433,7 @@ export default function ProjectRequirementsFormPage() {
     'teknis-implementasi': false,
     'analisis-evaluasi': false,
     'production-demo': false,
+    'deployment-setup': false,
   });
   const [activeField, setActiveField] = useState<string | null>(null);
   const [urlValidation, setUrlValidation] = useState<{
@@ -360,6 +456,13 @@ export default function ProjectRequirementsFormPage() {
     });
     const percent = Math.round((filledFields.length / ALL_FIELD_KEYS.length) * 100);
     return { percent, filled: filledFields.length, total: ALL_FIELD_KEYS.length };
+  }, [formData]);
+
+  // Get visible sections (respecting conditional visibility)
+  const visibleSections = useMemo(() => {
+    return REQUIREMENT_SECTIONS.filter(
+      (section) => !section.conditional || section.conditional(formData)
+    );
   }, [formData]);
 
   // Calculate section completion
@@ -401,7 +504,7 @@ export default function ProjectRequirementsFormPage() {
 
         // Set form data from requirements
         const initialData: Record<string, string> = {};
-        ALL_FIELD_KEYS.forEach((key) => {
+        ALL_DATA_KEYS.forEach((key) => {
           initialData[key] = (reqData[key as keyof ProjectRequirements] as string) || '';
         });
         setFormData(initialData);
@@ -460,7 +563,26 @@ export default function ProjectRequirementsFormPage() {
   };
 
   const handleFieldChange = (key: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => {
+      const updated = { ...prev, [key]: value };
+
+      // When platform changes, filter out tools that don't belong to the new platform's categories
+      if (key === 'deploymentPlatform') {
+        const newPlatform = getDeploymentPlatform(value);
+        if (newPlatform) {
+          const validCategories = getToolCategoriesForPlatform(newPlatform.category);
+          const validToolKeys = new Set(validCategories.flatMap((c) => c.tools.map((t) => t.key)));
+          const currentTools = parseDeploymentTools(prev.deploymentTools);
+          const filtered = currentTools.filter((t) => validToolKeys.has(t));
+          updated.deploymentTools = filtered.length > 0 ? JSON.stringify(filtered) : '';
+        } else {
+          // Platform cleared — clear tools too
+          updated.deploymentTools = '';
+        }
+      }
+
+      return updated;
+    });
     
     // Reset URL validation when URL changes
     if (key === 'productionUrl') {
@@ -630,20 +752,21 @@ export default function ProjectRequirementsFormPage() {
           </div>
 
           {/* Section Quick Status */}
-          <div className="grid grid-cols-4 divide-x divide-zinc-200 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700">
-            {REQUIREMENT_SECTIONS.map((section) => {
+          <div className="grid divide-x divide-zinc-200 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700" style={{ gridTemplateColumns: `repeat(${visibleSections.length}, minmax(0, 1fr))` }}>
+            {visibleSections.map((section) => {
               const sectionCompletion = getSectionCompletion(section);
               const SectionIcon = section.icon;
               return (
                 <button
                   key={section.id}
                   onClick={() => {
-                    setExpandedSections((prev) => ({
-                      'aspek-akademik': section.id === 'aspek-akademik',
-                      'teknis-implementasi': section.id === 'teknis-implementasi',
-                      'analisis-evaluasi': section.id === 'analisis-evaluasi',
-                      'production-demo': section.id === 'production-demo',
-                    }));
+                    setExpandedSections((prev) => {
+                      const newState: Record<string, boolean> = {};
+                      visibleSections.forEach((s) => {
+                        newState[s.id] = s.id === section.id;
+                      });
+                      return { ...prev, ...newState };
+                    });
                     document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }}
                   className="p-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-center"
@@ -664,7 +787,7 @@ export default function ProjectRequirementsFormPage() {
 
       {/* Requirement Sections */}
       <div className="space-y-4">
-        {REQUIREMENT_SECTIONS.map((section) => {
+        {visibleSections.map((section) => {
           const sectionCompletion = getSectionCompletion(section);
           const isExpanded = expandedSections[section.id];
           const SectionIcon = section.icon;
@@ -816,7 +939,181 @@ export default function ProjectRequirementsFormPage() {
                               )}
 
                               {/* Field Input - Different types */}
-                              {field.type === 'url' ? (
+                              {field.type === 'select' && field.options ? (
+                                <div className="space-y-3">
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {field.options.map((option) => {
+                                      const isSelected = formData[field.key] === option.key;
+                                      return (
+                                        <button
+                                          key={option.key}
+                                          type="button"
+                                          disabled={!isOwner}
+                                          onClick={() => {
+                                            if (!isOwner) return;
+                                            handleFieldChange(
+                                              field.key,
+                                              isSelected ? '' : option.key
+                                            );
+                                          }}
+                                          className={`text-left p-3 rounded-xl border-2 transition-all ${
+                                            isSelected
+                                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500/30'
+                                              : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                                          } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
+                                        >
+                                          <div className="flex items-center justify-between mb-1">
+                                            <span className={`text-sm font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300' : ''}`}>
+                                              {option.label}
+                                            </span>
+                                            {option.bonusPoints !== undefined && (
+                                              <Chip
+                                                size="sm"
+                                                variant="flat"
+                                                color={isSelected ? 'primary' : 'default'}
+                                                startContent={<Trophy size={10} />}
+                                              >
+                                                +{option.bonusPoints} poin
+                                              </Chip>
+                                            )}
+                                          </div>
+                                          <p className="text-xs text-default-500 line-clamp-2">{option.description}</p>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+
+                                  {/* Bonus Points Display */}
+                                  {formData.deploymentPlatform && field.key === 'deploymentPlatform' && (() => {
+                                    const platform = getDeploymentPlatform(formData.deploymentPlatform);
+                                    if (!platform) return null;
+                                    return (
+                                      <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800"
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <Trophy size={18} className="text-amber-600 dark:text-amber-400" />
+                                          <div>
+                                            <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                                              Bonus Deployment: +{platform.bonusPoints} poin
+                                            </p>
+                                            <p className="text-xs text-amber-600 dark:text-amber-400">
+                                              Platform {platform.label} mendapat bonus karena{' '}
+                                              {platform.category === 'manual'
+                                                ? 'memerlukan konfigurasi server manual'
+                                                : platform.category === 'cloud_service'
+                                                  ? 'menggunakan layanan cloud profesional'
+                                                  : platform.category === 'container'
+                                                    ? 'menggunakan containerization'
+                                                    : platform.category === 'semi_managed'
+                                                      ? 'menggunakan platform semi-managed'
+                                                      : 'menggunakan platform deployment'}
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </motion.div>
+                                    );
+                                  })()}
+                                </div>
+                              ) : field.type === 'tools_checklist' ? (() => {
+                                // Get selected platform's category to filter tool categories
+                                const selectedPlatform = getDeploymentPlatform(formData.deploymentPlatform);
+                                if (!selectedPlatform) return (
+                                  <div className="p-4 rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-center">
+                                    <Wrench size={24} className="mx-auto text-zinc-400 mb-2" />
+                                    <p className="text-sm text-default-400">Pilih platform deployment terlebih dahulu untuk melihat tools yang tersedia</p>
+                                  </div>
+                                );
+
+                                const toolCategories = getToolCategoriesForPlatform(selectedPlatform.category);
+                                const selectedTools = parseDeploymentTools(formData[field.key]);
+
+                                if (toolCategories.length === 0) return (
+                                  <div className="p-4 rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-center">
+                                    <p className="text-sm text-default-400">Tidak ada tools checklist untuk platform ini</p>
+                                  </div>
+                                );
+
+                                const toggleTool = (toolKey: string) => {
+                                  if (!isOwner) return;
+                                  const current = parseDeploymentTools(formData[field.key]);
+                                  const updated = current.includes(toolKey)
+                                    ? current.filter((k) => k !== toolKey)
+                                    : [...current, toolKey];
+                                  handleFieldChange(field.key, JSON.stringify(updated));
+                                };
+
+                                // Map icon strings to components
+                                const iconMap: Record<string, React.ElementType> = {
+                                  Server, ShieldCheck, Cpu, Database, Terminal, Wrench,
+                                  Shield, Globe, Container, Zap, KeyRound, GitBranch,
+                                };
+
+                                return (
+                                  <div className="space-y-4">
+                                    {/* Summary bar */}
+                                    {selectedTools.length > 0 && (
+                                      <motion.div
+                                        initial={{ opacity: 0, y: -10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800"
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <CheckCircle2 size={16} className="text-blue-600 dark:text-blue-400" />
+                                          <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+                                            {selectedTools.length} tools/services dipilih
+                                          </span>
+                                        </div>
+                                      </motion.div>
+                                    )}
+
+                                    {/* Tool categories */}
+                                    {toolCategories.map((category) => {
+                                      const CategoryIcon = iconMap[category.icon] || Wrench;
+                                      const selectedInCategory = category.tools.filter((t) => selectedTools.includes(t.key));
+                                      return (
+                                        <div key={category.key} className="space-y-2">
+                                          <div className="flex items-center gap-2">
+                                            <CategoryIcon size={14} className="text-default-500" />
+                                            <span className="text-xs font-semibold text-default-600 uppercase tracking-wide">
+                                              {category.label}
+                                            </span>
+                                            {selectedInCategory.length > 0 && (
+                                              <Chip size="sm" variant="flat" color="primary" className="h-5">
+                                                {selectedInCategory.length}
+                                              </Chip>
+                                            )}
+                                          </div>
+                                          <div className="flex flex-wrap gap-2">
+                                            {category.tools.map((tool) => {
+                                              const isActive = selectedTools.includes(tool.key);
+                                              return (
+                                                <button
+                                                  key={tool.key}
+                                                  type="button"
+                                                  disabled={!isOwner}
+                                                  onClick={() => toggleTool(tool.key)}
+                                                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                                                    isActive
+                                                      ? 'border-blue-500 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500/20'
+                                                      : 'border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600'
+                                                  } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
+                                                  title={tool.description}
+                                                >
+                                                  {isActive && <CheckCircle2 size={12} className="text-blue-500" />}
+                                                  {tool.label}
+                                                </button>
+                                              );
+                                            })}
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                );
+                              })() : field.type === 'url' ? (
                                 <div className="space-y-2">
                                   <div className="flex gap-2">
                                     <Input
