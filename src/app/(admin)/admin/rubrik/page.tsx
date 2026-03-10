@@ -17,6 +17,8 @@ import {
   Progress,
   Select,
   SelectItem,
+  Tabs,
+  Tab,
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import {
@@ -28,7 +30,6 @@ import {
   Search,
   CheckCircle2,
   XCircle,
-  Scale,
   ListOrdered,
   Users,
   UsersRound,
@@ -71,6 +72,7 @@ export default function AdminRubrikPage() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<string>('kelompok');
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -215,28 +217,38 @@ export default function AdminRubrikPage() {
       description: '',
       kategori: '',
       bobotMax: 20,
-      urutan: rubriks.length,
+      urutan: rubriks.filter((r) => r.tipe === activeTab).length,
       isActive: true,
-      tipe: 'kelompok',
+      tipe: activeTab,
     });
     setSelectedRubrik(null);
     setError('');
   };
 
-  // Calculate total bobot
-  const totalBobot = rubriks
-    .filter((r) => r.isActive)
+  // Calculate total bobot per tipe
+  const activeRubriks = rubriks.filter((r) => r.isActive);
+  const totalBobotKelompok = activeRubriks
+    .filter((r) => r.tipe === 'kelompok')
+    .reduce((sum, r) => sum + r.bobotMax, 0);
+  const totalBobotIndividu = activeRubriks
+    .filter((r) => r.tipe === 'individu')
     .reduce((sum, r) => sum + r.bobotMax, 0);
 
   // Group by kategori
   const kategoris = [...new Set(rubriks.map((r) => r.kategori))];
 
-  // Filter rubriks
+  const countKelompok = rubriks.filter((r) => r.tipe === 'kelompok').length;
+  const countIndividu = rubriks.filter((r) => r.tipe === 'individu').length;
+
+  // Filter rubriks by active tab and search
   const filteredRubriks = rubriks.filter(
     (r) =>
-      r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.kategori.toLowerCase().includes(searchQuery.toLowerCase()),
+      r.tipe === activeTab &&
+      (r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        r.kategori.toLowerCase().includes(searchQuery.toLowerCase())),
   );
+
+  const currentTotalBobot = activeTab === 'kelompok' ? totalBobotKelompok : totalBobotIndividu;
 
   if (isLoading) {
     return (
@@ -279,10 +291,11 @@ export default function AdminRubrikPage() {
               startContent={<Plus size={18} />}
               onPress={() => {
                 resetForm();
+                setFormData((prev) => ({ ...prev, tipe: activeTab }));
                 onOpen();
               }}
             >
-              Tambah Rubrik
+              Tambah Rubrik {activeTab === 'individu' ? 'Individu' : 'Kelompok'}
             </Button>
           </div>
         </div>
@@ -305,14 +318,24 @@ export default function AdminRubrikPage() {
 
           <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
-                <CheckCircle2 size={18} className="text-blue-600 dark:text-blue-400" />
+              <div className="p-2 rounded-lg bg-sky-50 dark:bg-sky-900/30">
+                <UsersRound size={18} className="text-sky-600 dark:text-sky-400" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                  {rubriks.filter((r) => r.isActive).length}
-                </p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Rubrik Aktif</p>
+                <p className="text-2xl font-bold text-sky-600 dark:text-sky-400">{countKelompok}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Rubrik Kelompok</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30">
+                <Users size={18} className="text-violet-600 dark:text-violet-400" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-violet-600 dark:text-violet-400">{countIndividu}</p>
+                <p className="text-xs text-slate-500 dark:text-zinc-400">Rubrik Individu</p>
               </div>
             </div>
           </div>
@@ -328,105 +351,101 @@ export default function AdminRubrikPage() {
               </div>
             </div>
           </div>
-
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div
-                className={`p-2 rounded-lg ${totalBobot === 100
-                  ? 'bg-emerald-50 dark:bg-emerald-900/30'
-                  : totalBobot > 100
-                    ? 'bg-red-50 dark:bg-red-900/30'
-                    : 'bg-amber-50 dark:bg-amber-900/30'
-                  }`}
-              >
-                <Scale size={18} className={
-                  totalBobot === 100
-                    ? 'text-emerald-600 dark:text-emerald-400'
-                    : totalBobot > 100
-                      ? 'text-red-600 dark:text-red-400'
-                      : 'text-amber-600 dark:text-amber-400'
-                } />
-              </div>
-              <div>
-                <p className={`text-2xl font-bold ${totalBobot === 100
-                  ? 'text-emerald-600 dark:text-emerald-400'
-                  : totalBobot > 100
-                    ? 'text-red-600 dark:text-red-400'
-                    : 'text-amber-600 dark:text-amber-400'
-                  }`}>{totalBobot}/100</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Total Bobot</p>
-              </div>
-            </div>
-          </div>
         </div>
       </motion.div>
 
-      {/* Total Bobot Progress - Softer */}
-      <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm font-medium text-slate-700 dark:text-zinc-300">Total Bobot Rubrik Aktif</span>
-            <span
-              className={`text-sm font-semibold ${totalBobot === 100
-                ? 'text-emerald-600'
-                : totalBobot > 100
-                  ? 'text-red-600'
-                  : 'text-amber-600'
-                }`}
-            >
-              {totalBobot}%
-            </span>
-          </div>
-          <Progress
-            value={Math.min(totalBobot, 100)}
-            classNames={{
-              indicator:
-                totalBobot === 100
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-500'
-                  : totalBobot > 100
-                    ? 'bg-gradient-to-r from-red-500 to-orange-500'
-                    : 'bg-gradient-to-r from-amber-500 to-yellow-500',
-              track: 'bg-zinc-200 dark:bg-zinc-700',
-            }}
-          />
-          {totalBobot !== 100 && (
-            <p className="text-xs text-zinc-500 mt-2">
-              {totalBobot < 100
-                ? `Kurang ${100 - totalBobot}% untuk mencapai 100%`
-                : `Kelebihan ${totalBobot - 100}% dari total 100%`}
-            </p>
-          )}
-        </div>
-      </motion.div>
-
-      {/* Search Card - Softer */}
-      <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
-          <Input
-            placeholder="Cari rubrik berdasarkan nama atau kategori..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
-            classNames={{
-              inputWrapper:
-                'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50',
-            }}
-          />
-        </div>
-      </motion.div>
-
-      {/* Rubriks List - Softer Container */}
+      {/* Tabs + Content */}
       <motion.div variants={itemVariants}>
         <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30">
-                <BookOpen size={14} className="text-indigo-600 dark:text-indigo-400" />
+          <Tabs
+            selectedKey={activeTab}
+            onSelectionChange={(key) => setActiveTab(key as string)}
+            variant="underlined"
+            classNames={{
+              tabList: 'px-4 pt-3 border-b border-slate-200/60 dark:border-zinc-700/50',
+              tab: 'h-10',
+            }}
+          >
+            <Tab
+              key="kelompok"
+              title={
+                <div className="flex items-center gap-2">
+                  <UsersRound size={16} />
+                  <span>Penilaian Kelompok</span>
+                  <Chip size="sm" variant="flat" className={totalBobotKelompok === 100 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}>
+                    {totalBobotKelompok}/100
+                  </Chip>
+                </div>
+              }
+            />
+            <Tab
+              key="individu"
+              title={
+                <div className="flex items-center gap-2">
+                  <Users size={16} />
+                  <span>Penilaian Individu</span>
+                  <Chip size="sm" variant="flat" className={totalBobotIndividu === 100 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}>
+                    {totalBobotIndividu}/100
+                  </Chip>
+                </div>
+              }
+            />
+          </Tabs>
+
+          {/* Progress Bar for Active Tab */}
+          <div className="px-4 pt-4">
+            <div className="rounded-lg border border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30 p-3">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-slate-600 dark:text-zinc-400">
+                  Total Bobot {activeTab === 'kelompok' ? 'Kelompok' : 'Individu'} Aktif
+                </span>
+                <span
+                  className={`text-xs font-semibold ${currentTotalBobot === 100
+                    ? 'text-emerald-600'
+                    : currentTotalBobot > 100
+                      ? 'text-red-600'
+                      : 'text-amber-600'
+                    }`}
+                >
+                  {currentTotalBobot}/100
+                </span>
               </div>
-              <h2 className="font-medium text-slate-700 dark:text-zinc-300">
-                Daftar Rubrik Penilaian ({filteredRubriks.length})
-              </h2>
+              <Progress
+                value={Math.min(currentTotalBobot, 100)}
+                size="sm"
+                classNames={{
+                  indicator:
+                    currentTotalBobot === 100
+                      ? 'bg-gradient-to-r from-emerald-500 to-green-500'
+                      : currentTotalBobot > 100
+                        ? 'bg-gradient-to-r from-red-500 to-orange-500'
+                        : 'bg-gradient-to-r from-amber-500 to-yellow-500',
+                  track: 'bg-zinc-200 dark:bg-zinc-700',
+                }}
+              />
+              {currentTotalBobot !== 100 && (
+                <p className="text-[11px] text-zinc-500 mt-1.5">
+                  {currentTotalBobot < 100
+                    ? `Kurang ${100 - currentTotalBobot} poin untuk mencapai 100`
+                    : `Kelebihan ${currentTotalBobot - 100} poin dari target 100`}
+                </p>
+              )}
             </div>
+          </div>
+
+          {/* Search */}
+          <div className="px-4 pt-3">
+            <Input
+              placeholder={`Cari rubrik ${activeTab === 'kelompok' ? 'kelompok' : 'individu'}...`}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              size="sm"
+              startContent={<Search size={16} className="text-slate-400 dark:text-zinc-500" />}
+              classNames={{
+                inputWrapper:
+                  'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50',
+              }}
+            />
           </div>
 
           {filteredRubriks.length === 0 ? (
@@ -478,17 +497,6 @@ export default function AdminRubrikPage() {
                       </Chip>
                       <Chip
                         size="sm"
-                        className={
-                          rubrik.tipe === 'individu'
-                            ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
-                            : 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400'
-                        }
-                        startContent={rubrik.tipe === 'individu' ? <Users size={12} /> : <UsersRound size={12} />}
-                      >
-                        {rubrik.tipe === 'individu' ? 'Individu' : 'Kelompok'}
-                      </Chip>
-                      <Chip
-                        size="sm"
                         className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
                       >
                         Bobot: {rubrik.bobotMax}
@@ -534,9 +542,6 @@ export default function AdminRubrikPage() {
                         Kategori
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
-                        Tipe
-                      </th>
-                      <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
                         Bobot Max
                       </th>
                       <th className="text-left p-4 text-xs font-semibold text-zinc-500 uppercase tracking-wider">
@@ -577,19 +582,6 @@ export default function AdminRubrikPage() {
                         <td className="p-4">
                           <Chip size="sm" variant="flat">
                             {rubrik.kategori}
-                          </Chip>
-                        </td>
-                        <td className="p-4">
-                          <Chip
-                            size="sm"
-                            className={
-                              rubrik.tipe === 'individu'
-                                ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
-                                : 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400'
-                            }
-                            startContent={rubrik.tipe === 'individu' ? <Users size={12} /> : <UsersRound size={12} />}
-                          >
-                            {rubrik.tipe === 'individu' ? 'Individu' : 'Kelompok'}
                           </Chip>
                         </td>
                         <td className="p-4">
