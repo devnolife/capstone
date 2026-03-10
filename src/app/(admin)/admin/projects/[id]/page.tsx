@@ -618,10 +618,10 @@ export default function AdminProjectDetailPage({
     );
   }
 
-  const canApprove = ['SUBMITTED', 'IN_REVIEW'].includes(project.status);
-  const canReject = ['SUBMITTED', 'IN_REVIEW'].includes(project.status);
+  const canApprove = ['SUBMITTED', 'IN_REVIEW', 'READY_FOR_PRESENTATION', 'PRESENTATION_SCHEDULED'].includes(project.status);
+  const canReject = ['SUBMITTED', 'IN_REVIEW', 'READY_FOR_PRESENTATION', 'PRESENTATION_SCHEDULED'].includes(project.status);
   const canStartReview = project.status === 'SUBMITTED';
-  const canRequestRevision = project.status === 'IN_REVIEW';
+  const canRequestRevision = ['IN_REVIEW', 'READY_FOR_PRESENTATION'].includes(project.status);
   // Admin can revert any non-DRAFT project back to DRAFT so mahasiswa can edit again
   const canRevertToDraft = project.status !== 'DRAFT';
   const githubInfo = project.githubRepoUrl ? parseGitHubUrl(project.githubRepoUrl) : null;
@@ -1203,10 +1203,10 @@ export default function AdminProjectDetailPage({
                           key={screenshot.id}
                           onClick={() => setSelectedScreenshot(screenshot)}
                           className={`relative rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${selectedScreenshot.id === screenshot.id
-                              ? 'border-purple-500 ring-2 ring-purple-500/30'
-                              : screenshot.isFeatured
-                                ? 'border-amber-400'
-                                : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-400'
+                            ? 'border-purple-500 ring-2 ring-purple-500/30'
+                            : screenshot.isFeatured
+                              ? 'border-amber-400'
+                              : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-400'
                             }`}
                         >
                           {screenshot.isFeatured && (

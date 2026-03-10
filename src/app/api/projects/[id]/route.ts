@@ -219,8 +219,8 @@ export async function PUT(
       }
 
       const validStatuses = [
-        'DRAFT', 'SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 
-        'READY_FOR_PRESENTATION', 'PRESENTATION_SCHEDULED', 
+        'DRAFT', 'SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED',
+        'READY_FOR_PRESENTATION', 'PRESENTATION_SCHEDULED',
         'APPROVED', 'REJECTED'
       ];
       if (!validStatuses.includes(body.status)) {
@@ -242,18 +242,18 @@ export async function PUT(
 
       const adminAllowedTransitions: Record<string, string[]> = {
         'DRAFT': ['SUBMITTED'],
-        'SUBMITTED': ['IN_REVIEW', 'DRAFT'],
-        'IN_REVIEW': ['READY_FOR_PRESENTATION', 'REVISION_NEEDED', 'REJECTED'],
-        'REVISION_NEEDED': ['SUBMITTED', 'IN_REVIEW', 'REJECTED'],
-        'READY_FOR_PRESENTATION': ['PRESENTATION_SCHEDULED', 'IN_REVIEW', 'REJECTED'],
-        'PRESENTATION_SCHEDULED': ['APPROVED', 'REJECTED', 'READY_FOR_PRESENTATION'],
-        'APPROVED': ['REJECTED'], // Edge case: undo approval
-        'REJECTED': ['DRAFT', 'READY_FOR_PRESENTATION'], // Allow resubmission
+        'SUBMITTED': ['IN_REVIEW', 'DRAFT', 'APPROVED', 'REJECTED'],
+        'IN_REVIEW': ['READY_FOR_PRESENTATION', 'REVISION_NEEDED', 'APPROVED', 'REJECTED', 'DRAFT'],
+        'REVISION_NEEDED': ['SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'DRAFT'],
+        'READY_FOR_PRESENTATION': ['PRESENTATION_SCHEDULED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'DRAFT'],
+        'PRESENTATION_SCHEDULED': ['APPROVED', 'REJECTED', 'READY_FOR_PRESENTATION', 'DRAFT'],
+        'APPROVED': ['REJECTED', 'DRAFT'],
+        'REJECTED': ['DRAFT', 'SUBMITTED', 'READY_FOR_PRESENTATION'],
       };
 
       // Check if transition is allowed based on role
       let isTransitionAllowed = false;
-      
+
       if (session.user.role === 'ADMIN') {
         const allowedNext = adminAllowedTransitions[currentStatus] || [];
         isTransitionAllowed = allowedNext.includes(newStatus);
@@ -264,10 +264,10 @@ export async function PUT(
 
       if (!isTransitionAllowed) {
         return NextResponse.json(
-          { 
+          {
             error: `Tidak dapat mengubah status dari ${currentStatus} ke ${newStatus}`,
             currentStatus,
-            allowedTransitions: session.user.role === 'ADMIN' 
+            allowedTransitions: session.user.role === 'ADMIN'
               ? adminAllowedTransitions[currentStatus] || []
               : dosenAllowedTransitions[currentStatus] || []
           },
@@ -284,7 +284,7 @@ export async function PUT(
       if (newStatus === 'APPROVED') {
         updateData.approvedAt = new Date();
       }
-      
+
       // Clear approvedAt if rejected or reverted
       if (newStatus === 'REJECTED' || newStatus === 'REVISION_NEEDED') {
         updateData.approvedAt = null;
@@ -303,7 +303,7 @@ export async function PUT(
       // Create notification for mahasiswa
       let notificationTitle = '';
       let notificationMessage = '';
-      
+
       switch (newStatus) {
         case 'READY_FOR_PRESENTATION':
           notificationTitle = 'Project Disetujui untuk Presentasi';
