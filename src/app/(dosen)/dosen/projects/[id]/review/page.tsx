@@ -19,6 +19,13 @@ import {
   Spinner,
   Progress,
   addToast,
+  Input,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from '@heroui/react';
 import {
   ArrowLeft,
@@ -57,6 +64,8 @@ import {
   RotateCcw,
   Server,
   Trophy,
+  Clock,
+  MapPin,
 } from 'lucide-react';
 import Link from 'next/link';
 import {
@@ -302,6 +311,17 @@ export default function ReviewPage({
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const [isApproving, setIsApproving] = useState(false);
 
+  // Presentation scheduling state
+  const { isOpen: isScheduleOpen, onOpen: onScheduleOpen, onClose: onScheduleClose } = useDisclosure();
+  const [scheduleForm, setScheduleForm] = useState({
+    scheduledDate: '',
+    startTime: '09:00',
+    endTime: '',
+    location: '',
+    notes: '',
+  });
+  const [isScheduling, setIsScheduling] = useState(false);
+
   // Sub-tab state for grouped tabs
   const [penilaianSubTab, setPenilaianSubTab] = useState<'kelompok' | 'individu'>('kelompok');
   const [referensiSubTab, setReferensiSubTab] = useState<'dokumen' | 'screenshot'>('dokumen');
@@ -323,13 +343,20 @@ export default function ReviewPage({
     const url = project.requirements.productionUrl;
     window.open(url, '_blank');
   };
-  
+
   // Individual assessment state
   const [individualRubriks, setIndividualRubriks] = useState<Rubrik[]>([]);
   const [memberScores, setMemberScores] = useState<MemberScoreData[]>([]);
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(null);
+  const [savingMemberId, setSavingMemberId] = useState<string | null>(null);
+  const [savedMemberIds, setSavedMemberIds] = useState<Set<string>>(new Set());
+  const [isSavingGroup, setIsSavingGroup] = useState(false);
+  const [isGroupSaved, setIsGroupSaved] = useState(false);
 
   useEffect(() => {
+    // Wait for session to be loaded before fetching data
+    if (!session?.user?.id) return;
+
     const fetchData = async () => {
       try {
         // Fetch project
@@ -379,12 +406,10 @@ export default function ReviewPage({
           }
         }
 
-        // Check if review exists for current reviewer
-        const myReview = session?.user?.id
-          ? projectData.reviews?.find(
-              (r: { reviewer: { id: string } }) => r.reviewer.id === session.user.id
-            )
-          : projectData.reviews?.[0];
+        // Find review for current user only
+        const myReview = projectData.reviews?.find(
+          (r: { reviewer: { id: string } }) => r.reviewer.id === session.user.id
+        );
         if (myReview) {
           setReviewId(myReview.id);
           setOverallComment(myReview.overallComment || '');
@@ -408,6 +433,10 @@ export default function ReviewPage({
               },
             );
             setScores((prev) => ({ ...prev, ...existingScores }));
+            // Mark group scores as saved if any score > 0
+            if (Object.values(existingScores).some((s) => s.score > 0)) {
+              setIsGroupSaved(true);
+            }
           }
 
           // Populate existing comments
@@ -433,6 +462,7 @@ export default function ReviewPage({
 
           // Populate existing member scores
           if (myReview.memberScores && myReview.memberScores.length > 0) {
+            const savedIds = new Set<string>();
             setMemberScores((prev) => {
               const updated = [...prev];
               myReview.memberScores.forEach(
@@ -448,12 +478,21 @@ export default function ReviewPage({
                       score: ms.score,
                       feedback: ms.feedback || '',
                     };
+                    if (ms.score > 0) {
+                      savedIds.add(ms.memberId);
+                    }
                   }
                 }
               );
               return updated;
             });
+            setSavedMemberIds(savedIds);
           }
+        } else {
+          // No existing review for current user — reset reviewId
+          setReviewId(null);
+          setOverallComment('');
+          setComments([]);
         }
 
         // Fetch stakeholder documents
@@ -496,29 +535,27 @@ export default function ReviewPage({
     setError('');
 
     try {
-      // Prepare member scores for API
+      // Prepare member scores for API - only include current active individual rubriks
       const formattedMemberScores = memberScores.map((ms) => ({
         memberId: ms.memberId,
-        scores: Object.entries(ms.scores).map(([rubrikId, data]) => {
-          const rubrik = individualRubriks.find((r) => r.id === rubrikId);
-          return {
-            rubrikId,
-            score: data.score,
-            maxScore: rubrik?.bobotMax || 0,
-            feedback: data.feedback,
-          };
-        }),
+        scores: individualRubriks.map((rubrik) => ({
+          rubrikId: rubrik.id,
+          score: ms.scores[rubrik.id]?.score || 0,
+          maxScore: rubrik.bobotMax,
+          feedback: ms.scores[rubrik.id]?.feedback || '',
+        })),
       }));
 
-      // Create or update review
+      // Create or update review - only include current active group rubriks
       const reviewPayload = {
         projectId,
         overallComment,
         overallScore: calculateTotalScore(),
-        scores: Object.entries(scores).map(([rubrikId, data]) => ({
-          rubrikId,
-          score: data.score,
-          feedback: data.feedback,
+        scores: rubriks.map((rubrik) => ({
+          rubrikId: rubrik.id,
+          score: scores[rubrik.id]?.score || 0,
+          maxScore: rubrik.bobotMax,
+          feedback: scores[rubrik.id]?.feedback || '',
         })),
         comments: comments.map((c) => ({
           content: c.content,
@@ -531,16 +568,44 @@ export default function ReviewPage({
         status: submit ? 'COMPLETED' : 'IN_PROGRESS',
       };
 
-      const method = reviewId ? 'PUT' : 'POST';
-      const url = reviewId ? `/api/reviews/${reviewId}` : '/api/reviews';
+      let method = reviewId ? 'PUT' : 'POST';
+      let url = reviewId ? `/api/reviews/${reviewId}` : '/api/reviews';
 
-      const response = await fetch(url, {
+      let response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(reviewPayload),
       });
 
-      if (!response.ok) {
+      // If POST fails because review already exists, fetch the existing review ID and retry with PUT
+      if (!response.ok && method === 'POST') {
+        const errorData = await response.json();
+        if (response.status === 400 && errorData.error?.includes('sudah ada')) {
+          // Fetch existing review ID
+          const reviewsRes = await fetch(`/api/reviews?projectId=${projectId}`);
+          if (reviewsRes.ok) {
+            const existingReviews = await reviewsRes.json();
+            const myExistingReview = existingReviews.find(
+              (r: { reviewerId: string }) => r.reviewerId === session?.user?.id
+            );
+            if (myExistingReview) {
+              setReviewId(myExistingReview.id);
+              // Retry with PUT
+              response = await fetch(`/api/reviews/${myExistingReview.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reviewPayload),
+              });
+            }
+          }
+          if (!response.ok) {
+            const retryData = await response.json();
+            throw new Error(retryData.error || 'Failed to save review');
+          }
+        } else {
+          throw new Error(errorData.error || 'Failed to save review');
+        }
+      } else if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || 'Failed to save review');
       }
@@ -549,13 +614,33 @@ export default function ReviewPage({
       setReviewId(data.review?.id || reviewId);
 
       if (submit) {
+        // Update local project status so ACC buttons become visible
+        setProject((prev) => {
+          if (!prev) return null;
+          const updatedReviews = prev.reviews.map((r) =>
+            r.id === (data.review?.id || reviewId) ? { ...r, status: 'COMPLETED' } : r
+          );
+          // If this is a new review (not yet in the list), add it
+          const reviewExists = updatedReviews.some((r) => r.id === (data.review?.id || reviewId));
+          if (!reviewExists && data.review) {
+            updatedReviews.push({
+              id: data.review.id,
+              status: 'COMPLETED',
+              overallScore: data.review.overallScore,
+              overallComment: data.review.overallComment,
+              reviewer: { id: session?.user?.id || '', name: session?.user?.name || '' },
+              comments: data.review.comments || [],
+              scores: data.review.scores || [],
+              memberScores: data.review.memberScores || [],
+            });
+          }
+          return { ...prev, status: 'IN_REVIEW', reviews: updatedReviews };
+        });
         addToast({
           title: 'Review Disubmit',
-          description: 'Review berhasil disubmit.',
+          description: 'Review berhasil disubmit. Anda sekarang dapat ACC atau minta revisi.',
           color: 'success',
         });
-        router.push('/dosen/projects');
-        router.refresh();
       } else {
         addToast({
           title: 'Draft Tersimpan',
@@ -586,12 +671,12 @@ export default function ReviewPage({
   // Handle approve project for presentation (ACC)
   const handleApproveForPresentation = async () => {
     if (!project) return;
-    
+
     // Check if review has been submitted (either existing COMPLETED review or current review is being saved)
     const existingCompletedReview = project.reviews.find(
       (r) => r.status === 'COMPLETED'
     );
-    
+
     if (!existingCompletedReview) {
       addToast({
         title: 'Review Belum Selesai',
@@ -601,42 +686,78 @@ export default function ReviewPage({
       return;
     }
 
-    setIsApproving(true);
-    setError('');
+    // Open the scheduling modal instead of just setting status
+    setScheduleForm({
+      scheduledDate: '',
+      startTime: '09:00',
+      endTime: '',
+      location: '',
+      notes: '',
+    });
+    onScheduleOpen();
+  };
+
+  // Handle scheduling presentation after ACC
+  const handleSchedulePresentation = async () => {
+    if (!project) return;
+
+    if (!scheduleForm.scheduledDate || !scheduleForm.startTime) {
+      addToast({
+        title: 'Validasi Gagal',
+        description: 'Tanggal dan jam mulai wajib diisi',
+        color: 'warning',
+      });
+      return;
+    }
+
+    setIsScheduling(true);
 
     try {
-      const response = await fetch(`/api/projects/${projectId}`, {
+      // First, update project status to READY_FOR_PRESENTATION
+      const statusRes = await fetch(`/api/projects/${projectId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'READY_FOR_PRESENTATION' }),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
+      if (!statusRes.ok) {
+        const data = await statusRes.json();
         throw new Error(data.error || 'Gagal menyetujui project untuk presentasi');
       }
 
-      // Update local state
-      setProject((prev) => prev ? { ...prev, status: 'READY_FOR_PRESENTATION' } : null);
-      
+      // Then, create the presentation schedule
+      const scheduleRes = await fetch('/api/presentations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId,
+          ...scheduleForm,
+        }),
+      });
+
+      if (!scheduleRes.ok) {
+        const data = await scheduleRes.json();
+        throw new Error(data.error || 'Gagal menjadwalkan presentasi');
+      }
+
+      onScheduleClose();
+
       addToast({
-        title: 'Project Disetujui',
-        description: 'Project telah disetujui untuk presentasi. Admin akan menjadwalkan presentasi.',
+        title: 'Project Disetujui & Dijadwalkan',
+        description: 'Project telah disetujui dan jadwal presentasi berhasil dibuat.',
         color: 'success',
       });
-      
-      // Show success and redirect
+
       router.push('/dosen/projects');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Gagal menyetujui project');
       addToast({
         title: 'Gagal',
-        description: err instanceof Error ? err.message : 'Gagal menyetujui project',
+        description: err instanceof Error ? err.message : 'Gagal menjadwalkan presentasi',
         color: 'danger',
       });
     } finally {
-      setIsApproving(false);
+      setIsScheduling(false);
     }
   };
 
@@ -660,13 +781,13 @@ export default function ReviewPage({
       }
 
       setProject((prev) => prev ? { ...prev, status: 'REVISION_NEEDED' } : null);
-      
+
       addToast({
         title: 'Revisi Diminta',
         description: 'Mahasiswa akan diberitahu untuk melakukan revisi pada project.',
         color: 'warning',
       });
-      
+
       router.push('/dosen/projects');
       router.refresh();
     } catch (err) {
@@ -727,11 +848,210 @@ export default function ReviewPage({
     return { name, nim, avatar, isLeader };
   };
 
+  // Save group (kelompok) scores
+  const handleSaveGroupScore = async () => {
+    setIsSavingGroup(true);
+    setError('');
+
+    try {
+      const formattedMemberScores = memberScores.map((ms) => ({
+        memberId: ms.memberId,
+        scores: individualRubriks.map((rubrik) => ({
+          rubrikId: rubrik.id,
+          score: ms.scores[rubrik.id]?.score || 0,
+          maxScore: rubrik.bobotMax,
+          feedback: ms.scores[rubrik.id]?.feedback || '',
+        })),
+      }));
+
+      const reviewPayload = {
+        projectId,
+        overallComment,
+        overallScore: calculateTotalScore(),
+        scores: rubriks.map((rubrik) => ({
+          rubrikId: rubrik.id,
+          score: scores[rubrik.id]?.score || 0,
+          maxScore: rubrik.bobotMax,
+          feedback: scores[rubrik.id]?.feedback || '',
+        })),
+        comments: comments.map((c) => ({
+          content: c.content,
+          section: c.section || 'general',
+          filePath: c.filePath,
+          lineStart: c.lineStart,
+          lineEnd: c.lineEnd,
+        })),
+        memberScores: formattedMemberScores,
+        status: 'IN_PROGRESS' as const,
+      };
+
+      let method = reviewId ? 'PUT' : 'POST';
+      let url = reviewId ? `/api/reviews/${reviewId}` : '/api/reviews';
+
+      let response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reviewPayload),
+      });
+
+      if (!response.ok && method === 'POST') {
+        const errorData = await response.json();
+        if (response.status === 400 && errorData.error?.includes('sudah ada')) {
+          const reviewsRes = await fetch(`/api/reviews?projectId=${projectId}`);
+          if (reviewsRes.ok) {
+            const existingReviews = await reviewsRes.json();
+            const myExistingReview = existingReviews.find(
+              (r: { reviewerId: string }) => r.reviewerId === session?.user?.id
+            );
+            if (myExistingReview) {
+              setReviewId(myExistingReview.id);
+              response = await fetch(`/api/reviews/${myExistingReview.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reviewPayload),
+              });
+            }
+          }
+          if (!response.ok) {
+            const retryData = await response.json();
+            throw new Error(retryData.error || 'Failed to save');
+          }
+        } else {
+          throw new Error(errorData.error || 'Failed to save');
+        }
+      } else if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to save');
+      }
+
+      const data = await response.json();
+      setReviewId(data.review?.id || reviewId);
+      setIsGroupSaved(true);
+
+      addToast({
+        title: 'Nilai Kelompok Tersimpan',
+        description: 'Nilai penilaian kelompok berhasil disimpan.',
+        color: 'success',
+      });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Error saving';
+      setError(errorMsg);
+      addToast({
+        title: 'Gagal Menyimpan',
+        description: errorMsg,
+        color: 'danger',
+      });
+    } finally {
+      setIsSavingGroup(false);
+    }
+  };
+
   // Check if a member has any scores filled
   const isMemberScored = (memberId: string) => {
     const memberData = memberScores.find((ms) => ms.memberId === memberId);
     if (!memberData) return false;
     return Object.values(memberData.scores).some((s) => s.score > 0);
+  };
+
+  // Save individual member score (saves the entire review as draft)
+  const handleSaveMemberScore = async (memberId: string) => {
+    setSavingMemberId(memberId);
+    setError('');
+
+    try {
+      const formattedMemberScores = memberScores.map((ms) => ({
+        memberId: ms.memberId,
+        scores: individualRubriks.map((rubrik) => ({
+          rubrikId: rubrik.id,
+          score: ms.scores[rubrik.id]?.score || 0,
+          maxScore: rubrik.bobotMax,
+          feedback: ms.scores[rubrik.id]?.feedback || '',
+        })),
+      }));
+
+      const reviewPayload = {
+        projectId,
+        overallComment,
+        overallScore: calculateTotalScore(),
+        scores: rubriks.map((rubrik) => ({
+          rubrikId: rubrik.id,
+          score: scores[rubrik.id]?.score || 0,
+          maxScore: rubrik.bobotMax,
+          feedback: scores[rubrik.id]?.feedback || '',
+        })),
+        comments: comments.map((c) => ({
+          content: c.content,
+          section: c.section || 'general',
+          filePath: c.filePath,
+          lineStart: c.lineStart,
+          lineEnd: c.lineEnd,
+        })),
+        memberScores: formattedMemberScores,
+        status: 'IN_PROGRESS' as const,
+      };
+
+      let method = reviewId ? 'PUT' : 'POST';
+      let url = reviewId ? `/api/reviews/${reviewId}` : '/api/reviews';
+
+      let response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reviewPayload),
+      });
+
+      if (!response.ok && method === 'POST') {
+        const errorData = await response.json();
+        if (response.status === 400 && errorData.error?.includes('sudah ada')) {
+          const reviewsRes = await fetch(`/api/reviews?projectId=${projectId}`);
+          if (reviewsRes.ok) {
+            const existingReviews = await reviewsRes.json();
+            const myExistingReview = existingReviews.find(
+              (r: { reviewerId: string }) => r.reviewerId === session?.user?.id
+            );
+            if (myExistingReview) {
+              setReviewId(myExistingReview.id);
+              response = await fetch(`/api/reviews/${myExistingReview.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(reviewPayload),
+              });
+            }
+          }
+          if (!response.ok) {
+            const retryData = await response.json();
+            throw new Error(retryData.error || 'Failed to save');
+          }
+        } else {
+          throw new Error(errorData.error || 'Failed to save');
+        }
+      } else if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to save');
+      }
+
+      const data = await response.json();
+      setReviewId(data.review?.id || reviewId);
+      setSavedMemberIds((prev) => new Set(prev).add(memberId));
+
+      const memberName = project?.members.find((m) => m.id === memberId);
+      const displayName = memberName?.user?.name || memberName?.name || 'Anggota';
+
+      addToast({
+        title: 'Nilai Tersimpan',
+        description: `Nilai individu untuk ${displayName} berhasil disimpan.`,
+        color: 'success',
+      });
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Error saving';
+      setError(errorMsg);
+      addToast({
+        title: 'Gagal Menyimpan',
+        description: errorMsg,
+        color: 'danger',
+      });
+    } finally {
+      setSavingMemberId(null);
+    }
   };
 
   // Get selected member data
@@ -832,9 +1152,9 @@ export default function ReviewPage({
                 >
                   Submit Review
                 </Button>
-                
-                {/* ACC & Revision buttons - only show when project is IN_REVIEW */}
-                {project.status === 'IN_REVIEW' && (
+
+                {/* ACC & Revision buttons - show when project is IN_REVIEW */}
+                {(project.status === 'IN_REVIEW') && (
                   <>
                     <Divider orientation="vertical" className="h-8 bg-white/30" />
                     <Button
@@ -1035,15 +1355,16 @@ export default function ReviewPage({
                                 maxValue={rubrik.bobotMax}
                                 minValue={0}
                                 value={scores[rubrik.id]?.score || 0}
-                                onChange={(value) =>
+                                onChange={(value) => {
                                   setScores((prev) => ({
                                     ...prev,
                                     [rubrik.id]: {
                                       ...prev[rubrik.id],
                                       score: value as number,
                                     },
-                                  }))
-                                }
+                                  }));
+                                  setIsGroupSaved(false);
+                                }}
                                 color={getScoreColor(scores[rubrik.id]?.score || 0, rubrik.bobotMax)}
                                 className="max-w-full"
                                 showTooltip
@@ -1054,15 +1375,16 @@ export default function ReviewPage({
                               placeholder="Berikan feedback untuk kategori ini..."
                               variant="bordered"
                               value={scores[rubrik.id]?.feedback || ''}
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 setScores((prev) => ({
                                   ...prev,
                                   [rubrik.id]: {
                                     ...prev[rubrik.id],
                                     feedback: e.target.value,
                                   },
-                                }))
-                              }
+                                }));
+                                setIsGroupSaved(false);
+                              }}
                               minRows={2}
                               classNames={{
                                 inputWrapper: "border-zinc-200 dark:border-zinc-700"
@@ -1098,6 +1420,24 @@ export default function ReviewPage({
                           size="md"
                         />
                       </div>
+
+                      {/* Save Group Score Button */}
+                      <Button
+                        fullWidth
+                        color={isGroupSaved ? 'success' : 'primary'}
+                        variant="solid"
+                        size="lg"
+                        startContent={isGroupSaved ? <CheckCircle2 size={20} /> : <Save size={20} />}
+                        isLoading={isSavingGroup}
+                        onPress={handleSaveGroupScore}
+                        className="font-semibold"
+                      >
+                        {isSavingGroup
+                          ? 'Menyimpan...'
+                          : isGroupSaved
+                            ? 'Nilai Kelompok Tersimpan — Simpan Ulang'
+                            : 'Simpan Nilai Kelompok'}
+                      </Button>
                     </>
                   )}
 
@@ -1127,7 +1467,7 @@ export default function ReviewPage({
                               <div>
                                 <p className="font-semibold">Pilih Anggota untuk Dinilai</p>
                                 <p className="text-xs text-default-500">
-                                  {project.members.filter(m => isMemberScored(m.id)).length} dari {project.members.length} sudah dinilai
+                                  {project.members.filter(m => savedMemberIds.has(m.id)).length} dari {project.members.length} tersimpan
                                 </p>
                               </div>
                             </div>
@@ -1139,7 +1479,7 @@ export default function ReviewPage({
                               const { name, nim, avatar, isLeader } = getMemberDisplayInfo(member);
                               const memberScore = calculateMemberScore(member.id);
                               const hasScores = isMemberScored(member.id);
-                              
+
                               return (
                                 <motion.div
                                   key={member.id}
@@ -1147,9 +1487,8 @@ export default function ReviewPage({
                                   animate={{ opacity: 1, x: 0 }}
                                   transition={{ delay: memberIndex * 0.05 }}
                                   onClick={() => setSelectedMemberId(member.id)}
-                                  className={`flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${
-                                    isLeader ? 'bg-amber-50/50 dark:bg-amber-950/20' : ''
-                                  }`}
+                                  className={`flex items-center gap-4 p-4 cursor-pointer transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 ${isLeader ? 'bg-amber-50/50 dark:bg-amber-950/20' : ''
+                                    }`}
                                 >
                                   {/* Avatar */}
                                   <div className="relative flex-shrink-0">
@@ -1186,8 +1525,8 @@ export default function ReviewPage({
                                         </span>
                                         <span className="text-xs text-default-400">/100</span>
                                       </div>
-                                      <p className={`text-xs ${hasScores ? 'text-emerald-600 dark:text-emerald-400' : 'text-default-400'}`}>
-                                        {hasScores ? 'Sudah dinilai' : 'Belum dinilai'}
+                                      <p className={`text-xs ${hasScores ? (savedMemberIds.has(member.id) ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400') : 'text-default-400'}`}>
+                                        {hasScores ? (savedMemberIds.has(member.id) ? 'Tersimpan' : 'Belum disimpan') : 'Belum dinilai'}
                                       </p>
                                     </div>
                                     <ChevronRight size={18} className="text-default-400" />
@@ -1202,10 +1541,10 @@ export default function ReviewPage({
                         (() => {
                           const selectedMember = getSelectedMember();
                           if (!selectedMember) return null;
-                          
+
                           const { name, nim, avatar, isLeader } = getMemberDisplayInfo(selectedMember);
                           const memberScore = calculateMemberScore(selectedMember.id);
-                          
+
                           return (
                             <div className="space-y-6">
                               {/* Back Button & Member Info Header */}
@@ -1348,6 +1687,24 @@ export default function ReviewPage({
                                 />
                               </div>
 
+                              {/* Save Individual Score Button */}
+                              <Button
+                                fullWidth
+                                color={savedMemberIds.has(selectedMember.id) ? 'success' : 'primary'}
+                                variant="solid"
+                                size="lg"
+                                startContent={savedMemberIds.has(selectedMember.id) ? <CheckCircle2 size={20} /> : <Save size={20} />}
+                                isLoading={savingMemberId === selectedMember.id}
+                                onPress={() => handleSaveMemberScore(selectedMember.id)}
+                                className="font-semibold"
+                              >
+                                {savingMemberId === selectedMember.id
+                                  ? 'Menyimpan...'
+                                  : savedMemberIds.has(selectedMember.id)
+                                    ? `Nilai ${name} Tersimpan — Simpan Ulang`
+                                    : `Simpan Nilai ${name}`}
+                              </Button>
+
                               {/* Navigation Buttons */}
                               <div className="flex items-center justify-between pt-4 border-t border-zinc-200 dark:border-zinc-700">
                                 <Button
@@ -1362,7 +1719,7 @@ export default function ReviewPage({
                                     const currentIndex = project.members.findIndex(m => m.id === selectedMemberId);
                                     const prevMember = currentIndex > 0 ? project.members[currentIndex - 1] : null;
                                     const nextMember = currentIndex < project.members.length - 1 ? project.members[currentIndex + 1] : null;
-                                    
+
                                     return (
                                       <>
                                         {prevMember && (
@@ -2197,6 +2554,75 @@ export default function ReviewPage({
           </div>
         </motion.div>
       </div >
+
+      {/* Presentation Scheduling Modal */}
+      <Modal isOpen={isScheduleOpen} onClose={onScheduleClose} size="lg">
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <Calendar size={20} className="text-primary" />
+              <span>Jadwalkan Presentasi</span>
+            </div>
+            <p className="text-sm font-normal text-default-500">
+              Atur jadwal presentasi untuk project &quot;{project?.title}&quot;
+            </p>
+          </ModalHeader>
+          <ModalBody className="gap-4">
+            <Input
+              label="Tanggal Presentasi"
+              type="date"
+              isRequired
+              value={scheduleForm.scheduledDate}
+              onChange={(e) => setScheduleForm((prev) => ({ ...prev, scheduledDate: e.target.value }))}
+              startContent={<Calendar size={16} className="text-default-400" />}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Jam Mulai"
+                type="time"
+                isRequired
+                value={scheduleForm.startTime}
+                onChange={(e) => setScheduleForm((prev) => ({ ...prev, startTime: e.target.value }))}
+                startContent={<Clock size={16} className="text-default-400" />}
+              />
+              <Input
+                label="Jam Selesai"
+                type="time"
+                value={scheduleForm.endTime}
+                onChange={(e) => setScheduleForm((prev) => ({ ...prev, endTime: e.target.value }))}
+                startContent={<Clock size={16} className="text-default-400" />}
+              />
+            </div>
+            <Input
+              label="Lokasi / Ruangan"
+              placeholder="Contoh: Ruang Sidang Lt. 3"
+              value={scheduleForm.location}
+              onChange={(e) => setScheduleForm((prev) => ({ ...prev, location: e.target.value }))}
+              startContent={<MapPin size={16} className="text-default-400" />}
+            />
+            <Textarea
+              label="Catatan Tambahan"
+              placeholder="Catatan untuk mahasiswa..."
+              value={scheduleForm.notes}
+              onChange={(e) => setScheduleForm((prev) => ({ ...prev, notes: e.target.value }))}
+              minRows={2}
+            />
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="flat" onPress={onScheduleClose}>
+              Batal
+            </Button>
+            <Button
+              color="success"
+              onPress={handleSchedulePresentation}
+              isLoading={isScheduling}
+              startContent={<Calendar size={16} />}
+            >
+              ACC & Jadwalkan
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </motion.div >
   );
 }

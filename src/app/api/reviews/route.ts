@@ -147,7 +147,7 @@ export async function POST(request: Request) {
     }
 
     // Check if project is ready for review (has been submitted)
-    const reviewableStatuses = ['SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 'APPROVED'];
+    const reviewableStatuses = ['SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 'APPROVED', 'READY_FOR_PRESENTATION', 'PRESENTATION_SCHEDULED'];
     if (!reviewableStatuses.includes(project.status)) {
       return NextResponse.json(
         { error: 'Project belum siap untuk direview' },
@@ -200,11 +200,11 @@ export async function POST(request: Request) {
 
     // Get rubriks to determine maxScore for group scores
     const rubrikIds = scores?.map((s: { rubrikId: string }) => s.rubrikId) || [];
-    const rubriks = rubrikIds.length > 0 
+    const rubriks = rubrikIds.length > 0
       ? await prisma.rubrikPenilaian.findMany({
-          where: { id: { in: rubrikIds } },
-          select: { id: true, bobotMax: true },
-        })
+        where: { id: { in: rubrikIds } },
+        select: { id: true, bobotMax: true },
+      })
       : [];
     const rubrikMap = new Map(rubriks.map((r) => [r.id, r.bobotMax]));
 

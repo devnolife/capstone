@@ -96,7 +96,7 @@ export async function GET(
   }
 }
 
-// PUT /api/presentations/[id] - Update presentation schedule (Admin only)
+// PUT /api/presentations/[id] - Update presentation schedule (Admin or Dosen)
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -107,10 +107,10 @@ export async function PUT(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only admin can update presentations
-    if (session.user.role !== "ADMIN") {
+    // Admin or Dosen can update presentations
+    if (session.user.role !== "ADMIN" && session.user.role !== "DOSEN_PENGUJI") {
       return NextResponse.json(
-        { error: "Hanya admin yang dapat mengubah jadwal presentasi" },
+        { error: "Hanya admin atau dosen yang dapat mengubah jadwal presentasi" },
         { status: 403 }
       );
     }

@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/presentations - Create presentation schedule (Admin only)
+// POST /api/presentations - Create presentation schedule (Admin or Dosen)
 export async function POST(request: NextRequest) {
   try {
     const session = await auth();
@@ -101,10 +101,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only admin can schedule presentations
-    if (session.user.role !== "ADMIN") {
+    // Admin or Dosen can schedule presentations
+    if (session.user.role !== "ADMIN" && session.user.role !== "DOSEN_PENGUJI") {
       return NextResponse.json(
-        { error: "Hanya admin yang dapat menjadwalkan presentasi" },
+        { error: "Hanya admin atau dosen yang dapat menjadwalkan presentasi" },
         { status: 403 }
       );
     }

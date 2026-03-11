@@ -149,107 +149,117 @@ export async function PUT(
       );
     }
 
-    // Update review
-    const review = await prisma.review.update({
-      where: { id },
-      data: {
-        overallComment,
-        overallScore,
-        status: (status as ReviewStatus) || existingReview.status,
-        completedAt:
-          status === 'COMPLETED' ? new Date() : existingReview.completedAt,
-      },
-    });
-
-    // Update scores
-    if (scores) {
-      // Delete existing scores and recreate
-      await prisma.reviewScore.deleteMany({
-        where: { reviewId: id },
+    // Use transaction to prevent data loss if any step fails
+    await prisma.$transaction(async (tx) => {
+      // Update review
+      await tx.review.update({
+        where: { id },
+        data: {
+          overallComment,
+          overallScore,
+          status: (status as ReviewStatus) || existingReview.status,
+          completedAt:
+            status === 'COMPLETED' ? new Date() : existingReview.completedAt,
+        },
       });
 
-      if (scores.length > 0) {
-        // Get rubriks to determine maxScore
-        const rubrikIds = scores.map((s: { rubrikId: string }) => s.rubrikId);
-        const rubriks = await prisma.rubrikPenilaian.findMany({
-          where: { id: { in: rubrikIds } },
-          select: { id: true, bobotMax: true },
+      // Update scores
+      if (scores) {
+        // Delete existing scores and recreate
+        await tx.reviewScore.deleteMany({
+          where: { reviewId: id },
         });
-        const rubrikMap = new Map(rubriks.map((r) => [r.id, r.bobotMax]));
 
-        await prisma.reviewScore.createMany({
-          data: scores.map(
-            (s: { rubrikId: string; score: number; feedback?: string; maxScore?: number }) => ({
+        if (scores.length > 0) {
+          // Get rubriks to determine maxScore
+          const rubrikIds = scores.map((s: { rubrikId: string }) => s.rubrikId);
+          const rubriks = await tx.rubrikPenilaian.findMany({
+            where: { id: { in: rubrikIds } },
+            select: { id: true, bobotMax: true },
+          });
+          const rubrikMap = new Map(rubriks.map((r) => [r.id, r.bobotMax]));
+
+          // Filter out scores with invalid rubrikIds
+          const validScores = scores.filter(
+            (s: { rubrikId: string }) => rubrikMap.has(s.rubrikId)
+          );
+
+          if (validScores.length > 0) {
+            await tx.reviewScore.createMany({
+              data: validScores.map(
+                (s: { rubrikId: string; score: number; feedback?: string; maxScore?: number }) => ({
+                  reviewId: id,
+                  rubrikId: s.rubrikId,
+                  score: s.score,
+                  maxScore: s.maxScore || rubrikMap.get(s.rubrikId) || 0,
+                  feedback: s.feedback,
+                }),
+              ),
+            });
+          }
+        }
+      }
+
+      // Update comments
+      if (comments) {
+        // Delete existing comments and recreate
+        await tx.reviewComment.deleteMany({
+          where: { reviewId: id },
+        });
+
+        if (comments.length > 0) {
+          await tx.reviewComment.createMany({
+            data: comments.map(
+              (c: { content: string; section?: string; filePath?: string; lineStart?: number; lineEnd?: number }) => ({
+                reviewId: id,
+                content: c.content,
+                section: c.section || 'general',
+                filePath: c.filePath,
+                lineStart: c.lineStart,
+                lineEnd: c.lineEnd,
+              }),
+            ),
+          });
+        }
+      }
+
+      // Update member scores (individual assessment)
+      if (memberScores) {
+        // Delete existing member scores and recreate
+        await tx.memberReviewScore.deleteMany({
+          where: { reviewId: id },
+        });
+
+        const memberScoreData = memberScores.flatMap(
+          (ms: {
+            memberId: string;
+            scores: Array<{ rubrikId: string; score: number; maxScore: number; feedback?: string }>;
+          }) =>
+            ms.scores.map((s) => ({
               reviewId: id,
+              memberId: ms.memberId,
               rubrikId: s.rubrikId,
               score: s.score,
-              maxScore: s.maxScore || rubrikMap.get(s.rubrikId) || 0,
+              maxScore: s.maxScore,
               feedback: s.feedback,
-            }),
-          ),
+            })),
+        );
+
+        if (memberScoreData.length > 0) {
+          await tx.memberReviewScore.createMany({
+            data: memberScoreData,
+          });
+        }
+      }
+
+      // Update project status if review is completed
+      if (status === 'COMPLETED') {
+        await tx.project.update({
+          where: { id: existingReview.projectId },
+          data: { status: 'IN_REVIEW' },
         });
       }
-    }
-
-    // Update comments
-    if (comments) {
-      // Delete existing comments and recreate
-      await prisma.reviewComment.deleteMany({
-        where: { reviewId: id },
-      });
-
-      if (comments.length > 0) {
-        await prisma.reviewComment.createMany({
-          data: comments.map(
-            (c: { content: string; section?: string; filePath?: string; lineStart?: number; lineEnd?: number }) => ({
-              reviewId: id,
-              content: c.content,
-              section: c.section || 'general',
-              filePath: c.filePath,
-              lineStart: c.lineStart,
-              lineEnd: c.lineEnd,
-            }),
-          ),
-        });
-      }
-    }
-
-    // Update member scores (individual assessment)
-    if (memberScores) {
-      // Delete existing member scores and recreate
-      await prisma.memberReviewScore.deleteMany({
-        where: { reviewId: id },
-      });
-
-      const memberScoreData = memberScores.flatMap(
-        (ms: {
-          memberId: string;
-          scores: Array<{ rubrikId: string; score: number; maxScore: number; feedback?: string }>;
-        }) =>
-          ms.scores.map((s) => ({
-            reviewId: id,
-            memberId: ms.memberId,
-            rubrikId: s.rubrikId,
-            score: s.score,
-            maxScore: s.maxScore,
-            feedback: s.feedback,
-          })),
-      );
-
-      if (memberScoreData.length > 0) {
-        await prisma.memberReviewScore.createMany({
-          data: memberScoreData,
-        });
-      }
-    }
-
-    // Update project status if review is completed
-    if (status === 'COMPLETED') {
-      await prisma.project.update({
-        where: { id: existingReview.projectId },
-        data: { status: 'IN_REVIEW' },
-      });
-    }
+    });
 
     // Fetch updated review
     const updatedReview = await prisma.review.findUnique({
