@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: capstone-app
+    restart: unless-stopped
+    ports:
+      - "3012:3012"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+    networks:
+      - capstone-network
+
+networks:
+  capstone-network:
+    driver: bridge
