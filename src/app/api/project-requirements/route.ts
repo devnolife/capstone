@@ -5,30 +5,18 @@ import { getDeploymentBonusPoints } from "@/lib/utils";
 
 // Fields that count towards completion percentage (grouped by section)
 const REQUIREMENT_FIELDS = [
-  // Informasi Dasar
-  "judulProyek",
-  "targetPengguna",
-  "latarBelakangMasalah",
-  "tujuanProyek",
-  "manfaatProyek",
   // Aspek Akademik
   "integrasiMatakuliah",
   "metodologi",
-  "penulisanLaporan",
   // Teknis & Implementasi
   "ruangLingkup",
   "sumberDayaBatasan",
-  "teknologi",
   "fiturUtama",
   // Analisis & Evaluasi
   "analisisTemuan",
   "presentasiUjian",
   "stakeholder",
   "kepatuhanEtika",
-  // Timeline
-  "timeline",
-  "kerangkaWaktu",
-  // Production & Demo (optional - not counted in completion)
 ] as const;
 
 // Optional fields that don't count towards completion

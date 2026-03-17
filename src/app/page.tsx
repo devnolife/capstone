@@ -27,6 +27,7 @@ import {
   Moon,
   Sun,
 } from 'lucide-react';
+import { ProjectGallery } from '@/components/gallery';
 
 // Feature Card Component
 function FeatureCard({
@@ -124,7 +125,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-white overflow-hidden">
       {/* Grid Background */}
       <div className="fixed inset-0 -z-10">
-        <div 
+        <div
           className="absolute inset-0 bg-white dark:bg-black"
           style={{
             backgroundImage: `linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
@@ -132,7 +133,7 @@ export default function LandingPage() {
             backgroundSize: '60px 60px',
           }}
         />
-        <div 
+        <div
           className="absolute inset-0 hidden dark:block"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
@@ -409,6 +410,27 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section id="features" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Project Showcase
+            </h2>
+            <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+              Lihat hasil karya mahasiswa yang telah berhasil menyelesaikan capstone project mereka.
+            </p>
+          </motion.div>
+
+          <ProjectGallery limit={12} />
+        </div>
+      </section>
+
+      {/* Platform Features Section */}
+      <section className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
