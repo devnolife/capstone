@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -216,6 +216,14 @@ function ProjectAssignmentCard({
 }
 
 export default function AdminAssignmentsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Spinner size="lg" /></div>}>
+      <AdminAssignmentsPageInner />
+    </Suspense>
+  );
+}
+
+function AdminAssignmentsPageInner() {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [projects, setProjects] = useState<ProjectWithAssignments[]>([]);
   const [dosenList, setDosenList] = useState<Dosen[]>([]);

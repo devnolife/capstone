@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Card,
   CardBody,
@@ -129,8 +130,24 @@ const getStatusIcon = (status: string) => {
 };
 
 export function DosenProjectsClient({ projects }: DosenProjectsClientProps) {
-  const [searchQuery, setSearchQuery] = useState('');
+  return (
+    <Suspense fallback={null}>
+      <DosenProjectsClientInner projects={projects} />
+    </Suspense>
+  );
+}
+
+function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
+  const urlParams = useSearchParams();
+  const initialQuery = urlParams.get('q') || urlParams.get('search') || '';
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [statusFilter, setStatusFilter] = useState('all');
+
+  // Sync when URL query changes
+  useEffect(() => {
+    const q = urlParams.get('q') || urlParams.get('search') || '';
+    setSearchQuery(q);
+  }, [urlParams]);
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =

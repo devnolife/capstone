@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -288,6 +288,14 @@ function MobileProjectCard({
 }
 
 export default function AdminProjectsPage() {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Spinner size="lg" /></div>}>
+      <AdminProjectsPageInner />
+    </Suspense>
+  );
+}
+
+function AdminProjectsPageInner() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
   const [projects, setProjects] = useState<Project[]>([]);
