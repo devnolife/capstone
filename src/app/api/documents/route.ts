@@ -47,10 +47,18 @@ export async function POST(request: Request) {
       );
     }
 
-    if (
-      project.mahasiswaId !== session.user.id &&
-      session.user.role !== 'ADMIN'
-    ) {
+    const isOwner = project.mahasiswaId === session.user.id;
+    const isAdmin = session.user.role === 'ADMIN';
+    let isMember = false;
+    if (!isOwner && !isAdmin) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isAdmin && !isMember) {
       return NextResponse.json(
         { error: 'Tidak memiliki akses' },
         { status: 403 },
@@ -142,8 +150,16 @@ export async function GET(request: Request) {
       (a) => a.dosenId === session.user.id,
     );
     const isAdmin = session.user.role === 'ADMIN';
-
+    let isMember = false;
     if (!isOwner && !isAssignedDosen && !isAdmin) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isAssignedDosen && !isAdmin && !isMember) {
       return NextResponse.json(
         { error: 'Tidak memiliki akses' },
         { status: 403 },

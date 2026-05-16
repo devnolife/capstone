@@ -10,6 +10,11 @@ import {
   Spinner,
   Chip,
   Divider,
+  Input,
+  Textarea,
+  Select,
+  SelectItem,
+  addToast,
 } from '@heroui/react';
 import {
   Bell,
@@ -21,6 +26,8 @@ import {
   FileText,
   AlertCircle,
   ExternalLink,
+  Megaphone,
+  Send,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -56,6 +63,51 @@ export default function NotificationsPage() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { confirm, ConfirmDialog } = useConfirmDialog();
+
+  // Broadcast form state
+  const [broadcastTitle, setBroadcastTitle] = useState('');
+  const [broadcastMessage, setBroadcastMessage] = useState('');
+  const [broadcastType, setBroadcastType] = useState('system');
+  const [broadcastRole, setBroadcastRole] = useState<'all' | 'MAHASISWA' | 'DOSEN_PENGUJI' | 'ADMIN'>('all');
+  const [broadcastLink, setBroadcastLink] = useState('');
+  const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
+
+  const handleSendBroadcast = async () => {
+    if (!broadcastTitle.trim() || !broadcastMessage.trim()) {
+      addToast({ title: 'Judul dan pesan wajib diisi', color: 'warning' });
+      return;
+    }
+    setIsSendingBroadcast(true);
+    try {
+      const res = await fetch('/api/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          role: broadcastRole,
+          title: broadcastTitle.trim(),
+          message: broadcastMessage.trim(),
+          type: broadcastType,
+          link: broadcastLink.trim() || undefined,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        addToast({ title: data.error || 'Gagal mengirim notifikasi', color: 'danger' });
+        return;
+      }
+      addToast({
+        title: data.message || 'Notifikasi terkirim',
+        color: 'success',
+      });
+      setBroadcastTitle('');
+      setBroadcastMessage('');
+      setBroadcastLink('');
+    } catch {
+      addToast({ title: 'Terjadi kesalahan', color: 'danger' });
+    } finally {
+      setIsSendingBroadcast(false);
+    }
+  };
 
   useEffect(() => {
     fetchNotifications();
@@ -203,6 +255,78 @@ export default function NotificationsPage() {
           )}
         </div>
       </div>
+
+      {/* Broadcast Composer */}
+      <Card>
+        <CardHeader className="flex items-center gap-2">
+          <Megaphone size={18} className="text-primary" />
+          <h2 className="text-lg font-semibold">Kirim Pengumuman</h2>
+        </CardHeader>
+        <Divider />
+        <CardBody className="space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Select
+              label="Penerima"
+              size="sm"
+              selectedKeys={[broadcastRole]}
+              onSelectionChange={(keys) => {
+                const v = Array.from(keys)[0] as string;
+                if (v) setBroadcastRole(v as typeof broadcastRole);
+              }}
+            >
+              <SelectItem key="all">Semua pengguna</SelectItem>
+              <SelectItem key="MAHASISWA">Semua mahasiswa</SelectItem>
+              <SelectItem key="DOSEN_PENGUJI">Semua dosen penguji</SelectItem>
+              <SelectItem key="ADMIN">Semua admin</SelectItem>
+            </Select>
+            <Select
+              label="Tipe"
+              size="sm"
+              selectedKeys={[broadcastType]}
+              onSelectionChange={(keys) => {
+                const v = Array.from(keys)[0] as string;
+                if (v) setBroadcastType(v);
+              }}
+            >
+              <SelectItem key="system">Sistem</SelectItem>
+              <SelectItem key="assignment">Penugasan</SelectItem>
+              <SelectItem key="review">Review</SelectItem>
+              <SelectItem key="submission">Submission</SelectItem>
+            </Select>
+          </div>
+          <Input
+            label="Judul"
+            size="sm"
+            value={broadcastTitle}
+            onValueChange={setBroadcastTitle}
+            maxLength={120}
+          />
+          <Textarea
+            label="Pesan"
+            minRows={2}
+            value={broadcastMessage}
+            onValueChange={setBroadcastMessage}
+            maxLength={1000}
+          />
+          <Input
+            label="Link (opsional)"
+            placeholder="/admin/projects"
+            size="sm"
+            value={broadcastLink}
+            onValueChange={setBroadcastLink}
+          />
+          <div className="flex justify-end">
+            <Button
+              color="primary"
+              startContent={<Send size={16} />}
+              onPress={handleSendBroadcast}
+              isLoading={isSendingBroadcast}
+            >
+              Kirim
+            </Button>
+          </div>
+        </CardBody>
+      </Card>
 
       {/* Notifications List */}
       <Card>

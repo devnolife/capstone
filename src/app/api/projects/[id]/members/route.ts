@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { decryptNullable } from '@/lib/crypto';
 import { Octokit } from 'octokit';
 
 const MAX_MEMBERS = 3;
@@ -142,13 +143,13 @@ export async function POST(
     }
 
     // Verify GitHub user exists
-    const token =
-      (await prisma.user
-        .findUnique({
-          where: { id: session.user.id },
-          select: { githubToken: true },
-        })
-        .then((u) => u?.githubToken)) || process.env.GITHUB_ORG_TOKEN;
+    const userToken = await prisma.user
+      .findUnique({
+        where: { id: session.user.id },
+        select: { githubToken: true },
+      })
+      .then((u) => decryptNullable(u?.githubToken));
+    const token = userToken || process.env.GITHUB_ORG_TOKEN;
 
     if (!token) {
       return NextResponse.json(

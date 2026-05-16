@@ -16,40 +16,77 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const role = searchParams.get('role');
     const active = searchParams.get('active');
+    const search = (searchParams.get('search') ?? searchParams.get('q') ?? '').trim();
 
-    let whereClause = {};
+    const MAX_LIMIT = 200;
+    const rawLimit = Number(searchParams.get('limit'));
+    const limit = Number.isFinite(rawLimit) && rawLimit > 0
+      ? Math.min(Math.floor(rawLimit), MAX_LIMIT)
+      : MAX_LIMIT;
+    const rawPage = Number(searchParams.get('page'));
+    const page = Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
 
-    if (role) {
-      whereClause = { ...whereClause, role };
+    const andFilters: Record<string, unknown>[] = [];
+    if (role) andFilters.push({ role });
+    if (active !== null) andFilters.push({ isActive: active === 'true' });
+    if (search) {
+      andFilters.push({
+        OR: [
+          { name: { contains: search, mode: 'insensitive' } },
+          { username: { contains: search, mode: 'insensitive' } },
+          { email: { contains: search, mode: 'insensitive' } },
+          { nim: { contains: search, mode: 'insensitive' } },
+          { nip: { contains: search, mode: 'insensitive' } },
+          { prodi: { contains: search, mode: 'insensitive' } },
+        ],
+      });
     }
 
-    if (active !== null) {
-      whereClause = { ...whereClause, isActive: active === 'true' };
-    }
+    const whereClause = andFilters.length ? { AND: andFilters } : {};
 
-    const users = await prisma.user.findMany({
-      where: whereClause,
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        role: true,
-        image: true,
-        githubUsername: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-        _count: {
-          select: {
-            projects: true,
-            reviews: true,
+    const [total, users] = await Promise.all([
+      prisma.user.count({ where: whereClause }),
+      prisma.user.findMany({
+        where: whereClause,
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+          nim: true,
+          nip: true,
+          prodi: true,
+          role: true,
+          image: true,
+          githubUsername: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+          _count: {
+            select: {
+              projects: true,
+              reviews: true,
+            },
           },
         },
-      },
-      orderBy: { createdAt: 'desc' },
-    });
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+    ]);
 
-    return NextResponse.json(users);
+    // Backward compatible: return array if no pagination params were sent
+    const hasPaginationParams =
+      searchParams.has('page') || searchParams.has('limit') || searchParams.has('search') || searchParams.has('q');
+
+    if (!hasPaginationParams) {
+      return NextResponse.json(users);
+    }
+
+    return NextResponse.json({
+      data: users,
+      pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    });
   } catch (error) {
     console.error('Error fetching users:', error);
     return NextResponse.json(

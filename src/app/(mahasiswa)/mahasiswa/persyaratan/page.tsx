@@ -191,43 +191,33 @@ export default function PersyaratanPage() {
   );
 
   return (
-    <div className="w-full space-y-6 pb-8">
-      {/* Header Card - Soft Colored */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-indigo-50 to-violet-50 dark:from-blue-950/40 dark:via-indigo-950/30 dark:to-violet-950/40 border border-blue-200/50 dark:border-blue-800/30 p-6 sm:p-8">
-        {/* Subtle Background Accents */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-violet-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-        
-        <div className="relative flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/25">
-              <ClipboardList size={32} />
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-800 dark:text-zinc-100">Persyaratan Capstone</h1>
-              <p className="text-blue-600/70 dark:text-blue-400/60 mt-1">
-                Panduan lengkap persyaratan dokumen yang harus dipenuhi
-              </p>
-              <div className="flex items-center gap-3 mt-3">
-                <Chip className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300" size="sm">
-                  {PERSYARATAN_SECTIONS.length} Kategori
-                </Chip>
-                <Chip className="bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300" size="sm">
-                  {totalRequirements} Persyaratan
-                </Chip>
-              </div>
-            </div>
+    <div className="w-full space-y-5 pb-8">
+      {/* Header */}
+      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-default-900">Persyaratan Capstone</h1>
+          <p className="text-sm text-default-500 mt-0.5">
+            Panduan lengkap persyaratan dokumen yang harus dipenuhi
+          </p>
+          <div className="flex items-center gap-2 mt-2">
+            <Chip size="sm" variant="flat" color="primary">
+              {PERSYARATAN_SECTIONS.length} Kategori
+            </Chip>
+            <Chip size="sm" variant="flat" color="primary">
+              {totalRequirements} Persyaratan
+            </Chip>
           </div>
-          <Button
-            as={Link}
-            href="/mahasiswa/projects"
-            color="primary"
-            endContent={<ArrowRight size={18} />}
-          >
-            Lihat Proyek Saya
-          </Button>
         </div>
-      </div>
+        <Button
+          as={Link}
+          href="/mahasiswa/projects"
+          color="primary"
+          endContent={<ArrowRight size={16} />}
+          size="sm"
+        >
+          Lihat Proyek Saya
+        </Button>
+      </header>
 
       {/* Info Card */}
       <Card className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30">

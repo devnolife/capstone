@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { decryptNullable } from '@/lib/crypto';
 import { createGitHubClient } from '@/lib/github';
 
 // GET /api/github/repos - Get user's GitHub repositories
@@ -25,7 +26,15 @@ export async function GET() {
       );
     }
 
-    const github = createGitHubClient(user.githubToken);
+    const token = decryptNullable(user.githubToken);
+    if (!token) {
+      return NextResponse.json(
+        { error: 'GitHub token tidak dapat digunakan' },
+        { status: 400 },
+      );
+    }
+
+    const github = createGitHubClient(token);
     const repos = await github.getUserRepos();
 
     return NextResponse.json(repos);

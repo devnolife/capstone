@@ -1,12 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/lib/auth';
 import { getMinioClient, MINIO_BUCKET_NAME } from '@/lib/minio';
 
 // GET /api/minio/[...path] - Serve files from MinIO through Next.js
+// All access requires an authenticated session. The bucket itself is private
+// (no public read policy); presigned URLs / per-resource ACLs can be added
+// on top of this if finer-grained authorization is required.
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 },
+      );
+    }
+
     const { path } = await params;
     const objectPath = path.join('/');
 

@@ -1,5 +1,7 @@
 'use client';
 
+import { useMemo, useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -249,106 +251,122 @@ export function DosenProjectsContent({
   projects,
   currentUserId,
 }: DosenProjectsContentProps) {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+
+  // Keep state in sync if URL ?q= changes (e.g. via header search)
+  useEffect(() => {
+    setSearchQuery(searchParams.get('q') || searchParams.get('search') || '');
+  }, [searchParams]);
+
+  const filteredProjects = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return projects.filter((p) => {
+      const matchesStatus = statusFilter === 'all' || p.status === statusFilter;
+      if (!q) return matchesStatus;
+      const haystack = [
+        p.title,
+        p.mahasiswa?.name,
+        p.mahasiswa?.username,
+        p.semester,
+        p.tahunAkademik,
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return matchesStatus && haystack.includes(q);
+    });
+  }, [projects, searchQuery, statusFilter]);
+
   return (
     <motion.div
-      className="w-full space-y-6 pb-8"
+      className="w-full space-y-5 pb-8"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Header Card - Soft Colored */}
+      {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/40 border border-emerald-200/50 dark:border-emerald-800/30 p-6 md:p-8">
-          {/* Subtle Background Accents */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-cyan-400/15 to-emerald-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
-          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25">
-                <ClipboardCheck size={28} />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-zinc-800 dark:text-zinc-100">Project Mahasiswa</h1>
-                <p className="text-emerald-600/70 dark:text-emerald-400/60 text-sm md:text-base mt-1">
-                  Daftar project yang ditugaskan untuk Anda review
-                </p>
-              </div>
+        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-default-900">Project Mahasiswa</h1>
+            <p className="text-sm text-default-500 mt-0.5">
+              Daftar project yang ditugaskan untuk Anda review
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="px-3 py-1.5 rounded-lg border border-divider/60 bg-content1">
+              <span className="text-sm font-semibold text-default-900 tabular-nums">{projects.length}</span>
+              <span className="text-xs text-default-500 ml-1.5">Total</span>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-emerald-200/50 dark:border-emerald-700/30">
-                <p className="text-2xl md:text-3xl font-bold text-emerald-700 dark:text-emerald-300">{projects.length}</p>
-                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70">Total Project</p>
-              </div>
-              <div className="text-center px-4 py-2 rounded-xl bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/30">
-                <p className="text-2xl md:text-3xl font-bold text-amber-700 dark:text-amber-300">
-                  {projects.filter(p => p.status === 'SUBMITTED' || p.status === 'IN_REVIEW').length}
-                </p>
-                <p className="text-xs text-amber-600/70 dark:text-amber-400/70">Perlu Review</p>
-              </div>
+            <div className="px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+              <span className="text-sm font-semibold text-amber-700 dark:text-amber-300 tabular-nums">
+                {projects.filter(p => p.status === 'SUBMITTED' || p.status === 'IN_REVIEW').length}
+              </span>
+              <span className="text-xs text-amber-700 dark:text-amber-300 ml-1.5">Perlu Review</span>
             </div>
           </div>
-        </div>
+        </header>
       </motion.div>
 
       {/* Filters */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <CardBody className="p-4">
-            <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-              <Input
-                placeholder="Cari project atau mahasiswa..."
-                startContent={<Search size={18} className="text-default-400" />}
-                className="flex-1"
-                size="md"
-                variant="bordered"
-              />
-              <Select
-                placeholder="Filter Status"
-                className="w-full md:max-w-[200px]"
-                size="md"
-                variant="bordered"
-              >
-                <SelectItem key="all">Semua Status</SelectItem>
-                <SelectItem key="SUBMITTED">Disubmit</SelectItem>
-                <SelectItem key="IN_REVIEW">Dalam Review</SelectItem>
-                <SelectItem key="APPROVED">Disetujui</SelectItem>
-                <SelectItem key="REVISION_NEEDED">Perlu Revisi</SelectItem>
-              </Select>
-            </div>
-          </CardBody>
-        </Card>
+        <div className="flex flex-col gap-2 md:flex-row md:items-center">
+          <Input
+            placeholder="Cari project atau mahasiswa..."
+            startContent={<Search size={16} className="text-default-400" />}
+            className="flex-1"
+            size="sm"
+            value={searchQuery}
+            onValueChange={setSearchQuery}
+            isClearable
+            onClear={() => setSearchQuery('')}
+          />
+          <Select
+            placeholder="Filter Status"
+            aria-label="Filter status"
+            className="w-full md:max-w-[200px]"
+            size="sm"
+            selectedKeys={[statusFilter]}
+            onSelectionChange={(keys) => {
+              const next = Array.from(keys as Set<string>)[0];
+              if (next) setStatusFilter(next);
+            }}
+          >
+            <SelectItem key="all">Semua Status</SelectItem>
+            <SelectItem key="SUBMITTED">Disubmit</SelectItem>
+            <SelectItem key="IN_REVIEW">Dalam Review</SelectItem>
+            <SelectItem key="APPROVED">Disetujui</SelectItem>
+            <SelectItem key="REVISION_NEEDED">Perlu Revisi</SelectItem>
+          </Select>
+        </div>
       </motion.div>
 
       {/* Projects List/Table */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-          {/* Header */}
-          <div className="p-5 bg-gradient-to-r from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white">
-                  <FolderGit2 size={20} />
-                </div>
-                <div>
-                  <h2 className="font-bold text-lg">Project Ditugaskan</h2>
-                  <p className="text-xs text-default-500">
-                    {projects.length} project untuk direview
-                  </p>
-                </div>
-              </div>
-            </div>
+        <Card shadow="none" className="border border-divider/60 overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-divider/60 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-default-700">Project Ditugaskan</h2>
+            <span className="text-xs text-default-500 tabular-nums">
+              {filteredProjects.length} hasil
+            </span>
           </div>
 
           <CardBody className="p-0">
-            {projects.length === 0 ? (
+            {filteredProjects.length === 0 ? (
               <div className="text-center py-12 px-4">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 flex items-center justify-center">
                   <FolderGit2 size={36} className="text-emerald-500" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Belum Ada Project</h3>
+                <h3 className="font-semibold text-lg mb-2">
+                  {projects.length === 0 ? 'Belum Ada Project' : 'Tidak Ada Hasil'}
+                </h3>
                 <p className="text-default-500 text-sm max-w-sm mx-auto">
-                  Belum ada project yang ditugaskan kepada Anda
+                  {projects.length === 0
+                    ? 'Belum ada project yang ditugaskan kepada Anda'
+                    : 'Tidak ada project yang cocok dengan pencarian atau filter Anda'}
                 </p>
               </div>
             ) : (
@@ -356,7 +374,7 @@ export function DosenProjectsContent({
                 {/* Mobile View - Cards */}
                 <div className="md:hidden p-4">
                   <motion.div variants={containerVariants}>
-                    {projects.map((project) => (
+                    {filteredProjects.map((project) => (
                       <MobileProjectCard
                         key={project.id}
                         project={project}
@@ -379,7 +397,7 @@ export function DosenProjectsContent({
                       <TableColumn>AKSI</TableColumn>
                     </TableHeader>
                     <TableBody>
-                      {projects.map((project) => {
+                      {filteredProjects.map((project) => {
                         const myReview = project.reviews.find(
                           (r) => r.reviewerId === currentUserId,
                         );

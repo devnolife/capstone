@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { decryptNullable } from '@/lib/crypto';
 import {
   createGitHubClient,
   parseGitHubUrl,
@@ -131,7 +132,16 @@ export async function GET(request: Request) {
       );
     }
 
-    const github = createGitHubClient(githubToken);
+    // Decrypt token if it was sourced from DB (env tokens pass through unchanged)
+    const resolvedToken = decryptNullable(githubToken);
+    if (!resolvedToken) {
+      return NextResponse.json(
+        { error: 'GitHub token tidak dapat digunakan', code: 'NO_GITHUB_TOKEN' },
+        { status: 400 },
+      );
+    }
+
+    const github = createGitHubClient(resolvedToken);
 
     // Handle shortcut for getting file content directly
     if (getContent && path) {

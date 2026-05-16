@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { createGitHubClient } from '@/lib/github';
+import { decryptNullable } from '@/lib/crypto';
 import { Octokit } from 'octokit';
 
 // GET /api/github/search-user?q=username - Search GitHub users
@@ -30,8 +30,9 @@ export async function GET(request: NextRequest) {
     });
 
     // Use user's token if available, otherwise use org token
-    const token = user?.githubToken || process.env.GITHUB_ORG_TOKEN;
-    
+    const token =
+      decryptNullable(user?.githubToken) || process.env.GITHUB_ORG_TOKEN;
+
     if (!token) {
       return NextResponse.json(
         { error: 'GitHub token tidak tersedia' },
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
           const { data: userDetail } = await octokit.rest.users.getByUsername({
             username: item.login,
           });
-          
+
           return {
             id: userDetail.id,
             login: userDetail.login,
@@ -119,8 +120,9 @@ export async function POST(request: NextRequest) {
       select: { githubToken: true },
     });
 
-    const token = user?.githubToken || process.env.GITHUB_ORG_TOKEN;
-    
+    const token =
+      decryptNullable(user?.githubToken) || process.env.GITHUB_ORG_TOKEN;
+
     if (!token) {
       return NextResponse.json(
         { error: 'GitHub token tidak tersedia' },

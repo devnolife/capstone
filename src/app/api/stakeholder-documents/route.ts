@@ -133,15 +133,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Only owner or admin can add stakeholder documents
+    // Owner, team member, or admin can add stakeholder documents
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: { role: true },
     });
 
-    if (project.mahasiswaId !== session.user.id && user?.role !== "ADMIN") {
+    const isOwner = project.mahasiswaId === session.user.id;
+    const isAdmin = user?.role === 'ADMIN';
+    let isMember = false;
+    if (!isOwner && !isAdmin) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isAdmin && !isMember) {
       return NextResponse.json(
-        { error: "Forbidden - Only project owner can add stakeholder documents" },
+        { error: "Forbidden - Hanya pemilik atau anggota tim yang dapat menambah dokumen stakeholder" },
         { status: 403 }
       );
     }

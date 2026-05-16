@@ -260,44 +260,31 @@ export default function AdminSemestersPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-5"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Header - Soft Emerald/Teal */}
+      {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 dark:from-emerald-950/40 dark:via-green-950/30 dark:to-teal-950/40 border border-emerald-200/50 dark:border-emerald-800/30 p-6 md:p-8">
-          {/* Subtle Background Accent */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-400/20 to-green-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-teal-400/15 to-emerald-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-
-          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25">
-                <Calendar size={28} />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">
-                  Manajemen Semester
-                </h1>
-                <p className="text-emerald-600/70 dark:text-emerald-400/60 text-sm mt-1">
-                  Kelola periode semester untuk pengumpulan project
-                </p>
-              </div>
-            </div>
-            <Button
-              className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-medium shadow-lg shadow-emerald-500/25"
-              startContent={<Plus size={18} />}
-              onPress={() => {
-                resetForm();
-                onOpen();
-              }}
-            >
-              Tambah Semester
-            </Button>
+        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-default-900">Manajemen Semester</h1>
+            <p className="text-sm text-default-500 mt-0.5">
+              Kelola periode semester untuk pengumpulan project
+            </p>
           </div>
-        </div>
+          <Button
+            color="primary"
+            startContent={<Plus size={16} />}
+            onPress={() => {
+              resetForm();
+              onOpen();
+            }}
+          >
+            Tambah Semester
+          </Button>
+        </header>
       </motion.div>
 
       {/* Active Semester Card - Softer */}
@@ -450,8 +437,8 @@ export default function AdminSemestersPage() {
                       <div className="flex items-center gap-3">
                         <div
                           className={`p-2 rounded-lg ${semester.isActive
-                              ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
-                              : 'bg-zinc-100 dark:bg-zinc-800'
+                            ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
+                            : 'bg-zinc-100 dark:bg-zinc-800'
                             }`}
                         >
                           <GraduationCap
@@ -551,8 +538,8 @@ export default function AdminSemestersPage() {
                           <div className="flex items-center gap-3">
                             <div
                               className={`p-2 rounded-lg ${semester.isActive
-                                  ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
-                                  : 'bg-zinc-100 dark:bg-zinc-800'
+                                ? 'bg-gradient-to-br from-emerald-500 to-teal-500 text-white'
+                                : 'bg-zinc-100 dark:bg-zinc-800'
                                 }`}
                             >
                               <GraduationCap

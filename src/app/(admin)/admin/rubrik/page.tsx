@@ -117,6 +117,23 @@ export default function AdminRubrikPage() {
       return;
     }
 
+    const bobotMax = Number(formData.bobotMax);
+    if (Number.isNaN(bobotMax) || bobotMax <= 0) {
+      setError('Bobot maksimal harus angka positif');
+      return;
+    }
+
+    const tipe = formData.tipe;
+    const currentTotal = activeRubriks
+      .filter((r) => r.tipe === tipe)
+      .reduce((sum, r) => sum + r.bobotMax, 0);
+    if (formData.isActive && currentTotal + bobotMax > 100) {
+      setError(
+        `Total bobot ${tipe} akan menjadi ${currentTotal + bobotMax} (maksimal 100). Kurangi bobot atau nonaktifkan rubrik lain.`,
+      );
+      return;
+    }
+
     setError('');
     setIsSubmitting(true);
 
@@ -144,6 +161,23 @@ export default function AdminRubrikPage() {
 
   const handleUpdateRubrik = async () => {
     if (!selectedRubrik) return;
+
+    const bobotMax = Number(formData.bobotMax);
+    if (Number.isNaN(bobotMax) || bobotMax <= 0) {
+      setError('Bobot maksimal harus angka positif');
+      return;
+    }
+
+    const tipe = formData.tipe;
+    const otherTotal = activeRubriks
+      .filter((r) => r.tipe === tipe && r.id !== selectedRubrik.id)
+      .reduce((sum, r) => sum + r.bobotMax, 0);
+    if (formData.isActive && otherTotal + bobotMax > 100) {
+      setError(
+        `Total bobot ${tipe} akan menjadi ${otherTotal + bobotMax} (maksimal 100). Kurangi bobot atau nonaktifkan rubrik lain.`,
+      );
+      return;
+    }
 
     setError('');
     setIsSubmitting(true);
@@ -260,45 +294,32 @@ export default function AdminRubrikPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-5"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Header - Soft Indigo/Blue */}
+      {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-50 via-blue-50 to-cyan-50 dark:from-indigo-950/40 dark:via-blue-950/30 dark:to-cyan-950/40 border border-indigo-200/50 dark:border-indigo-800/30 p-6 md:p-8">
-          {/* Subtle Background Accent */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-indigo-400/20 to-blue-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-cyan-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-
-          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-lg shadow-indigo-500/25">
-                <BookOpen size={28} />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">
-                  Rubrik Penilaian
-                </h1>
-                <p className="text-indigo-600/70 dark:text-indigo-400/60 text-sm mt-1">
-                  Kelola kriteria penilaian untuk review project
-                </p>
-              </div>
-            </div>
-            <Button
-              className="bg-gradient-to-r from-indigo-500 to-blue-600 text-white font-medium shadow-lg shadow-indigo-500/25"
-              startContent={<Plus size={18} />}
-              onPress={() => {
-                resetForm();
-                setFormData((prev) => ({ ...prev, tipe: activeTab }));
-                onOpen();
-              }}
-            >
-              Tambah Rubrik {activeTab === 'individu' ? 'Individu' : 'Kelompok'}
-            </Button>
+        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-default-900">Rubrik Penilaian</h1>
+            <p className="text-sm text-default-500 mt-0.5">
+              Kelola kriteria penilaian untuk review project
+            </p>
           </div>
-        </div>
+          <Button
+            color="primary"
+            startContent={<Plus size={16} />}
+            onPress={() => {
+              resetForm();
+              setFormData((prev) => ({ ...prev, tipe: activeTab }));
+              onOpen();
+            }}
+          >
+            Tambah Rubrik {activeTab === 'individu' ? 'Individu' : 'Kelompok'}
+          </Button>
+        </header>
       </motion.div>
 
       {/* Stats Cards - Softer Design */}

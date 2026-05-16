@@ -4,6 +4,7 @@ import GitHub from 'next-auth/providers/github';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { validateSimakCredentials, upsertUserFromSimak } from '@/lib/simak';
+import { encryptNullable } from '@/lib/crypto';
 import type { Role } from '@/generated/prisma';
 
 declare module 'next-auth' {
@@ -234,30 +235,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           if (!existingUser) {
-            // Check if username (GitHub login) already exists
-            const usernameExists = await prisma.user.findUnique({
-              where: { username: githubProfile.login },
-            });
-
-            // Generate unique username if needed
-            let username = githubProfile.login;
-            if (usernameExists) {
-              username = `${githubProfile.login}_${githubProfile.id}`;
-            }
-
-            // Create new user
-            existingUser = await prisma.user.create({
-              data: {
-                username: username,
-                name: githubProfile.name || githubProfile.login,
-                email: githubProfile.email,
-                githubId: String(githubProfile.id),
-                githubUsername: githubProfile.login,
-                image: githubProfile.avatar_url,
-                role: 'MAHASISWA', // Default role for new GitHub users
-                isActive: true,
-              },
-            });
+            // SECURITY: Do NOT auto-create accounts via GitHub OAuth.
+            // Accounts must be provisioned through SIMAK (mahasiswa) or by an
+            // admin (dosen/admin). GitHub login is for *linking* an existing
+            // account only. Otherwise anyone on the internet could create a
+            // MAHASISWA account.
+            console.warn(
+              `[auth] Rejected GitHub sign-in for unprovisioned user: ${githubProfile.login} (${githubProfile.email ?? 'no email'})`,
+            );
+            return false;
           } else {
             // Update existing user's GitHub info
             await prisma.user.update({
@@ -269,11 +255,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             });
           }
 
-          // Store access token for GitHub API access
+          // Store access token for GitHub API access (encrypted at rest)
           if (account.access_token) {
+            const encryptedToken = encryptNullable(account.access_token);
             await prisma.user.update({
               where: { id: existingUser.id },
-              data: { githubToken: account.access_token },
+              data: { githubToken: encryptedToken },
             });
 
             // Also store in Account table for token refresh

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getDeploymentBonusPoints } from "@/lib/utils";
+import { encryptNullable, decryptNullable } from "@/lib/crypto";
 
 // Fields that count towards completion percentage (grouped by section)
 const REQUIREMENT_FIELDS = [
@@ -119,8 +120,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Return requirements with project info for efficiency
+    // Decrypt sensitive credentials before sending to authorized clients.
     return NextResponse.json({
       ...requirements,
+      testingPassword: decryptNullable(requirements.testingPassword),
       project: {
         id: project.id,
         title: project.title,
@@ -168,7 +171,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    if (project.mahasiswaId !== session.user.id) {
+    // Owner, team member, or admin can edit requirements
+    const userRecord = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    });
+    const isOwner = project.mahasiswaId === session.user.id;
+    const isAdmin = userRecord?.role === 'ADMIN';
+    let isMember = false;
+    if (!isOwner && !isAdmin) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isAdmin && !isMember) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -182,6 +201,9 @@ export async function POST(request: NextRequest) {
 
     // Calculate deployment bonus points based on platform
     const deploymentBonusPoints = getDeploymentBonusPoints(data.deploymentPlatform);
+
+    // Encrypt sensitive testing credentials at-rest
+    const encryptedTestingPassword = encryptNullable(data.testingPassword);
 
     // Upsert requirements
     const requirements = await prisma.projectRequirements.upsert({
@@ -217,7 +239,7 @@ export async function POST(request: NextRequest) {
         productionUrlStatus: data.productionUrlStatus || null,
         productionUrlCheckedAt: data.productionUrlCheckedAt ? new Date(data.productionUrlCheckedAt) : null,
         testingUsername: data.testingUsername || null,
-        testingPassword: data.testingPassword || null,
+        testingPassword: encryptedTestingPassword,
         testingNotes: data.testingNotes || null,
         // Deployment Setup
         deploymentPlatform: data.deploymentPlatform || null,
@@ -257,7 +279,7 @@ export async function POST(request: NextRequest) {
         productionUrlStatus: data.productionUrlStatus || null,
         productionUrlCheckedAt: data.productionUrlCheckedAt ? new Date(data.productionUrlCheckedAt) : null,
         testingUsername: data.testingUsername || null,
-        testingPassword: data.testingPassword || null,
+        testingPassword: encryptedTestingPassword,
         testingNotes: data.testingNotes || null,
         // Deployment Setup
         deploymentPlatform: data.deploymentPlatform || null,
@@ -271,7 +293,10 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      requirements,
+      requirements: {
+        ...requirements,
+        testingPassword: decryptNullable(requirements.testingPassword),
+      },
       message: "Persyaratan proyek berhasil disimpan",
     });
   } catch (error) {

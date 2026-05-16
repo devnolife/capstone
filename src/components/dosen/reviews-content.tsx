@@ -260,7 +260,7 @@ function DesktopPendingCard({ assignment }: { assignment: PendingAssignment }) {
             <div className="p-2 rounded-lg bg-warning/10">
               <FolderGit2 className="text-warning" size={24} />
             </div>
-              <div>
+            <div>
               <p className="font-semibold">{assignment.project.title}</p>
               <div className="flex items-center gap-2 text-sm text-default-500">
                 <User size={14} />
@@ -355,7 +355,7 @@ export function DosenReviewsContent({ reviews, pendingAssignments, stats }: Revi
 
   // Filter reviews
   const filteredReviews = reviews.filter((review) => {
-    const matchesSearch = 
+    const matchesSearch =
       review.project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       review.project.mahasiswa.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || review.status === statusFilter;
@@ -372,30 +372,19 @@ export function DosenReviewsContent({ reviews, pendingAssignments, stats }: Revi
 
   return (
     <motion.div
-      className="space-y-4 md:space-y-6"
+      className="space-y-5"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Header - Soft Colored */}
+      {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-teal-50 via-cyan-50 to-sky-50 dark:from-teal-950/40 dark:via-cyan-950/30 dark:to-sky-950/40 border border-teal-200/50 dark:border-teal-800/30 p-6 md:p-8">
-          {/* Subtle Background Accents */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-400/20 to-cyan-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-sky-400/15 to-teal-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
-          <div className="relative flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-500/25">
-              <ClipboardCheck size={28} />
-            </div>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-zinc-800 dark:text-zinc-100">Review</h1>
-              <p className="text-sm md:text-base text-teal-600/70 dark:text-teal-400/60">
-                Kelola review project mahasiswa
-              </p>
-            </div>
-          </div>
-        </div>
+        <header>
+          <h1 className="text-2xl font-semibold text-default-900">Review</h1>
+          <p className="text-sm text-default-500 mt-0.5">
+            Kelola review project mahasiswa
+          </p>
+        </header>
       </motion.div>
 
       {/* Stats */}

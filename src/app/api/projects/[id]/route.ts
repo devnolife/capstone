@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { projectSchema } from '@/lib/validations';
+import { encryptNullable, decryptNullable } from '@/lib/crypto';
 
 // GET /api/projects/[id] - Get single project
 export async function GET(
@@ -171,7 +172,20 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(project);
+    // Decrypt sensitive fields before returning to authorized clients
+    const responseProject = project.requirements
+      ? {
+        ...project,
+        requirements: {
+          ...project.requirements,
+          testingPassword: decryptNullable(
+            project.requirements.testingPassword,
+          ),
+        },
+      }
+      : project;
+
+    return NextResponse.json(responseProject);
   } catch (error) {
     console.error('Error fetching project:', error);
     return NextResponse.json(
@@ -341,13 +355,21 @@ export async function PUT(
       });
     }
 
-    // Regular project update - Check ownership
-    if (
-      existingProject.mahasiswaId !== session.user.id &&
-      session.user.role !== 'ADMIN'
-    ) {
+    // Regular project update - Check ownership (owner, active team member, or admin can edit)
+    const isOwner = existingProject.mahasiswaId === session.user.id;
+    const isAdmin = session.user.role === 'ADMIN';
+    let isMember = false;
+    if (!isOwner && !isAdmin) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId: id, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isAdmin && !isMember) {
       return NextResponse.json(
-        { error: 'Tidak memiliki akses' },
+        { error: 'Tidak memiliki akses untuk mengedit project ini' },
         { status: 403 },
       );
     }
@@ -356,7 +378,7 @@ export async function PUT(
     if (
       existingProject.status !== 'DRAFT' &&
       existingProject.status !== 'REVISION_NEEDED' &&
-      session.user.role !== 'ADMIN'
+      !isAdmin
     ) {
       return NextResponse.json(
         { error: 'Project hanya dapat diedit saat status DRAFT atau REVISION_NEEDED' },
@@ -368,8 +390,14 @@ export async function PUT(
     const validatedData = projectSchema.safeParse(body);
 
     if (!validatedData.success) {
+      const issues = validatedData.error.issues;
+      const firstIssue = issues[0];
+      const fieldName = firstIssue?.path?.join('.') || 'input';
       return NextResponse.json(
-        { error: validatedData.error.issues[0].message },
+        {
+          error: `${fieldName}: ${firstIssue?.message || 'tidak valid'}`,
+          issues: issues.map((iss) => ({ field: iss.path.join('.'), message: iss.message })),
+        },
         { status: 400 },
       );
     }
@@ -391,6 +419,7 @@ export async function PUT(
       testingNotes,
       consentDocument,
       pendingTeamMembers,
+      removedMemberIds,
     } = body;
 
     // Extract GitHub repo name if URL provided
@@ -419,6 +448,7 @@ export async function PUT(
       });
 
       // 2. Update or create project requirements
+      const encryptedTestingPassword = encryptNullable(testingPassword);
       await tx.projectRequirements.upsert({
         where: { projectId: id },
         create: {
@@ -431,7 +461,7 @@ export async function PUT(
           ruangLingkup: category || null,
           productionUrl: productionUrl || null,
           testingUsername: testingUsername || null,
-          testingPassword: testingPassword || null,
+          testingPassword: encryptedTestingPassword,
           testingNotes: testingNotes || null,
         },
         update: {
@@ -443,7 +473,7 @@ export async function PUT(
           ruangLingkup: category || null,
           productionUrl: productionUrl || null,
           testingUsername: testingUsername || null,
-          testingPassword: testingPassword || null,
+          testingPassword: encryptedTestingPassword,
           testingNotes: testingNotes || null,
         },
       });
@@ -473,7 +503,26 @@ export async function PUT(
         }
       }
 
-      // 4. Handle team invitations for pending members
+      // 4. Handle team member removals (owner/admin only)
+      if (
+        Array.isArray(removedMemberIds) &&
+        removedMemberIds.length > 0 &&
+        (isOwner || isAdmin)
+      ) {
+        const cleanIds = (removedMemberIds as unknown[])
+          .filter((v): v is string => typeof v === 'string' && v.length > 0);
+        if (cleanIds.length > 0) {
+          await tx.projectMember.deleteMany({
+            where: {
+              projectId: id,
+              userId: { in: cleanIds },
+              role: { not: 'OWNER' },
+            },
+          });
+        }
+      }
+
+      // 5. Handle team invitations for pending members
       if (pendingTeamMembers && Array.isArray(pendingTeamMembers) && pendingTeamMembers.length > 0) {
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 7);
@@ -484,53 +533,50 @@ export async function PUT(
           select: { userId: true },
         });
         const existingMemberUserIds = new Set(
-          existingMembers.map(m => m.userId).filter(Boolean)
+          existingMembers.map((m) => m.userId).filter(Boolean) as string[]
         );
 
-        for (const member of pendingTeamMembers) {
-          // Skip if member.id is missing or not a valid user
-          if (!member.id) continue;
+        const candidates = (pendingTeamMembers as Array<{ id?: string; name?: string }>)
+          .filter((m) => !!m.id && !existingMemberUserIds.has(m.id));
+        const candidateIds = Array.from(new Set(candidates.map((m) => m.id as string)));
 
-          // Skip if already a project member
-          if (existingMemberUserIds.has(member.id)) continue;
-
-          // Validate that the user actually exists
-          const userExists = await tx.user.findUnique({
-            where: { id: member.id },
+        if (candidateIds.length > 0) {
+          const validUsers = await tx.user.findMany({
+            where: { id: { in: candidateIds } },
             select: { id: true },
           });
-          if (!userExists) continue;
+          const validIds = new Set(validUsers.map((u) => u.id));
 
-          // Check if invitation already exists
-          const existingInvitation = await tx.teamInvitation.findUnique({
-            where: {
-              projectId_inviteeId: {
-                projectId: id,
-                inviteeId: member.id,
-              },
-            },
+          const existingInvites = await tx.teamInvitation.findMany({
+            where: { projectId: id, inviteeId: { in: candidateIds } },
+            select: { inviteeId: true },
           });
+          const alreadyInvited = new Set(existingInvites.map((i) => i.inviteeId));
 
-          if (!existingInvitation) {
-            await tx.teamInvitation.create({
-              data: {
+          const toCreate = candidates.filter(
+            (m) => validIds.has(m.id as string) && !alreadyInvited.has(m.id as string)
+          );
+
+          if (toCreate.length > 0) {
+            await tx.teamInvitation.createMany({
+              data: toCreate.map((m) => ({
                 projectId: id,
                 inviterId: session.user.id,
-                inviteeId: member.id,
+                inviteeId: m.id as string,
                 status: 'pending',
                 expiresAt,
-              },
+              })),
+              skipDuplicates: true,
             });
 
-            // Create notification
-            await tx.notification.create({
-              data: {
-                userId: member.id,
+            await tx.notification.createMany({
+              data: toCreate.map((m) => ({
+                userId: m.id as string,
                 title: 'Undangan Tim Project',
                 message: `${session.user.name} mengundang Anda untuk bergabung dalam project "${title}"`,
                 type: 'invitation',
                 link: `/mahasiswa/invitations`,
-              },
+              })),
             });
           }
         }
@@ -545,8 +591,9 @@ export async function PUT(
     });
   } catch (error) {
     console.error('Error updating project:', error);
+    const message = error instanceof Error ? error.message : 'Terjadi kesalahan server';
     return NextResponse.json(
-      { error: 'Terjadi kesalahan server' },
+      { error: message },
       { status: 500 },
     );
   }

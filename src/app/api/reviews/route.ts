@@ -14,20 +14,51 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const projectId = searchParams.get('projectId');
+    const search = (searchParams.get('search') || searchParams.get('q') || '').trim();
 
-    let whereClause = {};
+    const baseFilters: Record<string, unknown>[] = [];
 
     if (session.user.role === 'DOSEN_PENGUJI') {
-      whereClause = { reviewerId: session.user.id };
+      baseFilters.push({ reviewerId: session.user.id });
     } else if (session.user.role === 'MAHASISWA') {
-      whereClause = {
+      baseFilters.push({
         project: { mahasiswaId: session.user.id },
-      };
+      });
     }
 
     if (projectId) {
-      whereClause = { ...whereClause, projectId };
+      baseFilters.push({ projectId });
     }
+
+    if (search) {
+      baseFilters.push({
+        project: {
+          is: {
+            OR: [
+              { title: { contains: search, mode: 'insensitive' } },
+              {
+                mahasiswa: {
+                  is: {
+                    OR: [
+                      { name: { contains: search, mode: 'insensitive' } },
+                      { username: { contains: search, mode: 'insensitive' } },
+                      { nim: { contains: search, mode: 'insensitive' } },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        },
+      });
+    }
+
+    const whereClause =
+      baseFilters.length === 0
+        ? {}
+        : baseFilters.length === 1
+          ? baseFilters[0]
+          : { AND: baseFilters };
 
     const reviews = await prisma.review.findMany({
       where: whereClause,

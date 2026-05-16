@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Card,
   CardBody,
@@ -39,6 +39,7 @@ import {
   GraduationCap,
   Building,
   RefreshCw,
+  Search,
 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
 
@@ -118,13 +119,15 @@ export default function PresentationsPage() {
   const [presentations, setPresentations] = useState<PresentationSchedule[]>([]);
   const [projectsReadyForPresentation, setProjectsReadyForPresentation] = useState<ProjectForScheduling[]>([]);
   const [selectedTab, setSelectedTab] = useState('pending');
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'upcoming' | 'past'>('all');
+
   // Modal state
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedProject, setSelectedProject] = useState<ProjectForScheduling | null>(null);
   const [editingPresentation, setEditingPresentation] = useState<PresentationSchedule | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  
+
   // Form state
   const [formData, setFormData] = useState({
     scheduledDate: '',
@@ -204,12 +207,12 @@ export default function PresentationsPage() {
 
     setIsSaving(true);
     try {
-      const url = editingPresentation 
+      const url = editingPresentation
         ? `/api/presentations/${editingPresentation.id}`
         : '/api/presentations';
-      
+
       const method = editingPresentation ? 'PUT' : 'POST';
-      
+
       const body = editingPresentation
         ? formData
         : { ...formData, projectId: selectedProject?.id };
@@ -227,7 +230,7 @@ export default function PresentationsPage() {
 
       addToast({
         title: 'Berhasil',
-        description: editingPresentation 
+        description: editingPresentation
           ? 'Jadwal presentasi berhasil diubah'
           : 'Jadwal presentasi berhasil dibuat',
         color: 'success',
@@ -319,7 +322,7 @@ export default function PresentationsPage() {
 
       addToast({
         title: 'Berhasil',
-        description: status === 'APPROVED' 
+        description: status === 'APPROVED'
           ? 'Project telah disetujui'
           : 'Project telah ditolak',
         color: status === 'APPROVED' ? 'success' : 'warning',
@@ -338,6 +341,41 @@ export default function PresentationsPage() {
   const scheduledPresentations = presentations.filter(p => p.presentationStatus === 'scheduled');
   const completedPresentations = presentations.filter(p => p.presentationStatus === 'completed');
 
+  // ---- Search + date filter helpers ----
+  const matchesSearch = (text: string) => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+    return text.toLowerCase().includes(q);
+  };
+
+  const matchesDate = (iso: string | null | undefined) => {
+    if (dateFilter === 'all' || !iso) return dateFilter === 'all';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return false;
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const endOfToday = new Date(startOfToday.getTime() + 24 * 60 * 60 * 1000);
+    if (dateFilter === 'today') return d >= startOfToday && d < endOfToday;
+    if (dateFilter === 'upcoming') return d >= endOfToday;
+    if (dateFilter === 'past') return d < startOfToday;
+    return true;
+  };
+
+  const filteredPending = useMemo(() => projectsReadyForPresentation.filter(p => {
+    const text = `${p.title} ${p.mahasiswa.name} ${p.mahasiswa.nim ?? ''} ${p.mahasiswa.username}`;
+    return matchesSearch(text);
+  }), [projectsReadyForPresentation, searchQuery]);
+
+  const filteredScheduled = useMemo(() => scheduledPresentations.filter(p => {
+    const text = `${p.project.title} ${p.project.mahasiswa.name} ${p.location ?? ''}`;
+    return matchesSearch(text) && matchesDate(p.scheduledDate);
+  }), [scheduledPresentations, searchQuery, dateFilter]);
+
+  const filteredCompleted = useMemo(() => completedPresentations.filter(p => {
+    const text = `${p.project.title} ${p.project.mahasiswa.name} ${p.location ?? ''}`;
+    return matchesSearch(text) && matchesDate(p.scheduledDate);
+  }), [completedPresentations, searchQuery, dateFilter]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
@@ -349,36 +387,29 @@ export default function PresentationsPage() {
 
   return (
     <motion.div
-      className="w-full space-y-6 pb-8"
+      className="w-full space-y-5 pb-8"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
       {/* Header */}
       <motion.div variants={itemVariants}>
-        <Card className="border-0 bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-600 text-white overflow-hidden">
-          <CardBody className="p-6 md:p-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-xl bg-white/20 backdrop-blur-sm">
-                  <CalendarClock size={28} />
-                </div>
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold">Jadwal Presentasi</h1>
-                  <p className="text-white/70">Kelola jadwal presentasi project mahasiswa</p>
-                </div>
-              </div>
-              <Button
-                variant="flat"
-                className="bg-white/20 text-white hover:bg-white/30"
-                startContent={<RefreshCw size={18} />}
-                onPress={fetchData}
-              >
-                Refresh
-              </Button>
-            </div>
-          </CardBody>
-        </Card>
+        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-default-900">Jadwal Presentasi</h1>
+            <p className="text-sm text-default-500 mt-0.5">
+              Kelola jadwal presentasi project mahasiswa
+            </p>
+          </div>
+          <Button
+            variant="flat"
+            startContent={<RefreshCw size={16} />}
+            onPress={fetchData}
+            size="sm"
+          >
+            Refresh
+          </Button>
+        </header>
       </motion.div>
 
       {/* Stats */}
@@ -396,7 +427,7 @@ export default function PresentationsPage() {
             </div>
           </CardBody>
         </Card>
-        
+
         <Card className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
           <CardBody className="p-4">
             <div className="flex items-center gap-3">
@@ -410,7 +441,7 @@ export default function PresentationsPage() {
             </div>
           </CardBody>
         </Card>
-        
+
         <Card className="border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
           <CardBody className="p-4">
             <div className="flex items-center gap-3">
@@ -421,6 +452,37 @@ export default function PresentationsPage() {
                 <p className="text-2xl font-bold text-green-700 dark:text-green-300">{completedPresentations.length}</p>
                 <p className="text-sm text-green-600 dark:text-green-400">Selesai</p>
               </div>
+            </div>
+          </CardBody>
+        </Card>
+      </motion.div>
+
+      {/* Search + Date filter */}
+      <motion.div variants={itemVariants}>
+        <Card>
+          <CardBody className="p-3 md:p-4 flex flex-col md:flex-row gap-3">
+            <Input
+              size="sm"
+              placeholder="Cari judul project, nama mahasiswa, ruangan..."
+              startContent={<Search size={16} className="text-default-400" />}
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              isClearable
+              onClear={() => setSearchQuery('')}
+              className="flex-1"
+            />
+            <div className="flex gap-2">
+              {(['all', 'today', 'upcoming', 'past'] as const).map((k) => (
+                <Button
+                  key={k}
+                  size="sm"
+                  variant={dateFilter === k ? 'solid' : 'bordered'}
+                  color={dateFilter === k ? 'primary' : 'default'}
+                  onPress={() => setDateFilter(k)}
+                >
+                  {k === 'all' ? 'Semua' : k === 'today' ? 'Hari ini' : k === 'upcoming' ? 'Akan datang' : 'Lewat'}
+                </Button>
+              ))}
             </div>
           </CardBody>
         </Card>
@@ -455,15 +517,19 @@ export default function PresentationsPage() {
                 }
               >
                 <div className="p-4 space-y-4">
-                  {projectsReadyForPresentation.length === 0 ? (
+                  {filteredPending.length === 0 ? (
                     <div className="text-center py-12">
                       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
                         <GraduationCap size={32} className="text-default-400" />
                       </div>
-                      <p className="text-default-500">Tidak ada project yang menunggu jadwal presentasi</p>
+                      <p className="text-default-500">
+                        {projectsReadyForPresentation.length === 0
+                          ? 'Tidak ada project yang menunggu jadwal presentasi'
+                          : 'Tidak ada hasil yang cocok dengan pencarian'}
+                      </p>
                     </div>
                   ) : (
-                    projectsReadyForPresentation.map((project) => (
+                    filteredPending.map((project) => (
                       <Card key={project.id} className="border border-default-200">
                         <CardBody className="p-4">
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -524,15 +590,19 @@ export default function PresentationsPage() {
                 }
               >
                 <div className="p-4 space-y-4">
-                  {scheduledPresentations.length === 0 ? (
+                  {filteredScheduled.length === 0 ? (
                     <div className="text-center py-12">
                       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
                         <Calendar size={32} className="text-default-400" />
                       </div>
-                      <p className="text-default-500">Belum ada presentasi yang terjadwal</p>
+                      <p className="text-default-500">
+                        {scheduledPresentations.length === 0
+                          ? 'Belum ada presentasi yang terjadwal'
+                          : 'Tidak ada hasil yang cocok dengan pencarian'}
+                      </p>
                     </div>
                   ) : (
-                    scheduledPresentations.map((presentation) => (
+                    filteredScheduled.map((presentation) => (
                       <Card key={presentation.id} className="border border-default-200">
                         <CardBody className="p-4">
                           <div className="flex flex-col gap-4">
@@ -569,7 +639,7 @@ export default function PresentationsPage() {
                                 </Button>
                               </div>
                             </div>
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                               <div className="flex items-center gap-2">
                                 <Calendar size={14} className="text-default-400" />
@@ -589,9 +659,9 @@ export default function PresentationsPage() {
                                 </div>
                               )}
                             </div>
-                            
+
                             <Divider />
-                            
+
                             <div className="flex flex-wrap items-center gap-2">
                               <Button
                                 size="sm"
@@ -626,15 +696,19 @@ export default function PresentationsPage() {
                 }
               >
                 <div className="p-4 space-y-4">
-                  {completedPresentations.length === 0 ? (
+                  {filteredCompleted.length === 0 ? (
                     <div className="text-center py-12">
                       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
                         <CheckCircle2 size={32} className="text-default-400" />
                       </div>
-                      <p className="text-default-500">Belum ada presentasi yang selesai</p>
+                      <p className="text-default-500">
+                        {completedPresentations.length === 0
+                          ? 'Belum ada presentasi yang selesai'
+                          : 'Tidak ada hasil yang cocok dengan pencarian'}
+                      </p>
                     </div>
                   ) : (
-                    completedPresentations.map((presentation) => (
+                    filteredCompleted.map((presentation) => (
                       <Card key={presentation.id} className="border border-default-200">
                         <CardBody className="p-4">
                           <div className="flex flex-col gap-4">
@@ -660,7 +734,7 @@ export default function PresentationsPage() {
                                 {getStatusLabel(presentation.project.status)}
                               </Chip>
                             </div>
-                            
+
                             {/* Show finalize buttons if project is still PRESENTATION_SCHEDULED */}
                             {presentation.project.status === 'PRESENTATION_SCHEDULED' && (
                               <>

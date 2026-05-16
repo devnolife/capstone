@@ -217,58 +217,38 @@ export function DosenDashboardContent({
 
   return (
     <motion.div
-      className="w-full space-y-6 pb-8"
+      className="w-full space-y-5 pb-8"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Welcome Card - Soft Colored */}
+      {/* Welcome Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-cyan-950/40 border border-emerald-200/50 dark:border-emerald-800/30 p-6 md:p-8">
-          {/* Subtle Background Accents */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-cyan-400/15 to-emerald-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
-          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-            {/* Left side - Welcome */}
-            <div className="flex items-center gap-4">
-              <Avatar
-                name={userName}
-                src={userImage}
-                size="lg"
-                className="ring-4 ring-emerald-200 dark:ring-emerald-800 w-16 h-16 md:w-20 md:h-20"
-                icon={<GraduationCap size={32} />}
-              />
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Sparkles size={16} className="text-emerald-500" />
-                  <span className="text-sm text-emerald-600/70 dark:text-emerald-400/70">{getGreeting()}</span>
-                </div>
-                <h1 className="text-2xl md:text-3xl font-bold text-zinc-800 dark:text-zinc-100">{firstName}!</h1>
-                <p className="text-emerald-600/70 dark:text-emerald-400/60 text-sm md:text-base mt-1">
-                  Kelola review project mahasiswa di sini
-                </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Avatar
+              name={userName}
+              src={userImage}
+              className="w-12 h-12"
+              icon={<GraduationCap size={24} />}
+            />
+            <div>
+              <div className="flex items-center gap-1.5 text-xs text-default-500">
+                <Sparkles size={12} className="text-primary" />
+                <span>{getGreeting()}</span>
               </div>
-            </div>
-
-            {/* Right side - Quick Stats */}
-            <div className="flex items-center gap-3 md:gap-4">
-              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-emerald-200/50 dark:border-emerald-700/30">
-                <p className="text-2xl md:text-3xl font-bold text-emerald-700 dark:text-emerald-300">{stats.totalAssigned}</p>
-                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70">Project</p>
-              </div>
-              <div className="text-center px-4 py-2 rounded-xl bg-white/60 dark:bg-zinc-800/60 border border-emerald-200/50 dark:border-emerald-700/30">
-                <p className="text-2xl md:text-3xl font-bold text-emerald-700 dark:text-emerald-300">{stats.totalMahasiswa}</p>
-                <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70">Mahasiswa</p>
-              </div>
-              {stats.pendingReview > 0 && (
-                <div className="text-center px-4 py-2 rounded-xl bg-amber-100/80 dark:bg-amber-900/30 border border-amber-300/50 dark:border-amber-700/30">
-                  <p className="text-2xl md:text-3xl font-bold text-amber-700 dark:text-amber-300">{stats.pendingReview}</p>
-                  <p className="text-xs text-amber-600/70 dark:text-amber-400/70">Pending</p>
-                </div>
-              )}
+              <h1 className="text-xl font-semibold text-default-900 leading-tight">{firstName}</h1>
+              <p className="text-xs text-default-500">Kelola review project mahasiswa</p>
             </div>
           </div>
+          {stats.pendingReview > 0 && (
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+              <span className="text-sm font-semibold text-amber-700 dark:text-amber-300 tabular-nums">
+                {stats.pendingReview}
+              </span>
+              <span className="text-xs text-amber-700 dark:text-amber-300">Review menunggu</span>
+            </div>
+          )}
         </div>
       </motion.div>
 

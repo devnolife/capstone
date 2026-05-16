@@ -80,6 +80,9 @@ model User {
   simakValidated Boolean   @default(false) // Apakah akun sudah tervalidasi via SIMAK
   simakLastSync  DateTime?          // Terakhir sync data dari SIMAK
 
+  // User preferences (notifications, language, privacy toggles)
+  preferences    Json?
+
   // Relations
   projects            Project[]           @relation("ProjectOwner")
   reviews             Review[]            @relation("Reviewer")

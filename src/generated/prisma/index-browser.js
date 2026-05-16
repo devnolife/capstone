@@ -142,7 +142,8 @@ exports.Prisma.UserScalarFieldEnum = {
   prodi: 'prodi',
   simakPhoto: 'simakPhoto',
   simakValidated: 'simakValidated',
-  simakLastSync: 'simakLastSync'
+  simakLastSync: 'simakLastSync',
+  preferences: 'preferences'
 };
 
 exports.Prisma.AccountScalarFieldEnum = {
@@ -400,9 +401,20 @@ exports.Prisma.SortOrder = {
   desc: 'desc'
 };
 
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 
 exports.Prisma.NullsOrder = {

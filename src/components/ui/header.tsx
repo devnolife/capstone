@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import {
@@ -15,16 +15,16 @@ import {
   Skeleton,
   Spinner,
 } from '@heroui/react';
-import { 
-  Bell, 
-  Moon, 
-  Sun, 
-  Search, 
-  LogOut, 
-  User, 
-  Settings, 
-  Menu, 
-  GitBranch, 
+import {
+  Bell,
+  Moon,
+  Sun,
+  Search,
+  LogOut,
+  User,
+  Settings,
+  Menu,
+  GitBranch,
   Command,
   Check,
   FileText,
@@ -37,6 +37,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getSimakPhotoUrl } from '@/lib/utils';
 import { useNotifications, type Notification } from '@/hooks/use-notifications';
+import { Breadcrumbs } from '@/components/ui/breadcrumbs';
 
 interface HeaderProps {
   title?: string;
@@ -83,6 +84,8 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const [mounted, setMounted] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Use the notifications hook with 30 second polling
   const {
@@ -107,13 +110,45 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   const role = (session?.user as { role?: string })?.role?.toLowerCase() || 'mahasiswa';
   const basePath = role === 'dosen_penguji' ? '/dosen' : `/${role}`;
 
+  // Submit search: navigate to role-based projects list with ?q=
+  const submitSearch = useCallback(
+    (query: string) => {
+      const trimmed = query.trim();
+      const target = `${basePath}/projects${trimmed ? `?q=${encodeURIComponent(trimmed)}` : ''}`;
+      router.push(target);
+    },
+    [basePath, router],
+  );
+
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitSearch(searchQuery);
+      }
+    },
+    [searchQuery, submitSearch],
+  );
+
+  // Global Cmd+K / Ctrl+K shortcut to focus search
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const toggleTheme = () => {
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   const handleLogout = useCallback(async () => {
     if (isLoggingOut) return;
-    
+
     setIsLoggingOut(true);
     try {
       // Clear any cached data first
@@ -121,11 +156,11 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         // Clear session storage
         sessionStorage.clear();
       }
-      
+
       // Sign out and redirect to landing page
-      await signOut({ 
+      await signOut({
         callbackUrl: '/',
-        redirect: true 
+        redirect: true
       });
     } catch (error) {
       console.error('Logout error:', error);
@@ -140,7 +175,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
     if (!notification.isRead) {
       await markAsRead(notification.id);
     }
-    
+
     // Navigate to link if exists
     if (notification.link) {
       setIsDropdownOpen(false);
@@ -185,32 +220,40 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
         {/* Mobile Logo */}
         <Link href={`${basePath}/dashboard`} className="flex items-center gap-2 md:hidden">
-          <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-secondary">
-            <GitBranch className="text-white" size={18} />
+          <div className="p-1.5 rounded-lg bg-primary">
+            <GitBranch className="text-white" size={16} />
           </div>
-          <span className="font-bold text-base bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+          <span className="font-semibold text-sm text-default-900">
             Capstone
           </span>
         </Link>
 
-        {/* Page Title - Desktop */}
-        {title && (
-          <h1 className="hidden md:block text-xl font-semibold text-default-800">
-            {title}
-          </h1>
-        )}
+        {/* Breadcrumbs - Desktop */}
+        <div className="hidden md:flex items-center min-w-0">
+          {title ? (
+            <h1 className="text-lg font-semibold text-default-900 truncate">{title}</h1>
+          ) : (
+            <Breadcrumbs />
+          )}
+        </div>
       </div>
 
       {/* Center - Search Bar (Desktop) */}
       <div className="hidden md:flex flex-1 max-w-2xl mx-8">
         <Input
+          ref={searchInputRef}
           classNames={{
             base: 'w-full',
             inputWrapper: 'bg-default-100/70 hover:bg-default-100 border-transparent shadow-sm',
           }}
-          placeholder="Search projects, documents..."
+          placeholder="Cari project, mahasiswa, NIM..."
           size="sm"
           radius="lg"
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          onKeyDown={handleSearchKeyDown}
+          isClearable
+          onClear={() => setSearchQuery('')}
           startContent={<Search size={18} className="text-default-400" />}
           endContent={
             <div className="hidden lg:flex items-center gap-1 text-default-400">
@@ -227,7 +270,14 @@ export function Header({ title, onMenuClick }: HeaderProps) {
       {/* Right Side */}
       <div className="flex items-center gap-3">
         {/* Mobile Search Button */}
-        <Button isIconOnly variant="light" size="sm" className="md:hidden">
+        <Button
+          isIconOnly
+          variant="light"
+          size="sm"
+          className="md:hidden"
+          onPress={() => submitSearch('')}
+          aria-label="Cari"
+        >
           <Search size={20} />
         </Button>
 
@@ -243,17 +293,17 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         </Button>
 
         {/* Notifications - Real-time with polling */}
-        <Dropdown 
+        <Dropdown
           placement="bottom-end"
           isOpen={isDropdownOpen}
           onOpenChange={setIsDropdownOpen}
         >
           <DropdownTrigger>
             <Button isIconOnly variant="light" size="sm">
-              <Badge 
-                color="danger" 
-                content={unreadCount > 99 ? '99+' : unreadCount} 
-                size="sm" 
+              <Badge
+                color="danger"
+                content={unreadCount > 99 ? '99+' : unreadCount}
+                size="sm"
                 shape="circle"
                 isInvisible={unreadCount === 0}
               >
@@ -261,8 +311,8 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               </Badge>
             </Button>
           </DropdownTrigger>
-          <DropdownMenu 
-            aria-label="Notifications" 
+          <DropdownMenu
+            aria-label="Notifications"
             className="w-80 max-w-[calc(100vw-2rem)]"
             closeOnSelect={false}
           >

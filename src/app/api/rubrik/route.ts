@@ -10,11 +10,11 @@ export async function GET(request: Request) {
     const tipe = searchParams.get('tipe'); // "kelompok" atau "individu"
 
     const whereClause: Record<string, unknown> = {};
-    
+
     if (activeOnly) {
       whereClause.isActive = true;
     }
-    
+
     // Filter by tipe if provided
     if (tipe && (tipe === 'kelompok' || tipe === 'individu')) {
       whereClause.tipe = tipe;
@@ -57,12 +57,37 @@ export async function POST(request: Request) {
     // Validate tipe
     const validTipe = tipe === 'individu' ? 'individu' : 'kelompok';
 
+    const numericBobot = Number(bobotMax);
+    if (!Number.isFinite(numericBobot) || numericBobot <= 0) {
+      return NextResponse.json(
+        { error: 'Bobot maksimal harus angka positif' },
+        { status: 400 },
+      );
+    }
+
+    // Enforce total bobot per tipe <= 100 when active
+    if (isActive !== false) {
+      const aggregate = await prisma.rubrikPenilaian.aggregate({
+        where: { tipe: validTipe, isActive: true },
+        _sum: { bobotMax: true },
+      });
+      const currentTotal = aggregate._sum.bobotMax ?? 0;
+      if (currentTotal + numericBobot > 100) {
+        return NextResponse.json(
+          {
+            error: `Total bobot ${validTipe} akan menjadi ${currentTotal + numericBobot} (maksimal 100).`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     const rubrik = await prisma.rubrikPenilaian.create({
       data: {
         name,
         description,
         kategori,
-        bobotMax,
+        bobotMax: numericBobot,
         urutan: urutan || 0,
         isActive: isActive !== false,
         tipe: validTipe,

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Button,
@@ -33,6 +34,10 @@ interface User {
   id: string;
   name: string;
   username: string;
+  email?: string | null;
+  nim?: string | null;
+  nip?: string | null;
+  prodi?: string | null;
   role: 'MAHASISWA' | 'DOSEN_PENGUJI' | 'ADMIN';
   image: string | null;
   isActive: boolean;
@@ -210,6 +215,32 @@ export default function AdminUsersPage() {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  // React to ?action=add and ?id=... from dashboard quick links
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  useEffect(() => {
+    const action = searchParams.get('action');
+    const id = searchParams.get('id');
+    const initialSearch = searchParams.get('q') || searchParams.get('search');
+    if (initialSearch) {
+      setSearchQuery(initialSearch);
+    }
+    if (action === 'add') {
+      onOpen();
+      // strip param from URL so refreshing doesn't reopen
+      router.replace('/admin/users', { scroll: false });
+      return;
+    }
+    if (id && users.length > 0) {
+      const target = users.find((u) => u.id === id);
+      if (target) {
+        openEditModal(target);
+        router.replace('/admin/users', { scroll: false });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, users.length]);
 
   const fetchUsers = async () => {
     try {
@@ -447,9 +478,15 @@ export default function AdminUsersPage() {
   };
 
   const filteredUsers = users.filter((user) => {
+    const q = searchQuery.trim().toLowerCase();
     const matchesSearch =
-      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.username.toLowerCase().includes(searchQuery.toLowerCase());
+      !q ||
+      user.name.toLowerCase().includes(q) ||
+      user.username.toLowerCase().includes(q) ||
+      (user.email?.toLowerCase().includes(q) ?? false) ||
+      (user.nim?.toLowerCase().includes(q) ?? false) ||
+      (user.nip?.toLowerCase().includes(q) ?? false) ||
+      (user.prodi?.toLowerCase().includes(q) ?? false);
 
     const matchesRole = roleFilter === 'all' || user.role === roleFilter;
 
@@ -487,165 +524,105 @@ export default function AdminUsersPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-5"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Header - Soft Blue/Cyan */}
-      <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950/40 dark:via-cyan-950/30 dark:to-sky-950/40 border border-blue-200/50 dark:border-blue-800/30 p-6 md:p-8">
-          {/* Subtle Background Accent */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-sky-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
+      {/* Header */}
+      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-default-900">Manajemen User</h1>
+          <p className="text-sm text-default-500 mt-0.5">
+            Kelola mahasiswa, dosen, dan admin
+          </p>
+        </div>
+        <Button
+          color="primary"
+          startContent={<UserPlus size={16} />}
+          onPress={() => {
+            resetForm();
+            onOpen();
+          }}
+        >
+          Tambah User
+        </Button>
+      </header>
 
-          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-600 text-white shadow-lg shadow-blue-500/25">
-                <Users className="w-7 h-7" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Manajemen User</h1>
-                <p className="text-blue-600/70 dark:text-blue-400/60 text-sm mt-1">Kelola semua user dalam sistem</p>
-              </div>
-            </div>
-
-            <Button
-              className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white font-medium shadow-lg shadow-blue-500/25"
-              startContent={<UserPlus size={18} />}
-              onPress={() => {
-                resetForm();
-                onOpen();
-              }}
+      {/* Stats */}
+      <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {[
+          { label: 'Total', value: stats.total, icon: Users, cls: 'bg-default-100 text-default-600' },
+          { label: 'Mahasiswa', value: stats.mahasiswa, icon: GraduationCap, cls: 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300' },
+          { label: 'Dosen', value: stats.dosen, icon: UserCog, cls: 'bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300' },
+          { label: 'Admin', value: stats.admin, icon: Shield, cls: 'bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300' },
+          { label: 'Aktif', value: stats.active, icon: CheckCircle, cls: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300' },
+        ].map((s) => {
+          const Icon = s.icon;
+          return (
+            <div
+              key={s.label}
+              className="flex items-center gap-3 rounded-xl border border-divider/60 bg-content1 p-3.5"
             >
-              Tambah User
-            </Button>
-          </div>
-        </div>
-      </motion.div>
+              <div className={`p-2 rounded-lg ${s.cls}`}>
+                <Icon size={16} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-xl font-semibold text-default-900 tabular-nums leading-tight">
+                  {s.value}
+                </p>
+                <p className="text-xs text-default-500 leading-tight">{s.label}</p>
+              </div>
+            </div>
+          );
+        })}
+      </section>
 
-      {/* Stats Grid - Clean Design */}
+      {/* Filters */}
+      <section className="flex flex-col gap-2 md:flex-row md:items-center">
+        <Input
+          placeholder="Cari nama, email, NIM/NIP, prodi..."
+          startContent={<Search size={16} className="text-default-400" />}
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          isClearable
+          onClear={() => setSearchQuery('')}
+          className="flex-1"
+          size="sm"
+        />
+        <Select
+          aria-label="Filter role"
+          placeholder="Semua Role"
+          selectedKeys={[roleFilter]}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          className="w-full md:w-48"
+          size="sm"
+        >
+          <SelectItem key="all">Semua Role</SelectItem>
+          <SelectItem key="MAHASISWA">Mahasiswa</SelectItem>
+          <SelectItem key="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
+          <SelectItem key="ADMIN">Admin</SelectItem>
+        </Select>
+      </section>
+
+      {/* Users List */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-slate-100 dark:bg-zinc-800">
-                <Users size={18} className="text-slate-600 dark:text-zinc-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-800 dark:text-white">{stats.total}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Total User</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
-                <GraduationCap size={18} className="text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.mahasiswa}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Mahasiswa</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-violet-50 dark:bg-violet-900/30">
-                <UserCog size={18} className="text-violet-600 dark:text-violet-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-violet-600 dark:text-violet-400">{stats.dosen}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Dosen</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-rose-50 dark:bg-rose-900/30">
-                <Shield size={18} className="text-rose-600 dark:text-rose-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-rose-600 dark:text-rose-400">{stats.admin}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Admin</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow col-span-2 md:col-span-1">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/30">
-                <Users size={18} className="text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.active}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">User Aktif</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Filters - Clean Design */}
-      <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800">
-              <Search size={14} className="text-slate-600 dark:text-zinc-400" />
-            </div>
-            <h3 className="font-medium text-sm text-slate-700 dark:text-zinc-300">Filter & Pencarian</h3>
-          </div>
-          <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-            <Input
-              placeholder="Cari nama, email, NIM/Username..."
-              startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-              size="sm"
-              classNames={{
-                inputWrapper: 'h-10 bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50 hover:bg-slate-100 dark:hover:bg-zinc-700/50',
-              }}
-            />
-            <Select
-              placeholder="Filter Role"
-              selectedKeys={[roleFilter]}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              className="w-full md:max-w-[200px]"
-              size="sm"
-            >
-              <SelectItem key="all">Semua Role</SelectItem>
-              <SelectItem key="MAHASISWA">Mahasiswa</SelectItem>
-              <SelectItem key="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
-              <SelectItem key="ADMIN">Admin</SelectItem>
-            </Select>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Users List - Clean Container */}
-      <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800">
-                <Users size={14} className="text-slate-600 dark:text-zinc-400" />
-              </div>
-              <h2 className="font-medium text-slate-700 dark:text-zinc-300">
-                Daftar User ({filteredUsers.length})
-              </h2>
-            </div>
+        <div className="rounded-xl border border-divider/60 bg-content1 overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-divider/60 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-default-700">
+              Daftar User
+            </h2>
+            <span className="text-xs text-default-500 tabular-nums">
+              {filteredUsers.length} hasil
+            </span>
           </div>
           <div className="p-4">
             {filteredUsers.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="inline-flex p-4 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">
-                  <Users size={48} className="text-zinc-400" />
+              <div className="text-center py-10">
+                <div className="inline-flex p-3 rounded-full bg-default-100 mb-3">
+                  <Users size={32} className="text-default-400" />
                 </div>
-                <p className="text-zinc-500">
+                <p className="text-sm text-default-500">
                   Tidak ada user ditemukan
                 </p>
               </div>

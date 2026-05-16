@@ -70,7 +70,38 @@ export function SettingsContent({ role }: SettingsContentProps) {
   const [reviewReminders, setReviewReminders] = useState(true);
   const [projectUpdates, setProjectUpdates] = useState(true);
   const [language, setLanguage] = useState('id');
+  const [showProfile, setShowProfile] = useState(true);
+  const [showGithub, setShowGithub] = useState(true);
   const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingPrefs, setIsLoadingPrefs] = useState(true);
+
+  // Load persisted preferences
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch('/api/profile/preferences');
+        if (!res.ok) return;
+        const p = await res.json();
+        if (cancelled) return;
+        setEmailNotifications(Boolean(p.emailNotifications));
+        setPushNotifications(Boolean(p.pushNotifications));
+        setReviewReminders(Boolean(p.reviewReminders));
+        setProjectUpdates(Boolean(p.projectUpdates));
+        setShowProfile(Boolean(p.showProfile));
+        setShowGithub(Boolean(p.showGithub));
+        if (p.language === 'id' || p.language === 'en') setLanguage(p.language);
+      } catch (err) {
+        console.error('Failed to load preferences', err);
+      } finally {
+        if (!cancelled) setIsLoadingPrefs(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // GitHub linking state
   const [githubStatus, setGithubStatus] = useState<GitHubLinkStatus | null>(null);
@@ -143,36 +174,52 @@ export function SettingsContent({ role }: SettingsContentProps) {
     }
   };
 
-  const handleSave = () => {
-    // In a real app, this would save to the backend
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const res = await fetch('/api/profile/preferences', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          emailNotifications,
+          pushNotifications,
+          reviewReminders,
+          projectUpdates,
+          language,
+          showProfile,
+          showGithub,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        toast.error(data.error || 'Gagal menyimpan pengaturan');
+        return;
+      }
+      setIsSaved(true);
+      toast.success('Pengaturan berhasil disimpan');
+      setTimeout(() => setIsSaved(false), 3000);
+    } catch {
+      toast.error('Terjadi kesalahan');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
     <motion.div
-      className="w-full space-y-4 md:space-y-6"
+      className="w-full space-y-5"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Header - Soft Colored */}
+      {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-zinc-50 via-slate-50 to-gray-50 dark:from-zinc-950/40 dark:via-slate-950/30 dark:to-gray-950/40 border border-zinc-200/50 dark:border-zinc-800/30 p-6 md:p-8">
-          {/* Subtle Background Accents */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-zinc-400/20 to-slate-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-gray-400/15 to-zinc-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-
-          <div className="relative flex items-center gap-4">
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-zinc-600 to-slate-700 text-white shadow-lg shadow-zinc-500/25">
-              <Settings size={28} />
-            </div>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-zinc-800 dark:text-zinc-100">Pengaturan</h1>
-              <p className="text-sm md:text-base text-zinc-600/70 dark:text-zinc-400/60">
-                Sesuaikan preferensi aplikasi Anda
-              </p>
-            </div>
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-default-900">Pengaturan</h1>
+            <p className="text-sm text-default-500 mt-0.5">
+              Sesuaikan preferensi aplikasi Anda
+            </p>
           </div>
         </div>
       </motion.div>
@@ -192,10 +239,10 @@ export function SettingsContent({ role }: SettingsContentProps) {
 
       {/* Appearance */}
       <motion.div variants={itemVariants}>
-        <Card>
+        <Card shadow="none" className="border border-divider/60">
           <CardHeader className="pb-0">
-            <h3 className="font-semibold flex items-center gap-2">
-              <Palette size={18} />
+            <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+              <Palette size={16} />
               Tampilan
             </h3>
           </CardHeader>
@@ -265,10 +312,10 @@ export function SettingsContent({ role }: SettingsContentProps) {
 
       {/* Notifications */}
       <motion.div variants={itemVariants}>
-        <Card>
+        <Card shadow="none" className="border border-divider/60">
           <CardHeader className="pb-0">
-            <h3 className="font-semibold flex items-center gap-2">
-              <Bell size={18} />
+            <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+              <Bell size={16} />
               Notifikasi
             </h3>
           </CardHeader>
@@ -367,10 +414,10 @@ export function SettingsContent({ role }: SettingsContentProps) {
 
       {/* Privacy */}
       <motion.div variants={itemVariants}>
-        <Card>
+        <Card shadow="none" className="border border-divider/60">
           <CardHeader className="pb-0">
-            <h3 className="font-semibold flex items-center gap-2">
-              <Shield size={18} />
+            <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+              <Shield size={16} />
               Privasi
             </h3>
           </CardHeader>
@@ -382,7 +429,7 @@ export function SettingsContent({ role }: SettingsContentProps) {
                   Izinkan pengguna lain melihat profil Anda
                 </p>
               </div>
-              <Switch defaultSelected color="primary" />
+              <Switch isSelected={showProfile} onValueChange={setShowProfile} color="primary" />
             </div>
 
             {role === 'mahasiswa' && (
@@ -395,7 +442,7 @@ export function SettingsContent({ role }: SettingsContentProps) {
                       Tampilkan link GitHub di profil
                     </p>
                   </div>
-                  <Switch defaultSelected color="primary" />
+                  <Switch isSelected={showGithub} onValueChange={setShowGithub} color="primary" />
                 </div>
               </>
             )}
@@ -406,10 +453,10 @@ export function SettingsContent({ role }: SettingsContentProps) {
       {/* GitHub Integration - Only for Mahasiswa */}
       {role === 'mahasiswa' && (
         <motion.div variants={itemVariants}>
-          <Card>
+          <Card shadow="none" className="border border-divider/60">
             <CardHeader className="pb-0">
-              <h3 className="font-semibold flex items-center gap-2">
-                <Github size={18} />
+              <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+                <Github size={16} />
                 Integrasi GitHub
               </h3>
             </CardHeader>
@@ -492,6 +539,8 @@ export function SettingsContent({ role }: SettingsContentProps) {
           color="primary"
           startContent={<Save size={18} />}
           onPress={handleSave}
+          isLoading={isSaving}
+          isDisabled={isLoadingPrefs}
         >
           Simpan Pengaturan
         </Button>

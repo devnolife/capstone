@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -79,12 +80,12 @@ interface DropdownItemData {
   label: string;
   icon?: React.ReactNode;
   color?:
-    | 'default'
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'warning'
-    | 'danger';
+  | 'default'
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'warning'
+  | 'danger';
   href?: string;
   onPress?: () => void;
 }
@@ -137,7 +138,7 @@ function MobileProjectCard({
   onDeleteClick: (project: Project) => void;
 }) {
   const avatarUrl = getAvatarUrl(project.mahasiswa);
-  
+
   return (
     <motion.div variants={itemVariants}>
       <div className="group relative p-5 rounded-2xl border border-default-200 dark:border-default-100 bg-white dark:bg-default-50 mb-4 hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-300">
@@ -157,10 +158,10 @@ function MobileProjectCard({
         <div className="space-y-4">
           {/* Mahasiswa Info with Avatar */}
           <div className="flex items-center gap-3">
-            <Avatar 
+            <Avatar
               src={avatarUrl}
-              name={project.mahasiswa.name} 
-              size="lg" 
+              name={project.mahasiswa.name}
+              size="lg"
               className="ring-2 ring-primary/20 ring-offset-2 ring-offset-background"
               imgProps={{ referrerPolicy: "no-referrer" }}
             />
@@ -216,16 +217,16 @@ function MobileProjectCard({
 
           {/* Actions */}
           <div className="flex gap-2 pt-2">
-                <Button
-                      as={Link}
-                      href={`/admin/projects/${project.id}`}
-                      size="sm"
-                      variant="flat"
-                      className="flex-1"
-                      startContent={<Eye size={16} />}
-                    >
-                      Detail
-                    </Button>
+            <Button
+              as={Link}
+              href={`/admin/projects/${project.id}`}
+              size="sm"
+              variant="flat"
+              className="flex-1"
+              startContent={<Eye size={16} />}
+            >
+              Detail
+            </Button>
             {project.status === 'SUBMITTED' && (
               <Button
                 size="sm"
@@ -287,12 +288,19 @@ function MobileProjectCard({
 }
 
 export default function AdminProjectsPage() {
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [semesterFilter, setSemesterFilter] = useState<string>('all');
-  
+
+  // Keep state in sync when URL ?q= changes (e.g. header search)
+  useEffect(() => {
+    setSearchQuery(searchParams.get('q') || searchParams.get('search') || '');
+  }, [searchParams]);
+
   // Approval modal state
   const [approvalModalOpen, setApprovalModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -526,184 +534,112 @@ export default function AdminProjectsPage() {
 
   return (
     <motion.div
-      className="space-y-6"
+      className="space-y-5"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
     >
-      {/* Hero Header - Soft Violet/Purple */}
-      <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-950/40 dark:via-purple-950/30 dark:to-fuchsia-950/40 border border-violet-200/50 dark:border-violet-800/30 p-6 md:p-8">
-          {/* Subtle Background Accent */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-400/20 to-purple-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-fuchsia-400/15 to-violet-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
-          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/25">
-                <FolderGit2 className="w-7 h-7" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Semua Project</h1>
-                <p className="text-violet-600/70 dark:text-violet-400/60 text-sm mt-1">Kelola semua project capstone mahasiswa</p>
-              </div>
-            </div>
-            
-            {/* Quick Stats - Refined Cards */}
-            <div className="flex gap-3 md:gap-4">
-              <div className="text-center px-4 py-2 rounded-xl bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm border border-violet-200/50 dark:border-violet-800/30">
-                <p className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">{stats.total}</p>
-                <p className="text-violet-600/60 dark:text-violet-400/60 text-xs">Total</p>
-              </div>
-              <div className="text-center px-4 py-2 rounded-xl bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm border border-violet-200/50 dark:border-violet-800/30">
-                <p className="text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400">{stats.submitted}</p>
-                <p className="text-violet-600/60 dark:text-violet-400/60 text-xs">Submit</p>
-              </div>
-              <div className="text-center px-4 py-2 rounded-xl bg-white/70 dark:bg-zinc-800/60 backdrop-blur-sm border border-violet-200/50 dark:border-violet-800/30">
-                <p className="text-2xl md:text-3xl font-bold text-emerald-600 dark:text-emerald-400">{stats.approved}</p>
-                <p className="text-violet-600/60 dark:text-violet-400/60 text-xs">Approved</p>
-              </div>
-            </div>
-          </div>
+      {/* Header */}
+      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-semibold text-default-900">Semua Project</h1>
+          <p className="text-sm text-default-500 mt-0.5">
+            Kelola seluruh project capstone mahasiswa
+          </p>
         </div>
-      </motion.div>
+      </header>
 
-      {/* Stats Grid - Cleaner Design */}
-      <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-slate-100 dark:bg-zinc-800">
-                <TrendingUp size={16} className="text-slate-600 dark:text-zinc-400" />
+      {/* Stats */}
+      <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
+        {[
+          { label: 'Total', value: stats.total, icon: TrendingUp, cls: 'bg-default-100 text-default-600' },
+          { label: 'Draft', value: stats.draft, icon: FileText, cls: 'bg-default-100 text-default-500' },
+          { label: 'Submit', value: stats.submitted, icon: Clock, cls: 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300' },
+          { label: 'Review', value: stats.inReview, icon: Eye, cls: 'bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300' },
+          { label: 'Approved', value: stats.approved, icon: CheckCircle2, cls: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300' },
+        ].map((s) => {
+          const Icon = s.icon;
+          return (
+            <div
+              key={s.label}
+              className="flex items-center gap-3 rounded-xl border border-divider/60 bg-content1 p-3.5"
+            >
+              <div className={`p-2 rounded-lg ${s.cls}`}>
+                <Icon size={16} />
               </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-800 dark:text-white">{stats.total}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Total</p>
-              </div>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-slate-100 dark:bg-zinc-800">
-                <FileText size={16} className="text-slate-500 dark:text-zinc-500" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-slate-500 dark:text-zinc-400">{stats.draft}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Draft</p>
-              </div>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/30">
-                <Clock size={16} className="text-blue-600 dark:text-blue-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.submitted}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Submit</p>
+              <div className="min-w-0">
+                <p className="text-xl font-semibold text-default-900 tabular-nums leading-tight">
+                  {s.value}
+                </p>
+                <p className="text-xs text-default-500 leading-tight">{s.label}</p>
               </div>
             </div>
-          </div>
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-50 dark:bg-amber-900/30">
-                <Eye size={16} className="text-amber-600 dark:text-amber-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.inReview}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Review</p>
-              </div>
-            </div>
-          </div>
-          <div className="relative overflow-hidden rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4 hover:shadow-md transition-shadow col-span-2 md:col-span-1">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/30">
-                <CheckCircle2 size={16} className="text-emerald-600 dark:text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.approved}</p>
-                <p className="text-xs text-slate-500 dark:text-zinc-400">Approved</p>
-              </div>
-            </div>
-          </div>
+          );
+        })}
+      </section>
+
+      {/* Filters */}
+      <section className="flex flex-col gap-2 md:flex-row md:items-center">
+        <Input
+          placeholder="Cari judul, nama mahasiswa, NIM, atau repo..."
+          startContent={<Search size={16} className="text-default-400" />}
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          isClearable
+          onClear={() => setSearchQuery('')}
+          className="flex-1"
+          size="sm"
+        />
+        <div className="flex gap-2">
+          <Select
+            aria-label="Status"
+            placeholder="Status"
+            selectedKeys={[statusFilter]}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="flex-1 md:w-44"
+            size="sm"
+          >
+            <SelectItem key="all">Semua Status</SelectItem>
+            <SelectItem key="DRAFT">Draft</SelectItem>
+            <SelectItem key="SUBMITTED">Submitted</SelectItem>
+            <SelectItem key="IN_REVIEW">In Review</SelectItem>
+            <SelectItem key="REVISION_NEEDED">Revisi</SelectItem>
+            <SelectItem key="APPROVED">Approved</SelectItem>
+            <SelectItem key="REJECTED">Rejected</SelectItem>
+          </Select>
+          <Select
+            aria-label="Semester"
+            placeholder="Semester"
+            selectedKeys={[semesterFilter]}
+            onChange={(e) => setSemesterFilter(e.target.value)}
+            className="flex-1 md:w-44"
+            size="sm"
+            items={[
+              { key: 'all', label: 'Semua Semester' },
+              ...semesters.map((sem) => ({ key: sem, label: sem })),
+            ]}
+          >
+            {(item) => <SelectItem key={item.key}>{item.label}</SelectItem>}
+          </Select>
         </div>
-      </motion.div>
+      </section>
 
-      {/* Filters - Clean Design */}
+      {/* Projects List */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800">
-              <Search size={14} className="text-slate-600 dark:text-zinc-400" />
-            </div>
-            <h3 className="font-medium text-sm text-slate-700 dark:text-zinc-300">Filter & Pencarian</h3>
-          </div>
-          <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-            <Input
-              placeholder="Cari judul, nama, atau NIM..."
-              startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1"
-              size="sm"
-              classNames={{
-                inputWrapper: 'h-10 bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50 hover:bg-slate-100 dark:hover:bg-zinc-700/50',
-              }}
-            />
-            <div className="flex gap-2">
-              <Select
-                placeholder="Status"
-                selectedKeys={[statusFilter]}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="flex-1 md:w-[150px]"
-                size="sm"
-              >
-                <SelectItem key="all">Semua Status</SelectItem>
-                <SelectItem key="DRAFT">Draft</SelectItem>
-                <SelectItem key="SUBMITTED">Submitted</SelectItem>
-                <SelectItem key="IN_REVIEW">In Review</SelectItem>
-                <SelectItem key="REVISION_NEEDED">Revisi</SelectItem>
-                <SelectItem key="APPROVED">Approved</SelectItem>
-                <SelectItem key="REJECTED">Rejected</SelectItem>
-              </Select>
-              <Select
-                placeholder="Semester"
-                selectedKeys={[semesterFilter]}
-                onChange={(e) => setSemesterFilter(e.target.value)}
-                className="flex-1 md:w-[150px]"
-                size="sm"
-                items={[
-                  { key: 'all', label: 'Semua' },
-                  ...semesters.map((sem) => ({ key: sem, label: sem })),
-                ]}
-              >
-                {(item) => <SelectItem key={item.key}>{item.label}</SelectItem>}
-              </Select>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-
-      {/* Projects List - Clean Container */}
-      <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-slate-50/50 dark:bg-zinc-800/30">
-            <div className="flex items-center gap-2">
-              <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-zinc-800">
-                <FolderGit2 size={14} className="text-slate-600 dark:text-zinc-400" />
-              </div>
-              <h2 className="font-medium text-slate-700 dark:text-zinc-300">
-                Daftar Project ({filteredProjects.length})
-              </h2>
-            </div>
+        <div className="rounded-xl border border-divider/60 bg-content1 overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-divider/60 flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-default-700">Daftar Project</h2>
+            <span className="text-xs text-default-500 tabular-nums">
+              {filteredProjects.length} hasil
+            </span>
           </div>
           <div className="p-4">
             {filteredProjects.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="inline-flex p-4 rounded-full bg-zinc-100 dark:bg-zinc-800 mb-4">
-                  <FolderGit2 size={48} className="text-zinc-400" />
+              <div className="text-center py-10">
+                <div className="inline-flex p-3 rounded-full bg-default-100 mb-3">
+                  <FolderGit2 size={32} className="text-default-400" />
                 </div>
-                <p className="text-zinc-500">
+                <p className="text-sm text-default-500">
                   Tidak ada project ditemukan
                 </p>
               </div>
@@ -754,7 +690,7 @@ export default function AdminProjectsPage() {
                         <div className="flex-1 min-w-0 grid grid-cols-12 gap-4 items-center">
                           {/* Project & Student Info - 4 cols */}
                           <div className="col-span-4 space-y-1">
-                            <Link 
+                            <Link
                               href={`/admin/projects/${project.id}`}
                               className="font-semibold text-slate-800 dark:text-white hover:text-primary transition-colors line-clamp-1"
                             >
@@ -834,9 +770,9 @@ export default function AdminProjectsPage() {
                             </Button>
                             <Dropdown>
                               <DropdownTrigger>
-                                <Button 
-                                  isIconOnly 
-                                  size="sm" 
+                                <Button
+                                  isIconOnly
+                                  size="sm"
                                   variant="light"
                                   className="text-slate-500 hover:text-slate-700 dark:text-zinc-400 dark:hover:text-zinc-200"
                                 >
@@ -953,7 +889,7 @@ export default function AdminProjectsPage() {
                             <ul className="text-xs text-slate-500 dark:text-zinc-500 space-y-1 ml-4 list-disc">
                               <li>Di-fork ke organisasi dengan nama baru</li>
                               <li>
-                                {selectedProject.mahasiswa.githubUsername 
+                                {selectedProject.mahasiswa.githubUsername
                                   ? `Menambahkan @${selectedProject.mahasiswa.githubUsername} sebagai collaborator`
                                   : 'Menambahkan mahasiswa sebagai collaborator'}
                               </li>

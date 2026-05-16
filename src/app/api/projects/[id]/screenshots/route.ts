@@ -65,7 +65,17 @@ export async function POST(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
-    if (project.mahasiswaId !== session.user.id) {
+    const isOwner = project.mahasiswaId === session.user.id;
+    let isMember = false;
+    if (!isOwner) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -192,7 +202,17 @@ export async function DELETE(
       return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     }
 
-    if (project.mahasiswaId !== session.user.id) {
+    const isOwner = project.mahasiswaId === session.user.id;
+    let isMember = false;
+    if (!isOwner) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 

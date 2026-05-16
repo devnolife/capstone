@@ -535,23 +535,50 @@ export default function EditProjectPage({ params }: { params: Promise<{ id: stri
     setError('');
 
     try {
+      // Compute removed members: ids that were in original project but not in current state
+      const originalMemberIds = (originalProject?.members || [])
+        .filter((m) => m.role !== 'OWNER')
+        .map((m) => m.user?.id || m.userId)
+        .filter((v): v is string => !!v);
+      const currentMemberIds = new Set(
+        pendingTeamMembers.map((m) => m.id).filter((v): v is string => !!v)
+      );
+      const removedMemberIds = originalMemberIds.filter((id) => !currentMemberIds.has(id));
+
+      const payload = {
+        ...formData,
+        // ensure tahunAkademik is never empty (auto-derive from selected semester if missing)
+        tahunAkademik:
+          formData.tahunAkademik ||
+          semesterOptions.find((s) => s.name === formData.semester)?.tahunAkademik ||
+          originalProject?.tahunAkademik ||
+          '',
+        // omit GitHub URL field if empty so it doesn't fail .url() validation
+        githubRepoUrl: formData.githubRepoUrl?.trim() || undefined,
+        githubRepoName: formData.githubRepoName?.trim() || undefined,
+        technologies: selectedTechs,
+        pendingTeamMembers: pendingTeamMembers,
+        removedMemberIds,
+        isPublic,
+        testingUsername: testingCredentials.username || null,
+        testingPassword: testingCredentials.password || null,
+        testingNotes: testingCredentials.notes || null,
+        consentDocument: consentDocument,
+      };
+
       const response = await fetch(`/api/projects/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          technologies: selectedTechs,
-          pendingTeamMembers: pendingTeamMembers,
-          isPublic,
-          testingUsername: testingCredentials.username || null,
-          testingPassword: testingCredentials.password || null,
-          testingNotes: testingCredentials.notes || null,
-          consentDocument: consentDocument,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Gagal mengupdate project');
+      if (!response.ok) {
+        const detail = Array.isArray(data?.issues) && data.issues.length > 0
+          ? data.issues.map((i: { field: string; message: string }) => `${i.field}: ${i.message}`).join('; ')
+          : data?.error || 'Gagal mengupdate project';
+        throw new Error(detail);
+      }
 
       addToast({
         title: 'Berhasil',

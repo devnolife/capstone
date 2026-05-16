@@ -51,6 +51,10 @@ export async function GET(request: Request) {
 }
 
 // POST /api/notifications - Create notification (Admin/System only)
+// Supports:
+//   { userId, title, message, type, link }        -> single recipient
+//   { userIds: string[], title, ... }             -> explicit list
+//   { role: 'MAHASISWA'|'DOSEN_PENGUJI'|'ADMIN'|'all', title, ... }  -> broadcast
 export async function POST(request: Request) {
   try {
     const session = await auth();
@@ -60,29 +64,84 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { userId, title, message, type, link } = body;
+    const { userId, userIds, role, title, message, type, link } = body;
 
-    if (!userId || !title || !message || !type) {
+    if (!title || !message || !type) {
       return NextResponse.json(
-        { error: 'userId, title, message, dan type diperlukan' },
+        { error: 'title, message, dan type diperlukan' },
         { status: 400 },
       );
     }
 
-    const notification = await prisma.notification.create({
-      data: {
-        userId,
+    // Resolve recipient ids
+    let recipientIds: string[] = [];
+
+    if (Array.isArray(userIds) && userIds.length > 0) {
+      recipientIds = userIds.filter((v): v is string => typeof v === 'string');
+    } else if (role) {
+      const validRoles = ['MAHASISWA', 'DOSEN_PENGUJI', 'ADMIN'] as const;
+      type ValidRole = typeof validRoles[number];
+      const where: { isActive: boolean; role?: ValidRole } = { isActive: true };
+      if (role !== 'all') {
+        if (!validRoles.includes(role)) {
+          return NextResponse.json(
+            { error: 'role tidak valid' },
+            { status: 400 },
+          );
+        }
+        where.role = role;
+      }
+      const users = await prisma.user.findMany({
+        where,
+        select: { id: true },
+      });
+      recipientIds = users.map((u) => u.id);
+    } else if (typeof userId === 'string') {
+      recipientIds = [userId];
+    }
+
+    if (recipientIds.length === 0) {
+      return NextResponse.json(
+        { error: 'Tidak ada penerima notifikasi' },
+        { status: 400 },
+      );
+    }
+
+    // Single insert keeps response shape backward-compatible
+    if (recipientIds.length === 1) {
+      const notification = await prisma.notification.create({
+        data: {
+          userId: recipientIds[0],
+          title,
+          message,
+          type,
+          link,
+        },
+      });
+
+      return NextResponse.json(
+        {
+          message: 'Notifikasi berhasil dibuat',
+          notification,
+        },
+        { status: 201 },
+      );
+    }
+
+    const result = await prisma.notification.createMany({
+      data: recipientIds.map((uid) => ({
+        userId: uid,
         title,
         message,
         type,
         link,
-      },
+      })),
     });
 
     return NextResponse.json(
       {
-        message: 'Notifikasi berhasil dibuat',
-        notification,
+        message: `Notifikasi terkirim ke ${result.count} pengguna`,
+        count: result.count,
       },
       { status: 201 },
     );

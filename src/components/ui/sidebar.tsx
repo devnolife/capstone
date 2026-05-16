@@ -13,7 +13,6 @@ import {
 import {
   LayoutDashboard,
   FolderGit2,
-  FileText,
   Users,
   ClipboardCheck,
   ChevronLeft,
@@ -21,7 +20,6 @@ import {
   GraduationCap,
   UserCog,
   BookOpen,
-  GitBranch,
   X,
   Menu,
   Mail,
@@ -37,97 +35,79 @@ interface SidebarItem {
   icon: React.ReactNode;
 }
 
-const mahasiswaMenuItems: SidebarItem[] = [
+interface SidebarSection {
+  label: string;
+  items: SidebarItem[];
+}
+
+const mahasiswaSections: SidebarSection[] = [
   {
-    title: 'Dashboard',
-    href: '/mahasiswa/dashboard',
-    icon: <LayoutDashboard size={20} />,
+    label: 'Ringkasan',
+    items: [
+      { title: 'Dashboard', href: '/mahasiswa/dashboard', icon: <LayoutDashboard size={18} /> },
+    ],
   },
   {
-    title: 'Project Saya',
-    href: '/mahasiswa/projects',
-    icon: <FolderGit2 size={20} />,
+    label: 'Proyek',
+    items: [
+      { title: 'Project Saya', href: '/mahasiswa/projects', icon: <FolderGit2 size={18} /> },
+      { title: 'Persyaratan', href: '/mahasiswa/persyaratan', icon: <BookOpen size={18} /> },
+    ],
   },
   {
-    title: 'Undangan Tim',
-    href: '/mahasiswa/invitations',
-    icon: <Mail size={20} />,
-  },
-  {
-    title: 'Persyaratan',
-    href: '/mahasiswa/persyaratan',
-    icon: <BookOpen size={20} />,
-  },
-  {
-    title: 'Review & Feedback',
-    href: '/mahasiswa/reviews',
-    icon: <ClipboardCheck size={20} />,
+    label: 'Tim & Review',
+    items: [
+      { title: 'Undangan Tim', href: '/mahasiswa/invitations', icon: <Mail size={18} /> },
+      { title: 'Review & Feedback', href: '/mahasiswa/reviews', icon: <ClipboardCheck size={18} /> },
+    ],
   },
 ];
 
-const dosenMenuItems: SidebarItem[] = [
+const dosenSections: SidebarSection[] = [
   {
-    title: 'Dashboard',
-    href: '/dosen/dashboard',
-    icon: <LayoutDashboard size={20} />,
+    label: 'Ringkasan',
+    items: [
+      { title: 'Dashboard', href: '/dosen/dashboard', icon: <LayoutDashboard size={18} /> },
+    ],
   },
   {
-    title: 'Project Mahasiswa',
-    href: '/dosen/projects',
-    icon: <FolderGit2 size={20} />,
+    label: 'Penilaian',
+    items: [
+      { title: 'Project Mahasiswa', href: '/dosen/projects', icon: <FolderGit2 size={18} /> },
+      { title: 'Review', href: '/dosen/reviews', icon: <ClipboardCheck size={18} /> },
+      { title: 'Auto Review', href: '/dosen/auto-review', icon: <Bot size={18} /> },
+    ],
   },
   {
-    title: 'Review',
-    href: '/dosen/reviews',
-    icon: <ClipboardCheck size={20} />,
-  },
-  {
-    title: 'Statistik',
-    href: '/dosen/statistics',
-    icon: <BarChart3 size={20} />,
-  },
-  {
-    title: 'Auto Review',
-    href: '/dosen/auto-review',
-    icon: <Bot size={20} />,
+    label: 'Analitik',
+    items: [
+      { title: 'Statistik', href: '/dosen/statistics', icon: <BarChart3 size={18} /> },
+    ],
   },
 ];
 
-const adminMenuItems: SidebarItem[] = [
+const adminSections: SidebarSection[] = [
   {
-    title: 'Dashboard',
-    href: '/admin/dashboard',
-    icon: <LayoutDashboard size={20} />,
+    label: 'Ringkasan',
+    items: [
+      { title: 'Dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={18} /> },
+    ],
   },
   {
-    title: 'Semua Project',
-    href: '/admin/projects',
-    icon: <FolderGit2 size={20} />,
+    label: 'Akademik',
+    items: [
+      { title: 'Semua Project', href: '/admin/projects', icon: <FolderGit2 size={18} /> },
+      { title: 'Jadwal Presentasi', href: '/admin/presentations', icon: <CalendarCheck size={18} /> },
+      { title: 'Penugasan Dosen', href: '/admin/assignments', icon: <UserCog size={18} /> },
+    ],
   },
   {
-    title: 'Jadwal Presentasi',
-    href: '/admin/presentations',
-    icon: <CalendarCheck size={20} />,
-  },
-  {
-    title: 'Manajemen User',
-    href: '/admin/users',
-    icon: <Users size={20} />,
-  },
-  {
-    title: 'Penugasan Dosen',
-    href: '/admin/assignments',
-    icon: <UserCog size={20} />,
-  },
-  {
-    title: 'Rubrik Penilaian',
-    href: '/admin/rubrik',
-    icon: <BookOpen size={20} />,
-  },
-  {
-    title: 'Semester',
-    href: '/admin/semesters',
-    icon: <GraduationCap size={20} />,
+    label: 'Konfigurasi',
+    items: [
+      { title: 'Manajemen User', href: '/admin/users', icon: <Users size={18} /> },
+      { title: 'Rubrik Penilaian', href: '/admin/rubrik', icon: <BookOpen size={18} /> },
+      { title: 'Semester', href: '/admin/semesters', icon: <GraduationCap size={18} /> },
+    ],
   },
 ];
 
@@ -136,7 +116,12 @@ interface SidebarProps {
   onMobileClose?: () => void;
 }
 
-// Helper function to get dashboard URL based on role
+const DASHBOARD_PATHS = new Set([
+  '/admin/dashboard',
+  '/dosen/dashboard',
+  '/mahasiswa/dashboard',
+]);
+
 function getDashboardUrl(role?: string): string {
   switch (role) {
     case 'ADMIN':
@@ -157,12 +142,12 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
 
   const userRole = session?.user?.role;
 
-  const menuItems =
+  const sections =
     userRole === 'ADMIN'
-      ? adminMenuItems
+      ? adminSections
       : userRole === 'DOSEN_PENGUJI'
-        ? dosenMenuItems
-        : mahasiswaMenuItems;
+        ? dosenSections
+        : mahasiswaSections;
 
   const roleLabel =
     userRole === 'ADMIN'
@@ -173,157 +158,157 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
 
   const dashboardUrl = getDashboardUrl(userRole);
 
-  // Close mobile sidebar when route changes
   useEffect(() => {
     if (onMobileClose) {
       onMobileClose();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
+
+  const isItemActive = (href: string) =>
+    pathname === href || (!DASHBOARD_PATHS.has(href) && pathname.startsWith(href));
+
+  const renderItem = (item: SidebarItem) => {
+    const isActive = isItemActive(item.href);
+
+    const link = (
+      <Link
+        href={item.href}
+        className={cn(
+          'flex items-center gap-2.5 px-3 h-9 rounded-lg text-sm transition-colors',
+          isActive
+            ? 'bg-primary/10 text-primary font-medium'
+            : 'text-default-600 hover:bg-default-100 hover:text-default-900',
+          isCollapsed && 'justify-center px-0 w-9 mx-auto',
+        )}
+        onClick={onMobileClose}
+      >
+        <span className={cn('shrink-0', isActive && 'text-primary')}>{item.icon}</span>
+        {!isCollapsed && <span className="truncate">{item.title}</span>}
+      </Link>
+    );
+
+    return (
+      <div key={item.href}>
+        {isCollapsed ? (
+          <Tooltip content={item.title} placement="right" delay={300}>
+            {link}
+          </Tooltip>
+        ) : (
+          link
+        )}
+      </div>
+    );
+  };
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className={cn(
-        "flex items-center h-20 px-4",
-        isCollapsed ? "justify-center" : "justify-between"
-      )}>
-        {!isCollapsed && (
-          <Link href={dashboardUrl} className="flex items-center gap-3">
-            <Image
-              src="/logo.png"
-              alt="Capstone Logo"
-              width={48}
-              height={48}
-              className="object-contain"
-            />
-            <div>
-              <span className="font-bold text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+      {/* Brand */}
+      <div
+        className={cn(
+          'flex items-center h-14 px-3 border-b border-divider/60',
+          isCollapsed ? 'justify-center' : 'justify-start gap-2.5',
+        )}
+      >
+        <Link href={dashboardUrl} className="flex items-center gap-2.5 min-w-0">
+          <Image
+            src="/logo.png"
+            alt="Capstone"
+            width={32}
+            height={32}
+            className="object-contain shrink-0"
+          />
+          {!isCollapsed && (
+            <div className="min-w-0">
+              <p className="font-semibold text-sm text-default-900 leading-tight truncate">
                 Capstone
-              </span>
-              <p className="text-[10px] text-default-400 -mt-0.5">Prodi Informatika</p>
+              </p>
+              <p className="text-[10px] text-default-500 leading-tight truncate">
+                Prodi Informatika
+              </p>
             </div>
-          </Link>
-        )}
-        {isCollapsed && (
-          <Link href={dashboardUrl}>
-            <Image
-              src="/logo.png"
-              alt="Capstone Logo"
-              width={40}
-              height={40}
-              className="object-contain"
-            />
-          </Link>
-        )}
+          )}
+        </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4">
-        <div className={cn("space-y-1", isCollapsed && "px-0")}>
-          {!isCollapsed && (
-            <p className="text-[10px] font-semibold text-default-400 uppercase tracking-wider px-3 mb-3">
-              Menu
-            </p>
-          )}
-          {menuItems.map((item) => {
-            const isActive =
-              pathname === item.href ||
-              (item.href !== '/mahasiswa/dashboard' &&
-                item.href !== '/dosen/dashboard' &&
-                item.href !== '/admin/dashboard' &&
-                pathname.startsWith(item.href));
-
-            const linkContent = (
-              <Link
-                href={item.href}
-                className={cn(
-                  'flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group',
-                  isActive
-                    ? 'bg-gradient-to-r from-primary to-primary/80 text-white shadow-lg shadow-primary/30'
-                    : 'hover:bg-default-100 text-default-600 hover:text-default-900',
-                  isCollapsed && 'justify-center px-2',
-                )}
-                onClick={onMobileClose}
-              >
-                <span className={cn(
-                  'transition-transform duration-200',
-                  !isActive && 'group-hover:scale-110',
-                  isActive && 'drop-shadow-sm'
-                )}>
-                  {item.icon}
-                </span>
-                {!isCollapsed && (
-                  <span className="text-sm font-medium">{item.title}</span>
-                )}
-              </Link>
-            );
-
-            return (
-              <div key={item.href}>
-                {isCollapsed ? (
-                  <Tooltip content={item.title} placement="right">
-                    {linkContent}
-                  </Tooltip>
-                ) : (
-                  linkContent
-                )}
-              </div>
-            );
-          })}
+      <nav className="flex-1 overflow-y-auto px-2 py-3">
+        <div className="space-y-4">
+          {sections.map((section, sectionIdx) => (
+            <div key={section.label}>
+              {!isCollapsed && (
+                <p className="text-[10px] font-semibold text-default-400 uppercase tracking-wider px-3 mb-1.5">
+                  {section.label}
+                </p>
+              )}
+              {isCollapsed && sectionIdx > 0 && (
+                <div className="h-px bg-divider/50 mx-2 mb-2" />
+              )}
+              <div className="space-y-0.5">{section.items.map(renderItem)}</div>
+            </div>
+          ))}
         </div>
       </nav>
 
-      {/* User Section at Bottom */}
-      <div className="p-3 border-t border-divider">
+      {/* User Section */}
+      <div className="p-2 border-t border-divider/60">
         {isCollapsed ? (
           <Tooltip content={session?.user?.name || 'User'} placement="right">
-            <div className="flex justify-center">
+            <div className="flex justify-center py-1">
               <Avatar
-                src={getSimakPhotoUrl((session?.user as { nim?: string })?.nim) || session?.user?.image || undefined}
+                src={
+                  getSimakPhotoUrl((session?.user as { nim?: string })?.nim) ||
+                  session?.user?.image ||
+                  undefined
+                }
                 name={session?.user?.name || 'User'}
                 size="sm"
-                className="ring-2 ring-primary/20"
               />
             </div>
           </Tooltip>
         ) : (
-          <div className="flex items-center gap-3 p-2 rounded-xl bg-default-100/50">
+          <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg">
             <Avatar
-              src={getSimakPhotoUrl((session?.user as { nim?: string })?.nim) || session?.user?.image || undefined}
+              src={
+                getSimakPhotoUrl((session?.user as { nim?: string })?.nim) ||
+                session?.user?.image ||
+                undefined
+              }
               name={session?.user?.name || 'User'}
               size="sm"
-              className="ring-2 ring-primary/20"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">
+              <p className="text-xs font-semibold truncate text-default-900">
                 {session?.user?.name}
               </p>
-              <p className="text-xs text-default-500 truncate">{roleLabel}</p>
+              <p className="text-[10px] text-default-500 truncate">{roleLabel}</p>
             </div>
           </div>
         )}
 
         {/* Collapse Toggle - Desktop Only */}
-        <div className="hidden md:block pt-3 mt-3 border-t border-divider">
+        <div className="hidden md:block pt-2 mt-2 border-t border-divider/60">
           {isCollapsed ? (
-            <Tooltip content="Expand" placement="right">
+            <Tooltip content="Perluas" placement="right">
               <Button
                 isIconOnly
                 variant="light"
-                className="w-full"
+                size="sm"
+                className="w-full h-8"
                 onPress={() => setIsCollapsed(false)}
               >
-                <ChevronRight size={18} />
+                <ChevronRight size={16} />
               </Button>
             </Tooltip>
           ) : (
             <Button
               variant="light"
-              className="w-full justify-between text-default-500"
+              size="sm"
+              className="w-full justify-between h-8 text-default-500"
               onPress={() => setIsCollapsed(true)}
-              endContent={<ChevronLeft size={16} />}
+              endContent={<ChevronLeft size={14} />}
             >
-              <span className="text-xs">Collapse</span>
+              <span className="text-[11px]">Ciutkan</span>
             </Button>
           )}
         </div>
@@ -334,11 +319,11 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden md:block p-3 h-screen">
+      <div className="hidden md:block h-screen">
         <aside
           className={cn(
-            'flex flex-col h-full bg-content1 rounded-3xl shadow-xl shadow-default-200/50 dark:shadow-none border border-divider/50 transition-all duration-300 overflow-hidden',
-            isCollapsed ? 'w-[72px]' : 'w-64',
+            'flex flex-col h-full bg-content1 border-r border-divider/60 transition-[width] duration-200 overflow-hidden',
+            isCollapsed ? 'w-[60px]' : 'w-60',
           )}
         >
           {sidebarContent}
@@ -356,12 +341,11 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       {/* Mobile Sidebar Drawer */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-72 bg-content1 transition-transform duration-300 ease-out md:hidden',
+          'fixed inset-y-0 left-0 z-50 w-72 bg-content1 transition-transform duration-200 ease-out md:hidden',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >
-        {/* Mobile Close Button */}
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-3 right-3">
           <Button
             isIconOnly
             variant="flat"
@@ -369,7 +353,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
             onPress={onMobileClose}
             className="rounded-full"
           >
-            <X size={18} />
+            <X size={16} />
           </Button>
         </div>
         {sidebarContent}

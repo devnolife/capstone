@@ -27,28 +27,15 @@ export function getMinioClient(): Minio.Client {
   return minioClient;
 }
 
-// Ensure bucket exists
+// Ensure bucket exists. The bucket is intentionally PRIVATE; access must go
+// through the authenticated `/api/minio/[...path]` proxy or via short-lived
+// presigned URLs generated server-side. Do NOT add a public-read policy here.
 export async function ensureBucket(): Promise<void> {
   const client = getMinioClient();
   const bucketExists = await client.bucketExists(MINIO_BUCKET_NAME);
 
   if (!bucketExists) {
     await client.makeBucket(MINIO_BUCKET_NAME);
-
-    // Set bucket policy to allow public read access
-    const policy = {
-      Version: '2012-10-17',
-      Statement: [
-        {
-          Effect: 'Allow',
-          Principal: { AWS: ['*'] },
-          Action: ['s3:GetObject'],
-          Resource: [`arn:aws:s3:::${MINIO_BUCKET_NAME}/*`],
-        },
-      ],
-    };
-
-    await client.setBucketPolicy(MINIO_BUCKET_NAME, JSON.stringify(policy));
   }
 }
 
@@ -190,7 +177,7 @@ export function validateFile(
     });
     // Remove duplicates (e.g., jpeg and jpg both map to JPG)
     const uniqueTypes = [...new Set(friendlyTypes)];
-    
+
     return {
       valid: false,
       error: `Tipe file tidak didukung. Format yang diizinkan: ${uniqueTypes.join(', ')}`,

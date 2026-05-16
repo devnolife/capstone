@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { encryptNullable } from '@/lib/crypto';
 
 interface GitHubTokenResponse {
   access_token: string;
@@ -115,13 +116,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Link GitHub account to current user
+    // Link GitHub account to current user (token encrypted at rest)
+    const encryptedToken = encryptNullable(tokenData.access_token);
     await prisma.user.update({
       where: { id: session.user.id },
       data: {
         githubId: String(githubUser.id),
         githubUsername: githubUser.login,
-        githubToken: tokenData.access_token,
+        githubToken: encryptedToken,
         // Optionally update image if user doesn't have one
         image: githubUser.avatar_url,
       },

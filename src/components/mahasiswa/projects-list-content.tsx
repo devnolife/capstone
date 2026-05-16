@@ -1,20 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { 
-  Button, 
-  Chip, 
-  Card, 
+import { useRouter, useSearchParams } from 'next/navigation';
+import {
+  Button,
+  Chip,
+  Card,
   CardBody,
+  Input,
   Modal,
   ModalContent,
   ModalHeader,
   ModalBody,
   ModalFooter,
 } from '@heroui/react';
-import { Plus, FolderGit2, Trash2, Crown, Users } from 'lucide-react';
+import { Plus, FolderGit2, Trash2, Crown, Users, Search } from 'lucide-react';
 import { ProjectCard } from '@/components/projects/project-card';
 
 interface Project {
@@ -59,9 +60,38 @@ interface ProjectsListContentProps {
 
 export function ProjectsListContent({ projects, statusCounts }: ProjectsListContentProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialQuery = searchParams.get('q') || searchParams.get('search') || '';
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Keep state in sync if URL ?q= changes (e.g. header search)
+  useEffect(() => {
+    setSearchQuery(searchParams.get('q') || searchParams.get('search') || '');
+  }, [searchParams]);
+
+  const filteredProjects = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return projects;
+    return projects.filter((p) => {
+      const haystack = [
+        p.title,
+        p.description,
+        p.githubRepoName,
+        p.semester,
+        p.tahunAkademik,
+        p.mahasiswa?.name,
+        p.mahasiswa?.username,
+        p.mahasiswa?.nim ?? '',
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+      return haystack.includes(q);
+    });
+  }, [projects, searchQuery]);
 
   const handleDeleteClick = (project: Project) => {
     setProjectToDelete(project);
@@ -102,7 +132,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
         {/* Subtle Background Accents */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-violet-400/20 to-purple-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-fuchsia-400/15 to-violet-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-        
+
         <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="p-3 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/25">
@@ -123,6 +153,18 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
           </Button>
         </div>
       </div>
+
+      {/* Search */}
+      <Input
+        placeholder="Cari project, semester, atau anggota tim..."
+        startContent={<Search size={18} className="text-default-400" />}
+        value={searchQuery}
+        onValueChange={setSearchQuery}
+        isClearable
+        onClear={() => setSearchQuery('')}
+        variant="bordered"
+        size="md"
+      />
 
       {/* Status Filter Chips */}
       <div className="flex flex-wrap gap-2">
@@ -147,30 +189,35 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
       </div>
 
       {/* Projects Grid */}
-      {projects.length === 0 ? (
+      {filteredProjects.length === 0 ? (
         <Card>
           <CardBody className="text-center py-12">
             <FolderGit2 size={64} className="mx-auto text-default-300 mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Belum Ada Project</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {projects.length === 0 ? 'Belum Ada Project' : 'Tidak Ada Hasil'}
+            </h3>
             <p className="text-default-500 mb-6">
-              Anda belum memiliki project capstone. Mulai dengan membuat project
-              baru atau terima undangan dari ketua kelompok.
+              {projects.length === 0
+                ? 'Anda belum memiliki project capstone. Mulai dengan membuat project baru atau terima undangan dari ketua kelompok.'
+                : 'Tidak ada project yang cocok dengan pencarian Anda.'}
             </p>
-            <Button
-              as={Link}
-              href="/mahasiswa/projects/new"
-              color="primary"
-              startContent={<Plus size={18} />}
-            >
-              Buat Project Pertama
-            </Button>
+            {projects.length === 0 && (
+              <Button
+                as={Link}
+                href="/mahasiswa/projects/new"
+                color="primary"
+                startContent={<Plus size={18} />}
+              >
+                Buat Project Pertama
+              </Button>
+            )}
           </CardBody>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {projects.map((project) => (
-            <ProjectCard 
-              key={project.id} 
+          {filteredProjects.map((project) => (
+            <ProjectCard
+              key={project.id}
               project={project}
               isOwner={project.isOwner}
               ownerName={project.mahasiswa?.name}

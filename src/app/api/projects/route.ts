@@ -14,40 +14,74 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const page = parseInt(searchParams.get('page') || '1');
+    const search = (searchParams.get('search') || searchParams.get('q') || '').trim();
+    const MAX_LIMIT = 100;
+    const rawLimit = parseInt(searchParams.get('limit') || '50', 10);
+    const limit = Math.min(
+      Math.max(Number.isFinite(rawLimit) ? rawLimit : 50, 1),
+      MAX_LIMIT,
+    );
+    const rawPage = parseInt(searchParams.get('page') || '1', 10);
+    const page = Math.max(Number.isFinite(rawPage) ? rawPage : 1, 1);
     const skip = (page - 1) * limit;
 
-    let whereClause = {};
+    // Build base filters from role
+    const baseFilters: Record<string, unknown>[] = [];
 
-    // Filter based on role
     if (session.user.role === 'MAHASISWA') {
-      // Mahasiswa can see:
-      // 1. Projects they own (mahasiswaId)
-      // 2. Projects where they are a team member
-      whereClause = {
+      baseFilters.push({
         OR: [
           { mahasiswaId: session.user.id },
-          {
-            members: {
-              some: { userId: session.user.id },
-            },
-          },
+          { members: { some: { userId: session.user.id } } },
         ],
-      };
+      });
     } else if (session.user.role === 'DOSEN_PENGUJI') {
-      whereClause = {
-        assignments: {
-          some: { dosenId: session.user.id },
-        },
-      };
+      baseFilters.push({
+        assignments: { some: { dosenId: session.user.id } },
+      });
     }
     // ADMIN can see all projects
 
-    // Add status filter if provided
     if (status) {
-      whereClause = { ...whereClause, status };
+      baseFilters.push({ status });
     }
+
+    // Search filter (case-insensitive across title, description, owner info,
+    // and requirements.judulProyek). Skipped if `search` is empty.
+    if (search) {
+      baseFilters.push({
+        OR: [
+          { title: { contains: search, mode: 'insensitive' } },
+          { description: { contains: search, mode: 'insensitive' } },
+          { githubRepoName: { contains: search, mode: 'insensitive' } },
+          {
+            requirements: {
+              is: {
+                judulProyek: { contains: search, mode: 'insensitive' },
+              },
+            },
+          },
+          {
+            mahasiswa: {
+              is: {
+                OR: [
+                  { name: { contains: search, mode: 'insensitive' } },
+                  { username: { contains: search, mode: 'insensitive' } },
+                  { nim: { contains: search, mode: 'insensitive' } },
+                ],
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    const whereClause =
+      baseFilters.length === 0
+        ? {}
+        : baseFilters.length === 1
+          ? baseFilters[0]
+          : { AND: baseFilters };
 
     const [projects, total] = await Promise.all([
       prisma.project.findMany({

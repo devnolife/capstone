@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   Button,
@@ -230,6 +231,24 @@ export default function AdminAssignmentsPage() {
     fetchData();
   }, []);
 
+  // Sync from URL ?projectId=... and ?q=...
+  const urlSearchParams = useSearchParams();
+  const router = useRouter();
+  useEffect(() => {
+    const projectId = urlSearchParams.get('projectId');
+    const q = urlSearchParams.get('q') || urlSearchParams.get('search');
+    if (q) setSearchQuery(q);
+    if (projectId && projects.length > 0) {
+      const target = projects.find((p) => p.id === projectId);
+      if (target) {
+        setSearchQuery(target.title);
+        setActiveTab(target.assignments.length === 0 ? 'unassigned' : 'assigned');
+        router.replace('/admin/assignments', { scroll: false });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlSearchParams, projects.length]);
+
   const fetchData = async () => {
     try {
       const [assignmentsRes, projectsRes, usersRes] = await Promise.all([
@@ -400,25 +419,17 @@ export default function AdminAssignmentsPage() {
   }
 
   return (
-    <motion.div className="space-y-6" variants={containerVariants} initial="hidden" animate="visible">
-      {/* Hero Header */}
+    <motion.div className="space-y-5" variants={containerVariants} initial="hidden" animate="visible">
+      {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/40 dark:via-orange-950/30 dark:to-yellow-950/40 border border-amber-200/50 dark:border-amber-800/30 p-6 md:p-8">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-400/20 to-orange-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-yellow-400/15 to-amber-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-
-          <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-            <div className="flex items-center gap-4">
-              <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-lg shadow-amber-500/25">
-                <Link2 className="w-7 h-7" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">Penugasan Dosen</h1>
-                <p className="text-amber-600/70 dark:text-amber-400/60 text-sm mt-1">Kelola penugasan dosen penguji ke project mahasiswa</p>
-              </div>
-            </div>
+        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold text-default-900">Penugasan Dosen</h1>
+            <p className="text-sm text-default-500 mt-0.5">
+              Kelola penugasan dosen penguji ke project mahasiswa
+            </p>
           </div>
-        </div>
+        </header>
       </motion.div>
 
       {/* Stats Grid */}

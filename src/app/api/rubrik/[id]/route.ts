@@ -49,6 +49,35 @@ export async function PUT(
     // Validate tipe if provided
     const validTipe = tipe === 'individu' ? 'individu' : tipe === 'kelompok' ? 'kelompok' : undefined;
 
+    // Enforce total bobot per tipe <= 100 when active
+    if (bobotMax !== undefined && isActive !== false) {
+      const numericBobot = Number(bobotMax);
+      if (!Number.isFinite(numericBobot) || numericBobot <= 0) {
+        return NextResponse.json(
+          { error: 'Bobot maksimal harus angka positif' },
+          { status: 400 },
+        );
+      }
+      const existing = await prisma.rubrikPenilaian.findUnique({
+        where: { id },
+        select: { tipe: true },
+      });
+      const checkTipe = validTipe ?? existing?.tipe ?? 'kelompok';
+      const aggregate = await prisma.rubrikPenilaian.aggregate({
+        where: { tipe: checkTipe, isActive: true, NOT: { id } },
+        _sum: { bobotMax: true },
+      });
+      const otherTotal = aggregate._sum.bobotMax ?? 0;
+      if (otherTotal + numericBobot > 100) {
+        return NextResponse.json(
+          {
+            error: `Total bobot ${checkTipe} akan menjadi ${otherTotal + numericBobot} (maksimal 100).`,
+          },
+          { status: 400 },
+        );
+      }
+    }
+
     const rubrik = await prisma.rubrikPenilaian.update({
       where: { id },
       data: {

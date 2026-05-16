@@ -47,8 +47,16 @@ export async function GET(
     const isOwner = document.project.mahasiswaId === session.user.id;
     const isAdmin = user?.role === 'ADMIN';
     const isDosen = user?.role === 'DOSEN_PENGUJI';
-
+    let isMember = false;
     if (!isOwner && !isAdmin && !isDosen) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId: document.project.id, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isAdmin && !isDosen && !isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -105,8 +113,16 @@ export async function DELETE(
 
     const isOwner = document.project.mahasiswaId === session.user.id;
     const isAdmin = user?.role === 'ADMIN';
-
+    let isMember = false;
     if (!isOwner && !isAdmin) {
+      const memberRecord = await prisma.projectMember.findFirst({
+        where: { projectId: document.project.id, userId: session.user.id },
+        select: { id: true },
+      });
+      isMember = !!memberRecord;
+    }
+
+    if (!isOwner && !isAdmin && !isMember) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
