@@ -112,11 +112,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const isStudentNim = /^\d+$/.test(username);
 
         if (isStudentNim) {
-          // OPTIMIZATION: If user exists locally, already validated with SIMAK, 
-          // and password matches locally - skip SIMAK call for faster login
-          if (existingUser && existingUser.password && existingUser.simakValidated && existingUser.isActive) {
-            const isLocalPasswordValid = await bcrypt.compare(password, existingUser.password);
-            if (isLocalPasswordValid) {
+          if (existingUser && !existingUser.isActive) {
+            throw new Error('Akun tidak aktif');
+          }
+
+          // ---------- FAST PATH: local bcrypt ----------
+          // If user already exists and was previously SIMAK-validated, try
+          // the local bcrypt hash first to avoid a network call to SIMAK on
+          // every login.
+          let localPasswordMatches = false;
+          if (existingUser?.password && existingUser.simakValidated) {
+            localPasswordMatches = await bcrypt.compare(password, existingUser.password);
+            if (localPasswordMatches) {
               return {
                 id: existingUser.id,
                 username: existingUser.username,
@@ -128,17 +135,28 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
           }
 
-          // Try SIMAK validation (for new users or password changes)
+          // ---------- FALLBACK: re-check against SIMAK ----------
+          // Local hash didn't match (or user is new / never validated).
+          // SIMAK passwords can rotate, so we re-validate against the
+          // authoritative source. If SIMAK accepts the password, we update
+          // (rotate) the local bcrypt hash so the fast path works next time.
           const simakResult = await validateSimakCredentials(username, password);
 
           if (simakResult.success && simakResult.data) {
-            // SIMAK validation succeeded, create/update user
             const bcryptHash = await bcrypt.hash(password, 12);
             const user = await upsertUserFromSimak(
               prisma,
               simakResult.data,
-              bcryptHash
+              bcryptHash,
             );
+
+            if (existingUser) {
+              console.info(
+                `[auth] Password rotated for NIM ${username} via SIMAK (local hash was stale).`,
+              );
+            } else {
+              console.info(`[auth] New mahasiswa provisioned from SIMAK: ${username}.`);
+            }
 
             return {
               id: user.id,
@@ -150,11 +168,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             };
           }
 
-          // SIMAK validation failed, try local fallback if user exists
-          if (existingUser && existingUser.password) {
-            const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-
-            if (isPasswordValid && existingUser.isActive) {
+          // ---------- LAST RESORT: local fallback when SIMAK is unreachable ----------
+          // SIMAK rejected OR was unreachable. If we have an existing user
+          // with a usable local hash, accept the local match so students can
+          // still log in during a SIMAK outage. (We already know
+          // `localPasswordMatches` is false above for simakValidated users,
+          // but a user might not be `simakValidated` yet — check anyway.)
+          if (existingUser?.password) {
+            const isPasswordValid =
+              localPasswordMatches ||
+              (await bcrypt.compare(password, existingUser.password));
+            if (isPasswordValid) {
+              console.warn(
+                `[auth] SIMAK rejected/unreachable for NIM ${username}; accepted local hash fallback.`,
+              );
               return {
                 id: existingUser.id,
                 username: existingUser.username,
@@ -166,7 +193,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
           }
 
-          // Neither SIMAK nor local validation succeeded
+          // Both SIMAK and local validation failed
           throw new Error(simakResult.message || 'NIM atau password salah');
         }
 

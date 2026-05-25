@@ -39,6 +39,15 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
 
+# Copy Prisma CLI + all its transitive deps so entrypoint can run `prisma migrate deploy`
+# (Prisma 7's CLI pulls in many internal modules — copying the whole node_modules
+#  tree from the builder is the most reliable way to keep them in sync.)
+COPY --from=builder /app/node_modules ./node_modules
+
+# Entrypoint script: runs migrations then starts server
+COPY --chown=nextjs:nodejs docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+
 USER nextjs
 
 EXPOSE 3012
@@ -46,4 +55,4 @@ EXPOSE 3012
 ENV PORT=3012
 ENV HOSTNAME="0.0.0.0"
 
-CMD ["node", "server.js"]
+ENTRYPOINT ["./docker-entrypoint.sh"]

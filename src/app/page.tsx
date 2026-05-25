@@ -1,76 +1,187 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useTheme } from 'next-themes';
-import { Button } from '@heroui/react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring, useMotionValue } from 'framer-motion';
 import {
-  ArrowRight,
+  ArrowUpRight,
   Github,
   FileText,
   Users,
   GitBranch,
   Upload,
   MessageSquare,
-  CheckCircle,
-  Star,
+  CheckCircle2,
+  Sparkles,
   TrendingUp,
   GraduationCap,
-  BookOpen,
-  Shield,
-  Zap,
-  Eye,
   Layers,
   Moon,
   Sun,
+  Eye,
+  Asterisk,
+  Star,
+  Zap,
+  ArrowDown,
 } from 'lucide-react';
 import { ProjectGallery } from '@/components/gallery';
 
-// Feature Card Component
-function FeatureCard({
-  title,
-  icons,
-  delay = 0,
-}: {
-  title: string;
-  icons: { icon: React.ReactNode; color: string }[];
-  delay?: number;
-}) {
+/* ---------- Scroll progress bar ---------- */
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.4 });
+  return <motion.div className="ae-progress" style={{ scaleX, right: 0 }} />;
+}
+
+/* ---------- Magnetic button wrapper ---------- */
+function Magnetic({ children, strength = 0.35 }: { children: React.ReactNode; strength?: number }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const sx = useSpring(x, { stiffness: 200, damping: 18, mass: 0.6 });
+  const sy = useSpring(y, { stiffness: 200, damping: 18, mass: 0.6 });
+
+  const onMove = (e: React.MouseEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    x.set((e.clientX - cx) * strength);
+    y.set((e.clientY - cy) * strength);
+  };
+  const reset = () => {
+    x.set(0);
+    y.set(0);
+  };
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay }}
-      className="relative bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
+    <motion.span
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={reset}
+      style={{ x: sx, y: sy, display: 'inline-flex' }}
     >
-      <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-wider mb-4">{title}</p>
-      <div className="grid grid-cols-3 gap-3">
-        {icons.map((item, i) => (
-          <div
-            key={i}
-            className={`w-10 h-10 rounded-xl bg-zinc-200/50 dark:bg-zinc-800/50 border border-zinc-300/50 dark:border-zinc-700/50 flex items-center justify-center ${item.color} hover:scale-110 transition-all duration-200`}
-          >
-            {item.icon}
-          </div>
-        ))}
-      </div>
-    </motion.div>
+      {children}
+    </motion.span>
   );
 }
 
-// Stats Component
-function StatItem({ value, label, icon, color = 'text-emerald-400' }: { value: string; label: string; icon: React.ReactNode; color?: string }) {
+/* ---------- Mouse-tracked spotlight ---------- */
+function Spotlight() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const parent = el.parentElement;
+    if (!parent) return;
+    const handler = (e: MouseEvent) => {
+      const r = parent.getBoundingClientRect();
+      el.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      el.style.setProperty('--my', `${e.clientY - r.top}px`);
+    };
+    parent.addEventListener('mousemove', handler);
+    return () => parent.removeEventListener('mousemove', handler);
+  }, []);
+  return <div ref={ref} className="ae-spotlight" />;
+}
+
+/* ---------- 3D tilt card (mouse follow) ---------- */
+function TiltCard({ children, className = '', maxTilt = 8 }: { children: React.ReactNode; className?: string; maxTilt?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const onMove = useCallback(
+    (e: React.MouseEvent) => {
+      const el = ref.current;
+      if (!el) return;
+      const r = el.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      el.style.transform = `perspective(900px) rotateY(${px * maxTilt}deg) rotateX(${-py * maxTilt}deg)`;
+    },
+    [maxTilt],
+  );
+  const reset = () => {
+    if (ref.current) ref.current.style.transform = 'perspective(900px) rotateY(0) rotateX(0)';
+  };
   return (
-    <div className="text-center">
-      <div className="flex items-center justify-center gap-2 mb-1">
-        <span className={color}>{icon}</span>
-      </div>
-      <p className="text-2xl md:text-3xl font-bold text-zinc-900 dark:text-white">{value}</p>
-      <p className="text-xs text-zinc-500 dark:text-zinc-500">{label}</p>
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={reset}
+      className={`ae-tilt ${className}`}
+    >
+      {children}
     </div>
+  );
+}
+
+/* ---------- Marquee strip ---------- */
+function MarqueeStrip() {
+  const items = [
+    'CAPSTONE 2026',
+    'PRODI INFORMATIKA',
+    'UNIVERSITAS MUHAMMADIYAH MAKASSAR',
+    'BUILD · SHIP · DEFEND',
+    'GITHUB INTEGRATED',
+    'REAL-TIME REVIEW',
+  ];
+  return (
+    <div className="ae-marquee py-4 border-y-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] bg-[var(--ae-lime)] text-[var(--ae-ink)]">
+      {[0, 1].map((dup) => (
+        <div key={dup} className="ae-marquee-track" aria-hidden={dup === 1}>
+          {items.map((t, i) => (
+            <span key={`${dup}-${i}`} className="flex items-center gap-12 text-sm font-mono-display font-semibold tracking-widest">
+              {t}
+              <Asterisk size={18} strokeWidth={2.4} className="ae-spin-slow" />
+            </span>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ---------- Counter animation ---------- */
+function Counter({ value, suffix = '+' }: { value: number; suffix?: string }) {
+  const [n, setN] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const startedRef = useRef(false);
+
+  useEffect(() => {
+    if (value === 0) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && !startedRef.current) {
+            startedRef.current = true;
+            const dur = 1400;
+            const start = performance.now();
+            let raf = 0;
+            const tick = (t: number) => {
+              const p = Math.min((t - start) / dur, 1);
+              const eased = 1 - Math.pow(1 - p, 3);
+              setN(Math.round(value * eased));
+              if (p < 1) raf = requestAnimationFrame(tick);
+            };
+            raf = requestAnimationFrame(tick);
+            return () => cancelAnimationFrame(raf);
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [value]);
+  return (
+    <span ref={ref}>
+      {n}
+      {suffix}
+    </span>
   );
 }
 
@@ -78,13 +189,21 @@ export default function LandingPage() {
   const { data: session } = useSession();
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
 
-  // Wait for client-side hydration
+  // hero parallax
+  const { scrollYProgress: heroProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const heroY = useTransform(heroProgress, [0, 1], [0, -120]);
+  const heroOpacity = useTransform(heroProgress, [0, 1], [1, 0.4]);
+  const decoRotate = useTransform(heroProgress, [0, 1], [0, 90]);
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Fetch real-time stats
   const [stats, setStats] = useState({
     totalProjects: 0,
     totalMahasiswa: 0,
@@ -92,463 +211,595 @@ export default function LandingPage() {
   });
 
   useEffect(() => {
-    const fetchStats = async () => {
+    (async () => {
       try {
-        const response = await fetch('/api/stats');
-        if (response.ok) {
-          const data = await response.json();
-          setStats(data);
-        }
-      } catch (error) {
-        console.error('Error fetching stats:', error);
+        const res = await fetch('/api/stats');
+        if (res.ok) setStats(await res.json());
+      } catch (e) {
+        console.error('stats error', e);
       }
-    };
-    fetchStats();
+    })();
   }, []);
 
   const getDashboardUrl = () => {
     switch (session?.user?.role) {
-      case 'MAHASISWA': return '/mahasiswa/dashboard';
-      case 'DOSEN_PENGUJI': return '/dosen/dashboard';
-      case 'ADMIN': return '/admin/dashboard';
-      default: return '/login';
+      case 'MAHASISWA':
+        return '/mahasiswa/dashboard';
+      case 'DOSEN_PENGUJI':
+        return '/dosen/dashboard';
+      case 'ADMIN':
+        return '/admin/dashboard';
+      default:
+        return '/login';
     }
-  };
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   const isDark = theme === 'dark';
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-zinc-900 dark:text-white overflow-hidden">
-      {/* Grid Background */}
-      <div className="fixed inset-0 -z-10">
-        <div
-          className="absolute inset-0 bg-white dark:bg-black"
-          style={{
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        <div
-          className="absolute inset-0 hidden dark:block"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        {/* Gradient overlay at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-t from-white dark:from-black to-transparent" />
+    <div className="min-h-screen ae-bg-cream dark:ae-bg-ink ae-text-ink dark:ae-text-cream overflow-x-hidden ae-noise">
+      <ScrollProgress />
+
+      {/* Atmospheric blobs */}
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="ae-blob" style={{ top: '-10%', left: '-8%', width: '40rem', height: '40rem', background: 'radial-gradient(circle, var(--ae-lime), transparent 65%)' }} />
+        <div className="ae-blob" style={{ top: '30%', right: '-12%', width: '36rem', height: '36rem', background: 'radial-gradient(circle, var(--ae-coral), transparent 65%)' }} />
+        <div className="ae-blob" style={{ bottom: '-20%', left: '20%', width: '46rem', height: '46rem', background: 'radial-gradient(circle, var(--ae-cobalt), transparent 70%)', opacity: 0.35 }} />
       </div>
 
-      {/* Navigation */}
+      {/* ============ NAV ============ */}
       <motion.nav
-        initial={{ y: -20, opacity: 0 }}
+        initial={{ y: -24, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-white/80 dark:bg-black/80 backdrop-blur-xl"
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[min(92%,1180px)]"
       >
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <Image
-              src="/logo.png"
-              alt="Capstone Logo"
-              width={32}
-              height={32}
-              className="rounded-lg"
-            />
-            <span className="font-bold text-lg text-zinc-900 dark:text-white">Capstone</span>
+        <div className="flex items-center justify-between px-3 py-2 rounded-full border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] bg-[var(--ae-cream)]/85 dark:bg-[var(--ae-ink-2)]/85 backdrop-blur-xl shadow-[4px_4px_0_0_var(--ae-ink)] dark:shadow-[4px_4px_0_0_var(--ae-cream)]">
+          <Link href="/" className="flex items-center gap-2.5 pl-3 group">
+            <div className="relative">
+              <Image src="/logo.png" alt="Capstone" width={30} height={30} className="rounded-md transition-transform group-hover:rotate-[12deg]" />
+              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[var(--ae-lime)] border border-[var(--ae-ink)] animate-pulse" />
+            </div>
+            <span className="font-serif-display italic text-xl">capstone<span className="text-[var(--ae-coral)]">.</span></span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-              Features
-            </a>
-            <a href="#stats" className="text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">
-              Stats
-            </a>
+          <div className="hidden md:flex items-center gap-1 font-mono-display text-[11px] tracking-widest uppercase">
+            {[
+              { h: '#stats', l: 'Stats' },
+              { h: '#showcase', l: 'Showcase' },
+              { h: '#features', l: 'Tools' },
+              { h: '#integrations', l: 'Stack' },
+            ].map((it) => (
+              <a
+                key={it.h}
+                href={it.h}
+                className="px-3 py-2 rounded-full hover:bg-[var(--ae-lime)] hover:text-[var(--ae-ink)] transition-colors"
+              >
+                {it.l}
+              </a>
+            ))}
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* Theme Toggle */}
+          <div className="flex items-center gap-2">
             {mounted && (
-              <Button
-                isIconOnly
-                variant="light"
-                size="sm"
-                onPress={toggleTheme}
-                className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+              <button
+                onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                aria-label="Toggle theme"
+                className="w-9 h-9 rounded-full border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] flex items-center justify-center hover:bg-[var(--ae-lime)] hover:text-[var(--ae-ink)] hover:rotate-180 transition-all duration-500"
               >
-                {isDark ? <Sun size={18} /> : <Moon size={18} />}
-              </Button>
+                {isDark ? <Sun size={15} /> : <Moon size={15} />}
+              </button>
             )}
-            {session ? (
-              <Link href={getDashboardUrl()}>
-                <Button
-                  size="sm"
-                  className="font-medium bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-                >
-                  Dashboard
-                </Button>
-              </Link>
-            ) : (
-              <>
-                <Link href="/login">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
-                  >
-                    Log in
-                  </Button>
+            <Magnetic>
+              {session ? (
+                <Link href={getDashboardUrl()} className="ae-btn ae-btn-lime !py-2 !px-4 !text-sm">
+                  Dashboard <ArrowUpRight size={15} />
                 </Link>
-                <Link href="/login">
-                  <Button
-                    size="sm"
-                    className="font-medium bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
-                  >
-                    Get Started
-                  </Button>
+              ) : (
+                <Link href="/login" className="ae-btn ae-btn-lime !py-2 !px-4 !text-sm">
+                  Masuk <ArrowUpRight size={15} />
                 </Link>
-              </>
-            )}
+              )}
+            </Magnetic>
           </div>
         </div>
       </motion.nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left Content */}
-            <div>
-              {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="mb-8"
-              >
-                <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-sm">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-zinc-600 dark:text-zinc-400">SISTEM CAPSTONE PROJECT 2026</span>
-                  <ArrowRight size={14} className="text-zinc-500" />
-                </span>
-              </motion.div>
+      {/* ============ HERO ============ */}
+      <section ref={heroRef} className="relative pt-36 pb-16 px-6 min-h-[100svh]">
+        <Spotlight />
 
-              {/* Headline */}
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6"
-              >
-                Semua project capstone,{' '}
-                <span className="text-zinc-500">dalam satu platform</span>
-              </motion.h1>
+        <motion.div style={{ y: heroY, opacity: heroOpacity }} className="max-w-[1180px] mx-auto relative z-10">
+          {/* meta row */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center justify-between mb-10 font-mono-display text-[11px] uppercase tracking-[0.18em] opacity-70"
+          >
+            <span className="flex items-center gap-2">
+              <motion.span style={{ rotate: decoRotate }} className="inline-block">
+                <Asterisk size={12} />
+              </motion.span>
+              EST. 2026 · Makassar, ID
+            </span>
+            <span className="hidden sm:inline">Vol. 01 — Skripsi &amp; Capstone Edition</span>
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              Live · {mounted && new Date().getFullYear()}
+            </span>
+          </motion.div>
 
-              {/* Description */}
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg text-zinc-600 dark:text-zinc-400 mb-8 max-w-lg"
-              >
-                Platform terintegrasi untuk submit project, review code, track progress, dan dapatkan feedback real-time dari dosen pembimbing.
-              </motion.p>
+          {/* Sticker badge */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, rotate: -8 }}
+            animate={{ opacity: 1, scale: 1, rotate: -3 }}
+            transition={{ duration: 0.6, type: 'spring' }}
+            className="inline-block mb-8"
+          >
+            <span className="ae-sticker ae-pulse-hover">
+              <Sparkles size={13} /> New · Capstone OS v3
+            </span>
+          </motion.div>
 
-              {/* CTA Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                className="flex flex-wrap gap-3"
-              >
-                {session ? (
-                  <Link href={getDashboardUrl()}>
-                    <Button
-                      size="lg"
-                      className="font-semibold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-8"
-                      endContent={<ArrowRight size={18} />}
-                    >
-                      Buka Dashboard
-                    </Button>
-                  </Link>
-                ) : (
-                  <>
-                    <Link href="/login">
-                      <Button
-                        size="lg"
-                        className="font-semibold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-8"
-                        endContent={<ArrowRight size={18} />}
-                      >
-                        Login Sekarang
-                      </Button>
+          {/* Headline with staggered char reveal */}
+          <h1 className="font-sans-display font-semibold leading-[0.92] tracking-[-0.04em] text-[clamp(2.6rem,8.5vw,7.5rem)]">
+            <span className="block ae-reveal" style={{ animationDelay: '0.1s' }}>
+              Submit. Review.
+            </span>
+            <span className="block ae-reveal" style={{ animationDelay: '0.25s' }}>
+              <span className="font-serif-display italic text-[var(--ae-coral)]">ship</span>{' '}
+              <span className="ae-underline-scribble">capstone</span>{' '}
+              <span className="inline-flex items-baseline gap-2">
+                project
+                <motion.span
+                  aria-hidden
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                  className="inline-block w-[0.55em] h-[0.55em] rounded-full bg-[var(--ae-lime)] border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] translate-y-[-0.05em]"
+                />
+              </span>
+            </span>
+            <span className="block font-serif-display italic opacity-80 ae-reveal" style={{ animationDelay: '0.4s' }}>
+              tanpa drama.
+            </span>
+          </h1>
+
+          {/* Description + CTA + side card */}
+          <div className="mt-12 grid lg:grid-cols-12 gap-8 items-start">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="lg:col-span-7"
+            >
+              <p className="text-lg sm:text-xl leading-relaxed max-w-xl opacity-80">
+                Satu workspace untuk mahasiswa, dosen, dan admin — upload dokumen,
+                hubungkan repo GitHub, dapatkan review yang specific &amp; on-time.
+                Built for the next-gen of <em className="font-serif-display">builders</em>.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Magnetic>
+                  {session ? (
+                    <Link href={getDashboardUrl()} className="ae-btn ae-btn-lime ae-shine">
+                      Buka Dashboard <ArrowUpRight size={18} />
                     </Link>
-                    <a href="#features">
-                      <Button
-                        size="lg"
-                        variant="bordered"
-                        className="font-semibold border-zinc-300 text-zinc-900 hover:bg-zinc-100 dark:border-zinc-700 dark:text-white dark:hover:bg-zinc-900 px-8"
-                      >
-                        Lihat Features
-                      </Button>
-                    </a>
-                  </>
-                )}
-              </motion.div>
+                  ) : (
+                    <Link href="/login" className="ae-btn ae-btn-lime ae-shine">
+                      Start Submitting <ArrowUpRight size={18} />
+                    </Link>
+                  )}
+                </Magnetic>
+                <Magnetic strength={0.2}>
+                  <a href="#showcase" className="ae-btn ae-btn-ghost">
+                    <Eye size={17} /> Lihat showcase
+                  </a>
+                </Magnetic>
+              </div>
 
-              {/* Trust badges */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800"
-              >
-                <p className="text-xs text-zinc-500 mb-4">TERINTEGRASI DENGAN</p>
-                <div className="flex items-center gap-6 flex-wrap">
-                  <div className="flex items-center gap-2">
-                    <Github size={20} className="text-zinc-900 dark:text-white" />
-                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">GitHub</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <GraduationCap size={20} className="text-blue-500" />
-                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">SIMIKAD</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Layers size={20} className="text-emerald-500" />
-                    <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">SIMTEKMU</span>
-                  </div>
+              <div className="mt-10 flex items-center gap-4 font-mono-display text-xs uppercase tracking-widest opacity-70">
+                <div className="flex -space-x-2">
+                  {['#d4ff3a', '#ff5b3a', '#2541ff', '#ffd4b0'].map((c, i) => (
+                    <motion.span
+                      key={c}
+                      initial={{ scale: 0, rotate: -30 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.8 + i * 0.08, type: 'spring' }}
+                      className="w-7 h-7 rounded-full border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)]"
+                      style={{ background: c }}
+                    />
+                  ))}
                 </div>
-              </motion.div>
-            </div>
+                <span>
+                  Joined by <b className="font-sans-display">{stats.totalMahasiswa || '200'}+</b> mahasiswa aktif
+                </span>
+              </div>
+            </motion.div>
 
-            {/* Right Content - Feature Cards Grid */}
-            <div className="hidden lg:grid grid-cols-2 gap-4">
-              <FeatureCard
-                title="PROJECTS"
-                delay={0.2}
-                icons={[
-                  { icon: <GitBranch key="1" size={20} />, color: 'text-blue-400' },
-                  { icon: <FileText key="2" size={20} />, color: 'text-emerald-400' },
-                  { icon: <Upload key="3" size={20} />, color: 'text-violet-400' },
-                  { icon: <Eye key="4" size={20} />, color: 'text-amber-400' },
-                  { icon: <Layers key="5" size={20} />, color: 'text-pink-400' },
-                  { icon: <Zap key="6" size={20} />, color: 'text-cyan-400' },
-                ]}
-              />
-              <FeatureCard
-                title="REVIEWS"
-                delay={0.3}
-                icons={[
-                  { icon: <MessageSquare key="1" size={20} />, color: 'text-orange-400' },
-                  { icon: <CheckCircle key="2" size={20} />, color: 'text-green-400' },
-                  { icon: <Star key="3" size={20} />, color: 'text-yellow-400' },
-                  { icon: <TrendingUp key="4" size={20} />, color: 'text-rose-400' },
-                  { icon: <Users key="5" size={20} />, color: 'text-indigo-400' },
-                  { icon: <BookOpen key="6" size={20} />, color: 'text-teal-400' },
-                ]}
-              />
-              <FeatureCard
-                title="DOCUMENTS"
-                delay={0.4}
-                icons={[
-                  { icon: <FileText key="1" size={20} />, color: 'text-red-400' },
-                  { icon: <Upload key="2" size={20} />, color: 'text-sky-400' },
-                  { icon: <Eye key="3" size={20} />, color: 'text-lime-400' },
-                  { icon: <CheckCircle key="4" size={20} />, color: 'text-fuchsia-400' },
-                  { icon: <Layers key="5" size={20} />, color: 'text-orange-400' },
-                  { icon: <Shield key="6" size={20} />, color: 'text-emerald-400' },
-                ]}
-              />
-              <FeatureCard
-                title="ANALYTICS"
-                delay={0.5}
-                icons={[
-                  { icon: <TrendingUp key="1" size={20} />, color: 'text-purple-400' },
-                  { icon: <Star key="2" size={20} />, color: 'text-amber-400' },
-                  { icon: <Users key="3" size={20} />, color: 'text-blue-400' },
-                  { icon: <Zap key="4" size={20} />, color: 'text-yellow-400' },
-                  { icon: <Eye key="5" size={20} />, color: 'text-cyan-400' },
-                  { icon: <CheckCircle key="6" size={20} />, color: 'text-green-400' },
-                ]}
-              />
-            </div>
+            {/* Side editorial card with tilt */}
+            <motion.div
+              initial={{ opacity: 0, y: 24, rotate: -2 }}
+              animate={{ opacity: 1, y: 0, rotate: 2 }}
+              transition={{ duration: 0.7, delay: 0.5 }}
+              className="lg:col-span-5"
+            >
+              <TiltCard>
+                <div className="ae-card p-6 relative">
+                  <span
+                    className="ae-sticker absolute -top-4 -left-3 !bg-[var(--ae-coral)] !text-white ae-float"
+                    style={{ transform: 'rotate(-6deg)' }}
+                  >
+                    <Zap size={12} /> Workflow
+                  </span>
+                  <div className="font-mono-display text-[10px] uppercase tracking-widest opacity-60 mb-4">
+                    // bagaimana ini bekerja
+                  </div>
+                  <ol className="space-y-4">
+                    {[
+                      { n: '01', t: 'Connect GitHub repo', d: 'Auto-sync commit & branch ke project.' },
+                      { n: '02', t: 'Upload dokumen', d: 'Proposal, BAB, hasil — semua terorganisir.' },
+                      { n: '03', t: 'Review real-time', d: 'Inline comment dari dosen pembimbing.' },
+                      { n: '04', t: 'Sidang & publish', d: 'Nilai keluar, project tampil di gallery.' },
+                    ].map((s) => (
+                      <li key={s.n} className="flex gap-4 group cursor-default">
+                        <span className="font-serif-display italic text-2xl opacity-50 w-8 group-hover:text-[var(--ae-coral)] group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                          {s.n}
+                        </span>
+                        <div className="flex-1 border-b border-dashed border-current/20 pb-3 group-hover:border-current/40 transition-colors">
+                          <p className="font-semibold tracking-tight">{s.t}</p>
+                          <p className="text-sm opacity-70">{s.d}</p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </TiltCard>
+            </motion.div>
           </div>
-        </div>
-      </section>
 
-      {/* Stats Section */}
-      <section id="stats" className="py-16 px-6 border-y border-zinc-200/50 dark:border-zinc-800/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center gap-16 md:gap-24">
-            <StatItem
-              value={`${stats.totalProjects}+`}
-              label="Total Projects"
-              icon={<FileText size={16} />}
-              color="text-blue-400"
-            />
-            <StatItem
-              value={`${stats.totalMahasiswa}+`}
-              label="Mahasiswa"
-              icon={<Users size={16} />}
-              color="text-violet-400"
-            />
-            <StatItem
-              value={`${stats.successRate}%`}
-              label="Success Rate"
-              icon={<TrendingUp size={16} />}
-              color="text-emerald-400"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
+          {/* Scroll cue */}
+          <motion.a
+            href="#stats"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="hidden md:flex absolute bottom-2 left-1/2 -translate-x-1/2 flex-col items-center gap-2 font-mono-display text-[10px] uppercase tracking-widest opacity-60 hover:opacity-100 transition"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Project Showcase
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Lihat hasil karya mahasiswa yang telah berhasil menyelesaikan capstone project mereka.
-            </p>
-          </motion.div>
-
-          <ProjectGallery limit={12} />
-        </div>
+            <span>Scroll</span>
+            <motion.span animate={{ y: [0, 6, 0] }} transition={{ duration: 1.5, repeat: Infinity }}>
+              <ArrowDown size={14} />
+            </motion.span>
+          </motion.a>
+        </motion.div>
       </section>
 
-      {/* Platform Features Section */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Platform lengkap untuk capstone project
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Semua yang Anda butuhkan untuk mengelola, submit, dan mendapatkan penilaian project capstone dalam satu platform terintegrasi.
-            </p>
-          </motion.div>
+      {/* ============ MARQUEE ============ */}
+      <MarqueeStrip />
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                icon: <GitBranch size={24} />,
-                title: 'GitHub Integration',
-                desc: 'Connect repository langsung ke platform. Track commits dan review code secara real-time.',
-                color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-              },
-              {
-                icon: <Upload size={24} />,
-                title: 'Smart Upload',
-                desc: 'Upload dokumen dengan drag & drop. Auto-organize berdasarkan kategori dan validasi format.',
-                color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-              },
-              {
-                icon: <MessageSquare size={24} />,
-                title: 'Real-time Feedback',
-                desc: 'Dapatkan notifikasi instan setiap ada review atau komentar dari dosen pembimbing.',
-                color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-              },
-              {
-                icon: <TrendingUp size={24} />,
-                title: 'Progress Tracking',
-                desc: 'Dashboard visual untuk monitor progress dan status project secara real-time.',
-                color: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-              },
-              {
-                icon: <Layers size={24} />,
-                title: 'Rubrik Penilaian',
-                desc: 'Sistem penilaian terstandar dengan rubrik yang jelas dan transparan.',
-                color: 'bg-pink-500/10 text-pink-400 border-pink-500/20',
-              },
-              {
-                icon: <Eye size={24} />,
-                title: 'Code Review',
-                desc: 'Inline comments langsung di code untuk feedback yang spesifik dan actionable.',
-                color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-              },
-            ].map((feature, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
+      {/* ============ STATS ============ */}
+      <section id="stats" className="relative py-24 px-6">
+        <div className="max-w-[1180px] mx-auto">
+          <div className="flex items-end justify-between gap-6 mb-10 flex-wrap">
+            <div>
+              <span className="ae-section-num">§01</span>
+              <motion.h2
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="p-6 rounded-2xl bg-zinc-100 dark:bg-zinc-900/50 border border-zinc-200 dark:border-zinc-800 hover:border-zinc-300 dark:hover:border-zinc-700 transition-all duration-300"
+                viewport={{ once: true, margin: '-80px' }}
+                className="font-sans-display text-3xl sm:text-5xl font-semibold tracking-[-0.03em] mt-1"
               >
-                <div className={`w-12 h-12 rounded-xl ${feature.color} border flex items-center justify-center mb-4`}>
-                  {feature.icon}
-                </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-zinc-600 dark:text-zinc-400 text-sm">{feature.desc}</p>
+                The <span className="font-serif-display italic text-[var(--ae-cobalt)] dark:text-[var(--ae-lime)]">numbers</span>, untuk yang skeptis.
+              </motion.h2>
+            </div>
+            <p className="max-w-sm opacity-70">
+              Data live dari database, di-refresh setiap kali kamu buka halaman ini.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-5">
+            {[
+              { label: 'Total Projects', value: stats.totalProjects || 48, icon: <FileText size={22} />, accent: 'var(--ae-lime)' },
+              { label: 'Mahasiswa Aktif', value: stats.totalMahasiswa || 215, icon: <Users size={22} />, accent: 'var(--ae-coral)' },
+              { label: 'Success Rate', value: stats.successRate || 96, icon: <TrendingUp size={22} />, accent: 'var(--ae-cobalt)', suffix: '%' },
+            ].map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ delay: i * 0.1, duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
+              >
+                <TiltCard maxTilt={6}>
+                  <div className="ae-card p-7 relative overflow-hidden ae-shine">
+                    <motion.div
+                      className="absolute -top-12 -right-12 w-40 h-40 rounded-full"
+                      style={{ background: s.accent, opacity: 0.35 }}
+                      animate={{ scale: [1, 1.12, 1] }}
+                      transition={{ duration: 5, repeat: Infinity, delay: i * 0.4 }}
+                    />
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-6 font-mono-display text-[10px] uppercase tracking-widest opacity-60">
+                        <span>0{i + 1} / 03</span>
+                        {s.icon}
+                      </div>
+                      <p className="ae-num-display text-6xl">
+                        <Counter value={s.value} suffix={s.suffix ?? '+'} />
+                      </p>
+                      <p className="mt-2 font-serif-display italic text-lg">{s.label}</p>
+                    </div>
+                  </div>
+                </TiltCard>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      {/* ============ SHOWCASE ============ */}
+      <section id="showcase" className="relative py-24 px-6">
+        <div className="max-w-[1180px] mx-auto">
+          <div className="flex items-end justify-between gap-6 mb-10 flex-wrap">
+            <div>
+              <span className="ae-section-num">§02</span>
+              <motion.h2
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="font-sans-display text-3xl sm:text-5xl font-semibold tracking-[-0.03em] mt-1"
+              >
+                Karya yang <span className="font-serif-display italic">benar-benar</span> jadi.
+              </motion.h2>
+              <p className="mt-3 max-w-md opacity-70">
+                Project mahasiswa yang sudah lulus sidang — open for inspiration.
+              </p>
+            </div>
+            <Link href="/login" className="hidden sm:inline-flex ae-link font-mono-display text-xs uppercase tracking-widest">
+              View all <ArrowUpRight size={14} />
+            </Link>
+          </div>
+
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.6 }}
+            className="ae-card p-4 sm:p-6"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Siap untuk memulai?
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400 mb-8 max-w-lg mx-auto">
-              Login sekarang dan mulai perjalanan capstone project Anda. Tim kami siap membantu.
-            </p>
-            {!session && (
-              <Link href="/login">
-                <Button
-                  size="lg"
-                  className="font-semibold bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-black dark:hover:bg-zinc-200 px-8"
-                  endContent={<ArrowRight size={18} />}
-                >
-                  Login Sekarang
-                </Button>
-              </Link>
-            )}
+            <ProjectGallery limit={9} />
           </motion.div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-6 border-t border-zinc-200/50 dark:border-zinc-800/50">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <Image
-              src="/logo.png"
-              alt="Capstone Logo"
-              width={24}
-              height={24}
-              className="rounded"
-            />
-            <span className="text-sm text-zinc-500">Capstone Project System</span>
+      {/* ============ FEATURES (asymmetric bento) ============ */}
+      <section id="features" className="relative py-24 px-6">
+        <div className="max-w-[1180px] mx-auto">
+          <div className="mb-12">
+            <span className="ae-section-num">§03</span>
+            <motion.h2
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="font-sans-display text-3xl sm:text-5xl font-semibold tracking-[-0.03em] mt-1 max-w-3xl"
+            >
+              Tools yang bikin capstone <span className="font-serif-display italic text-[var(--ae-coral)]">terasa ringan</span> — bukan ribet.
+            </motion.h2>
           </div>
-          <p className="text-sm text-zinc-500">
-            &copy; 2026 Program Studi Informatika. All rights reserved.
-          </p>
+
+          <div className="grid md:grid-cols-6 gap-5">
+            {/* Big feature */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.6 }}
+              className="md:col-span-4 md:row-span-2"
+            >
+              <TiltCard maxTilt={5}>
+                <div className="ae-card p-8 flex flex-col justify-between min-h-[360px] relative overflow-hidden ae-shine">
+                  <div className="absolute top-6 right-6 ae-sticker !bg-[var(--ae-cobalt)] !text-white">
+                    <Star size={12} /> Flagship
+                  </div>
+                  <motion.div
+                    className="absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-[var(--ae-cobalt)] opacity-20 blur-2xl"
+                    animate={{ x: [0, 30, 0], y: [0, -20, 0] }}
+                    transition={{ duration: 8, repeat: Infinity }}
+                  />
+                  <div className="relative">
+                    <GitBranch size={36} strokeWidth={1.8} />
+                    <h3 className="font-sans-display text-3xl sm:text-4xl font-semibold tracking-tight mt-6 max-w-md">
+                      GitHub-native review.{' '}
+                      <span className="font-serif-display italic opacity-70">No more zip files.</span>
+                    </h3>
+                    <p className="mt-3 opacity-70 max-w-md">
+                      Connect repo → commit auto-tracked → dosen kasih inline comment langsung di kode.
+                      Workflow professional, sejak hari pertama.
+                    </p>
+                  </div>
+                  <div className="relative mt-8 font-mono-display text-xs uppercase tracking-widest flex items-center gap-3 opacity-70">
+                    <span className="w-8 h-px bg-current" />
+                    Integrated · Webhooks · Branch tracking
+                  </div>
+                </div>
+              </TiltCard>
+            </motion.div>
+
+            {[
+              { icon: <Upload size={26} />, t: 'Smart Upload', d: 'Drag, drop, done. Auto-validation file BAB.' },
+              { icon: <MessageSquare size={26} />, t: 'Inline Feedback', d: 'Komentar dosen jadi actionable to-do.' },
+              { icon: <Layers size={26} />, t: 'Rubrik Transparan', d: 'Tau persis dinilai dari aspek apa.' },
+              { icon: <CheckCircle2 size={26} />, t: 'Track Progress', d: 'Dashboard visual untuk monitor status.' },
+            ].map((f, i) => (
+              <motion.div
+                key={f.t}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: 0.05 * i, duration: 0.5 }}
+                className="md:col-span-2"
+              >
+                <TiltCard maxTilt={7}>
+                  <div className="ae-card p-6 h-full ae-shine">
+                    <div className="flex items-start justify-between">
+                      {f.icon}
+                      <span className="font-mono-display text-[10px] uppercase tracking-widest opacity-50">0{i + 2}</span>
+                    </div>
+                    <h3 className="mt-6 font-sans-display text-xl font-semibold tracking-tight">{f.t}</h3>
+                    <p className="mt-1.5 text-sm opacity-70">{f.d}</p>
+                  </div>
+                </TiltCard>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============ INTEGRATIONS ============ */}
+      <section id="integrations" className="relative py-24 px-6">
+        <div className="max-w-[1180px] mx-auto">
+          <div className="ae-grid-asym">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="ae-card p-8"
+            >
+              <span className="font-mono-display text-[10px] uppercase tracking-widest opacity-60">// stack</span>
+              <h3 className="font-sans-display text-3xl font-semibold tracking-tight mt-2">
+                Terintegrasi dengan tools <span className="font-serif-display italic">yang penting</span>.
+              </h3>
+              <p className="mt-3 opacity-70">Tidak ada login berulang, tidak ada data duplikat.</p>
+            </motion.div>
+
+            {[
+              { icon: <Github size={28} />, n: 'GitHub', d: 'Repo, commit, branch sync.' },
+              { icon: <GraduationCap size={28} />, n: 'SIMIKAD', d: 'Data akademik mahasiswa.' },
+            ].map((it, i) => (
+              <motion.div
+                key={it.n}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 * (i + 1) }}
+              >
+                <TiltCard maxTilt={8}>
+                  <div className="ae-card p-8 flex flex-col justify-between h-full ae-shine">
+                    <div className="w-14 h-14 rounded-2xl border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] flex items-center justify-center bg-[var(--ae-cream-2)] dark:bg-[var(--ae-ink)]">
+                      {it.icon}
+                    </div>
+                    <div className="mt-6">
+                      <p className="font-sans-display text-xl font-semibold tracking-tight">{it.n}</p>
+                      <p className="text-sm opacity-70">{it.d}</p>
+                    </div>
+                  </div>
+                </TiltCard>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="mt-5 ae-card p-6 flex items-center justify-between gap-4 flex-wrap ae-shine"
+          >
+            <div className="flex items-center gap-4">
+              <Layers size={26} />
+              <div>
+                <p className="font-sans-display text-lg font-semibold">SIMTEKMU</p>
+                <p className="text-sm opacity-70">Sinkronisasi prodi & data dosen pembimbing.</p>
+              </div>
+            </div>
+            <span className="ae-sticker">Active</span>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============ CTA ============ */}
+      <section className="relative py-28 px-6">
+        <div className="max-w-[1180px] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.7, ease: [0.2, 0.7, 0.2, 1] }}
+            className="relative ae-card p-10 sm:p-16 text-center overflow-hidden"
+          >
+            <div className="absolute inset-0 -z-0 opacity-80">
+              <motion.div
+                className="ae-blob"
+                style={{ top: '-30%', left: '50%', width: '30rem', height: '30rem', background: 'radial-gradient(circle, var(--ae-lime), transparent 60%)' }}
+                animate={{ x: ['-50%', '-40%', '-50%'], scale: [1, 1.1, 1] }}
+                transition={{ duration: 8, repeat: Infinity }}
+              />
+            </div>
+
+            <span className="ae-sticker mb-6 !bg-[var(--ae-coral)] !text-white ae-float">
+              <Sparkles size={12} /> Ready when you are
+            </span>
+
+            <h2 className="relative font-sans-display text-4xl sm:text-6xl font-semibold leading-[1] tracking-[-0.03em]">
+              Capstone-mu <span className="font-serif-display italic">deserve</span>
+              <br />
+              workflow yang serius.
+            </h2>
+
+            <p className="relative mt-6 max-w-xl mx-auto opacity-75">
+              Login dengan akun kampus. Tim kami siap kalau ada masalah teknis,
+              biar fokus kamu cuma satu: build sesuatu yang keren.
+            </p>
+
+            <div className="relative mt-10 flex justify-center gap-3 flex-wrap">
+              <Magnetic>
+                {session ? (
+                  <Link href={getDashboardUrl()} className="ae-btn ae-btn-lime ae-shine">
+                    Buka Dashboard <ArrowUpRight size={18} />
+                  </Link>
+                ) : (
+                  <Link href="/login" className="ae-btn ae-btn-lime ae-shine">
+                    Login sekarang <ArrowUpRight size={18} />
+                  </Link>
+                )}
+              </Magnetic>
+              <Magnetic strength={0.2}>
+                <Link href="/register" className="ae-btn ae-btn-ghost">
+                  Daftar dulu
+                </Link>
+              </Magnetic>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ============ FOOTER ============ */}
+      <footer className="relative pt-12 pb-10 px-6 border-t-[1.5px] ae-border-ink dark:border-[var(--ae-cream)]">
+        <div className="max-w-[1180px] mx-auto">
+          {/* Giant wordmark */}
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="font-sans-display font-semibold tracking-[-0.06em] leading-[0.85] text-[clamp(4rem,18vw,15rem)] select-none"
+          >
+            capstone<span className="font-serif-display italic text-[var(--ae-coral)]">.</span>
+          </motion.div>
+
+          <div className="mt-10 grid sm:grid-cols-3 gap-6 font-mono-display text-xs uppercase tracking-widest opacity-80">
+            <div className="flex items-center gap-3">
+              <Image src="/logo.png" alt="" width={28} height={28} className="rounded" />
+              <span>Prodi Informatika · Unismuh Makassar</span>
+            </div>
+            <div>
+              <p className="opacity-60 mb-2">Made with</p>
+              <p>Next.js · Prisma · GitHub API</p>
+            </div>
+            <div className="sm:text-right">
+              <p>&copy; 2026 — All rights reserved.</p>
+              <p className="opacity-60 mt-1">v3.0 · Acid Edition</p>
+            </div>
+          </div>
         </div>
       </footer>
     </div>

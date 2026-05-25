@@ -17,11 +17,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family:
-    'Inter',
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -1023,3 +1019,377 @@ html {
   width: 100%;
 }
 
+
+/* ============================================
+   ACID EDITORIAL — Landing Page Aesthetic
+   ============================================ */
+:root {
+  --ae-cream: #f4efe6;
+  --ae-cream-2: #ebe4d5;
+  --ae-ink: #0e0e10;
+  --ae-ink-2: #1a1a1d;
+  --ae-lime: #d4ff3a;
+  --ae-cobalt: #2541ff;
+  --ae-coral: #ff5b3a;
+  --ae-peach: #ffd4b0;
+}
+
+.font-serif-display {
+  font-family: var(--font-serif), 'Times New Roman', serif;
+  font-feature-settings: 'liga', 'dlig';
+  letter-spacing: -0.02em;
+}
+.font-sans-display {
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+.font-mono-display {
+  font-family: var(--font-mono), 'JetBrains Mono', monospace;
+}
+
+/* Cream / Ink theme surfaces */
+.ae-bg-cream { background-color: var(--ae-cream); }
+.ae-bg-ink { background-color: var(--ae-ink); }
+.ae-text-ink { color: var(--ae-ink); }
+.ae-text-cream { color: var(--ae-cream); }
+.ae-border-ink { border-color: var(--ae-ink); }
+
+/* Noise grain overlay */
+.ae-noise {
+  position: relative;
+}
+.ae-noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.dark .ae-noise::after {
+  mix-blend-mode: overlay;
+  opacity: 0.12;
+}
+
+/* Hand drawn / sticker badge */
+.ae-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--ae-ink);
+  background: var(--ae-lime);
+  color: var(--ae-ink);
+  font-family: var(--font-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  box-shadow: 3px 3px 0 0 var(--ae-ink);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.ae-sticker:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 0 var(--ae-ink);
+}
+
+/* Brutalist outlined button */
+.ae-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--ae-ink);
+  background: var(--ae-ink);
+  color: var(--ae-cream);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  box-shadow: 4px 4px 0 0 var(--ae-ink);
+  transition: transform 0.18s cubic-bezier(.4,0,.2,1), box-shadow 0.18s ease, background 0.18s ease;
+  cursor: pointer;
+}
+.ae-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 0 var(--ae-ink);
+}
+.ae-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 0 var(--ae-ink);
+}
+.ae-btn-lime {
+  background: var(--ae-lime);
+  color: var(--ae-ink);
+}
+.ae-btn-ghost {
+  background: transparent;
+  color: var(--ae-ink);
+}
+.dark .ae-btn { border-color: var(--ae-cream); box-shadow: 4px 4px 0 0 var(--ae-cream); background: var(--ae-cream); color: var(--ae-ink); }
+.dark .ae-btn:hover { box-shadow: 6px 6px 0 0 var(--ae-cream); }
+.dark .ae-btn-ghost { background: transparent; color: var(--ae-cream); }
+.dark .ae-btn-lime { background: var(--ae-lime); color: var(--ae-ink); border-color: var(--ae-lime); box-shadow: 4px 4px 0 0 var(--ae-lime); }
+.dark .ae-btn-lime:hover { box-shadow: 6px 6px 0 0 var(--ae-lime); }
+
+/* Brutalist card */
+.ae-card {
+  border: 1.5px solid var(--ae-ink);
+  border-radius: 28px;
+  background: var(--ae-cream);
+  box-shadow: 6px 6px 0 0 var(--ae-ink);
+  transition: transform 0.25s cubic-bezier(.4,0,.2,1), box-shadow 0.25s ease;
+}
+.ae-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 0 var(--ae-ink);
+}
+.dark .ae-card {
+  background: var(--ae-ink-2);
+  border-color: var(--ae-cream);
+  box-shadow: 6px 6px 0 0 var(--ae-cream);
+}
+.dark .ae-card:hover { box-shadow: 9px 9px 0 0 var(--ae-cream); }
+
+/* Tilted decoration */
+.ae-tilt-l { transform: rotate(-3deg); }
+.ae-tilt-r { transform: rotate(3deg); }
+.ae-tilt-lg { transform: rotate(-6deg); }
+
+/* Marquee */
+.ae-marquee {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  gap: 3rem;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.ae-marquee-track {
+  display: flex;
+  gap: 3rem;
+  flex-shrink: 0;
+  align-items: center;
+  animation: ae-marquee 38s linear infinite;
+}
+@keyframes ae-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+/* Gradient mesh blob */
+.ae-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+.dark .ae-blob { opacity: 0.4; }
+
+/* Underline scribble */
+.ae-underline-scribble {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 14' preserveAspectRatio='none'><path d='M2 9 Q 75 1, 150 7 T 298 6' stroke='%23d4ff3a' stroke-width='8' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat: no-repeat;
+  background-size: 100% 0.4em;
+  background-position: 0 92%;
+  padding-bottom: 0.12em;
+}
+
+/* Marquee pause hover */
+.ae-marquee:hover .ae-marquee-track { animation-play-state: paused; }
+
+/* Big section number */
+.ae-section-num {
+  font-family: var(--font-serif), serif;
+  font-style: italic;
+  font-size: clamp(3rem, 10vw, 7rem);
+  line-height: 0.9;
+  color: var(--ae-ink);
+  opacity: 0.12;
+}
+.dark .ae-section-num { color: var(--ae-cream); opacity: 0.18; }
+
+/* Asymmetric grid helpers */
+.ae-grid-asym {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1.2fr;
+  gap: 1.25rem;
+}
+@media (max-width: 900px) {
+  .ae-grid-asym { grid-template-columns: 1fr; }
+}
+
+/* ============================================
+   ACID EDITORIAL — Modern Interactions
+   ============================================ */
+
+/* Scroll progress bar */
+.ae-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--ae-lime), var(--ae-coral), var(--ae-cobalt));
+  z-index: 100;
+  transform-origin: 0 0;
+}
+
+/* Animated rotating disc (for logos / decorative) */
+.ae-spin-slow {
+  animation: ae-spin 18s linear infinite;
+}
+@keyframes ae-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Cursor-tracked hero spotlight */
+.ae-spotlight {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(212, 255, 58, 0.18),
+    transparent 60%
+  );
+  transition: background 0.15s ease;
+  z-index: 0;
+}
+.dark .ae-spotlight {
+  background: radial-gradient(
+    600px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(212, 255, 58, 0.12),
+    transparent 60%
+  );
+}
+
+/* Magnetic / 3D tilt card */
+.ae-tilt {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
+}
+.ae-tilt > * {
+  transform: translateZ(0);
+}
+
+/* Text reveal — fade up with stagger via animation-delay */
+.ae-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  animation: ae-reveal 0.85s cubic-bezier(.2,.7,.2,1) forwards;
+}
+@keyframes ae-reveal {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Marker chip */
+.ae-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.25rem 0.65rem;
+  font-family: var(--font-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  background: transparent;
+}
+
+/* Card with shine sweep */
+.ae-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+.ae-shine::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.35),
+    transparent
+  );
+  transform: skewX(-20deg);
+  transition: left 0.7s cubic-bezier(.4,0,.2,1);
+}
+.ae-shine:hover::before { left: 125%; }
+.dark .ae-shine::before { background: linear-gradient(100deg, transparent, rgba(212,255,58,0.18), transparent); }
+
+/* Sticker pulse hover */
+.ae-pulse-hover:hover { animation: ae-pulse 0.5s ease; }
+@keyframes ae-pulse {
+  0%, 100% { transform: scale(1) rotate(-3deg); }
+  50% { transform: scale(1.08) rotate(2deg); }
+}
+
+/* Big stat ticker */
+.ae-num-display {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.05em;
+}
+
+/* Floating orbit */
+.ae-float {
+  animation: ae-float 6s ease-in-out infinite;
+}
+@keyframes ae-float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-12px) rotate(3deg); }
+}
+
+/* Dotted divider */
+.ae-dotted-div {
+  height: 1px;
+  width: 100%;
+  background-image: linear-gradient(90deg, currentColor 50%, transparent 0);
+  background-size: 8px 1px;
+  opacity: 0.25;
+}
+
+/* Hover lift link */
+.ae-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 500;
+}
+.ae-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1);
+}
+.ae-link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+/* Section card with corner ticks */
+.ae-corners {
+  position: relative;
+}
+.ae-corners::before,
+.ae-corners::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid currentColor;
+}
+.ae-corners::before { top: -1.5px; left: -1.5px; border-right: none; border-bottom: none; }
+.ae-corners::after { bottom: -1.5px; right: -1.5px; border-left: none; border-top: none; }
