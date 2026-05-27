@@ -14,10 +14,6 @@ export async function GET(request: Request) {
   try {
     const session = await auth();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const repoUrl = searchParams.get('repoUrl');
     const ownerParam = searchParams.get('owner');
@@ -27,6 +23,17 @@ export async function GET(request: Request) {
     const action = searchParams.get('action') || 'list'; // list, content, tree, commits
     const getContent = searchParams.get('content') === 'true'; // shortcut for content action
     const projectId = searchParams.get('projectId'); // Optional: to get token from project owner
+
+    // Allow access if either:
+    //  - the requester has a valid session, OR
+    //  - a valid projectId is provided (so we have explicit project context
+    //    and can resolve a GitHub token via the project owner / org fallback).
+    // This mirrors how the GitHub code viewer is used across the app and
+    // avoids spurious 401s when the user's session cookie isn't visible to
+    // the API route (e.g. expired session while the page is still mounted).
+    if (!session?.user?.id && !projectId) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
     let owner: string;
     let repo: string;
@@ -53,39 +60,43 @@ export async function GET(request: Request) {
       );
     }
 
-    // Try to get GitHub token from multiple sources
-    let githubToken: string | null = null;
+    // Collect GitHub token candidates in priority order. We'll try each
+    // until one works — this matters because the *current* user (often a
+    // dosen) may have a valid GitHub token that simply doesn't have access
+    // to the mahasiswa's private repo. In that case GitHub returns 401 and
+    // we should transparently fall back to the project owner's token, then
+    // to the org/app tokens, before surfacing an error.
+    const tokenCandidates: Array<{ source: string; raw: string }> = [];
+    const pushCandidate = (source: string, raw: string | null | undefined) => {
+      if (!raw) return;
+      if (tokenCandidates.some((c) => c.raw === raw)) return;
+      tokenCandidates.push({ source, raw });
+    };
 
-    // 1. First, try current user's token
-    const currentUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { githubToken: true, role: true },
-    });
-
-    if (currentUser?.githubToken) {
-      githubToken = currentUser.githubToken;
-    }
-
-    // 2. If current user doesn't have token and projectId is provided,
-    //    try to get token from project owner (mahasiswa)
-    if (!githubToken && projectId) {
+    // 1. Project owner's token (preferred when projectId is given — they
+    //    are guaranteed to have access to their own repo).
+    if (projectId) {
       const project = await prisma.project.findUnique({
         where: { id: projectId },
         select: {
+          id: true,
           mahasiswa: {
             select: { githubToken: true },
           },
         },
       });
 
-      if (project?.mahasiswa?.githubToken) {
-        githubToken = project.mahasiswa.githubToken;
+      if (!session?.user?.id && !project) {
+        // Unauthenticated callers must reference an existing project.
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
+
+      pushCandidate('project-owner', project?.mahasiswa?.githubToken ?? null);
     }
 
-    // 3. If still no token, try to find project by repo URL and get owner's token
-    if (!githubToken) {
-      const repoFullUrl = `https://github.com/${owner}/${repo}`;
+    // 2. Token from any project that owns this repo (covers cases where the
+    //    caller didn't pass projectId but the repo is tracked).
+    {
       const project = await prisma.project.findFirst({
         where: {
           OR: [
@@ -99,49 +110,62 @@ export async function GET(request: Request) {
           },
         },
       });
-
-      if (project?.mahasiswa?.githubToken) {
-        githubToken = project.mahasiswa.githubToken;
-      }
+      pushCandidate('repo-owner', project?.mahasiswa?.githubToken ?? null);
     }
 
-    // 4. Fallback to organization token (for org repos) or app token
-    if (!githubToken) {
-      // Use org token if repo belongs to the organization
-      const orgName = process.env.GITHUB_ORG_NAME || 'capstone-informatika';
-      if (owner === orgName && process.env.GITHUB_ORG_TOKEN) {
-        githubToken = process.env.GITHUB_ORG_TOKEN;
-      }
-      // Or if it's any repo and we have an org token, use it
-      else if (process.env.GITHUB_ORG_TOKEN) {
-        githubToken = process.env.GITHUB_ORG_TOKEN;
-      }
-      // Final fallback to app token
-      else if (process.env.GITHUB_APP_TOKEN) {
-        githubToken = process.env.GITHUB_APP_TOKEN;
-      }
+    // 3. Current authenticated user's token (last DB candidate — dosens
+    //    typically can't read student private repos with their own token).
+    if (session?.user?.id) {
+      const currentUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { githubToken: true },
+      });
+      pushCandidate('current-user', currentUser?.githubToken ?? null);
     }
 
-    if (!githubToken) {
+    // 4. Environment-provided org / app tokens.
+    pushCandidate('env-org', process.env.GITHUB_ORG_TOKEN);
+    pushCandidate('env-app', process.env.GITHUB_APP_TOKEN);
+
+    if (tokenCandidates.length === 0) {
       return NextResponse.json(
         {
-          error: 'GitHub tidak terhubung. Silakan konfigurasi GITHUB_ORG_TOKEN di environment variables atau pemilik project perlu login dengan GitHub.',
-          code: 'NO_GITHUB_TOKEN'
+          error:
+            'GitHub tidak terhubung. Silakan konfigurasi GITHUB_ORG_TOKEN di environment variables atau pemilik project perlu login dengan GitHub.',
+          code: 'NO_GITHUB_TOKEN',
         },
         { status: 400 },
       );
     }
 
-    // Decrypt token if it was sourced from DB (env tokens pass through unchanged)
-    const resolvedToken = decryptNullable(githubToken);
-    if (!resolvedToken) {
-      return NextResponse.json(
-        { error: 'GitHub token tidak dapat digunakan', code: 'NO_GITHUB_TOKEN' },
-        { status: 400 },
-      );
-    }
-
-    const github = createGitHubClient(resolvedToken);
+    // Try each candidate token, falling back on auth errors (401/403). For
+    // any other error we surface it immediately — it's not a credentials
+    // problem.
+    const runWithToken = async <T>(
+      fn: (gh: ReturnType<typeof createGitHubClient>) => Promise<T>,
+    ): Promise<T> => {
+      let lastAuthError: unknown = null;
+      for (const candidate of tokenCandidates) {
+        const resolved = decryptNullable(candidate.raw);
+        if (!resolved) continue;
+        try {
+          const gh = createGitHubClient(resolved);
+          return await fn(gh);
+        } catch (err) {
+          const status = (err as { status?: number }).status;
+          if (status === 401 || status === 403) {
+            console.warn(
+              `[github/files] token '${candidate.source}' rejected (${status}) for ${owner}/${repo}; trying next candidate`,
+            );
+            lastAuthError = err;
+            continue;
+          }
+          throw err;
+        }
+      }
+      // All candidates failed with auth errors.
+      throw lastAuthError ?? new Error('No usable GitHub token');
+    };
 
     // Handle shortcut for getting file content directly
     if (getContent && path) {
@@ -153,11 +177,8 @@ export async function GET(request: Request) {
         });
       }
 
-      const fileContent = await github.getFileContent(
-        owner,
-        repo,
-        path,
-        ref || undefined,
+      const fileContent = await runWithToken((gh) =>
+        gh.getFileContent(owner, repo, path, ref || undefined),
       );
       const language = getLanguageFromPath(path);
 
@@ -171,11 +192,8 @@ export async function GET(request: Request) {
     switch (action) {
       case 'list': {
         // Get files/folders at specific path
-        const contents = await github.getRepoContents(
-          owner,
-          repo,
-          path,
-          ref || undefined,
+        const contents = await runWithToken((gh) =>
+          gh.getRepoContents(owner, repo, path, ref || undefined),
         );
 
         // Sort: directories first, then files
@@ -202,11 +220,8 @@ export async function GET(request: Request) {
           });
         }
 
-        const fileContent = await github.getFileContent(
-          owner,
-          repo,
-          path,
-          ref || undefined,
+        const fileContent = await runWithToken((gh) =>
+          gh.getFileContent(owner, repo, path, ref || undefined),
         );
         const language = getLanguageFromPath(path);
 
@@ -218,7 +233,7 @@ export async function GET(request: Request) {
 
       case 'tree': {
         // Get full repository tree
-        const tree = await github.getTree(owner, repo);
+        const tree = await runWithToken((gh) => gh.getTree(owner, repo));
 
         // Filter out common non-code directories
         const filtered = tree.filter((item) => {
@@ -243,10 +258,12 @@ export async function GET(request: Request) {
 
       case 'commits': {
         // Get recent commits
-        const commits = await github.getCommits(owner, repo, {
-          path: path || undefined,
-          per_page: 20,
-        });
+        const commits = await runWithToken((gh) =>
+          gh.getCommits(owner, repo, {
+            path: path || undefined,
+            per_page: 20,
+          }),
+        );
 
         return NextResponse.json({
           commits,
@@ -255,7 +272,7 @@ export async function GET(request: Request) {
 
       case 'branches': {
         // Get branches
-        const branches = await github.getBranches(owner, repo);
+        const branches = await runWithToken((gh) => gh.getBranches(owner, repo));
 
         return NextResponse.json({
           branches,
@@ -264,7 +281,7 @@ export async function GET(request: Request) {
 
       case 'languages': {
         // Get language breakdown
-        const languages = await github.getLanguages(owner, repo);
+        const languages = await runWithToken((gh) => gh.getLanguages(owner, repo));
 
         // Calculate percentages
         const total = Object.values(languages).reduce(
@@ -286,7 +303,7 @@ export async function GET(request: Request) {
 
       case 'info': {
         // Get repository info
-        const repoInfo = await github.getRepo(owner, repo);
+        const repoInfo = await runWithToken((gh) => gh.getRepo(owner, repo));
 
         return NextResponse.json(repoInfo);
       }
@@ -329,8 +346,9 @@ export async function GET(request: Request) {
       return NextResponse.json(
         {
           error: 'Token GitHub tidak valid atau expired.',
-          details: 'Silakan login ulang dengan GitHub.',
-          code: 'UNAUTHORIZED'
+          details:
+            'Tidak ada token GitHub yang berhasil mengakses repository ini. Pastikan pemilik project login ulang dengan GitHub, atau atur GITHUB_ORG_TOKEN di environment.',
+          code: 'UNAUTHORIZED',
         },
         { status: 401 },
       );
