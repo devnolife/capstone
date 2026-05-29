@@ -101,7 +101,7 @@ export function ProjectGallery({ limit = 12 }: ProjectGalleryProps) {
   return (
     <>
       {/* Gallery Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {screenshots.map((screenshot, index) => (
           <motion.div
             key={screenshot.id}
@@ -113,7 +113,7 @@ export function ProjectGallery({ limit = 12 }: ProjectGalleryProps) {
             className="group relative cursor-pointer"
             onClick={() => openLightbox(index)}
           >
-            <div className="relative aspect-video rounded-lg sm:rounded-xl overflow-hidden border border-default-200 bg-default-100 shadow-sm hover:shadow-xl transition-all duration-300">
+            <div className="relative aspect-video rounded-[24px] overflow-hidden border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40 shadow-sm hover:shadow-xl transition-all duration-300">
               {/* Image */}
               <img
                 src={screenshot.fileUrl}
@@ -121,36 +121,36 @@ export function ProjectGallery({ limit = 12 }: ProjectGalleryProps) {
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 loading="lazy"
               />
-              
+
               {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute inset-0 bg-gradient-to-t from-[#09090b]/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 {/* Zoom Icon */}
-                <div className="absolute top-2 sm:top-3 right-2 sm:right-3">
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                    <ZoomIn size={14} className="sm:w-4 sm:h-4 text-white" />
+                <div className="absolute top-2.5 sm:top-3.5 right-2.5 sm:right-3.5">
+                  <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/10">
+                    <ZoomIn size={14} className="text-white" />
                   </div>
                 </div>
-                
+
                 {/* Info */}
-                <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
-                  <h4 className="text-white font-semibold text-xs sm:text-sm truncate mb-1">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+                  <h4 className="text-white font-semibold text-xs sm:text-sm truncate mb-1.5 font-sans-display tracking-tight">
                     {screenshot.title}
                   </h4>
-                  <div className="flex items-center gap-2 text-white/70 text-[10px] sm:text-xs">
-                    <FolderGit2 size={10} className="sm:w-3 sm:h-3" />
-                    <span className="truncate">{screenshot.project.title}</span>
+                  <div className="flex items-center gap-2 text-white/80 text-[10px] sm:text-xs">
+                    <FolderGit2 size={10} className="sm:w-3 sm:h-3 text-[var(--color-ember)]" />
+                    <span className="truncate font-medium">{screenshot.project.title}</span>
                   </div>
                   <div className="flex items-center gap-2 text-white/60 text-[10px] sm:text-xs mt-1">
-                    <User size={10} className="sm:w-3 sm:h-3" />
-                    <span>{screenshot.project.mahasiswa.name}</span>
+                    <User size={10} className="sm:w-3 sm:h-3 text-white/50" />
+                    <span className="truncate font-medium">{screenshot.project.mahasiswa.name}</span>
                   </div>
                 </div>
               </div>
 
               {/* Category Badge */}
               {screenshot.category && (
-                <div className="absolute top-2 sm:top-3 left-2 sm:left-3">
-                  <span className="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-white/90 dark:bg-black/70 text-[10px] sm:text-xs font-medium text-default-700 dark:text-white backdrop-blur-sm">
+                <div className="absolute top-2.5 sm:top-3.5 left-2.5 sm:left-3.5">
+                  <span className="px-2.5 py-1 rounded-full bg-white/95 dark:bg-[#09090b]/90 text-[9px] sm:text-[10px] font-bold tracking-wider font-mono-display uppercase text-[var(--color-obsidian)] dark:text-white border border-black/5 dark:border-white/10 backdrop-blur-md shadow-sm">
                     {screenshot.category}
                   </span>
                 </div>
@@ -167,74 +167,74 @@ export function ProjectGallery({ limit = 12 }: ProjectGalleryProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-2 sm:p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#09090b]/95 backdrop-blur-md p-4 sm:p-6"
             onClick={closeLightbox}
           >
             {/* Close Button */}
             <button
-              className="absolute top-2 sm:top-4 right-2 sm:right-4 z-10 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+              className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors border border-white/10 outline-none"
               onClick={closeLightbox}
             >
-              <X size={20} className="sm:w-6 sm:h-6 text-white" />
+              <X size={20} className="text-white" />
             </button>
 
             {/* Navigation Arrows */}
             {screenshots.length > 1 && (
               <>
                 <button
-                  className="absolute left-1 sm:left-4 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  className="absolute left-4 z-10 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center transition-colors border border-white/5 outline-none"
                   onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
                 >
-                  <ChevronLeft size={24} className="sm:w-7 sm:h-7 text-white" />
+                  <ChevronLeft size={24} className="text-white" />
                 </button>
                 <button
-                  className="absolute right-1 sm:right-4 z-10 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors"
+                  className="absolute right-4 z-10 w-12 h-12 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center transition-colors border border-white/5 outline-none"
                   onClick={(e) => { e.stopPropagation(); goToNext(); }}
                 >
-                  <ChevronRight size={24} className="sm:w-7 sm:h-7 text-white" />
+                  <ChevronRight size={24} className="text-white" />
                 </button>
               </>
             )}
 
             {/* Image Container */}
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+              exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="relative max-w-[95vw] sm:max-w-[90vw] max-h-[85vh] mx-2 sm:mx-4"
+              className="relative max-w-[95vw] sm:max-w-[90vw] max-h-[85vh] mx-4"
               onClick={(e) => e.stopPropagation()}
             >
               <img
                 src={selectedScreenshot.fileUrl}
                 alt={selectedScreenshot.title}
-                className="max-w-full max-h-[65vh] sm:max-h-[75vh] object-contain rounded-lg shadow-2xl"
+                className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-[24px] shadow-2xl border border-white/10"
               />
-              
+
               {/* Info Panel */}
-              <div className="mt-3 sm:mt-4 text-center px-2">
-                <h3 className="text-white text-base sm:text-xl font-bold mb-1 sm:mb-2">
+              <div className="mt-5 text-center px-4">
+                <h3 className="text-white text-base sm:text-xl font-bold mb-2 font-sans-display tracking-tight">
                   {selectedScreenshot.title}
                 </h3>
                 {selectedScreenshot.description && (
-                  <p className="text-white/70 text-xs sm:text-sm mb-2 sm:mb-3 max-w-lg mx-auto line-clamp-2">
+                  <p className="text-white/70 text-xs sm:text-sm mb-3 max-w-xl mx-auto line-clamp-2 leading-relaxed">
                     {selectedScreenshot.description}
                   </p>
                 )}
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-white/60 text-xs sm:text-sm">
-                  <span className="flex items-center gap-1 sm:gap-1.5">
-                    <FolderGit2 size={12} className="sm:w-3.5 sm:h-3.5" />
-                    <span className="truncate max-w-[120px] sm:max-w-none">{selectedScreenshot.project.title}</span>
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 text-white/60 text-xs sm:text-sm font-mono-display uppercase tracking-widest font-bold">
+                  <span className="flex items-center gap-1.5">
+                    <FolderGit2 size={12} className="text-[var(--color-ember)]" />
+                    <span className="truncate max-w-[140px] sm:max-w-none text-white/95">{selectedScreenshot.project.title}</span>
                   </span>
                   <span className="text-white/30 hidden sm:inline">|</span>
-                  <span className="flex items-center gap-1 sm:gap-1.5">
-                    <User size={12} className="sm:w-3.5 sm:h-3.5" />
-                    {selectedScreenshot.project.mahasiswa.name}
+                  <span className="flex items-center gap-1.5">
+                    <User size={12} className="text-[var(--color-steel)]" />
+                    <span className="text-white/80">{selectedScreenshot.project.mahasiswa.name}</span>
                   </span>
                 </div>
-                
+
                 {/* Counter */}
-                <div className="mt-3 sm:mt-4 text-white/40 text-[10px] sm:text-xs">
+                <div className="mt-4 text-white/40 text-[10px] sm:text-xs font-mono-display">
                   {(selectedIndex ?? 0) + 1} / {screenshots.length}
                 </div>
               </div>

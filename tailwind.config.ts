@@ -15,6 +15,26 @@ const config = {
   plugins: [
     heroui({
       addCommonColors: true,
+      themes: {
+        light: {
+          colors: {
+            primary: {
+              DEFAULT: '#3ba6f1',
+              foreground: '#ffffff',
+            },
+            focus: '#3ba6f1',
+          },
+        },
+        dark: {
+          colors: {
+            primary: {
+              DEFAULT: '#3ba6f1',
+              foreground: '#ffffff',
+            },
+            focus: '#3ba6f1',
+          },
+        },
+      },
     }),
   ],
 };
