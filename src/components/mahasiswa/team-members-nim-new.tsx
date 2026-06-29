@@ -139,7 +139,7 @@ export default function TeamMembersNimNew({
       name: user.name || user.username,
       nim: user.nim || user.username,
       prodi: user.prodi || undefined,
-      image: getSimakPhotoUrl(user.nim) || user.image || user.simakPhoto || undefined,
+      image: getSimakPhotoUrl(user.nim) || getSimakPhotoUrl(user.image) || getSimakPhotoUrl(user.simakPhoto) || undefined,
       githubUsername: user.githubUsername,
     };
 
@@ -175,8 +175,8 @@ export default function TeamMembersNimNew({
               <div
                 key={i}
                 className={`w-2 h-2 rounded-full transition-colors ${i < totalMembers
-                    ? 'bg-violet-500'
-                    : 'bg-default-200 dark:bg-default-700'
+                  ? 'bg-violet-500'
+                  : 'bg-default-200 dark:bg-default-700'
                   }`}
               />
             ))}
@@ -217,7 +217,7 @@ export default function TeamMembersNimNew({
           <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-500/10 dark:to-green-500/10 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
             <div className="relative">
               <Avatar
-                src={getSimakPhotoUrl(ownerNim) || ownerImage}
+                src={getSimakPhotoUrl(ownerNim) || getSimakPhotoUrl(ownerImage)}
                 name={ownerName || 'Owner'}
                 className="w-11 h-11 ring-2 ring-emerald-500/30"
               />
@@ -382,7 +382,7 @@ export default function TeamMembersNimNew({
                           className="w-full flex items-center gap-3 p-3 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors text-left border-b border-default-100 dark:border-default-800 last:border-b-0 group"
                         >
                           <Avatar
-                            src={getSimakPhotoUrl(user.nim) || user.image || user.simakPhoto || undefined}
+                            src={getSimakPhotoUrl(user.nim) || getSimakPhotoUrl(user.image) || getSimakPhotoUrl(user.simakPhoto) || undefined}
                             name={user.name || user.username}
                             className="w-10 h-10"
                           />

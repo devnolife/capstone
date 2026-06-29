@@ -203,7 +203,7 @@ export function DosenDashboardContent({
                         <div className="flex items-center gap-3 min-w-0">
                           <Avatar
                             name={project.mahasiswa.name}
-                            src={project.mahasiswa.profilePhoto || project.mahasiswa.image || getSimakPhotoUrl(project.mahasiswa.username)}
+                            src={getSimakPhotoUrl(project.mahasiswa.profilePhoto || project.mahasiswa.image || project.mahasiswa.username)}
                             size="sm"
                           />
                           <div className="min-w-0">

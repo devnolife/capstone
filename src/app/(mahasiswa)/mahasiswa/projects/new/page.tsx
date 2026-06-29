@@ -253,15 +253,20 @@ export default function NewProjectPage() {
     return { fields, filledCount, total: fields.length, percentage };
   }, [formData, selectedTechs, selectedRepo, consentDocument]);
 
-  // Form validation
-  const isFormValid = useMemo(() => {
-    return formData.title.length >= 5 &&
-      formData.description.length >= 20 &&
-      formData.semester &&
-      formData.category &&
-      formData.productionUrl.length > 0 &&
-      !!consentDocument;
+  // Required fields that are still missing (used to explain why submit is disabled)
+  const missingRequiredFields = useMemo(() => {
+    const missing: string[] = [];
+    if (formData.title.length < 5) missing.push('Judul minimal 5 karakter');
+    if (formData.description.length < 20) missing.push('Deskripsi minimal 20 karakter');
+    if (!formData.semester) missing.push('Semester');
+    if (!formData.category) missing.push('Kategori');
+    if (formData.productionUrl.length === 0) missing.push('URL Production');
+    if (!consentDocument) missing.push('Surat Persetujuan');
+    return missing;
   }, [formData, consentDocument]);
+
+  // Form validation
+  const isFormValid = missingRequiredFields.length === 0;
 
   useEffect(() => {
     const fetchSemesters = async () => {
@@ -494,17 +499,36 @@ export default function NewProjectPage() {
           </Tooltip>
 
           {/* Save Button */}
-          <Button
-            color="primary"
-            size="sm"
-            startContent={!isLoading && <Save size={16} />}
-            isLoading={isLoading}
-            isDisabled={!isFormValid}
-            onPress={handleSubmit}
-            className="font-semibold px-5 h-10 rounded-full shadow-md shadow-blue-500/20"
+          <Tooltip
+            isDisabled={isFormValid}
+            content={
+              <div className="max-w-[220px] py-1">
+                <p className="font-semibold text-xs mb-1 flex items-center gap-1">
+                  <AlertCircle size={13} className="text-warning" />
+                  Lengkapi dulu untuk menyimpan:
+                </p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  {missingRequiredFields.map((field) => (
+                    <li key={field}>{field}</li>
+                  ))}
+                </ul>
+              </div>
+            }
           >
-            Simpan
-          </Button>
+            <span className="inline-block">
+              <Button
+                color="primary"
+                size="sm"
+                startContent={!isLoading && <Save size={16} />}
+                isLoading={isLoading}
+                isDisabled={!isFormValid}
+                onPress={handleSubmit}
+                className="font-semibold px-5 h-10 rounded-full shadow-md shadow-blue-500/20"
+              >
+                Simpan
+              </Button>
+            </span>
+          </Tooltip>
         </div>
       </div>
 
@@ -976,10 +1000,9 @@ export default function NewProjectPage() {
                       isRequired
                       className="flex-1"
                       classNames={{
-                        inputWrapper: `border-default-200 hover:border-primary data-[focused=true]:border-primary ${
-                          urlValidation.status === 'valid' ? 'border-success' : 
+                        inputWrapper: `border-default-200 hover:border-primary data-[focused=true]:border-primary ${urlValidation.status === 'valid' ? 'border-success' :
                           urlValidation.status === 'invalid' ? 'border-danger' : ''
-                        }`,
+                          }`,
                       }}
                     />
                     {formData.productionUrl && urlValidation.status !== 'checking' && (
@@ -1032,7 +1055,7 @@ export default function NewProjectPage() {
                       Untuk Penguji
                     </Chip>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                       size="sm"
@@ -1063,7 +1086,7 @@ export default function NewProjectPage() {
                       }}
                     />
                   </div>
-                  
+
                   <Textarea
                     size="sm"
                     variant="bordered"
@@ -1175,213 +1198,213 @@ export default function NewProjectPage() {
               exit={{ opacity: 0, x: 20 }}
               className="hidden lg:block w-[340px] flex-shrink-0 space-y-4"
             >
-                {/* Live Preview Card - Clean Design */}
-                <Card className="border border-zinc-200 dark:border-zinc-800 shadow-lg bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden">
-                  <CardBody className="p-5 space-y-4">
-                    {/* Header: Category + Title */}
-                    <div className="space-y-3">
-                      {/* Category Badge */}
-                      {formData.category ? (
-                        (() => {
-                          const cat = PROJECT_CATEGORIES.find(c => c.key === formData.category);
-                          if (cat) {
-                            const Icon = cat.icon;
-                            return (
-                              <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r ${cat.color} text-white text-xs font-medium`}>
-                                <Icon size={12} />
-                                <span>{cat.label}</span>
-                              </div>
-                            );
-                          }
-                          return null;
-                        })()
-                      ) : (
-                        <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 text-xs">
-                          Pilih Kategori
-                        </div>
-                      )}
-
-                      {/* Project Title */}
-                      <h3 className="font-bold text-lg text-zinc-900 dark:text-white leading-snug">
-                        {formData.title || 'Judul Project Anda'}
-                      </h3>
-
-                      {/* Semester Info */}
-                      <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
-                        <Calendar size={14} />
-                        <span>{formData.semester || 'Ganjil 2025/2026'}</span>
-                        <span className="text-zinc-300 dark:text-zinc-600">•</span>
-                        <span>{formData.tahunAkademik || '2025/2026'}</span>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
-                      {formData.description || 'Deskripsi project akan ditampilkan di sini...'}
-                    </p>
-
-                    {/* Tech Stack */}
-                    {selectedTechs.length === 0 ? (
-                      <p className="text-xs text-zinc-400 italic">Belum ada teknologi dipilih</p>
+              {/* Live Preview Card - Clean Design */}
+              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-lg bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden">
+                <CardBody className="p-5 space-y-4">
+                  {/* Header: Category + Title */}
+                  <div className="space-y-3">
+                    {/* Category Badge */}
+                    {formData.category ? (
+                      (() => {
+                        const cat = PROJECT_CATEGORIES.find(c => c.key === formData.category);
+                        if (cat) {
+                          const Icon = cat.icon;
+                          return (
+                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r ${cat.color} text-white text-xs font-medium`}>
+                              <Icon size={12} />
+                              <span>{cat.label}</span>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()
                     ) : (
-                      <div className="flex flex-wrap gap-1.5">
-                        {selectedTechs.slice(0, 4).map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                        {selectedTechs.length > 4 && (
-                          <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-xs">
-                            +{selectedTechs.length - 4}
-                          </span>
-                        )}
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 text-xs">
+                        Pilih Kategori
                       </div>
                     )}
 
-                    {/* Divider */}
-                    <div className="border-t border-zinc-100 dark:border-zinc-800" />
+                    {/* Project Title */}
+                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white leading-snug">
+                      {formData.title || 'Judul Project Anda'}
+                    </h3>
 
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-4 gap-2">
-                      <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
-                        <Users size={16} className="mx-auto mb-1 text-blue-500" />
-                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">{pendingTeamMembers.length + 1}</p>
-                        <p className="text-[10px] text-zinc-400">Tim</p>
-                      </div>
-                      <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
-                        <Github size={16} className={`mx-auto mb-1 ${(selectedRepo || formData.githubRepoUrl) ? 'text-emerald-500' : 'text-zinc-400'}`} />
-                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">{(selectedRepo || formData.githubRepoUrl) ? 'Yes' : 'No'}</p>
-                        <p className="text-[10px] text-zinc-400">Repo</p>
-                      </div>
-                      <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
-                        {isPublic ? <Globe size={16} className="mx-auto mb-1 text-blue-500" /> : <Shield size={16} className="mx-auto mb-1 text-amber-500" />}
-                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">{isPublic ? 'Public' : 'Private'}</p>
-                        <p className="text-[10px] text-zinc-400">Access</p>
-                      </div>
-                      <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
-                        <Clock size={16} className="mx-auto mb-1 text-amber-500" />
-                        <p className="text-sm font-semibold text-zinc-900 dark:text-white">Draft</p>
-                        <p className="text-[10px] text-zinc-400">Status</p>
-                      </div>
-                    </div>
-
-                    {/* Author Section */}
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
-                      <div className="relative">
-                        <Avatar
-                          src={session?.user?.image || ''}
-                          name={session?.user?.name || ''}
-                          size="sm"
-                          className="w-10 h-10"
-                        />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
-                          <Check size={8} className="text-white" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-zinc-900 dark:text-white truncate">{session?.user?.name || 'Your Name'}</p>
-                        <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                          Ketua Tim • Project Owner
-                        </p>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-
-                {/* Checklist Card - Enhanced */}
-                <Card className="border border-default-100 shadow-sm overflow-hidden">
-                  <div className="p-4 bg-gradient-to-r from-success-50/50 to-transparent">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-success/10">
-                          <CheckCircle2 size={14} className="text-success" />
-                        </div>
-                        <span className="font-semibold text-sm">Progress</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-success">{formCompletion.percentage}%</span>
-                      </div>
+                    {/* Semester Info */}
+                    <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+                      <Calendar size={14} />
+                      <span>{formData.semester || 'Ganjil 2025/2026'}</span>
+                      <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                      <span>{formData.tahunAkademik || '2025/2026'}</span>
                     </div>
                   </div>
-                  <CardBody className="p-4 pt-2">
-                    <Progress
-                      value={formCompletion.percentage}
-                      color={formCompletion.percentage === 100 ? 'success' : 'primary'}
-                      size="md"
-                      className="mb-4"
-                      classNames={{
-                        track: 'h-2',
-                        indicator: formCompletion.percentage === 100
-                          ? 'bg-gradient-to-r from-success to-success-400'
-                          : 'bg-gradient-to-r from-primary to-secondary'
-                      }}
-                    />
-                    <div className="space-y-1">
-                      {formCompletion.fields.map((field, index) => (
-                        <motion.div
-                          key={field.name}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${field.filled
-                            ? 'bg-success-50 border border-success-100'
-                            : 'bg-default-50 border border-transparent hover:border-default-200'
-                            }`}
-                        >
-                          <span className={`font-medium ${field.filled ? 'text-success-700' : 'text-default-500'}`}>
-                            {field.name}
-                          </span>
-                          {field.filled ? (
-                            <motion.div
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: "spring", stiffness: 500 }}
-                            >
-                              <CheckCircle2 size={14} className="text-success" />
-                            </motion.div>
-                          ) : (
-                            <div className="w-4 h-4 rounded-full border-2 border-default-300 border-dashed" />
-                          )}
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardBody>
-                </Card>
 
-                {/* Tips Card - Enhanced */}
-                <Card className="border-0 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 via-orange-400/20 to-amber-500/20" />
-                  <CardBody className="p-4 relative">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="p-1.5 rounded-lg bg-amber-500/20">
-                        <Lightbulb size={14} className="text-amber-600" />
-                      </div>
-                      <span className="font-semibold text-sm text-amber-800 dark:text-amber-200">Pro Tips</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {[
-                        'Judul spesifik memudahkan pencarian',
-                        'Deskripsi lengkap bantu reviewer',
-                        'Hubungkan GitHub untuk code review'
-                      ].map((tip, index) => (
-                        <motion.li
-                          key={index}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 + index * 0.1 }}
-                          className="flex items-start gap-2 text-[11px] text-amber-900/80 dark:text-amber-100/80"
+                  {/* Description */}
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
+                    {formData.description || 'Deskripsi project akan ditampilkan di sini...'}
+                  </p>
+
+                  {/* Tech Stack */}
+                  {selectedTechs.length === 0 ? (
+                    <p className="text-xs text-zinc-400 italic">Belum ada teknologi dipilih</p>
+                  ) : (
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedTechs.slice(0, 4).map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium"
                         >
-                          <ChevronRight size={12} className="mt-0.5 text-amber-500 shrink-0" />
-                          <span>{tip}</span>
-                        </motion.li>
+                          {tech}
+                        </span>
                       ))}
-                    </ul>
-                  </CardBody>
-                </Card>
+                      {selectedTechs.length > 4 && (
+                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-xs">
+                          +{selectedTechs.length - 4}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Divider */}
+                  <div className="border-t border-zinc-100 dark:border-zinc-800" />
+
+                  {/* Stats Row */}
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <Users size={16} className="mx-auto mb-1 text-blue-500" />
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">{pendingTeamMembers.length + 1}</p>
+                      <p className="text-[10px] text-zinc-400">Tim</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <Github size={16} className={`mx-auto mb-1 ${(selectedRepo || formData.githubRepoUrl) ? 'text-emerald-500' : 'text-zinc-400'}`} />
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">{(selectedRepo || formData.githubRepoUrl) ? 'Yes' : 'No'}</p>
+                      <p className="text-[10px] text-zinc-400">Repo</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      {isPublic ? <Globe size={16} className="mx-auto mb-1 text-blue-500" /> : <Shield size={16} className="mx-auto mb-1 text-amber-500" />}
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">{isPublic ? 'Public' : 'Private'}</p>
+                      <p className="text-[10px] text-zinc-400">Access</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <Clock size={16} className="mx-auto mb-1 text-amber-500" />
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">Draft</p>
+                      <p className="text-[10px] text-zinc-400">Status</p>
+                    </div>
+                  </div>
+
+                  {/* Author Section */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                    <div className="relative">
+                      <Avatar
+                        src={session?.user?.image || ''}
+                        name={session?.user?.name || ''}
+                        size="sm"
+                        className="w-10 h-10"
+                      />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                        <Check size={8} className="text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-zinc-900 dark:text-white truncate">{session?.user?.name || 'Your Name'}</p>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                        Ketua Tim • Project Owner
+                      </p>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+
+              {/* Checklist Card - Enhanced */}
+              <Card className="border border-default-100 shadow-sm overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-success-50/50 to-transparent">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-success/10">
+                        <CheckCircle2 size={14} className="text-success" />
+                      </div>
+                      <span className="font-semibold text-sm">Progress</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold text-success">{formCompletion.percentage}%</span>
+                    </div>
+                  </div>
+                </div>
+                <CardBody className="p-4 pt-2">
+                  <Progress
+                    value={formCompletion.percentage}
+                    color={formCompletion.percentage === 100 ? 'success' : 'primary'}
+                    size="md"
+                    className="mb-4"
+                    classNames={{
+                      track: 'h-2',
+                      indicator: formCompletion.percentage === 100
+                        ? 'bg-gradient-to-r from-success to-success-400'
+                        : 'bg-gradient-to-r from-primary to-secondary'
+                    }}
+                  />
+                  <div className="space-y-1">
+                    {formCompletion.fields.map((field, index) => (
+                      <motion.div
+                        key={field.name}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${field.filled
+                          ? 'bg-success-50 border border-success-100'
+                          : 'bg-default-50 border border-transparent hover:border-default-200'
+                          }`}
+                      >
+                        <span className={`font-medium ${field.filled ? 'text-success-700' : 'text-default-500'}`}>
+                          {field.name}
+                        </span>
+                        {field.filled ? (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500 }}
+                          >
+                            <CheckCircle2 size={14} className="text-success" />
+                          </motion.div>
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border-2 border-default-300 border-dashed" />
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+
+              {/* Tips Card - Enhanced */}
+              <Card className="border-0 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 via-orange-400/20 to-amber-500/20" />
+                <CardBody className="p-4 relative">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 rounded-lg bg-amber-500/20">
+                      <Lightbulb size={14} className="text-amber-600" />
+                    </div>
+                    <span className="font-semibold text-sm text-amber-800 dark:text-amber-200">Pro Tips</span>
+                  </div>
+                  <ul className="space-y-2">
+                    {[
+                      'Judul spesifik memudahkan pencarian',
+                      'Deskripsi lengkap bantu reviewer',
+                      'Hubungkan GitHub untuk code review'
+                    ].map((tip, index) => (
+                      <motion.li
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 + index * 0.1 }}
+                        className="flex items-start gap-2 text-[11px] text-amber-900/80 dark:text-amber-100/80"
+                      >
+                        <ChevronRight size={12} className="mt-0.5 text-amber-500 shrink-0" />
+                        <span>{tip}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </CardBody>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>

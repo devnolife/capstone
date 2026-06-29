@@ -97,14 +97,28 @@ export function getDocumentTypeLabel(type: string): string {
   return typeLabels[type] || type;
 }
 
+const SIMAK_PHOTO_BASE = 'https://simak.unismuh.ac.id/upload/mahasiswa';
+
 /**
- * Get SIMAK photo URL from NIM
- * @param nim - Student NIM (Nomor Induk Mahasiswa)
- * @returns URL to SIMAK photo or undefined if no NIM provided
+ * Resolve a usable photo URL from either a NIM or a stored SIMAK photo value.
+ * Handles three cases so callers never end up with a bare filename used as a
+ * relative path (which 404s against the current route):
+ *  - already-absolute URLs (http/https) or app paths (/api/minio/...) are returned as-is
+ *  - SIMAK photo filenames (e.g. "abc123_foto.jpg") are prefixed with the SIMAK base
+ *  - a plain NIM is turned into `${nim}.jpg`
+ * @param value - Student NIM or stored photo filename/URL
+ * @returns Absolute photo URL or undefined if no value provided
  */
-export function getSimakPhotoUrl(nim: string | null | undefined): string | undefined {
-  if (!nim) return undefined;
-  return `https://simak.unismuh.ac.id/upload/mahasiswa/${nim}.jpg`;
+export function getSimakPhotoUrl(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  // Already a full URL or app-served path — use directly.
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith('/')) return trimmed;
+  // Stored SIMAK photo filename (has an image extension) — prefix with base.
+  if (/\.(jpe?g|png|webp|gif)$/i.test(trimmed)) return `${SIMAK_PHOTO_BASE}/${trimmed}`;
+  // Plain NIM — build the conventional SIMAK photo URL.
+  return `${SIMAK_PHOTO_BASE}/${trimmed}.jpg`;
 }
 
 // ==================== DEPLOYMENT PLATFORM CONFIG ====================
