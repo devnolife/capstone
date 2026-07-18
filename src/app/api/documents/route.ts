@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { uploadFile, generateObjectName } from '@/lib/minio';
 import type { DocumentType } from '@/generated/prisma';
 
 // POST /api/documents - Upload document
@@ -65,30 +64,31 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create upload directory
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', projectId);
-    await mkdir(uploadDir, { recursive: true });
-
-    // Generate unique filename
-    const timestamp = Date.now();
-    const ext = path.extname(file.name);
-    const baseName = path.basename(file.name, ext);
-    const sanitizedName = baseName.replace(/[^a-zA-Z0-9-_]/g, '_');
-    const fileName = `${sanitizedName}_${timestamp}${ext}`;
-    const filePath = path.join(uploadDir, fileName);
-
-    // Write file
+    // Upload file to MinIO (object storage). Local disk is not writable in the
+    // standalone/containerized runtime, so all uploads go through MinIO.
+    const objectName = generateObjectName('documents', file.name, projectId);
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
 
-    // Save to database
+    const uploadResult = await uploadFile(buffer, objectName, file.type || 'application/octet-stream', {
+      uploadedBy: session.user.id,
+      uploadedAt: new Date().toISOString(),
+    });
+
+    if (!uploadResult.success) {
+      return NextResponse.json(
+        { error: uploadResult.error || 'Upload gagal' },
+        { status: 500 },
+      );
+    }
+
+    // Save to database (filePath stores the authenticated proxy URL: /api/minio/<objectName>)
     const document = await prisma.document.create({
       data: {
         projectId,
         type,
         fileName: file.name,
-        filePath: `/uploads/${projectId}/${fileName}`,
+        filePath: uploadResult.url,
         fileSize: file.size,
         mimeType: file.type,
       },

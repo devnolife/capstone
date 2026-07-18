@@ -22458,6 +22458,7 @@ export namespace Prisma {
     tahunAkademik: string | null
     startDate: Date | null
     endDate: Date | null
+    submissionDeadline: Date | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -22469,6 +22470,7 @@ export namespace Prisma {
     tahunAkademik: string | null
     startDate: Date | null
     endDate: Date | null
+    submissionDeadline: Date | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -22480,6 +22482,7 @@ export namespace Prisma {
     tahunAkademik: number
     startDate: number
     endDate: number
+    submissionDeadline: number
     isActive: number
     createdAt: number
     updatedAt: number
@@ -22493,6 +22496,7 @@ export namespace Prisma {
     tahunAkademik?: true
     startDate?: true
     endDate?: true
+    submissionDeadline?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -22504,6 +22508,7 @@ export namespace Prisma {
     tahunAkademik?: true
     startDate?: true
     endDate?: true
+    submissionDeadline?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -22515,6 +22520,7 @@ export namespace Prisma {
     tahunAkademik?: true
     startDate?: true
     endDate?: true
+    submissionDeadline?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -22599,6 +22605,7 @@ export namespace Prisma {
     tahunAkademik: string
     startDate: Date
     endDate: Date
+    submissionDeadline: Date | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -22627,6 +22634,7 @@ export namespace Prisma {
     tahunAkademik?: boolean
     startDate?: boolean
     endDate?: boolean
+    submissionDeadline?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -22638,6 +22646,7 @@ export namespace Prisma {
     tahunAkademik?: boolean
     startDate?: boolean
     endDate?: boolean
+    submissionDeadline?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -22649,6 +22658,7 @@ export namespace Prisma {
     tahunAkademik?: boolean
     startDate?: boolean
     endDate?: boolean
+    submissionDeadline?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -22660,12 +22670,13 @@ export namespace Prisma {
     tahunAkademik?: boolean
     startDate?: boolean
     endDate?: boolean
+    submissionDeadline?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SemesterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "tahunAkademik" | "startDate" | "endDate" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["semester"]>
+  export type SemesterOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "tahunAkademik" | "startDate" | "endDate" | "submissionDeadline" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["semester"]>
 
   export type $SemesterPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Semester"
@@ -22676,6 +22687,7 @@ export namespace Prisma {
       tahunAkademik: string
       startDate: Date
       endDate: Date
+      submissionDeadline: Date | null
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -23107,6 +23119,7 @@ export namespace Prisma {
     readonly tahunAkademik: FieldRef<"Semester", 'String'>
     readonly startDate: FieldRef<"Semester", 'DateTime'>
     readonly endDate: FieldRef<"Semester", 'DateTime'>
+    readonly submissionDeadline: FieldRef<"Semester", 'DateTime'>
     readonly isActive: FieldRef<"Semester", 'Boolean'>
     readonly createdAt: FieldRef<"Semester", 'DateTime'>
     readonly updatedAt: FieldRef<"Semester", 'DateTime'>
@@ -26102,6 +26115,7 @@ export namespace Prisma {
     tahunAkademik: 'tahunAkademik',
     startDate: 'startDate',
     endDate: 'endDate',
+    submissionDeadline: 'submissionDeadline',
     isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -27906,6 +27920,7 @@ export namespace Prisma {
     tahunAkademik?: StringFilter<"Semester"> | string
     startDate?: DateTimeFilter<"Semester"> | Date | string
     endDate?: DateTimeFilter<"Semester"> | Date | string
+    submissionDeadline?: DateTimeNullableFilter<"Semester"> | Date | string | null
     isActive?: BoolFilter<"Semester"> | boolean
     createdAt?: DateTimeFilter<"Semester"> | Date | string
     updatedAt?: DateTimeFilter<"Semester"> | Date | string
@@ -27917,6 +27932,7 @@ export namespace Prisma {
     tahunAkademik?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
+    submissionDeadline?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -27931,6 +27947,7 @@ export namespace Prisma {
     tahunAkademik?: StringFilter<"Semester"> | string
     startDate?: DateTimeFilter<"Semester"> | Date | string
     endDate?: DateTimeFilter<"Semester"> | Date | string
+    submissionDeadline?: DateTimeNullableFilter<"Semester"> | Date | string | null
     isActive?: BoolFilter<"Semester"> | boolean
     createdAt?: DateTimeFilter<"Semester"> | Date | string
     updatedAt?: DateTimeFilter<"Semester"> | Date | string
@@ -27942,6 +27959,7 @@ export namespace Prisma {
     tahunAkademik?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
+    submissionDeadline?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -27959,6 +27977,7 @@ export namespace Prisma {
     tahunAkademik?: StringWithAggregatesFilter<"Semester"> | string
     startDate?: DateTimeWithAggregatesFilter<"Semester"> | Date | string
     endDate?: DateTimeWithAggregatesFilter<"Semester"> | Date | string
+    submissionDeadline?: DateTimeNullableWithAggregatesFilter<"Semester"> | Date | string | null
     isActive?: BoolWithAggregatesFilter<"Semester"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Semester"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Semester"> | Date | string
@@ -29897,6 +29916,7 @@ export namespace Prisma {
     tahunAkademik: string
     startDate: Date | string
     endDate: Date | string
+    submissionDeadline?: Date | string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29908,6 +29928,7 @@ export namespace Prisma {
     tahunAkademik: string
     startDate: Date | string
     endDate: Date | string
+    submissionDeadline?: Date | string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29919,6 +29940,7 @@ export namespace Prisma {
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    submissionDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29930,6 +29952,7 @@ export namespace Prisma {
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    submissionDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29941,6 +29964,7 @@ export namespace Prisma {
     tahunAkademik: string
     startDate: Date | string
     endDate: Date | string
+    submissionDeadline?: Date | string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -29952,6 +29976,7 @@ export namespace Prisma {
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    submissionDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -29963,6 +29988,7 @@ export namespace Prisma {
     tahunAkademik?: StringFieldUpdateOperationsInput | string
     startDate?: DateTimeFieldUpdateOperationsInput | Date | string
     endDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    submissionDeadline?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31569,6 +31595,7 @@ export namespace Prisma {
     tahunAkademik?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
+    submissionDeadline?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -31580,6 +31607,7 @@ export namespace Prisma {
     tahunAkademik?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
+    submissionDeadline?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -31591,6 +31619,7 @@ export namespace Prisma {
     tahunAkademik?: SortOrder
     startDate?: SortOrder
     endDate?: SortOrder
+    submissionDeadline?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder

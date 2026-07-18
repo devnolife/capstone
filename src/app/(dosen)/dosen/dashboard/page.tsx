@@ -14,21 +14,19 @@ export default async function DosenDashboardPage() {
 
   // Fetch stats and data
   const [assignedProjects, reviews, recentProjects, recentActivities] = await Promise.all([
-    // Total assigned projects
-    prisma.projectAssignment.count({
-      where: { dosenId: userId },
+    // Total submitted projects (visible to all dosen)
+    prisma.project.count({
+      where: { status: { not: 'DRAFT' } },
     }),
     // Review stats
     prisma.review.findMany({
       where: { reviewerId: userId },
       select: { status: true },
     }),
-    // Recent projects assigned to this dosen
+    // Recent submitted projects
     prisma.project.findMany({
       where: {
-        assignments: {
-          some: { dosenId: userId },
-        },
+        status: { not: 'DRAFT' },
       },
       include: {
         mahasiswa: {
@@ -73,12 +71,10 @@ export default async function DosenDashboardPage() {
   const pendingReview = reviews.filter((r) => r.status === 'PENDING' || r.status === 'IN_PROGRESS').length;
   const completedReview = reviews.filter((r) => r.status === 'COMPLETED').length;
 
-  // Count unique mahasiswa from assigned projects
+  // Count unique mahasiswa from submitted projects
   const uniqueMahasiswa = await prisma.project.findMany({
     where: {
-      assignments: {
-        some: { dosenId: userId },
-      },
+      status: { not: 'DRAFT' },
     },
     select: { mahasiswaId: true },
     distinct: ['mahasiswaId'],

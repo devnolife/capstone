@@ -35,9 +35,36 @@ interface Semester {
   tahunAkademik: string;
   startDate: string;
   endDate: string;
+  submissionDeadline: string | null;
   isActive: boolean;
   createdAt: string;
 }
+
+const toLocalDateTimeInput = (value: string | null) => {
+  if (!value) return '';
+  const date = new Date(value);
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localDate.toISOString().slice(0, 16);
+};
+
+const toLocalDateInput = (value: string) =>
+  toLocalDateTimeInput(value).slice(0, 10);
+
+const toSemesterPayload = (formData: {
+  name: string;
+  tahunAkademik: string;
+  startDate: string;
+  endDate: string;
+  submissionDeadline: string;
+  isActive: boolean;
+}) => ({
+  ...formData,
+  startDate: new Date(`${formData.startDate}T00:00:00`).toISOString(),
+  endDate: new Date(`${formData.endDate}T23:59:59.999`).toISOString(),
+  submissionDeadline: formData.submissionDeadline
+    ? new Date(formData.submissionDeadline).toISOString()
+    : null,
+});
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -80,6 +107,7 @@ export default function AdminSemestersPage() {
     tahunAkademik: '',
     startDate: '',
     endDate: '',
+    submissionDeadline: '',
     isActive: false,
   });
 
@@ -119,7 +147,7 @@ export default function AdminSemestersPage() {
       const response = await fetch('/api/semesters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(toSemesterPayload(formData)),
       });
 
       if (!response.ok) {
@@ -147,7 +175,7 @@ export default function AdminSemestersPage() {
       const response = await fetch(`/api/semesters/${selectedSemester.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(toSemesterPayload(formData)),
       });
 
       if (!response.ok) {
@@ -216,8 +244,9 @@ export default function AdminSemestersPage() {
     setFormData({
       name: semester.name,
       tahunAkademik: semester.tahunAkademik,
-      startDate: semester.startDate.split('T')[0],
-      endDate: semester.endDate.split('T')[0],
+      startDate: toLocalDateInput(semester.startDate),
+      endDate: toLocalDateInput(semester.endDate),
+      submissionDeadline: toLocalDateTimeInput(semester.submissionDeadline),
       isActive: semester.isActive,
     });
     onEditOpen();
@@ -229,6 +258,7 @@ export default function AdminSemestersPage() {
       tahunAkademik: '',
       startDate: '',
       endDate: '',
+      submissionDeadline: '',
       isActive: false,
     });
     setSelectedSemester(null);
@@ -318,6 +348,19 @@ export default function AdminSemestersPage() {
                       {formatDate(activeSemester.endDate)}
                     </span>
                   </div>
+                  {activeSemester.submissionDeadline && (
+                    <div className="flex items-center gap-2 mt-1 text-sm text-amber-700 dark:text-amber-300">
+                      <CalendarClock size={14} />
+                      <span>
+                        Batas submission:{' '}
+                        {new Intl.DateTimeFormat('id-ID', {
+                          dateStyle: 'long',
+                          timeStyle: 'short',
+                          timeZone: 'Asia/Makassar',
+                        }).format(new Date(activeSemester.submissionDeadline))}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
               <Chip
@@ -480,6 +523,18 @@ export default function AdminSemestersPage() {
                         {formatDate(semester.endDate)}
                       </span>
                     </div>
+                    {semester.submissionDeadline && (
+                      <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+                        <CalendarClock size={14} />
+                        <span>
+                          Submit: {new Intl.DateTimeFormat('id-ID', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short',
+                            timeZone: 'Asia/Makassar',
+                          }).format(new Date(semester.submissionDeadline))}
+                        </span>
+                      </div>
+                    )}
                     <div className="flex gap-2">
                       <Button
                         size="sm"
@@ -558,12 +613,26 @@ export default function AdminSemestersPage() {
                           </Chip>
                         </td>
                         <td className="p-4">
-                          <div className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
-                            <Clock size={14} />
-                            <span>
-                              {formatDate(semester.startDate)} -{' '}
-                              {formatDate(semester.endDate)}
-                            </span>
+                          <div className="space-y-1.5 text-sm">
+                            <div className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400">
+                              <Clock size={14} />
+                              <span>
+                                {formatDate(semester.startDate)} -{' '}
+                                {formatDate(semester.endDate)}
+                              </span>
+                            </div>
+                            {semester.submissionDeadline && (
+                              <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
+                                <CalendarClock size={14} />
+                                <span>
+                                  Submit: {new Intl.DateTimeFormat('id-ID', {
+                                    dateStyle: 'medium',
+                                    timeStyle: 'short',
+                                    timeZone: 'Asia/Makassar',
+                                  }).format(new Date(semester.submissionDeadline))}
+                                </span>
+                              </div>
+                            )}
                           </div>
                         </td>
                         <td className="p-4">
@@ -676,6 +745,15 @@ export default function AdminSemestersPage() {
                 isRequired
               />
             </div>
+            <Input
+              type="datetime-local"
+              label="Batas Submission Project"
+              description="Opsional. Jika diisi, mahasiswa tidak dapat submit setelah waktu ini."
+              value={formData.submissionDeadline}
+              onChange={(e) =>
+                setFormData({ ...formData, submissionDeadline: e.target.value })
+              }
+            />
             <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <span className="text-sm font-medium">
                 Set sebagai Semester Aktif
@@ -762,6 +840,15 @@ export default function AdminSemestersPage() {
                 isRequired
               />
             </div>
+            <Input
+              type="datetime-local"
+              label="Batas Submission Project"
+              description="Opsional. Kosongkan untuk menonaktifkan batas submission."
+              value={formData.submissionDeadline}
+              onChange={(e) =>
+                setFormData({ ...formData, submissionDeadline: e.target.value })
+              }
+            />
             <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <span className="text-sm font-medium">Semester Aktif</span>
               <Switch

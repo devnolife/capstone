@@ -433,14 +433,15 @@ model Notification {
 }
 
 model Semester {
-  id            String   @id @default(cuid())
-  name          String // "Ganjil 2024/2025"
-  tahunAkademik String // "2024/2025"
-  startDate     DateTime
-  endDate       DateTime
-  isActive      Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                 String    @id @default(cuid())
+  name               String // "Ganjil 2024/2025"
+  tahunAkademik      String // "2024/2025"
+  startDate          DateTime
+  endDate            DateTime
+  submissionDeadline DateTime?
+  isActive           Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   @@map("semesters")
 }

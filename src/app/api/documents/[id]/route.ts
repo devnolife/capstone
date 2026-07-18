@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { unlink } from 'fs/promises';
-import { join } from 'path';
+import { deleteFile } from '@/lib/minio';
 
 // GET /api/documents/[id] - Get single document
 export async function GET(
@@ -140,10 +139,13 @@ export async function DELETE(
       );
     }
 
-    // Delete file from filesystem
+    // Delete file from MinIO. filePath is stored as the proxy URL `/api/minio/<objectName>`;
+    // legacy records may still hold local `/uploads/...` paths which are simply skipped.
     try {
-      const filePath = join(process.cwd(), 'public', document.filePath);
-      await unlink(filePath);
+      if (document.filePath.startsWith('/api/minio/')) {
+        const objectName = document.filePath.replace('/api/minio/', '');
+        await deleteFile(objectName);
+      }
     } catch (fileError) {
       console.error('Error deleting file:', fileError);
       // Continue with database deletion even if file deletion fails

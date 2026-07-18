@@ -59,6 +59,7 @@ const mahasiswaSections: SidebarSection[] = [
     items: [
       { title: 'Undangan Tim', href: '/mahasiswa/invitations', icon: <Mail size={18} /> },
       { title: 'Review & Feedback', href: '/mahasiswa/reviews', icon: <ClipboardCheck size={18} /> },
+      { title: 'Jadwal Presentasi', href: '/mahasiswa/presentations', icon: <CalendarCheck size={18} /> },
     ],
   },
 ];

@@ -45,6 +45,8 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+import { StudentJourneyHub } from '@/components/mahasiswa/student-journey-hub';
+import type { StudentJourney } from '@/lib/student-journey';
 
 interface ProjectMember {
   id: string;
@@ -85,6 +87,7 @@ interface MahasiswaDashboardProps {
   projects: Project[];
   hasGitHubConnected?: boolean;
   githubUsername?: string;
+  journey: StudentJourney;
   stats: {
     totalProjects: number;
     submittedProjects: number;
@@ -234,6 +237,7 @@ export function MahasiswaDashboardContent({
   projects,
   hasGitHubConnected,
   githubUsername,
+  journey,
   stats,
 }: MahasiswaDashboardProps) {
   const router = useRouter();
@@ -312,7 +316,7 @@ export function MahasiswaDashboardContent({
           {/* Subtle Background Accents */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/20 to-indigo-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
           <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-violet-400/15 to-blue-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-          
+
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Left side - Welcome */}
             <div className="flex items-center gap-4">
@@ -423,6 +427,11 @@ export function MahasiswaDashboardContent({
           </Card>
         </motion.div>
       )}
+
+      {/* Guided Student Journey */}
+      <motion.div variants={itemVariants}>
+        <StudentJourneyHub journey={journey} />
+      </motion.div>
 
       {/* Stats Grid */}
       <motion.div variants={itemVariants}>

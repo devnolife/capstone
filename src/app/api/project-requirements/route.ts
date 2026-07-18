@@ -3,36 +3,12 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getDeploymentBonusPoints } from "@/lib/utils";
 import { encryptNullable, decryptNullable } from "@/lib/crypto";
+import { REQUIRED_REQUIREMENT_FIELDS } from "@/lib/student-journey";
 
 // Fields that count towards completion percentage (grouped by section)
-const REQUIREMENT_FIELDS = [
-  // Aspek Akademik
-  "integrasiMatakuliah",
-  "metodologi",
-  // Teknis & Implementasi
-  "ruangLingkup",
-  "sumberDayaBatasan",
-  "fiturUtama",
-  // Analisis & Evaluasi
-  "analisisTemuan",
-  "presentasiUjian",
-  "stakeholder",
-  "kepatuhanEtika",
-] as const;
-
-// Optional fields that don't count towards completion
-const OPTIONAL_FIELDS = [
-  "productionUrl",
-  "productionUrlStatus",
-  "testingUsername",
-  "testingPassword",
-  "testingNotes",
-  "deploymentPlatform",
-  "deploymentDescription",
-  "deploymentEvidence",
-  "deploymentTools",
-  "deploymentBonusPoints",
-] as const;
+const REQUIREMENT_FIELDS = REQUIRED_REQUIREMENT_FIELDS.map(
+  (requirement) => requirement.key,
+);
 
 // Calculate completion percentage based on filled fields
 function calculateCompletion(data: Record<string, unknown>): number {

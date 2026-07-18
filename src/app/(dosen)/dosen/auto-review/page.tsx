@@ -12,12 +12,9 @@ export default async function AutoReviewPage() {
 
   const userId = session.user.id;
 
-  // Fetch all projects assigned to this dosen
+  // Fetch all submitted projects (visible to all dosen)
   const projects = await prisma.project.findMany({
     where: {
-      assignments: {
-        some: { dosenId: userId },
-      },
       status: {
         in: ['SUBMITTED', 'IN_REVIEW', 'REVISION_NEEDED', 'APPROVED'],
       },
@@ -40,13 +37,13 @@ export default async function AutoReviewPage() {
   // we'll generate placeholder scores based on project status
   const projectsData = projects.map((project) => {
     // Generate pseudo-scores based on status (placeholder until real AI analysis)
-    const baseScore = project.status === 'APPROVED' ? 85 : 
-                      project.status === 'REVISION_NEEDED' ? 55 :
-                      project.status === 'IN_REVIEW' ? 70 : 60;
-    
+    const baseScore = project.status === 'APPROVED' ? 85 :
+      project.status === 'REVISION_NEEDED' ? 55 :
+        project.status === 'IN_REVIEW' ? 70 : 60;
+
     const variance = Math.floor(Math.random() * 15) - 7; // -7 to +7
     const overallScore = Math.min(100, Math.max(0, baseScore + variance));
-    
+
     return {
       id: project.id,
       title: project.title,
@@ -64,9 +61,9 @@ export default async function AutoReviewPage() {
       overallScore,
       trend: (overallScore >= 75 ? 'up' : overallScore >= 50 ? 'stable' : 'down') as 'up' | 'down' | 'stable',
       trendValue: Math.floor(Math.random() * 10) - 3,
-      status: overallScore >= 80 ? 'excellent' : 
-              overallScore >= 70 ? 'good' : 
-              overallScore >= 50 ? 'warning' : 'poor',
+      status: overallScore >= 80 ? 'excellent' :
+        overallScore >= 70 ? 'good' :
+          overallScore >= 50 ? 'warning' : 'poor',
       aspects: {
         functionality: Math.min(100, Math.max(0, overallScore + Math.floor(Math.random() * 20) - 10)),
         uiux: Math.min(100, Math.max(0, overallScore + Math.floor(Math.random() * 20) - 10)),

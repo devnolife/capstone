@@ -765,8 +765,8 @@ export function ProjectDetailContent({
                     size="lg"
                     startContent={!isOwner ? <FileText size={18} /> : (requirementsComplete ? <Sparkles size={18} /> : <CheckCircle2 size={18} />)}
                   >
-                    {!isOwner 
-                      ? 'Lihat Persyaratan' 
+                    {!isOwner
+                      ? 'Lihat Persyaratan'
                       : (requirementsComplete ? 'Persyaratan Lengkap - Lihat Detail' : 'Lengkapi Persyaratan Sekarang')}
                   </Button>
                 </div>
@@ -1014,23 +1014,21 @@ export function ProjectDetailContent({
 
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
-          {/* Presentation Schedule Card - Show when status is READY_FOR_PRESENTATION or PRESENTATION_SCHEDULED */}
-          {(project.status === 'READY_FOR_PRESENTATION' || project.status === 'PRESENTATION_SCHEDULED') && (
+          {/* Presentation Schedule Card - Show whenever a schedule exists, or when awaiting scheduling */}
+          {(project.presentationSchedule || project.status === 'READY_FOR_PRESENTATION' || project.status === 'PRESENTATION_SCHEDULED') && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <Card className={`border shadow-sm overflow-hidden ${
-                project.presentationSchedule 
-                  ? 'border-emerald-200 dark:border-emerald-800' 
+              <Card className={`border shadow-sm overflow-hidden ${project.presentationSchedule
+                  ? 'border-emerald-200 dark:border-emerald-800'
                   : 'border-amber-200 dark:border-amber-800'
-              }`}>
-                <div className={`p-4 border-b ${
-                  project.presentationSchedule
+                }`}>
+                <div className={`p-4 border-b ${project.presentationSchedule
                     ? 'bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-emerald-100 dark:border-emerald-800'
                     : 'bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 border-amber-100 dark:border-amber-800'
-                }`}>
+                  }`}>
                   <div className="flex items-center gap-2">
                     <CalendarCheck size={18} className={project.presentationSchedule ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'} />
                     <h3 className="font-semibold">Jadwal Presentasi</h3>
@@ -1089,16 +1087,16 @@ export function ProjectDetailContent({
                           size="sm"
                           color={
                             project.presentationSchedule.presentationStatus === 'completed' ? 'success' :
-                            project.presentationSchedule.presentationStatus === 'cancelled' ? 'danger' :
-                            project.presentationSchedule.presentationStatus === 'rescheduled' ? 'warning' :
-                            'primary'
+                              project.presentationSchedule.presentationStatus === 'cancelled' ? 'danger' :
+                                project.presentationSchedule.presentationStatus === 'rescheduled' ? 'warning' :
+                                  'primary'
                           }
                           variant="flat"
                         >
                           {project.presentationSchedule.presentationStatus === 'completed' ? 'Selesai' :
-                           project.presentationSchedule.presentationStatus === 'cancelled' ? 'Dibatalkan' :
-                           project.presentationSchedule.presentationStatus === 'rescheduled' ? 'Dijadwalkan Ulang' :
-                           'Terjadwal'}
+                            project.presentationSchedule.presentationStatus === 'cancelled' ? 'Dibatalkan' :
+                              project.presentationSchedule.presentationStatus === 'rescheduled' ? 'Dijadwalkan Ulang' :
+                                'Terjadwal'}
                         </Chip>
                       </div>
                     </div>
@@ -1109,7 +1107,7 @@ export function ProjectDetailContent({
                       </div>
                       <p className="text-sm font-medium text-amber-700 dark:text-amber-300">Menunggu Penjadwalan</p>
                       <p className="text-xs text-default-500 mt-1">
-                        Project Anda sudah di-ACC oleh dosen.<br/>Admin akan segera menjadwalkan presentasi.
+                        Project Anda sudah di-ACC oleh dosen.<br />Admin akan segera menjadwalkan presentasi.
                       </p>
                     </div>
                   )}
@@ -1316,10 +1314,10 @@ export function ProjectDetailContent({
                   ))}
 
                   {/* Empty state if only owner */}
-                  {(!project.members || project.members.filter(m => m.role !== 'leader').length === 0) && 
-                   (!project.invitations || project.invitations.filter(i => i.status === 'pending').length === 0) && (
-                    <p className="text-xs text-center text-default-400 py-2">Belum ada anggota tim lainnya</p>
-                  )}
+                  {(!project.members || project.members.filter(m => m.role !== 'leader').length === 0) &&
+                    (!project.invitations || project.invitations.filter(i => i.status === 'pending').length === 0) && (
+                      <p className="text-xs text-center text-default-400 py-2">Belum ada anggota tim lainnya</p>
+                    )}
                 </div>
               </CardBody>
             </Card>

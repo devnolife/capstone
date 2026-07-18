@@ -36,8 +36,12 @@ export async function GET(request: Request) {
         ],
       });
     } else if (session.user.role === 'DOSEN_PENGUJI') {
+      // Dosen can see all submitted projects plus ones assigned to them
       baseFilters.push({
-        assignments: { some: { dosenId: session.user.id } },
+        OR: [
+          { status: { not: 'DRAFT' } },
+          { assignments: { some: { dosenId: session.user.id } } },
+        ],
       });
     }
     // ADMIN can see all projects

@@ -189,6 +189,15 @@ interface Project {
     deploymentTools?: string | null;
     deploymentBonusPoints?: number;
   } | null;
+  presentationSchedule?: {
+    id: string;
+    scheduledDate: string;
+    startTime: string;
+    endTime: string | null;
+    location: string | null;
+    notes: string | null;
+    presentationStatus: string;
+  } | null;
 }
 
 interface Rubrik {
@@ -686,13 +695,20 @@ export default function ReviewPage({
       return;
     }
 
-    // Open the scheduling modal instead of just setting status
+    openScheduleModal();
+  };
+
+  // Open scheduling modal, prefilled from existing schedule when rescheduling
+  const openScheduleModal = () => {
+    const existing = project?.presentationSchedule;
     setScheduleForm({
-      scheduledDate: '',
-      startTime: '09:00',
-      endTime: '',
-      location: '',
-      notes: '',
+      scheduledDate: existing
+        ? new Date(existing.scheduledDate).toISOString().split('T')[0]
+        : '',
+      startTime: existing?.startTime || '09:00',
+      endTime: existing?.endTime || '',
+      location: existing?.location || '',
+      notes: existing?.notes || '',
     });
     onScheduleOpen();
   };
@@ -713,27 +729,36 @@ export default function ReviewPage({
     setIsScheduling(true);
 
     try {
-      // First, update project status to READY_FOR_PRESENTATION
-      const statusRes = await fetch(`/api/projects/${projectId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'READY_FOR_PRESENTATION' }),
-      });
+      // Only transition status when project is still in review;
+      // when rescheduling (READY_FOR_PRESENTATION / PRESENTATION_SCHEDULED) skip this step
+      if (project.status === 'IN_REVIEW') {
+        const statusRes = await fetch(`/api/projects/${projectId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: 'READY_FOR_PRESENTATION' }),
+        });
 
-      if (!statusRes.ok) {
-        const data = await statusRes.json();
-        throw new Error(data.error || 'Gagal menyetujui project untuk presentasi');
+        if (!statusRes.ok) {
+          const data = await statusRes.json();
+          throw new Error(data.error || 'Gagal menyetujui project untuk presentasi');
+        }
       }
 
-      // Then, create the presentation schedule
-      const scheduleRes = await fetch('/api/presentations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          projectId,
-          ...scheduleForm,
-        }),
-      });
+      const isReschedule = !!project.presentationSchedule;
+
+      // Create or update the presentation schedule
+      const scheduleRes = await fetch(
+        isReschedule
+          ? `/api/presentations/${project.presentationSchedule!.id}`
+          : '/api/presentations',
+        {
+          method: isReschedule ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(
+            isReschedule ? scheduleForm : { projectId, ...scheduleForm }
+          ),
+        }
+      );
 
       if (!scheduleRes.ok) {
         const data = await scheduleRes.json();
@@ -743,8 +768,10 @@ export default function ReviewPage({
       onScheduleClose();
 
       addToast({
-        title: 'Project Disetujui & Dijadwalkan',
-        description: 'Project telah disetujui dan jadwal presentasi berhasil dibuat.',
+        title: isReschedule ? 'Jadwal Diubah' : 'Project Disetujui & Dijadwalkan',
+        description: isReschedule
+          ? 'Jadwal presentasi berhasil diubah. Mahasiswa akan diberitahu.'
+          : 'Project telah disetujui dan jadwal presentasi berhasil dibuat.',
         color: 'success',
       });
 
@@ -1173,6 +1200,21 @@ export default function ReviewPage({
                       isLoading={isApproving}
                     >
                       ACC Presentasi
+                    </Button>
+                  </>
+                )}
+
+                {/* Reschedule button - show when project already approved/scheduled */}
+                {(project.status === 'READY_FOR_PRESENTATION' || project.status === 'PRESENTATION_SCHEDULED') && (
+                  <>
+                    <Divider orientation="vertical" className="h-8 bg-white/30" />
+                    <Button
+                      className="bg-white/20 text-white hover:bg-white/30"
+                      variant="flat"
+                      startContent={<Calendar size={18} />}
+                      onPress={openScheduleModal}
+                    >
+                      {project.presentationSchedule ? 'Ubah Jadwal' : 'Jadwalkan Presentasi'}
                     </Button>
                   </>
                 )}
@@ -2561,7 +2603,7 @@ export default function ReviewPage({
           <ModalHeader className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <Calendar size={20} className="text-primary" />
-              <span>Jadwalkan Presentasi</span>
+              <span>{project?.presentationSchedule ? 'Ubah Jadwal Presentasi' : 'Jadwalkan Presentasi'}</span>
             </div>
             <p className="text-sm font-normal text-default-500">
               Atur jadwal presentasi untuk project &quot;{project?.title}&quot;
@@ -2618,7 +2660,7 @@ export default function ReviewPage({
               isLoading={isScheduling}
               startContent={<Calendar size={16} />}
             >
-              ACC & Jadwalkan
+              {project?.presentationSchedule ? 'Simpan Perubahan Jadwal' : 'ACC & Jadwalkan'}
             </Button>
           </ModalFooter>
         </ModalContent>

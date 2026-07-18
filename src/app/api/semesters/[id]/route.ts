@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { validateSemesterPeriod } from '@/lib/semester';
 
 // GET /api/semesters/[id] - Get single semester
 export async function GET(
@@ -44,7 +45,36 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { name, tahunAkademik, startDate, endDate, isActive } = body;
+    const {
+      name,
+      tahunAkademik,
+      startDate,
+      endDate,
+      submissionDeadline,
+      isActive,
+    } = body;
+
+    const existing = await prisma.semester.findUnique({ where: { id } });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: 'Semester tidak ditemukan' },
+        { status: 404 },
+      );
+    }
+
+    const period = validateSemesterPeriod({
+      startDate: startDate ?? existing.startDate,
+      endDate: endDate ?? existing.endDate,
+      submissionDeadline:
+        submissionDeadline === undefined
+          ? existing.submissionDeadline
+          : submissionDeadline,
+    });
+
+    if (!period.ok) {
+      return NextResponse.json({ error: period.error }, { status: 400 });
+    }
 
     // If setting as active, deactivate other semesters
     if (isActive) {
@@ -60,11 +90,12 @@ export async function PUT(
     const semester = await prisma.semester.update({
       where: { id },
       data: {
-        name,
-        tahunAkademik,
-        startDate: startDate ? new Date(startDate) : undefined,
-        endDate: endDate ? new Date(endDate) : undefined,
-        isActive,
+        name: name ?? existing.name,
+        tahunAkademik: tahunAkademik ?? existing.tahunAkademik,
+        startDate: period.startDate,
+        endDate: period.endDate,
+        submissionDeadline: period.submissionDeadline,
+        isActive: isActive ?? existing.isActive,
       },
     });
 

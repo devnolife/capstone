@@ -365,6 +365,7 @@ exports.Prisma.SemesterScalarFieldEnum = {
   tahunAkademik: 'tahunAkademik',
   startDate: 'startDate',
   endDate: 'endDate',
+  submissionDeadline: 'submissionDeadline',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

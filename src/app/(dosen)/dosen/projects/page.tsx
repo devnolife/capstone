@@ -12,12 +12,14 @@ export default async function DosenProjectsPage() {
 
   const userId = session.user.id;
 
-  // Fetch all projects assigned to this dosen
+  // Fetch all submitted projects (any status except DRAFT) plus projects
+  // explicitly assigned to this dosen
   const projects = await prisma.project.findMany({
     where: {
-      assignments: {
-        some: { dosenId: userId },
-      },
+      OR: [
+        { status: { not: 'DRAFT' } },
+        { assignments: { some: { dosenId: userId } } },
+      ],
     },
     include: {
       mahasiswa: {
@@ -32,6 +34,10 @@ export default async function DosenProjectsPage() {
       reviews: {
         where: { reviewerId: userId },
         select: { id: true, status: true },
+      },
+      assignments: {
+        where: { dosenId: userId },
+        select: { id: true },
       },
       _count: {
         select: {
@@ -63,6 +69,7 @@ export default async function DosenProjectsPage() {
     _count: project._count,
     hasMyReview: project.reviews.length > 0,
     myReviewStatus: project.reviews[0]?.status || null,
+    isAssigned: project.assignments.length > 0,
   }));
 
   return <DosenProjectsClient projects={projectsData} />;

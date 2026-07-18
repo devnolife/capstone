@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { validateSemesterPeriod } from '@/lib/semester';
 
 // GET /api/semesters - Get all semesters
 export async function GET(request: Request) {
@@ -35,7 +36,24 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, tahunAkademik, startDate, endDate, isActive } = body;
+    const {
+      name,
+      tahunAkademik,
+      startDate,
+      endDate,
+      submissionDeadline,
+      isActive,
+    } = body;
+
+    const period = validateSemesterPeriod({
+      startDate,
+      endDate,
+      submissionDeadline,
+    });
+
+    if (!period.ok) {
+      return NextResponse.json({ error: period.error }, { status: 400 });
+    }
 
     // If setting as active, deactivate other semesters
     if (isActive) {
@@ -49,8 +67,9 @@ export async function POST(request: Request) {
       data: {
         name,
         tahunAkademik,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        startDate: period.startDate,
+        endDate: period.endDate,
+        submissionDeadline: period.submissionDeadline,
         isActive: isActive || false,
       },
     });

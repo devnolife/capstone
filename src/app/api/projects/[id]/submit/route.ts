@@ -1,10 +1,11 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { getProjectSubmissionReadiness } from '@/lib/submission-readiness';
 
 // POST /api/projects/[id]/submit - Submit project for review
 export async function POST(
-  request: Request,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -15,26 +16,16 @@ export async function POST(
     }
 
     const { id } = await params;
+    const result = await getProjectSubmissionReadiness(id);
 
-    // Get existing project
-    const existingProject = await prisma.project.findUnique({
-      where: { id },
-      include: {
-        documents: true,
-        mahasiswa: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-
-    if (!existingProject) {
+    if (!result) {
       return NextResponse.json(
         { error: 'Project tidak ditemukan' },
         { status: 404 },
       );
     }
+
+    const { project: existingProject, readiness } = result;
 
     // Check ownership
     if (
@@ -47,25 +38,18 @@ export async function POST(
       );
     }
 
-    // Check if project can be submitted
-    if (
-      existingProject.status !== 'DRAFT' &&
-      existingProject.status !== 'REVISION_NEEDED'
-    ) {
+    // The server is authoritative: re-check all mandatory fields and deadline
+    // at the exact moment of submission.
+    if (!readiness.canSubmit) {
       return NextResponse.json(
-        { error: 'Project sudah disubmit atau tidak dapat disubmit' },
+        {
+          error: 'Project belum siap disubmit. Lengkapi persyaratan yang masih kurang.',
+          code: 'SUBMISSION_NOT_READY',
+          blockers: readiness.blockers,
+        },
         { status: 400 },
       );
     }
-
-    // Update project status to SUBMITTED
-    const project = await prisma.project.update({
-      where: { id },
-      data: {
-        status: 'SUBMITTED',
-        submittedAt: new Date(),
-      },
-    });
 
     // Create notification for admins
     const admins = await prisma.user.findMany({
@@ -73,17 +57,29 @@ export async function POST(
       select: { id: true },
     });
 
-    if (admins.length > 0) {
-      await prisma.notification.createMany({
-        data: admins.map((admin) => ({
-          userId: admin.id,
-          title: 'Project Baru Disubmit',
-          message: `${existingProject.mahasiswa.name} telah mengsubmit project "${existingProject.title}" untuk direview.`,
-          type: 'submission',
-          link: `/dashboard/admin/projects?id=${project.id}`,
-        })),
+    const project = await prisma.$transaction(async (tx) => {
+      const submittedProject = await tx.project.update({
+        where: { id },
+        data: {
+          status: 'SUBMITTED',
+          submittedAt: new Date(),
+        },
       });
-    }
+
+      if (admins.length > 0) {
+        await tx.notification.createMany({
+          data: admins.map((admin) => ({
+            userId: admin.id,
+            title: 'Project Baru Disubmit',
+            message: `${existingProject.mahasiswa.name} telah mengsubmit project "${existingProject.title}" untuk direview.`,
+            type: 'submission',
+            link: `/admin/assignments?projectId=${submittedProject.id}`,
+          })),
+        });
+      }
+
+      return submittedProject;
+    });
 
     return NextResponse.json({
       message: 'Project berhasil disubmit untuk review',

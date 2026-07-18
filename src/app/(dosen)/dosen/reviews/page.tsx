@@ -35,38 +35,31 @@ export default async function DosenReviewsPage() {
     orderBy: { updatedAt: 'desc' },
   });
 
-  // Fetch pending assignments (projects assigned but not yet reviewed)
-  const pendingAssignments = await prisma.projectAssignment.findMany({
+  // Fetch submitted projects not yet reviewed by this dosen
+  const pendingProjects = await prisma.project.findMany({
     where: {
-      dosenId: userId,
-      project: {
-        reviews: {
-          none: { reviewerId: userId },
-        },
-        status: {
-          in: ['SUBMITTED', 'IN_REVIEW'],
-        },
+      reviews: {
+        none: { reviewerId: userId },
+      },
+      status: {
+        in: ['SUBMITTED', 'IN_REVIEW'],
       },
     },
-    include: {
-      project: {
+    select: {
+      id: true,
+      title: true,
+      status: true,
+      submittedAt: true,
+      mahasiswa: {
         select: {
-          id: true,
-          title: true,
-          status: true,
-          submittedAt: true,
-          mahasiswa: {
-            select: {
-              name: true,
-              username: true,
-              image: true,
-              profilePhoto: true,
-            },
-          },
+          name: true,
+          username: true,
+          image: true,
+          profilePhoto: true,
         },
       },
     },
-    orderBy: { assignedAt: 'desc' },
+    orderBy: { submittedAt: 'desc' },
   });
 
   // Transform data for client
@@ -89,18 +82,18 @@ export default async function DosenReviewsPage() {
     },
   }));
 
-  const pendingData = pendingAssignments.map((assignment) => ({
-    id: assignment.id,
+  const pendingData = pendingProjects.map((project) => ({
+    id: project.id,
     project: {
-      id: assignment.project.id,
-      title: assignment.project.title,
-      status: assignment.project.status,
-      submittedAt: assignment.project.submittedAt?.toISOString() || null,
+      id: project.id,
+      title: project.title,
+      status: project.status,
+      submittedAt: project.submittedAt?.toISOString() || null,
       mahasiswa: {
-        name: assignment.project.mahasiswa.name,
-        username: assignment.project.mahasiswa.username,
-        image: assignment.project.mahasiswa.image,
-        profilePhoto: assignment.project.mahasiswa.profilePhoto,
+        name: project.mahasiswa.name,
+        username: project.mahasiswa.username,
+        image: project.mahasiswa.image,
+        profilePhoto: project.mahasiswa.profilePhoto,
       },
     },
   }));
