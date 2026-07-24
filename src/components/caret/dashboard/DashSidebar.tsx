@@ -24,7 +24,7 @@ const NAV = [
  */
 export function DashSidebar() {
   return (
-    <aside className="border-zinc-800 bg-background fixed top-0 bottom-0 left-0 z-40 hidden w-60 flex-col border-r px-4 py-5 lg:flex">
+    <aside className="border-border bg-background fixed top-0 bottom-0 left-0 z-40 hidden w-60 flex-col border-r px-4 py-5 lg:flex">
       <Link href="/" className="mb-8 px-2">
         <CaretLogo className="-mt-0.5 h-6 w-auto [&_path]:transition-all" />
       </Link>
@@ -46,7 +46,7 @@ export function DashSidebar() {
         ))}
       </nav>
       <div className="grow" />
-      <div className="border-zinc-800 -mx-4 border-t px-4 pt-4">
+      <div className="border-border -mx-4 border-t px-4 pt-4">
         <p className="text-app-teritary-invert mb-3 px-2 font-mono text-[10px] tracking-wider uppercase">
           Akses cepat
         </p>

@@ -3,21 +3,14 @@ import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { ProjectsListContent } from '@/components/mahasiswa/projects-list-content';
 
-export default async function MahasiswaProjectsPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect('/login');
-  }
-
-  // Fetch projects where user is owner OR team member
-  const projects = await prisma.project.findMany({
+async function getProjects(userId: string) {
+  return prisma.project.findMany({
     where: {
       OR: [
-        { mahasiswaId: session.user.id },
+        { mahasiswaId: userId },
         {
           members: {
-            some: { userId: session.user.id },
+            some: { userId },
           },
         },
       ],
@@ -61,6 +54,27 @@ export default async function MahasiswaProjectsPage() {
     },
     orderBy: { updatedAt: 'desc' },
   });
+}
+
+export default async function MahasiswaProjectsPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  // Fallback kosong bila DB down / sesi fake
+  let projects: Awaited<ReturnType<typeof getProjects>> = [];
+  if (!session.user.id.startsWith('dev-')) {
+    try {
+      projects = await getProjects(session.user.id);
+    } catch (error) {
+      console.warn(
+        '[mahasiswa/projects] DB tidak tersedia — daftar kosong:',
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
 
   // Add isOwner flag to each project
   const projectsWithOwnership = projects.map((project) => ({

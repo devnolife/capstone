@@ -39,12 +39,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" className="dark" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="/fonts/caret/fonts.css" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} dark antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased`}
         suppressHydrationWarning
       >
         <a

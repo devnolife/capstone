@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { PlaySolidIcon } from "@/components/icons";
 import { MINIBAR_COMP, MinibarDemo } from "@/remotion";

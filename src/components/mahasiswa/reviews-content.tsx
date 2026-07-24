@@ -240,10 +240,10 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.1 }}
     >
-      <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
+      <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
         <CardBody className="p-0">
           {/* Header */}
-          <div className="border-b border-zinc-800 bg-app-quinary p-4 md:p-5">
+          <div className="border-b border-border bg-app-quinary p-4 md:p-5">
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
                 <Avatar
@@ -257,12 +257,12 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
                 </div>
               </div>
               <div className="flex shrink-0 flex-col items-end gap-2">
-                <span className="text-app-secondary-invert inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-zinc-800 bg-app-quinary px-2.5 py-1 text-[11px] font-medium">
+                <span className="text-app-secondary-invert inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-border bg-app-quinary px-2.5 py-1 text-[11px] font-medium">
                   <span className={`size-1.5 rounded-full ${statusDotClass(review.status)}`} />
                   {reviewStatusLabels[review.status]}
                 </span>
                 {review.overallScore !== null && (
-                  <span className="inline-flex items-center gap-1 rounded-full border border-zinc-800 bg-app-quaternary px-2.5 py-1 text-[11px] font-semibold text-foreground">
+                  <span className="inline-flex items-center gap-1 rounded-full border border-border bg-app-quaternary px-2.5 py-1 text-[11px] font-semibold text-foreground">
                     <Star size={11} className="text-app-secondary-invert" />
                     <span className="tabular-nums">{review.overallScore}</span>
                     <span className="text-app-teritary-invert font-normal">/100</span>
@@ -277,7 +277,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
             {/* Project Link Card */}
             <Link
               href={`/mahasiswa/projects/${review.project.id}`}
-              className="group flex items-center gap-3 rounded-xl border border-zinc-800 bg-app-quinary p-3 transition-colors hover:bg-app-quaternary"
+              className="group flex items-center gap-3 rounded-xl border border-border bg-app-quinary p-3 transition-colors hover:bg-app-quaternary"
             >
               <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <FolderGit2 size={16} />
@@ -293,7 +293,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
 
             {/* Score Grade (if completed) */}
             {grade && (
-              <div className="rounded-xl border border-zinc-800 bg-app-quinary p-4">
+              <div className="rounded-xl border border-border bg-app-quinary p-4">
                 <div className="mb-3 flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Award size={18} className={grade.color} />
@@ -322,7 +322,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
 
             {/* Overall Comment */}
             {review.overallComment && (
-              <div className="rounded-xl border border-zinc-800 bg-app-quinary p-4">
+              <div className="rounded-xl border border-border bg-app-quinary p-4">
                 <div className="mb-2 flex items-center gap-2">
                   <MessageSquare size={14} className="text-app-teritary-invert" />
                   <span className="text-app-secondary-invert text-sm font-medium">Komentar Dosen</span>
@@ -333,7 +333,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
 
             {/* Scores Accordion */}
             {review.scores.length > 0 && (
-              <Accordion variant="bordered" className="rounded-xl border-zinc-800 px-0">
+              <Accordion variant="bordered" className="rounded-xl border-border px-0">
                 <AccordionItem
                   key="scores"
                   aria-label="Lihat Nilai per Kriteria"
@@ -387,7 +387,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
               const membersArray = Array.from(groupedScores.values());
               
               return (
-                <Accordion variant="bordered" className="rounded-xl border-zinc-800 px-0">
+                <Accordion variant="bordered" className="rounded-xl border-border px-0">
                   <AccordionItem
                     key="member-scores"
                     aria-label="Lihat Nilai Individu per Anggota"
@@ -411,7 +411,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
                         return (
                           <div 
                             key={member.id} 
-                            className="rounded-xl border border-zinc-800 bg-app-quinary p-4"
+                            className="rounded-xl border border-border bg-app-quinary p-4"
                           >
                             {/* Member Header */}
                             <div className="mb-3 flex items-center justify-between">
@@ -451,7 +451,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
                               {scores.map((score) => (
                                 <div 
                                   key={score.id} 
-                                  className="rounded-lg border border-zinc-800 bg-app-quaternary p-2.5"
+                                  className="rounded-lg border border-border bg-app-quaternary p-2.5"
                                 >
                                   <div className="mb-1.5 flex items-center justify-between">
                                     <div className="flex items-center gap-2">
@@ -498,7 +498,7 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
                 </div>
                 <div className="max-h-40 space-y-2 overflow-y-auto">
                   {review.comments.slice(0, 3).map((comment) => (
-                    <div key={comment.id} className="rounded-lg border border-zinc-800 bg-app-quinary p-3">
+                    <div key={comment.id} className="rounded-lg border border-border bg-app-quinary p-3">
                       {comment.filePath && (
                         <p className="mb-1 flex items-center gap-1 font-mono text-xs text-primary">
                           <FileText size={10} />
@@ -692,7 +692,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
       {/* Export Actions */}
       {stats.completedReviews > 0 && (
         <motion.div variants={itemVariants}>
-          <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
+          <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
             <CardBody className="p-4">
               <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-3">
@@ -724,7 +724,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
 
       {/* Stats Grid */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-2 gap-px border border-zinc-800 bg-zinc-800 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px border border-border bg-border lg:grid-cols-4">
           {STATS_CONFIG.map((stat) => {
             const Icon = stat.icon;
             const value = getStatsValue(stat.key);
@@ -755,8 +755,8 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
 
       {/* Filter Card */}
       <motion.div variants={itemVariants}>
-        <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
-          <div className="border-b border-zinc-800 bg-app-quinary p-4">
+        <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
+          <div className="border-b border-border bg-app-quinary p-4">
             <div className="flex items-center gap-2">
               <Filter size={16} className="text-app-teritary-invert" />
               <h3 className="text-sm font-semibold">Filter Review</h3>
@@ -772,7 +772,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
                 className="md:flex-1"
                 size="sm"
                 classNames={{
-                  inputWrapper: 'border border-zinc-800 bg-app-quinary',
+                  inputWrapper: 'border border-border bg-app-quinary',
                 }}
               />
               <Select
@@ -782,7 +782,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
                 className="md:w-[200px]"
                 size="sm"
                 classNames={{
-                  trigger: 'border border-zinc-800 bg-app-quinary',
+                  trigger: 'border border-border bg-app-quinary',
                 }}
                 items={[
                   { key: 'all', label: 'Semua Status' },
@@ -801,7 +801,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
       {/* Reviews List */}
       <motion.div variants={itemVariants}>
         {filteredReviews.length === 0 ? (
-          <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+          <Card className="rounded-2xl border border-border bg-card shadow-none">
             <CardBody className="py-16 text-center">
               {reviews.length === 0 ? (
                 <>

@@ -369,9 +369,9 @@ export default function TeamMembersNim({
   }
 
   return (
-    <Card className="border border-zinc-800 bg-card shadow-sm">
+    <Card className="border border-border bg-card shadow-sm">
       {showHeader && (
-        <CardHeader className="border-b border-zinc-800 pb-4">
+        <CardHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-app-primary text-foreground">
@@ -409,7 +409,7 @@ export default function TeamMembersNim({
         )}
 
         {/* Owner - Team Lead */}
-        <div className="flex items-center gap-3 p-3 bg-app-quinary border border-zinc-800 rounded-xl">
+        <div className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl">
           <Avatar
             src={getSimakPhotoUrl(ownerNim) || ownerImage}
             name={ownerName || 'Owner'}
@@ -437,7 +437,7 @@ export default function TeamMembersNim({
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
-              className="flex items-center gap-3 p-3 bg-app-quinary border border-zinc-800 rounded-xl group"
+              className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl group"
             >
               <Avatar
                 src={getSimakPhotoUrl(member.user?.nim) || member.user?.image || member.githubAvatarUrl}
@@ -486,7 +486,7 @@ export default function TeamMembersNim({
                 key={invitation.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="flex items-center gap-3 p-3 bg-app-quinary border border-zinc-800 rounded-xl group"
+                className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl group"
               >
                 <Avatar
                   src={getSimakPhotoUrl(invitation.invitee.nim) || invitation.invitee.image || undefined}
@@ -703,7 +703,7 @@ export default function TeamMembersNim({
 
         {/* No Project ID Warning */}
         {isEditable && !projectId && (
-          <div className="flex items-center gap-2 p-3 bg-app-quinary border border-zinc-800 text-app-secondary-invert rounded-lg text-sm">
+          <div className="flex items-center gap-2 p-3 bg-app-quinary border border-border text-app-secondary-invert rounded-lg text-sm">
             <AlertCircle size={16} />
             Simpan project terlebih dahulu untuk mengundang anggota
           </div>

@@ -13,7 +13,9 @@ const prismaClientSingleton = () => {
 
   return new PrismaClient({
     adapter,
-    log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+    // Dev: hanya 'warn' — error query yang sudah ditangkap fallback mock
+    // tidak perlu memicu overlay error Next. Prod tetap log 'error'.
+    log: process.env.NODE_ENV === 'development' ? ['warn'] : ['error'],
   });
 };
 

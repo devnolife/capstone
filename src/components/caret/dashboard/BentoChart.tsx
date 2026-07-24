@@ -72,7 +72,7 @@ export function BentoChart({ title, caption, data, highlightIndex, max }: BentoC
                 x2={CHART_W - PAD_X}
                 y1={y}
                 y2={y}
-                stroke="#27272a"
+                stroke="var(--border)"
                 strokeWidth="1"
                 strokeDasharray={v === 0 ? "0" : "3 5"}
               />
@@ -80,7 +80,7 @@ export function BentoChart({ title, caption, data, highlightIndex, max }: BentoC
                 x={CHART_W - PAD_X}
                 y={y - 4}
                 textAnchor="end"
-                className="fill-[#fafafa40] font-mono text-[9px]"
+                className="fill-app-teritary-invert font-mono text-[9px]"
               >
                 {v}
               </text>
@@ -107,8 +107,8 @@ export function BentoChart({ title, caption, data, highlightIndex, max }: BentoC
                   data-bar
                   className={
                     active
-                      ? "fill-[#e4e4e7] transition-opacity group-hover:opacity-90"
-                      : "fill-[#fafafa1a] transition-[fill] group-hover:fill-[#fafafa40]"
+                      ? "fill-primary transition-opacity group-hover:opacity-90"
+                      : "fill-app-primary transition-[fill] group-hover:fill-app-teritary-invert"
                   }
                 />
               ) : (
@@ -117,7 +117,7 @@ export function BentoChart({ title, caption, data, highlightIndex, max }: BentoC
                   x2={x + barW}
                   y1={PAD_TOP + innerH}
                   y2={PAD_TOP + innerH}
-                  stroke="#fafafa1a"
+                  stroke="var(--app-primary)"
                   strokeWidth="3"
                   strokeLinecap="round"
                 />
@@ -128,8 +128,8 @@ export function BentoChart({ title, caption, data, highlightIndex, max }: BentoC
                 textAnchor="middle"
                 className={
                   active
-                    ? "fill-[#fafafa] font-mono text-[10px] tracking-wider"
-                    : "fill-[#fafafa40] font-mono text-[10px] tracking-wider"
+                    ? "fill-foreground font-mono text-[10px] tracking-wider"
+                    : "fill-app-teritary-invert font-mono text-[10px] tracking-wider"
                 }
               >
                 {d.label}
@@ -140,7 +140,7 @@ export function BentoChart({ title, caption, data, highlightIndex, max }: BentoC
                   x={PAD_X + slot * i + slot / 2}
                   y={y - 6}
                   textAnchor="middle"
-                  className="fill-[#fafafa8c] font-mono text-[10px] opacity-0 transition-opacity group-hover:opacity-100"
+                  className="fill-app-secondary-invert font-mono text-[10px] opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   {d.value}
                 </text>

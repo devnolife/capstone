@@ -100,7 +100,7 @@ export function BentoLists({
   return (
     <div className="bg-background flex h-full flex-col">
       {/* Up next */}
-      <div className="border-zinc-800 border-b px-5 py-4 md:px-6 md:py-5">
+      <div className="border-border border-b px-5 py-4 md:px-6 md:py-5">
         <div className="mb-3 flex items-baseline justify-between">
           <h5 className="font-display text-lg leading-tight font-medium tracking-tight md:text-xl">
             {upNextTitle}

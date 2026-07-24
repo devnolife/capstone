@@ -15,7 +15,7 @@ export function SuggestionsFeed() {
   return (
     <div
       data-reveal-group
-      className="border-zinc-800 grid gap-px border bg-zinc-800 lg:grid-cols-2"
+      className="border-border grid gap-px border bg-border lg:grid-cols-2"
     >
       {SUGGESTIONS.map((s) => (
         <article key={s.question} className="bg-background px-5 py-4 md:px-6 md:py-5">

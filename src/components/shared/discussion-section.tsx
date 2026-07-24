@@ -104,7 +104,7 @@ function DiscussionMessage({
   const isAuthor = discussion.authorId === currentUserId;
 
   return (
-    <div className={`${isReply ? 'ml-8 pl-4 border-l-2 border-zinc-200 dark:border-zinc-700' : ''}`}>
+    <div className={`${isReply ? 'ml-8 pl-4 border-l-2 border-border' : ''}`}>
       <div className="group py-3">
         <div className="flex items-start gap-3">
           <Avatar
@@ -125,13 +125,13 @@ function DiscussionMessage({
               >
                 {roleCfg.label}
               </Chip>
-              <span className="flex items-center gap-1 text-[11px] text-zinc-400">
+              <span className="flex items-center gap-1 text-[11px] text-app-teritary-invert">
                 <Clock size={10} />
                 {timeAgo(discussion.createdAt)}
                 {discussion.isEdited && <span className="italic">(diedit)</span>}
               </span>
             </div>
-            <div className="mt-1 text-sm text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap break-words">
+            <div className="mt-1 text-sm text-foreground whitespace-pre-wrap break-words">
               {discussion.content}
             </div>
             <div className="flex items-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -140,7 +140,7 @@ function DiscussionMessage({
                   size="sm"
                   variant="light"
                   startContent={<Reply size={12} />}
-                  className="h-6 text-xs text-zinc-500"
+                  className="h-6 text-xs text-app-teritary-invert"
                   onPress={() => onReply(discussion.id)}
                 >
                   Balas
@@ -348,7 +348,7 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
   const totalMessages = discussions.reduce((sum, d) => sum + 1 + d.replies.length, 0);
 
   return (
-    <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
+    <Card className="border border-border shadow-none">
       <CardHeader className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="p-2 rounded-lg bg-primary/10">
@@ -356,7 +356,7 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
           </div>
           <div>
             <h3 className="text-base font-semibold">Diskusi Project</h3>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-app-teritary-invert">
               {totalMessages} pesan
             </p>
           </div>
@@ -370,12 +370,12 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
           </div>
         ) : discussions.length === 0 ? (
           <div className="p-8 text-center">
-            <MessageCircle size={40} className="mx-auto mb-3 text-zinc-300" />
-            <p className="text-sm text-zinc-500">Belum ada diskusi</p>
-            <p className="text-xs text-zinc-400 mt-1">Mulai diskusi dengan menulis pesan di bawah</p>
+            <MessageCircle size={40} className="mx-auto mb-3 text-app-quaternary-invert" />
+            <p className="text-sm text-app-teritary-invert">Belum ada diskusi</p>
+            <p className="text-xs text-app-teritary-invert mt-1">Mulai diskusi dengan menulis pesan di bawah</p>
           </div>
         ) : (
-          <div className="px-6 divide-y divide-zinc-100 dark:divide-zinc-800 max-h-[500px] overflow-y-auto">
+          <div className="px-6 divide-y divide-border max-h-[500px] overflow-y-auto">
             {discussions.map(discussion => (
               <DiscussionMessage
                 key={discussion.id}
@@ -390,7 +390,7 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
         )}
 
         {/* Compose area */}
-        <div className="border-t border-zinc-200 dark:border-zinc-800 p-4">
+        <div className="border-t border-border p-4">
           {/* Reply/Edit indicator */}
           <AnimatePresence>
             {(replyingTo || editingDiscussion) && (
@@ -400,17 +400,17 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden mb-2"
               >
-                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-xs">
+                <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-app-quaternary text-xs">
                   <div className="flex items-center gap-2">
                     {editingDiscussion ? (
                       <>
                         <Edit3 size={12} className="text-primary" />
-                        <span className="text-zinc-500">Mengedit pesan</span>
+                        <span className="text-app-teritary-invert">Mengedit pesan</span>
                       </>
                     ) : (
                       <>
                         <Reply size={12} className="text-primary" />
-                        <span className="text-zinc-500">
+                        <span className="text-app-teritary-invert">
                           Membalas <strong>{replyingToDiscussion?.author.name}</strong>
                         </span>
                       </>
@@ -462,7 +462,7 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
               <Send size={16} />
             </Button>
           </div>
-          <p className="text-[10px] text-zinc-400 mt-1">
+          <p className="text-[10px] text-app-teritary-invert mt-1">
             Tekan Enter untuk kirim, Shift+Enter untuk baris baru
           </p>
         </div>

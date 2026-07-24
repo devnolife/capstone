@@ -3,17 +3,8 @@ import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { DosenProjectsClient } from './client';
 
-export default async function DosenProjectsPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect('/login');
-  }
-
-  const userId = session.user.id;
-
-  // Fetch all projects assigned to this dosen
-  const projects = await prisma.project.findMany({
+async function getProjects(userId: string) {
+  return prisma.project.findMany({
     where: {
       assignments: {
         some: { dosenId: userId },
@@ -42,6 +33,29 @@ export default async function DosenProjectsPage() {
     },
     orderBy: { updatedAt: 'desc' },
   });
+}
+
+export default async function DosenProjectsPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  const userId = session.user.id;
+
+  // Fetch all projects assigned to this dosen (fallback kosong bila DB down / sesi fake)
+  let projects: Awaited<ReturnType<typeof getProjects>> = [];
+  if (!userId.startsWith('dev-')) {
+    try {
+      projects = await getProjects(userId);
+    } catch (error) {
+      console.warn(
+        '[dosen/projects] DB tidak tersedia — daftar kosong:',
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
 
   // Transform data for client
   const projectsData = projects.map((project) => ({

@@ -16,7 +16,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
       refetchInterval={0}
       refetchOnWindowFocus={false}
     >
-      <NextThemesProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
+      <NextThemesProvider
+        attribute="class"
+        defaultTheme="light"
+        enableSystem={false}
+        disableTransitionOnChange
+      >
         <HeroUIProvider navigate={router.push}>
           {children}
           <Toaster position="top-right" richColors />

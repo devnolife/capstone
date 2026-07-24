@@ -3,17 +3,8 @@ import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { AutoReviewClient } from './client';
 
-export default async function AutoReviewPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect('/login');
-  }
-
-  const userId = session.user.id;
-
-  // Fetch all projects assigned to this dosen
-  const projects = await prisma.project.findMany({
+async function getProjects(userId: string) {
+  return prisma.project.findMany({
     where: {
       assignments: {
         some: { dosenId: userId },
@@ -35,6 +26,29 @@ export default async function AutoReviewPage() {
     },
     orderBy: { updatedAt: 'desc' },
   });
+}
+
+export default async function AutoReviewPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  const userId = session.user.id;
+
+  // Fallback kosong bila DB down / sesi fake
+  let projects: Awaited<ReturnType<typeof getProjects>> = [];
+  if (!userId.startsWith('dev-')) {
+    try {
+      projects = await getProjects(userId);
+    } catch (error) {
+      console.warn(
+        '[dosen/auto-review] DB tidak tersedia — daftar kosong:',
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
 
   // Transform data for client - since we don't have AI analysis data yet,
   // we'll generate placeholder scores based on project status

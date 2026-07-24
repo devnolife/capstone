@@ -170,7 +170,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
             placeholder="Cari project berdasarkan judul, teknologi, semester…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="placeholder:text-app-teritary-invert h-10 w-full rounded-full border border-zinc-800 bg-app-quinary pl-11 pr-16 text-sm text-foreground outline-none transition-all hover:bg-app-quaternary focus:border-ring focus:ring-[3px] focus:ring-ring/50"
+            className="placeholder:text-app-teritary-invert h-10 w-full rounded-full border border-border bg-app-quinary pl-11 pr-16 text-sm text-foreground outline-none transition-all hover:bg-app-quaternary focus:border-ring focus:ring-[3px] focus:ring-ring/50"
           />
           {searchQuery && (
             <button
@@ -197,7 +197,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
                   className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-[10px] uppercase tracking-wider transition-all outline-none active:scale-[0.98] ${
                     isActive
                       ? 'border-transparent bg-primary font-semibold text-primary-foreground'
-                      : 'text-app-secondary-invert border-zinc-800 hover:bg-app-quaternary hover:text-foreground'
+                      : 'text-app-secondary-invert border-border hover:bg-app-quaternary hover:text-foreground'
                   }`}
                 >
                   <span>{fl.label}</span>
@@ -222,7 +222,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            className="border border-dashed border-zinc-800 bg-background p-12 text-center"
+            className="border border-dashed border-border bg-background p-12 text-center"
           >
             <div className="mx-auto max-w-md space-y-4">
               <EmptyStateIllustration icon="review" />
@@ -251,7 +251,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
             key={selectedStatus + searchQuery}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="grid grid-cols-1 gap-px border border-zinc-800 bg-zinc-800 md:grid-cols-2 xl:grid-cols-3"
+            className="grid grid-cols-1 gap-px border border-border bg-border md:grid-cols-2 xl:grid-cols-3"
           >
             {filteredProjects.map((project) => (
               <ProjectCard
@@ -277,13 +277,13 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
         }}
         classNames={{
           backdrop: 'bg-black/60 backdrop-blur-md',
-          base: 'border border-zinc-800 bg-card rounded-2xl overflow-hidden',
+          base: 'border border-border bg-card rounded-2xl overflow-hidden',
         }}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex items-center gap-3 border-b border-zinc-800 p-5">
+              <ModalHeader className="flex items-center gap-3 border-b border-border p-5">
                 <span className="flex size-9 items-center justify-center rounded-lg bg-destructive/15 text-destructive">
                   <Trash2 size={16} />
                 </span>
@@ -297,7 +297,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
                     <p className="text-app-secondary-invert text-sm">
                       Yakin ingin menghapus project berikut secara permanen?
                     </p>
-                    <div className="rounded-xl border border-zinc-800 bg-app-quinary p-4">
+                    <div className="rounded-xl border border-border bg-app-quinary p-4">
                       <p className="text-base font-semibold leading-tight">
                         {projectToDelete.title}
                       </p>
@@ -315,7 +315,7 @@ export function ProjectsListContent({ projects, statusCounts }: ProjectsListCont
                   </div>
                 )}
               </ModalBody>
-              <ModalFooter className="border-t border-zinc-800 bg-app-quinary p-4">
+              <ModalFooter className="border-t border-border bg-app-quinary p-4">
                 <button
                   onClick={onClose}
                   disabled={isDeleting}

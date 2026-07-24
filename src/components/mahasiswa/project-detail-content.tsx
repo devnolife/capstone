@@ -368,7 +368,7 @@ export function ProjectDetailContent({
   return (
     <div className="w-full space-y-6 pb-8">
       {/* Hero Header Card */}
-      <Card className="border border-zinc-800 bg-card overflow-hidden">
+      <Card className="border border-border bg-card overflow-hidden">
         <CardBody className="p-6 relative">
           {/* Top Actions */}
           <div className="flex items-center justify-between mb-6">
@@ -491,7 +491,7 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="border border-zinc-800 shadow-sm">
+              <Card className="border border-border shadow-sm">
                 <CardBody className="p-5">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -512,10 +512,10 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
             >
-              <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+              <Card className="border border-border shadow-sm overflow-hidden">
                 <CardBody className="p-0">
                   {/* Repository Header */}
-                  <div className="flex items-center gap-4 p-5 border-b border-zinc-800">
+                  <div className="flex items-center gap-4 p-5 border-b border-border">
                     <div className="bg-app-primary text-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
                       <Github size={24} />
                     </div>
@@ -570,7 +570,7 @@ export function ProjectDetailContent({
                         className="overflow-hidden"
                       >
                         <div className="p-4 bg-app-quinary">
-                          <div className="rounded-lg overflow-hidden border border-zinc-800">
+                          <div className="rounded-lg overflow-hidden border border-border">
                             <GitHubCodeViewer
                               owner={githubInfo.owner}
                               repo={githubInfo.repo}
@@ -593,10 +593,10 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+            <Card className="border border-border shadow-sm overflow-hidden">
               <CardBody className="p-0">
                 {/* Header */}
-                <div className="p-5 bg-app-quinary border-b border-zinc-800">
+                <div className="p-5 bg-app-quinary border-b border-border">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="bg-app-primary text-foreground flex size-10 shrink-0 items-center justify-center rounded-lg">
@@ -662,7 +662,7 @@ export function ProjectDetailContent({
                 <div className="p-5">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
                     {/* Akademik */}
-                    <div className="p-4 rounded-xl bg-app-quinary border border-zinc-800">
+                    <div className="p-4 rounded-xl bg-app-quinary border border-border">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <GraduationCap size={16} className="text-app-secondary-invert" />
@@ -690,7 +690,7 @@ export function ProjectDetailContent({
                     </div>
 
                     {/* Teknis */}
-                    <div className="p-4 rounded-xl bg-app-quinary border border-zinc-800">
+                    <div className="p-4 rounded-xl bg-app-quinary border border-border">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <Rocket size={16} className="text-app-secondary-invert" />
@@ -718,7 +718,7 @@ export function ProjectDetailContent({
                     </div>
 
                     {/* Analisis */}
-                    <div className="p-4 rounded-xl bg-app-quinary border border-zinc-800">
+                    <div className="p-4 rounded-xl bg-app-quinary border border-border">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
                           <Lightbulb size={16} className="text-app-secondary-invert" />
@@ -774,7 +774,7 @@ export function ProjectDetailContent({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.21 }}
               >
-                <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+                <Card className="border border-border shadow-sm overflow-hidden">
                   <CardBody className="p-5">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -795,14 +795,14 @@ export function ProjectDetailContent({
 
                     <div className="space-y-3">
                       {/* Platform Info */}
-                      <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                      <div className="p-3 rounded-xl bg-app-quinary border border-border">
                         <p className="text-xs text-app-teritary-invert mb-1">Platform</p>
                         <p className="text-sm font-semibold">{platform.label}</p>
                         <p className="text-xs text-app-secondary-invert mt-0.5">{platform.description}</p>
                       </div>
 
                       {/* Bonus Points */}
-                      <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                      <div className="p-3 rounded-xl bg-app-quinary border border-border">
                         <div className="flex items-center gap-2">
                           <Trophy size={16} className="text-warning" />
                           <span className="text-sm font-bold tabular-nums">
@@ -824,7 +824,7 @@ export function ProjectDetailContent({
                           .filter((cat) => cat.selected.length > 0);
 
                         return (
-                          <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                          <div className="p-3 rounded-xl bg-app-quinary border border-border">
                             <p className="text-xs text-app-teritary-invert mb-2 tabular-nums">Tools & Services ({tools.length})</p>
                             <div className="space-y-2.5">
                               {groupedTools.map((cat) => (
@@ -852,7 +852,7 @@ export function ProjectDetailContent({
 
                       {/* Description */}
                       {project.requirements.deploymentDescription && (
-                        <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                        <div className="p-3 rounded-xl bg-app-quinary border border-border">
                           <p className="text-xs text-app-teritary-invert mb-1">Deskripsi Deployment</p>
                           <p className="text-xs text-app-secondary-invert whitespace-pre-wrap">
                             {project.requirements.deploymentDescription}
@@ -862,7 +862,7 @@ export function ProjectDetailContent({
 
                       {/* Evidence */}
                       {project.requirements.deploymentEvidence && (
-                        <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                        <div className="p-3 rounded-xl bg-app-quinary border border-border">
                           <p className="text-xs text-app-teritary-invert mb-1">Bukti/Evidence</p>
                           <p className="text-xs text-app-secondary-invert whitespace-pre-wrap">
                             {project.requirements.deploymentEvidence}
@@ -882,7 +882,7 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.22 }}
           >
-            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+            <Card className="border border-border shadow-sm overflow-hidden">
               <CardBody className="p-5">
                 <StakeholderUpload
                   projectId={project.id}
@@ -900,7 +900,7 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.23 }}
           >
-            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+            <Card className="border border-border shadow-sm overflow-hidden">
               <CardBody className="p-5">
                 <ProjectScreenshotUpload
                   projectId={project.id}
@@ -917,7 +917,7 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <Card className="border border-zinc-800 shadow-sm">
+              <Card className="border border-border shadow-sm">
                 <CardBody className="p-5">
                   <div className="flex items-center gap-3 mb-5">
                     <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -933,7 +933,7 @@ export function ProjectDetailContent({
                     {project.reviews.map((review) => (
                       <div
                         key={review.id}
-                        className="p-4 rounded-xl border border-zinc-800 bg-app-quinary"
+                        className="p-4 rounded-xl border border-border bg-app-quinary"
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-3">
@@ -941,7 +941,7 @@ export function ProjectDetailContent({
                               name={review.reviewer.name}
                               src={review.reviewer.image || undefined}
                               size="sm"
-                              className="ring-2 ring-zinc-800"
+                              className="ring-2 ring-border"
                             />
                             <div>
                               <p className="font-medium text-sm">{review.reviewer.name}</p>
@@ -967,7 +967,7 @@ export function ProjectDetailContent({
                         </div>
 
                         {review.overallComment && (
-                          <div className="bg-background rounded-lg p-3 mb-3 border border-zinc-800">
+                          <div className="bg-background rounded-lg p-3 mb-3 border border-border">
                             <p className="text-sm text-app-secondary-invert">{review.overallComment}</p>
                           </div>
                         )}
@@ -1011,8 +1011,8 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <Card className="border border-zinc-800 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-zinc-800 bg-app-quinary">
+              <Card className="border border-border shadow-sm overflow-hidden">
+                <div className="p-4 border-b border-border bg-app-quinary">
                   <div className="flex items-center gap-2">
                     <CalendarCheck size={18} className={project.presentationSchedule ? 'text-success' : 'text-warning'} />
                     <h3 className="font-semibold">Jadwal Presentasi</h3>
@@ -1022,7 +1022,7 @@ export function ProjectDetailContent({
                   {project.presentationSchedule ? (
                     <div className="space-y-4">
                       {/* Scheduled Date & Time */}
-                      <div className="flex items-start gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                      <div className="flex items-start gap-3 p-3 rounded-xl bg-app-quinary border border-border">
                         <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                           <Calendar size={16} />
                         </div>
@@ -1058,14 +1058,14 @@ export function ProjectDetailContent({
 
                       {/* Notes */}
                       {project.presentationSchedule.notes && (
-                        <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                        <div className="p-3 rounded-xl bg-app-quinary border border-border">
                           <p className="text-xs text-app-primary-invert font-medium mb-1">Catatan</p>
                           <p className="text-sm text-app-secondary-invert">{project.presentationSchedule.notes}</p>
                         </div>
                       )}
 
                       {/* Status Badge */}
-                      <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
+                      <div className="flex items-center justify-between pt-2 border-t border-border">
                         <span className="text-xs text-app-secondary-invert">Status</span>
                         <Chip
                           size="sm"
@@ -1106,8 +1106,8 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-app-quinary border-b border-zinc-800">
+            <Card className="border border-border shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-border">
                 <div className="flex items-center gap-2">
                   <TrendingUp size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Progress Project</h3>
@@ -1146,7 +1146,7 @@ export function ProjectDetailContent({
                             <div
                               className={`w-0.5 h-8 my-1 ${status === 'completed'
                                 ? 'bg-success'
-                                : 'bg-zinc-800'
+                                : 'bg-border'
                                 }`}
                             />
                           )}
@@ -1181,8 +1181,8 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
           >
-            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-app-quinary border-b border-zinc-800">
+            <Card className="border border-border shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-border">
                 <div className="flex items-center gap-2">
                   <Users size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Dosen Penguji</h3>
@@ -1207,7 +1207,7 @@ export function ProjectDetailContent({
                           name={assignment.dosen.name}
                           src={assignment.dosen.image || undefined}
                           size="sm"
-                          className="ring-2 ring-zinc-700"
+                          className="ring-2 ring-border"
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{assignment.dosen.name}</p>
@@ -1227,8 +1227,8 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.38 }}
           >
-            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-app-quinary border-b border-zinc-800">
+            <Card className="border border-border shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-border">
                 <div className="flex items-center gap-2">
                   <Users size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Tim Project</h3>
@@ -1240,12 +1240,12 @@ export function ProjectDetailContent({
               <CardBody className="p-4">
                 <div className="space-y-3">
                   {/* Owner/Ketua */}
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quaternary border border-zinc-800">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quaternary border border-border">
                     <Avatar
                       name={project.mahasiswa.name}
                       src={project.mahasiswa.image || undefined}
                       size="sm"
-                      className="ring-2 ring-zinc-700"
+                      className="ring-2 ring-border"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
@@ -1267,7 +1267,7 @@ export function ProjectDetailContent({
                         name={member.user!.name}
                         src={member.user!.image || undefined}
                         size="sm"
-                        className="ring-2 ring-zinc-700"
+                        className="ring-2 ring-border"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{member.user!.name}</p>
@@ -1281,13 +1281,13 @@ export function ProjectDetailContent({
                   {project.invitations?.filter(i => i.status === 'pending').map((invitation) => (
                     <div
                       key={invitation.id}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-border"
                     >
                       <Avatar
                         name={invitation.invitee.name}
                         src={invitation.invitee.image || undefined}
                         size="sm"
-                        className="ring-2 ring-zinc-700 opacity-75"
+                        className="ring-2 ring-border opacity-75"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate text-app-secondary-invert">{invitation.invitee.name}</p>
@@ -1313,8 +1313,8 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-app-quinary border-b border-zinc-800">
+            <Card className="border border-border shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-border">
                 <div className="flex items-center gap-2">
                   <Clock size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Timeline</h3>

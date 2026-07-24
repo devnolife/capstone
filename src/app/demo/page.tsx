@@ -23,7 +23,7 @@ function LabelRow({ left, right }: { left: string; right: string }) {
 
 export default function DemoDashboardPage() {
   return (
-    <div className="min-h-screen">
+    <div className="dark min-h-screen bg-background text-foreground">
       <ScrollAnimations />
       <DashSidebar />
       <div className="lg:pl-60">

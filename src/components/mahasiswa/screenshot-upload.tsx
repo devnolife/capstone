@@ -308,8 +308,8 @@ export default function ScreenshotUpload({
 
   return (
     <>
-      <Card className="border border-zinc-800 bg-card shadow-sm">
-        <CardHeader className="border-b border-zinc-800 pb-4">
+      <Card className="border border-border bg-card shadow-sm">
+        <CardHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-app-primary text-foreground">
@@ -377,7 +377,7 @@ export default function ScreenshotUpload({
                       transition={{ delay: index * 0.05 }}
                       className="group relative"
                     >
-                      <div className="aspect-video rounded-lg overflow-hidden border border-zinc-800 bg-app-quinary relative">
+                      <div className="aspect-video rounded-lg overflow-hidden border border-border bg-app-quinary relative">
                         {/* Clickable image for preview */}
                         <div
                           className="w-full h-full cursor-pointer"
@@ -447,7 +447,7 @@ export default function ScreenshotUpload({
                   border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer
                   ${previewDataUrl
                     ? 'border-ring bg-app-quaternary'
-                    : 'border-zinc-800 bg-app-quinary hover:bg-app-quaternary'
+                    : 'border-border bg-app-quinary hover:bg-app-quaternary'
                   }
                 `}
                 onClick={() => fileInputRef.current?.click()}

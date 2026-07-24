@@ -62,7 +62,7 @@ function GitHubBanner({
 }) {
   if (connected && username) {
     return (
-      <div data-reveal className="border-zinc-800 bg-background mb-2 flex items-center gap-3 border px-5 py-3">
+      <div data-reveal className="border-border bg-background mb-2 flex items-center gap-3 border px-5 py-3">
         <span className="bg-app-primary text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg">
           <Github className="size-4" />
         </span>
@@ -84,7 +84,7 @@ function GitHubBanner({
   }
 
   return (
-    <div data-reveal className="border-zinc-800 bg-background mb-2 flex flex-wrap items-center gap-3 border px-5 py-3">
+    <div data-reveal className="border-border bg-background mb-2 flex flex-wrap items-center gap-3 border px-5 py-3">
       <span className="bg-app-primary text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg">
         <Github className="size-4" />
       </span>
@@ -190,7 +190,7 @@ export function MahasiswaDashboardContent({
       <LabelRow left="[SEL] AKTIVITAS" right="/ PROJECT" />
       <div
         data-reveal
-        className="border-zinc-800 grid gap-px border bg-zinc-800 lg:grid-cols-[1.1fr_1fr]"
+        className="border-border grid gap-px border bg-border lg:grid-cols-[1.1fr_1fr]"
       >
         <BentoChart
           title="Aktivitas notifikasi"

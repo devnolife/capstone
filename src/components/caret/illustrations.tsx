@@ -305,8 +305,8 @@ export function EmptyStateIllustration({
       {[64, 46].map((size, index) => (
         <span
           key={size}
-          className="animate-orbit-ripple absolute rounded-full border border-dashed border-zinc-700"
-          style={{ width: size, height: size, animationDelay: `${-(index * 0.3)}s`, opacity: 0.6 }}
+          className="animate-orbit-ripple absolute rounded-full border border-dashed border-border"
+          style={{ width: size, height: size, animationDelay: `${-(index * 0.3)}s`, opacity: 0.8 }}
         />
       ))}
       <span className="flex size-8 items-center justify-center rounded-full bg-app-primary text-foreground">

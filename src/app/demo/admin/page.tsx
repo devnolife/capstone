@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /** Preview publik dashboard admin dengan data mock (tanpa login). */
 export default function DemoAdminPage() {
   return (
-    <main className="min-h-screen px-4 py-6 md:px-6">
+    <main className="dark min-h-screen bg-background px-4 py-6 text-foreground md:px-6">
       <AdminDashboardContent
         userName="Admin Prodi"
         stats={MOCK_ADMIN.stats}

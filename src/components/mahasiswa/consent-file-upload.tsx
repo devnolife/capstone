@@ -204,7 +204,7 @@ export default function ConsentFileUpload({
   };
 
   return (
-    <Card className="border border-zinc-800 bg-card shadow-sm">
+    <Card className="border border-border bg-card shadow-sm">
       <CardBody className="p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -230,7 +230,7 @@ export default function ConsentFileUpload({
         </div>
 
         {/* Info Box */}
-        <div className="mb-4 p-3 bg-app-quinary rounded-lg border border-zinc-800">
+        <div className="mb-4 p-3 bg-app-quinary rounded-lg border border-border">
           <div className="flex gap-2">
             <Info size={16} className="text-app-secondary-invert flex-shrink-0 mt-0.5" />
             <div className="text-xs text-app-secondary-invert">
@@ -335,7 +335,7 @@ export default function ConsentFileUpload({
                     ${
                       isDragOver
                         ? 'border-ring bg-app-quaternary'
-                        : 'border-zinc-800 bg-app-quinary hover:bg-app-quaternary'
+                        : 'border-border bg-app-quinary hover:bg-app-quaternary'
                     }
                   `}
                 >

@@ -289,9 +289,9 @@ export default function TeamMembers({
   }
 
   return (
-    <Card className="border border-zinc-800 bg-card shadow-sm">
+    <Card className="border border-border bg-card shadow-sm">
       {showHeader && (
-        <CardHeader className="border-b border-zinc-800 pb-4">
+        <CardHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-app-primary text-foreground">
@@ -329,7 +329,7 @@ export default function TeamMembers({
         )}
 
         {/* Owner - Team Lead */}
-        <div className="flex items-center gap-3 p-3 bg-app-quinary border border-zinc-800 rounded-xl">
+        <div className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl">
           <Avatar
             src={ownerImage}
             name={ownerName || 'Owner'}
@@ -365,7 +365,7 @@ export default function TeamMembers({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
-                className="flex items-center gap-3 p-3 bg-app-quinary border border-zinc-800 rounded-xl group"
+                className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl group"
               >
                 <Avatar
                   src={avatarUrl}

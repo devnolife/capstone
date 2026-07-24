@@ -16,6 +16,7 @@
   /* shadcn token bridge */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-canvas: var(--canvas);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
@@ -32,6 +33,21 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* shadcn sidebar + chart bridge */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
 
   /* Caret app overlay palette (note: "teritary" spelling matches source) */
   --color-app-primary: var(--app-primary);
@@ -51,12 +67,64 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Dark-only zinc palette (exact values from caret.so) */
-:root,
+/* ------------------------------------------------------------------ */
+/*  Caret White — palette terang (default)                             */
+/* ------------------------------------------------------------------ */
+:root {
+  --radius: 0.625rem;
+  --background: #ffffff;
+  --foreground: #09090b;
+  --canvas: #f4f4f6;
+  --card: #ffffff;
+  --card-foreground: #09090b;
+  --popover: #ffffff;
+  --popover-foreground: #09090b;
+  --primary: #18181b;
+  --primary-foreground: #fafafa;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #52525b;
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #e5484d;
+  --border: #09090b1a;
+  --input: #09090b1f;
+  --ring: #a1a1aa;
+
+  --app-primary-invert: #09090be6;
+  --app-secondary-invert: #09090b99;
+  --app-teritary-invert: #09090b73;
+  --app-quaternary-invert: #09090b1f;
+  --app-quinary-invert: #09090b80;
+  --app-primary: #09090b14;
+  --app-secondary: #09090b0f;
+  --app-teritary: #09090b0a;
+  --app-quaternary: #09090b08;
+  --app-quinary: #09090b05;
+
+  /* shadcn sidebar + chart (selaras palette Caret White) */
+  --sidebar: #f8f8f9;
+  --sidebar-foreground: #09090b;
+  --sidebar-primary: #18181b;
+  --sidebar-primary-foreground: #fafafa;
+  --sidebar-accent: #09090b0a;
+  --sidebar-accent-foreground: #09090b;
+  --sidebar-border: #09090b14;
+  --sidebar-ring: #a1a1aa;
+  --chart-1: #18181b;
+  --chart-2: #71717a;
+  --chart-3: #a1a1aa;
+  --chart-4: #d4d4d8;
+  --chart-5: #52525b;
+}
+
+/* Dark island (landing, /demo) — palette zinc caret asli */
 .dark {
   --radius: 0.625rem;
   --background: #09090b;
   --foreground: #fafafa;
+  --canvas: #050506;
   --card: #18181b;
   --card-foreground: #fafafa;
   --popover: #18181b;
@@ -84,10 +152,25 @@
   --app-teritary: #fafafa0d;
   --app-quaternary: #fafafa08;
   --app-quinary: #fafafa04;
+
+  /* shadcn sidebar + chart (dark) */
+  --sidebar: #0c0c0e;
+  --sidebar-foreground: #fafafa;
+  --sidebar-primary: #e4e4e7;
+  --sidebar-primary-foreground: #18181b;
+  --sidebar-accent: #fafafa14;
+  --sidebar-accent-foreground: #fafafa;
+  --sidebar-border: #ffffff14;
+  --sidebar-ring: #71717b;
+  --chart-1: #e4e4e7;
+  --chart-2: #a1a1aa;
+  --chart-3: #71717a;
+  --chart-4: #3f3f46;
+  --chart-5: #d4d4d8;
 }
 
 html {
-  background-color: #09090b;
+  background-color: var(--background);
   -webkit-font-smoothing: antialiased;
 }
 

@@ -186,7 +186,7 @@ export default function DosenProjectCodeViewerPage({
   return (
     <div className="w-full space-y-4 pb-8">
       {/* Header */}
-      <Card className="border border-zinc-800 bg-card shadow-none">
+      <Card className="border border-border bg-card shadow-none">
         <CardBody className="p-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -238,7 +238,7 @@ export default function DosenProjectCodeViewerPage({
       </Card>
 
       {/* Full Height Code Viewer */}
-      <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+      <Card className="border border-border bg-card shadow-none overflow-hidden">
         <CardBody className="p-0">
           <div className="min-h-[calc(100vh-220px)]">
             <GitHubCodeViewer

@@ -7,12 +7,12 @@ import Link from "next/link";
  */
 export function DashTopbar() {
   return (
-    <header className="border-zinc-800 bg-background sticky top-0 z-30 border-b px-4 md:px-6">
+    <header className="border-border bg-background sticky top-0 z-30 border-b px-4 md:px-6">
       <div className="flex h-14 items-center gap-3">
         <Link href="/" className="lg:hidden">
           <CaretLogo className="-mt-0.5 h-6 w-auto" />
         </Link>
-        <div className="border-zinc-800 bg-app-quinary text-app-teritary-invert hidden h-9 w-72 items-center gap-2 rounded-full border px-4 text-sm md:flex">
+        <div className="border-border bg-app-quinary text-app-teritary-invert hidden h-9 w-72 items-center gap-2 rounded-full border px-4 text-sm md:flex">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="size-4 shrink-0">
             <path
               stroke="currentColor"
@@ -22,7 +22,7 @@ export function DashTopbar() {
             />
           </svg>
           <span className="grow">Cari project, review…</span>
-          <kbd className="border-zinc-800 text-app-teritary-invert rounded-md border px-1.5 py-0.5 font-mono text-[10px]">
+          <kbd className="border-border text-app-teritary-invert rounded-md border px-1.5 py-0.5 font-mono text-[10px]">
             ⌘K
           </kbd>
         </div>
@@ -32,7 +32,7 @@ export function DashTopbar() {
         </span>
         <button
           type="button"
-          className="border-zinc-800 hover:bg-accent/50 inline-flex h-9 items-center gap-2 rounded-full border px-2.5 transition-all"
+          className="border-border hover:bg-accent/50 inline-flex h-9 items-center gap-2 rounded-full border px-2.5 transition-all"
         >
           <span className="flex size-6 items-center justify-center overflow-hidden rounded-full bg-emerald-800">
             <img src="/logo.png" alt="Mahasiswa" className="h-4 w-auto" />

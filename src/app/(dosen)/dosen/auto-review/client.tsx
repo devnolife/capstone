@@ -210,7 +210,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
 
       {/* Stats Cards */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-2 gap-px border border-zinc-800 bg-zinc-800 md:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-px border border-border bg-border md:grid-cols-3 lg:grid-cols-6">
           <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
             <div className="flex items-center justify-between gap-2">
               <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Total Project</span>
@@ -282,7 +282,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
 
       {/* Filters */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-border bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
@@ -292,7 +292,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                 startContent={<Search size={16} className="text-app-teritary-invert" />}
                 variant="bordered"
                 classNames={{
-                  inputWrapper: 'border-zinc-800 bg-app-quinary',
+                  inputWrapper: 'border-border bg-app-quinary',
                 }}
                 className="flex-1"
               />
@@ -303,7 +303,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                 variant="bordered"
                 startContent={<Filter size={16} className="text-app-teritary-invert" />}
                 classNames={{
-                  trigger: 'border-zinc-800 bg-app-quinary min-w-[160px]',
+                  trigger: 'border-border bg-app-quinary min-w-[160px]',
                 }}
               >
                 <SelectItem key="all">Semua Status</SelectItem>
@@ -320,7 +320,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
       {/* Project List */}
       <motion.div variants={itemVariants} className="space-y-4">
         {filteredProjects.length === 0 ? (
-          <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+          <Card className="rounded-2xl border border-border bg-card shadow-none">
             <CardBody className="p-8 text-center">
               <Bot size={48} className="mx-auto mb-4 text-app-teritary-invert" />
               <p className="font-semibold">Tidak ada project yang ditemukan</p>
@@ -339,7 +339,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
 
             return (
               <motion.div key={project.id} variants={itemVariants}>
-                <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none hover:border-primary/50 transition-colors">
+                <Card className="rounded-2xl border border-border bg-card shadow-none hover:border-primary/50 transition-colors">
                   <CardBody className="p-0">
                     <div className="flex flex-col lg:flex-row">
                       {/* Left Section - Project Info */}
@@ -355,7 +355,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                                 fill="none"
                                 stroke="currentColor"
                                 strokeWidth="5"
-                                className="text-zinc-800"
+                                className="text-app-primary"
                               />
                               <circle
                                 cx="32"
@@ -488,7 +488,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                       </div>
 
                       {/* Right Section - Actions */}
-                      <div className="flex lg:flex-col items-center justify-end gap-2 p-4 lg:p-5 lg:pl-0 border-t lg:border-t-0 lg:border-l border-zinc-800">
+                      <div className="flex lg:flex-col items-center justify-end gap-2 p-4 lg:p-5 lg:pl-0 border-t lg:border-t-0 lg:border-l border-border">
                         <Button
                           as={Link}
                           href={`/dosen/auto-review/${project.id}`}
@@ -520,7 +520,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
 
       {/* Info Card */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-2xl border border-dashed border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-dashed border-border bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex items-start gap-3">
               <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">

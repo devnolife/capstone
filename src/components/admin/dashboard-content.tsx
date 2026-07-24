@@ -139,7 +139,7 @@ export function AdminDashboardContent({
       <LabelRow left="[SEL] AKSI CEPAT" right="/ KELOLA" />
       <div
         data-reveal-group
-        className="border-zinc-800 grid grid-cols-2 gap-px border bg-zinc-800 lg:grid-cols-4"
+        className="border-border grid grid-cols-2 gap-px border bg-border lg:grid-cols-4"
       >
         {QUICK_ACTIONS.map((action) => {
           const Icon = action.icon;
@@ -161,7 +161,7 @@ export function AdminDashboardContent({
       <LabelRow left="[RAB] AKTIVITAS" right="/ PROJECT" />
       <div
         data-reveal
-        className="border-zinc-800 grid gap-px border bg-zinc-800 lg:grid-cols-[1.1fr_1fr]"
+        className="border-border grid gap-px border bg-border lg:grid-cols-[1.1fr_1fr]"
       >
         <BentoChart
           title="Project baru"

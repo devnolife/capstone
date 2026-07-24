@@ -21,8 +21,52 @@ const config = {
   plugins: [
     heroui({
       addCommonColors: true,
-      defaultTheme: 'dark',
+      defaultTheme: 'light',
       themes: {
+        light: {
+          colors: {
+            background: '#ffffff',
+            foreground: '#09090b',
+            content1: '#ffffff',
+            content2: '#f4f4f5',
+            content3: '#e4e4e7',
+            content4: '#d4d4d8',
+            divider: 'rgba(0,0,0,0.08)',
+            focus: '#a1a1aa',
+            default: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              DEFAULT: '#e4e4e7',
+              foreground: '#18181b',
+            },
+            primary: {
+              50: '#fafafa',
+              100: '#f4f4f5',
+              200: '#e4e4e7',
+              300: '#d4d4d8',
+              400: '#a1a1aa',
+              500: '#71717a',
+              600: '#52525b',
+              700: '#3f3f46',
+              800: '#27272a',
+              900: '#18181b',
+              DEFAULT: '#18181b',
+              foreground: '#fafafa',
+            },
+            danger: {
+              DEFAULT: '#e5484d',
+              foreground: '#ffffff',
+            },
+          },
+        },
         dark: {
           colors: {
             background: '#09090b',
@@ -65,16 +109,6 @@ const config = {
               DEFAULT: '#ff6568',
               foreground: '#18181b',
             },
-          },
-        },
-        // Light theme kept as fallback (app is forced dark)
-        light: {
-          colors: {
-            primary: {
-              DEFAULT: '#18181b',
-              foreground: '#fafafa',
-            },
-            focus: '#71717b',
           },
         },
       },

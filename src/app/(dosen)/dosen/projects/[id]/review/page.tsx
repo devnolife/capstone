@@ -1095,7 +1095,7 @@ export default function ReviewPage({
     >
       {/* Hero Header */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+        <Card className="border border-border bg-card shadow-none overflow-hidden">
           <CardBody className="p-6 md:p-8 relative">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
@@ -1148,7 +1148,7 @@ export default function ReviewPage({
                 {/* ACC & Revision buttons - show when project is IN_REVIEW */}
                 {(project.status === 'IN_REVIEW') && (
                   <>
-                    <Divider orientation="vertical" className="h-8 bg-zinc-800" />
+                    <Divider orientation="vertical" className="h-8 bg-border" />
                     <Button
                       variant="flat"
                       color="warning"
@@ -1187,8 +1187,8 @@ export default function ReviewPage({
 
       {/* Mahasiswa Info Card */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-          <div className="p-5 bg-app-quinary border-b border-zinc-800">
+        <Card className="border border-border bg-card shadow-none overflow-hidden">
+          <div className="p-5 bg-app-quinary border-b border-border">
             <div className="flex items-center gap-3">
               <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <User size={18} />
@@ -1201,7 +1201,7 @@ export default function ReviewPage({
               <Avatar
                 name={project.mahasiswa.name}
                 src={project.mahasiswa.image || undefined}
-                className="w-16 h-16 ring-2 ring-zinc-700"
+                className="w-16 h-16 ring-2 ring-border"
               />
               <div className="flex-1 space-y-2">
                 <div>
@@ -1242,7 +1242,7 @@ export default function ReviewPage({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main Review Form */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
-          <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+          <Card className="border border-border bg-card shadow-none overflow-hidden">
             <Tabs
               aria-label="Review sections"
               color="primary"
@@ -1267,7 +1267,7 @@ export default function ReviewPage({
                 <CardBody className="space-y-6 pt-4">
                   {/* Sub-tab toggle: Kelompok / Individu */}
                   {project.members && project.members.length > 0 && (
-                    <div className="flex gap-2 p-1 bg-app-quinary border border-zinc-800 rounded-lg w-fit">
+                    <div className="flex gap-2 p-1 bg-app-quinary border border-border rounded-lg w-fit">
                       <Button
                         size="sm"
                         variant={penilaianSubTab === 'kelompok' ? 'solid' : 'light'}
@@ -1306,7 +1306,7 @@ export default function ReviewPage({
                         rubriks.map((rubrik, index) => (
                           <motion.div
                             key={rubrik.id}
-                            className="p-4 rounded-xl border border-zinc-800 bg-app-quinary space-y-4 hover:border-primary/50 transition-colors"
+                            className="p-4 rounded-xl border border-border bg-app-quinary space-y-4 hover:border-primary/50 transition-colors"
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.05 }}
@@ -1382,7 +1382,7 @@ export default function ReviewPage({
                               }}
                               minRows={2}
                               classNames={{
-                                inputWrapper: "border-zinc-800"
+                                inputWrapper: "border-border"
                               }}
                             />
                           </motion.div>
@@ -1390,7 +1390,7 @@ export default function ReviewPage({
                       )}
 
                       {/* Total Score Card */}
-                      <div className="p-5 bg-app-quaternary rounded-xl border border-zinc-800">
+                      <div className="p-5 bg-app-quaternary rounded-xl border border-border">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="bg-app-primary text-foreground flex size-11 shrink-0 items-center justify-center rounded-xl">
@@ -1470,7 +1470,7 @@ export default function ReviewPage({
                           </div>
 
                           {/* Member List */}
-                          <div className="border border-zinc-800 rounded-xl overflow-hidden divide-y divide-zinc-800">
+                          <div className="border border-border rounded-xl overflow-hidden divide-y divide-border">
                             {project.members.map((member, memberIndex) => {
                               const { name, nim, avatar, isLeader } = getMemberDisplayInfo(member);
                               const memberScore = calculateMemberScore(member.id);
@@ -1492,7 +1492,7 @@ export default function ReviewPage({
                                       name={name}
                                       src={avatar}
                                       size="sm"
-                                      className={isLeader ? 'ring-2 ring-zinc-700' : ''}
+                                      className={isLeader ? 'ring-2 ring-border' : ''}
                                     />
                                     {hasScores && (
                                       <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-success flex items-center justify-center">
@@ -1559,7 +1559,7 @@ export default function ReviewPage({
                                     name={name}
                                     src={avatar}
                                     size="md"
-                                    className={isLeader ? 'ring-2 ring-zinc-700' : ''}
+                                    className={isLeader ? 'ring-2 ring-border' : ''}
                                   />
                                   <div>
                                     <div className="flex items-center gap-2">
@@ -1598,7 +1598,7 @@ export default function ReviewPage({
                                       initial={{ opacity: 0, y: 10 }}
                                       animate={{ opacity: 1, y: 0 }}
                                       transition={{ delay: rubrikIndex * 0.05 }}
-                                      className="p-4 rounded-xl bg-app-quinary border border-zinc-800 space-y-3 hover:border-primary/30 transition-colors"
+                                      className="p-4 rounded-xl bg-app-quinary border border-border space-y-3 hover:border-primary/30 transition-colors"
                                     >
                                       <div className="flex justify-between items-start gap-4">
                                         <div className="flex-1">
@@ -1651,7 +1651,7 @@ export default function ReviewPage({
                                         }
                                         minRows={2}
                                         classNames={{
-                                          inputWrapper: "border-zinc-800"
+                                          inputWrapper: "border-border"
                                         }}
                                       />
                                     </motion.div>
@@ -1660,7 +1660,7 @@ export default function ReviewPage({
                               </div>
 
                               {/* Member Total Score Card */}
-                              <div className="p-5 bg-app-quaternary rounded-xl border border-zinc-800">
+                              <div className="p-5 bg-app-quaternary rounded-xl border border-border">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                     <div className="bg-app-primary text-foreground flex size-11 shrink-0 items-center justify-center rounded-xl">
@@ -1704,7 +1704,7 @@ export default function ReviewPage({
                               </Button>
 
                               {/* Navigation Buttons */}
-                              <div className="flex items-center justify-between pt-4 border-t border-zinc-800">
+                              <div className="flex items-center justify-between pt-4 border-t border-border">
                                 <Button
                                   variant="flat"
                                   startContent={<ArrowLeft size={16} />}
@@ -1783,7 +1783,7 @@ export default function ReviewPage({
                       onChange={(e) => setOverallComment(e.target.value)}
                       minRows={4}
                       classNames={{
-                        inputWrapper: "border-zinc-800"
+                        inputWrapper: "border-border"
                       }}
                     />
                   </div>
@@ -1809,7 +1809,7 @@ export default function ReviewPage({
                             key={index}
                             initial={{ opacity: 0, x: -10 }}
                             animate={{ opacity: 1, x: 0 }}
-                            className="group p-4 rounded-xl bg-app-quinary border border-zinc-800 hover:border-primary/30 transition-colors"
+                            className="group p-4 rounded-xl bg-app-quinary border border-border hover:border-primary/30 transition-colors"
                           >
                             <div className="flex justify-between items-start gap-2">
                               <div className="flex-1">
@@ -1851,7 +1851,7 @@ export default function ReviewPage({
                         minRows={2}
                         className="flex-1"
                         classNames={{
-                          inputWrapper: "border-zinc-800"
+                          inputWrapper: "border-border"
                         }}
                       />
                       <Button
@@ -1883,7 +1883,7 @@ export default function ReviewPage({
               >
                 <CardBody className="pt-4 space-y-6">
                   {/* Sub-tab toggle: Dokumen / Screenshot */}
-                  <div className="flex gap-2 p-1 bg-app-quinary border border-zinc-800 rounded-lg w-fit">
+                  <div className="flex gap-2 p-1 bg-app-quinary border border-border rounded-lg w-fit">
                     <Button
                       size="sm"
                       variant={referensiSubTab === 'dokumen' ? 'solid' : 'light'}
@@ -1927,7 +1927,7 @@ export default function ReviewPage({
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05 }}
-                                className="flex items-center justify-between p-4 rounded-xl bg-app-quinary border border-zinc-800 hover:border-primary/30 transition-colors group"
+                                className="flex items-center justify-between p-4 rounded-xl bg-app-quinary border border-border hover:border-primary/30 transition-colors group"
                               >
                                 <div className="flex items-center gap-3">
                                   <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -1977,7 +1977,7 @@ export default function ReviewPage({
                                   initial={{ opacity: 0, y: 10 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ delay: index * 0.05 }}
-                                  className="rounded-xl border border-zinc-800 overflow-hidden hover:border-primary/50 transition-colors group"
+                                  className="rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors group"
                                 >
                                   {/* Preview Thumbnail */}
                                   {isImage ? (
@@ -2045,7 +2045,7 @@ export default function ReviewPage({
                                       <p className="text-xs text-app-secondary-invert line-clamp-2">{doc.description}</p>
                                     )}
 
-                                    <div className="flex items-center justify-between text-xs text-app-teritary-invert pt-2 border-t border-zinc-800">
+                                    <div className="flex items-center justify-between text-xs text-app-teritary-invert pt-2 border-t border-border">
                                       <span className="truncate max-w-[60%]">{doc.fileName}</span>
                                       <span>{formatDate(doc.uploadedAt)}</span>
                                     </div>
@@ -2082,7 +2082,7 @@ export default function ReviewPage({
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: index * 0.05 }}
-                              className="rounded-xl border border-zinc-800 overflow-hidden hover:border-primary/50 transition-colors group"
+                              className="rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors group"
                             >
                               <div className="relative h-40 bg-app-quaternary overflow-hidden">
                                 <img
@@ -2145,7 +2145,7 @@ export default function ReviewPage({
                 >
                   <CardBody className="pt-4">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 rounded-xl bg-app-quinary border border-zinc-800">
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-app-quinary border border-border">
                         <div className="flex items-center gap-3">
                           <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                             <Code size={16} />
@@ -2209,8 +2209,8 @@ export default function ReviewPage({
         {/* Sidebar */}
         <motion.div variants={itemVariants} className="space-y-6">
           {/* Project Info */}
-          <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-            <div className="p-4 bg-app-quinary border-b border-zinc-800">
+          <Card className="border border-border bg-card shadow-none overflow-hidden">
+            <div className="p-4 bg-app-quinary border-b border-border">
               <div className="flex items-center gap-2">
                 <FolderGit2 size={18} className="text-app-secondary-invert" />
                 <h3 className="font-semibold">Info Project</h3>
@@ -2258,8 +2258,8 @@ export default function ReviewPage({
 
           {/* Production URL & Testing Credentials Card */}
           {project.requirements?.productionUrl && (
-            <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-              <div className="p-4 bg-app-quinary border-b border-zinc-800">
+            <Card className="border border-border bg-card shadow-none overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-border">
                 <div className="flex items-center gap-2">
                   <Globe size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Production URL & Testing</h3>
@@ -2270,7 +2270,7 @@ export default function ReviewPage({
                 <div className="space-y-2">
                   <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">URL Production</p>
                   <div className="flex gap-2">
-                    <div className="flex-1 p-2.5 bg-app-quinary rounded-lg border border-zinc-800 truncate text-xs font-mono">
+                    <div className="flex-1 p-2.5 bg-app-quinary rounded-lg border border-border truncate text-xs font-mono">
                       {project.requirements.productionUrl}
                     </div>
                     <Button
@@ -2296,7 +2296,7 @@ export default function ReviewPage({
 
                 {/* Testing Credentials */}
                 {(project.requirements.testingUsername || project.requirements.testingPassword) && (
-                  <div className="pt-3 border-t border-zinc-800 space-y-3">
+                  <div className="pt-3 border-t border-border space-y-3">
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert flex items-center gap-1.5">
                       <KeyRound size={12} />
                       Akun Testing
@@ -2340,7 +2340,7 @@ export default function ReviewPage({
 
                 {/* Testing Notes */}
                 {project.requirements.testingNotes && (
-                  <div className="pt-3 border-t border-zinc-800">
+                  <div className="pt-3 border-t border-border">
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert mb-2">Catatan Testing</p>
                     <div className="p-3 bg-warning/10 rounded-lg border border-warning/40">
                       <p className="text-xs text-app-secondary-invert whitespace-pre-wrap">
@@ -2358,8 +2358,8 @@ export default function ReviewPage({
             const platform = getDeploymentPlatform(project.requirements.deploymentPlatform);
             if (!platform) return null;
             return (
-              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-                <div className="p-4 bg-app-quinary border-b border-zinc-800">
+              <Card className="border border-border bg-card shadow-none overflow-hidden">
+                <div className="p-4 bg-app-quinary border-b border-border">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Server size={18} className="text-app-secondary-invert" />
@@ -2383,7 +2383,7 @@ export default function ReviewPage({
                   </div>
 
                   {/* Bonus Points */}
-                  <div className="p-3 rounded-xl bg-app-quaternary border border-zinc-800">
+                  <div className="p-3 rounded-xl bg-app-quaternary border border-border">
                     <div className="flex items-center gap-2">
                       <Trophy size={16} className="text-warning" />
                       <span className="text-sm font-bold text-foreground tabular-nums">
@@ -2436,7 +2436,7 @@ export default function ReviewPage({
                   {project.requirements.deploymentDescription && (
                     <div className="space-y-1">
                       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Deskripsi Deployment</p>
-                      <div className="p-3 bg-app-quinary rounded-lg border border-zinc-800">
+                      <div className="p-3 bg-app-quinary rounded-lg border border-border">
                         <p className="text-xs text-app-secondary-invert whitespace-pre-wrap">
                           {project.requirements.deploymentDescription}
                         </p>
@@ -2448,7 +2448,7 @@ export default function ReviewPage({
                   {project.requirements.deploymentEvidence && (
                     <div className="space-y-1">
                       <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Bukti/Evidence</p>
-                      <div className="p-3 bg-app-quinary rounded-lg border border-zinc-800">
+                      <div className="p-3 bg-app-quinary rounded-lg border border-border">
                         <p className="text-xs text-app-secondary-invert whitespace-pre-wrap">
                           {project.requirements.deploymentEvidence}
                         </p>
@@ -2461,15 +2461,15 @@ export default function ReviewPage({
           })()}
 
           {/* Quick Stats */}
-          <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-            <div className="p-4 bg-app-quinary border-b border-zinc-800">
+          <Card className="border border-border bg-card shadow-none overflow-hidden">
+            <div className="p-4 bg-app-quinary border-b border-border">
               <div className="flex items-center gap-2">
                 <TrendingUp size={18} className="text-app-secondary-invert" />
                 <h3 className="font-semibold">Statistik Review</h3>
               </div>
             </div>
             <CardBody className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-xl bg-app-quinary border border-zinc-800">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-app-quinary border border-border">
                 <div className="flex items-center gap-2">
                   <FileText size={16} className="text-app-secondary-invert" />
                   <span className="text-sm">Dokumen</span>
@@ -2478,7 +2478,7 @@ export default function ReviewPage({
                   {project.documents.length}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-3 rounded-xl bg-app-quinary border border-zinc-800">
+              <div className="flex items-center justify-between p-3 rounded-xl bg-app-quinary border border-border">
                 <div className="flex items-center gap-2">
                   <MessageSquare size={16} className="text-app-secondary-invert" />
                   <span className="text-sm">Komentar</span>
@@ -2555,11 +2555,11 @@ export default function ReviewPage({
         size="lg"
         classNames={{
           backdrop: 'bg-black/60 backdrop-blur-md',
-          base: 'border border-zinc-800 bg-card rounded-2xl',
+          base: 'border border-border bg-card rounded-2xl',
         }}
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1 border-b border-zinc-800">
+          <ModalHeader className="flex flex-col gap-1 border-b border-border">
             <div className="flex items-center gap-2">
               <Calendar size={20} className="text-primary" />
               <span>Jadwalkan Presentasi</span>
@@ -2609,7 +2609,7 @@ export default function ReviewPage({
               minRows={2}
             />
           </ModalBody>
-          <ModalFooter className="border-t border-zinc-800 bg-app-quinary">
+          <ModalFooter className="border-t border-border bg-app-quinary">
             <Button variant="flat" onPress={onScheduleClose}>
               Batal
             </Button>

@@ -110,16 +110,16 @@ function MobileProjectCard({
 
   return (
     <motion.div variants={itemVariants}>
-      <Card className="mb-3 border border-zinc-800 bg-card shadow-none overflow-hidden">
+      <Card className="mb-3 border border-border bg-card shadow-none overflow-hidden">
         <CardBody className="p-4">
           <div className="space-y-3">
             {/* Mahasiswa Info */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-border">
               <Avatar
                 name={project.mahasiswa.name}
                 src={project.mahasiswa.image || undefined}
                 size="sm"
-                className="ring-2 ring-zinc-700"
+                className="ring-2 ring-border"
               />
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">
@@ -280,7 +280,7 @@ export function DosenProjectsContent({
           description="Daftar project yang ditugaskan untuk Anda review"
           actions={
             <>
-              <div className="rounded-full border border-zinc-800 bg-app-quinary px-3 py-1.5">
+              <div className="rounded-full border border-border bg-app-quinary px-3 py-1.5">
                 <span className="text-sm font-semibold tabular-nums">{projects.length}</span>
                 <span className="text-xs text-app-teritary-invert ml-1.5">Total</span>
               </div>
@@ -330,8 +330,8 @@ export function DosenProjectsContent({
 
       {/* Projects List/Table */}
       <motion.div variants={itemVariants}>
-        <Card shadow="none" className="border border-zinc-800 bg-card overflow-hidden">
-          <div className="px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
+        <Card shadow="none" className="border border-border bg-card overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
             <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Project Ditugaskan</h2>
             <span className="text-xs text-app-teritary-invert tabular-nums">
               {filteredProjects.length} hasil
@@ -394,7 +394,7 @@ export function DosenProjectsContent({
                                   name={project.mahasiswa.name}
                                   src={project.mahasiswa.image || undefined}
                                   size="sm"
-                                  className="ring-2 ring-zinc-700"
+                                  className="ring-2 ring-border"
                                 />
                                 <div>
                                   <p className="font-medium text-sm">

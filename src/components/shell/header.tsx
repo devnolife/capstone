@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useTheme } from 'next-themes';
 import {
   Button,
   Avatar,
@@ -21,8 +22,12 @@ import {
   User,
   Settings,
   Menu,
+  Moon,
+  Plus,
+  Sun,
   Command,
   Check,
+  ChevronDown,
   FileText,
   UserPlus,
   ClipboardCheck,
@@ -34,7 +39,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getSimakPhotoUrl } from '@/lib/utils';
 import { useNotifications, type Notification } from '@/hooks/use-notifications';
-import { Breadcrumbs } from '@/components/ui/breadcrumbs';
+import { Breadcrumbs } from '@/components/shell/breadcrumbs';
 
 interface HeaderProps {
   title?: string;
@@ -54,7 +59,7 @@ function getNotificationIcon(type: string) {
       return <UserPlus size={16} className="text-orange-500" />;
     case 'system':
     default:
-      return <AlertCircle size={16} className="text-zinc-500" />;
+      return <AlertCircle size={16} className="text-app-teritary-invert" />;
   }
 }
 
@@ -74,14 +79,47 @@ function formatRelativeTime(dateString: string): string {
   return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
 
+function getWeekNumber(date: Date): number {
+  const start = new Date(date.getFullYear(), 0, 1);
+  const diff = date.getTime() - start.getTime();
+  return Math.ceil((diff / 86400000 + start.getDay() + 1) / 7);
+}
+
 export function Header({ title, onMenuClick }: HeaderProps) {
   const { data: session } = useSession();
+  const { resolvedTheme, setTheme } = useTheme();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Chip tanggal · pekan (dihitung setelah mount agar bebas hydration mismatch)
+  const dateChip = mounted
+    ? `${new Date()
+        .toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' })
+        .replace(/,/g, '')
+        .toUpperCase()} · PEKAN ${getWeekNumber(new Date())}`
+    : '';
+
+  const isDark = mounted && resolvedTheme === 'dark';
+  const toggleTheme = () => setTheme(isDark ? 'light' : 'dark');
+
+  // Aksi cepat per-role (pill primary di header)
+  const quickAction = (() => {
+    const r = (session?.user as { role?: string })?.role;
+    switch (r) {
+      case 'MAHASISWA':
+        return { label: 'Buat Project', href: '/mahasiswa/projects/new', icon: Plus };
+      case 'DOSEN_PENGUJI':
+        return { label: 'Antrian Review', href: '/dosen/reviews', icon: ClipboardCheck };
+      case 'ADMIN':
+        return { label: 'Tambah User', href: '/admin/users?action=add', icon: UserPlus };
+      default:
+        return null;
+    }
+  })();
 
   // Use the notifications hook with 30 second polling
   const {
@@ -178,7 +216,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   // Show skeleton while mounting to prevent hydration mismatch
   if (!mounted) {
     return (
-      <header className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-zinc-800 bg-background">
+      <header className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
         <div className="flex items-center gap-3">
           <Skeleton className="w-10 h-10 rounded-full md:hidden" />
           <Skeleton className="w-24 h-6 rounded-lg md:hidden" />
@@ -197,7 +235,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-zinc-800 bg-background">
+    <header className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-border bg-background">
       {/* Left Side */}
       <div className="flex items-center gap-3">
         {/* Mobile Menu Button */}
@@ -235,7 +273,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           classNames={{
             base: 'w-full',
             inputWrapper:
-              'bg-app-quinary hover:bg-app-quaternary border border-zinc-800 shadow-none rounded-full h-9',
+              'bg-app-quinary hover:bg-app-quaternary border border-border shadow-none rounded-full h-9',
           }}
           placeholder="Cari project, mahasiswa, NIM..."
           size="sm"
@@ -248,10 +286,10 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           startContent={<Search size={18} className="text-app-teritary-invert" />}
           endContent={
             <div className="hidden lg:flex items-center gap-1 text-app-teritary-invert">
-              <kbd className="px-1.5 py-0.5 text-[10px] font-medium border border-zinc-800 rounded-md font-dm-mono">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-medium border border-border rounded-md font-dm-mono">
                 <Command size={10} className="inline" />
               </kbd>
-              <kbd className="px-1.5 py-0.5 text-[10px] font-medium border border-zinc-800 rounded-md font-dm-mono">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-medium border border-border rounded-md font-dm-mono">
                 K
               </kbd>
             </div>
@@ -261,7 +299,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
       </div>
 
       {/* Right Side */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {/* Mobile Search Button */}
         <Button
           isIconOnly
@@ -274,7 +312,37 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           <Search size={20} />
         </Button>
 
-        {/* Theme dinonaktifkan — aplikasi dark-only (Caret design system) */}
+        {/* Aksi cepat per-role */}
+        {quickAction && (
+          <Link
+            href={quickAction.href}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 hidden h-9 shrink-0 items-center gap-1.5 rounded-full px-4 text-[13px] font-medium whitespace-nowrap shadow-xs transition-all active:scale-[0.98] lg:inline-flex"
+          >
+            <quickAction.icon size={14} strokeWidth={2.5} />
+            {quickAction.label}
+          </Link>
+        )}
+
+        {/* Tanggal · pekan (gaya DashTopbar) */}
+        <span
+          className="text-app-secondary-invert hidden shrink-0 font-mono text-xs tracking-wider xl:block"
+          suppressHydrationWarning
+        >
+          {dateChip}
+        </span>
+
+        {/* Pemisah cluster */}
+        <span className="hidden h-5 w-px bg-border lg:block" />
+
+        {/* Toggle tema light/dark */}
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground hidden size-9 items-center justify-center rounded-full border border-border transition-colors md:flex"
+          aria-label={isDark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'}
+        >
+          {isDark ? <Sun size={16} /> : <Moon size={16} />}
+        </button>
 
         {/* Notifications - Real-time with polling */}
         <Dropdown
@@ -283,7 +351,11 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           onOpenChange={setIsDropdownOpen}
         >
           <DropdownTrigger>
-            <Button isIconOnly variant="light" size="sm">
+            <button
+              type="button"
+              className="text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground relative flex size-9 items-center justify-center rounded-full border border-border transition-colors"
+              aria-label="Notifikasi"
+            >
               <Badge
                 color="danger"
                 content={unreadCount > 99 ? '99+' : unreadCount}
@@ -291,9 +363,9 @@ export function Header({ title, onMenuClick }: HeaderProps) {
                 shape="circle"
                 isInvisible={unreadCount === 0}
               >
-                <Bell size={20} />
+                <Bell size={16} />
               </Badge>
-            </Button>
+            </button>
           </DropdownTrigger>
           <DropdownMenu
             aria-label="Notifications"
@@ -397,22 +469,24 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           </DropdownMenu>
         </Dropdown>
 
-        {/* User Menu */}
+        {/* User Menu — account chip gaya DashTopbar */}
         <Dropdown placement="bottom-end">
           <DropdownTrigger>
-            <Button
-              variant="light"
-              className="p-1 min-w-0 h-auto"
+            <button
+              type="button"
+              className="border-border hover:bg-app-quaternary inline-flex h-9 shrink-0 items-center gap-2 rounded-full border px-1.5 transition-all outline-none md:px-2.5"
             >
               <Avatar
-                isBordered
-                className="w-8 h-8"
-                color="primary"
+                className="size-6"
                 name={session?.user?.name || 'User'}
                 size="sm"
                 src={getSimakPhotoUrl((session?.user as { nim?: string })?.nim) || session?.user?.image || undefined}
               />
-            </Button>
+              <span className="hidden max-w-[120px] truncate text-sm font-medium md:block">
+                {(session?.user?.name || 'User').split(' ')[0]}
+              </span>
+              <ChevronDown size={14} className="text-app-teritary-invert hidden md:block" />
+            </button>
           </DropdownTrigger>
           <DropdownMenu aria-label="Profile Actions" variant="flat">
             <DropdownItem
@@ -439,6 +513,15 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               startContent={<Settings size={18} />}
             >
               Pengaturan
+            </DropdownItem>
+            {/* Toggle tema — mobile (desktop punya tombol sendiri) */}
+            <DropdownItem
+              key="theme"
+              className="md:hidden"
+              startContent={isDark ? <Sun size={18} /> : <Moon size={18} />}
+              onPress={toggleTheme}
+            >
+              {isDark ? 'Mode Terang' : 'Mode Gelap'}
             </DropdownItem>
             <DropdownItem
               key="logout"

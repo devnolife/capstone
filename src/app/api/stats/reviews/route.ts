@@ -319,10 +319,34 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('Error fetching review stats:', error);
-    return NextResponse.json(
-      { error: 'Terjadi kesalahan server' },
-      { status: 500 }
+    console.warn(
+      'Error fetching review stats (fallback kosong):',
+      error instanceof Error ? error.message : error,
     );
+    // DB tidak tersedia — balas struktur kosong agar halaman statistik tetap render
+    return NextResponse.json({
+      summary: {
+        totalReviews: 0,
+        completedReviews: 0,
+        inProgressReviews: 0,
+        pendingReviews: 0,
+        totalAssignments: 0,
+        averageScore: 0,
+        completionRate: 0,
+      },
+      scoreDistribution: {
+        excellent: 0,
+        good: 0,
+        average: 0,
+        belowAverage: 0,
+        poor: 0,
+      },
+      rubrikAverages: [],
+      kategoriAverages: [],
+      recentReviews: [],
+      monthlyStats: [],
+      projectStatusCounts: {},
+      projectsBySemester: [],
+    });
   }
 }

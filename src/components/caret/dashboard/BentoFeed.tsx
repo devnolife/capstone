@@ -34,7 +34,7 @@ export function BentoFeed({
     return (
       <div
         data-reveal
-        className="border-zinc-800 bg-background border p-8"
+        className="border-border bg-background border p-8"
       >
         <EmptyStateIllustration icon="review" />
         <p className="text-app-teritary-invert mt-3 text-center text-sm">{emptyText}</p>
@@ -43,7 +43,7 @@ export function BentoFeed({
   }
 
   return (
-    <div data-reveal-group className="border-zinc-800 grid gap-px border bg-zinc-800 lg:grid-cols-2">
+    <div data-reveal-group className="border-border grid gap-px border bg-border lg:grid-cols-2">
       {items.map((item, index) => {
         const inner = (
           <>

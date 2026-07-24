@@ -190,35 +190,35 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
       {/* Stats Cards */}
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <Card className="border border-zinc-800 bg-card shadow-none">
+          <Card className="border border-border bg-card shadow-none">
             <CardBody className="p-4 text-center">
               <FolderGit2 size={20} className="mx-auto mb-2 text-app-secondary-invert" />
               <p className="text-2xl font-bold tabular-nums">{stats.total}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Total</p>
             </CardBody>
           </Card>
-          <Card className="border border-zinc-800 bg-card shadow-none">
+          <Card className="border border-border bg-card shadow-none">
             <CardBody className="p-4 text-center">
               <FileText size={20} className="mx-auto mb-2 text-primary" />
               <p className="text-2xl font-bold text-primary tabular-nums">{stats.submitted}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Menunggu</p>
             </CardBody>
           </Card>
-          <Card className="border border-zinc-800 bg-card shadow-none">
+          <Card className="border border-border bg-card shadow-none">
             <CardBody className="p-4 text-center">
               <Clock size={20} className="mx-auto mb-2 text-warning" />
               <p className="text-2xl font-bold text-warning tabular-nums">{stats.inReview}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Direview</p>
             </CardBody>
           </Card>
-          <Card className="border border-zinc-800 bg-card shadow-none">
+          <Card className="border border-border bg-card shadow-none">
             <CardBody className="p-4 text-center">
               <AlertTriangle size={20} className="mx-auto mb-2 text-warning" />
               <p className="text-2xl font-bold text-warning tabular-nums">{stats.revision}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Revisi</p>
             </CardBody>
           </Card>
-          <Card className="border border-zinc-800 bg-card shadow-none">
+          <Card className="border border-border bg-card shadow-none">
             <CardBody className="p-4 text-center">
               <CheckCircle2 size={20} className="mx-auto mb-2 text-success" />
               <p className="text-2xl font-bold text-success tabular-nums">{stats.approved}</p>
@@ -230,7 +230,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
 
       {/* Filters */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-800 bg-card shadow-none">
+        <Card className="border border-border bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
@@ -240,7 +240,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                 startContent={<Search size={16} className="text-app-teritary-invert" />}
                 variant="bordered"
                 classNames={{
-                  inputWrapper: 'border-zinc-800',
+                  inputWrapper: 'border-border',
                 }}
                 className="flex-1"
               />
@@ -251,7 +251,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                 variant="bordered"
                 startContent={<Filter size={16} className="text-app-teritary-invert" />}
                 classNames={{
-                  trigger: 'border-zinc-800 min-w-[180px]',
+                  trigger: 'border-border min-w-[180px]',
                 }}
               >
                 <SelectItem key="all">Semua Status</SelectItem>
@@ -269,7 +269,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
       {/* Project List */}
       <motion.div variants={itemVariants} className="space-y-3">
         {filteredProjects.length === 0 ? (
-          <Card className="border border-zinc-800 bg-card shadow-none">
+          <Card className="border border-border bg-card shadow-none">
             <CardBody className="p-8 text-center">
               <FolderGit2 size={48} className="mx-auto mb-4 text-app-teritary-invert" />
               <p className="font-semibold">Tidak ada project ditemukan</p>
@@ -287,7 +287,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
 
             return (
               <motion.div key={project.id} variants={itemVariants}>
-                <Card className="border border-zinc-800 bg-card shadow-none hover:border-primary/50 transition-colors">
+                <Card className="border border-border bg-card shadow-none hover:border-primary/50 transition-colors">
                   <CardBody className="p-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       {/* Left - Project Info */}

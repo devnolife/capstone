@@ -191,27 +191,35 @@ export default async function AutoReviewDetailPage({ params }: { params: Promise
 
   const userId = session.user.id;
 
-  // Fetch the project with assignment verification
-  const project = await prisma.project.findFirst({
-    where: {
-      id,
-      assignments: {
-        some: { dosenId: userId },
-      },
-    },
-    include: {
-      mahasiswa: {
-        select: {
-          id: true,
-          name: true,
-          username: true,
-          prodi: true,
-          image: true,
-          profilePhoto: true,
+  // Fetch the project with assignment verification (fallback bila DB down)
+  let project = null;
+  try {
+    project = await prisma.project.findFirst({
+      where: {
+        id,
+        assignments: {
+          some: { dosenId: userId },
         },
       },
-    },
-  });
+      include: {
+        mahasiswa: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            prodi: true,
+            image: true,
+            profilePhoto: true,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.warn(
+      '[dosen/auto-review/detail] DB tidak tersedia:',
+      error instanceof Error ? error.message : error,
+    );
+  }
 
   if (!project) {
     notFound();

@@ -240,8 +240,8 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
       {/* Project Overview Card */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none overflow-hidden">
-          <div className="p-4 bg-app-quinary border-b border-zinc-800">
+        <Card className="rounded-2xl border border-border bg-card shadow-none overflow-hidden">
+          <div className="p-4 bg-app-quinary border-b border-border">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 {/* Score Circle */}
@@ -254,7 +254,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="6"
-                      className="text-zinc-800"
+                      className="text-app-primary"
                     />
                     <circle
                       cx="40"
@@ -308,7 +308,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
           <CardBody className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Mahasiswa Info */}
-              <div className="flex items-center gap-3 p-3 rounded-xl border border-zinc-800 bg-app-quinary">
+              <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-app-quinary">
                 <Avatar 
                   name={project.mahasiswa.name} 
                   src={avatarSrc}
@@ -386,7 +386,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
       {/* Analysis History */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-border bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <History size={16} className="text-app-teritary-invert" />
@@ -429,8 +429,8 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
             const scoreDiff = aspect.score - aspect.previousScore;
 
             return (
-              <Card key={aspect.key} className="rounded-2xl border border-zinc-800 bg-card shadow-none overflow-hidden">
-                <div className="p-4 bg-app-quinary border-b border-zinc-800">
+              <Card key={aspect.key} className="rounded-2xl border border-border bg-card shadow-none overflow-hidden">
+                <div className="p-4 bg-app-quinary border-b border-border">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -527,7 +527,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
       {/* Info Card */}
       <motion.div variants={itemVariants}>
-        <Card className="rounded-2xl border border-dashed border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-dashed border-border bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex items-start gap-3">
               <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">

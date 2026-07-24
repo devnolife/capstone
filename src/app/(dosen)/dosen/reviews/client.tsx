@@ -149,7 +149,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
 
       {/* Stats Cards */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-2 gap-px border border-zinc-800 bg-zinc-800 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-px border border-border bg-border md:grid-cols-4">
           <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
             <div className="flex items-center justify-between gap-2">
               <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Perlu Direview</span>
@@ -236,7 +236,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
         {selectedTab === 'pending' ? (
           <>
             {pendingAssignments.length === 0 ? (
-              <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+              <Card className="rounded-2xl border border-border bg-card shadow-none">
                 <CardBody className="p-8 text-center">
                   <CheckCircle2 size={48} className="mx-auto mb-4 text-success" />
                   <p className="font-semibold">Tidak ada project yang perlu direview</p>
@@ -252,7 +252,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                 return (
                   <Card
                     key={assignment.id}
-                    className="rounded-2xl border border-zinc-800 bg-card shadow-none hover:border-primary/50 transition-colors"
+                    className="rounded-2xl border border-border bg-card shadow-none hover:border-primary/50 transition-colors"
                   >
                     <CardBody className="p-4">
                       <div className="flex items-center justify-between gap-4">
@@ -321,7 +321,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
         ) : (
           <>
             {reviews.length === 0 ? (
-              <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+              <Card className="rounded-2xl border border-border bg-card shadow-none">
                 <CardBody className="p-8 text-center">
                   <FileText size={48} className="mx-auto mb-4 text-app-teritary-invert" />
                   <p className="font-semibold">Belum ada riwayat review</p>
@@ -337,7 +337,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                 return (
                   <Card
                     key={review.id}
-                    className="rounded-2xl border border-zinc-800 bg-card shadow-none hover:border-primary/50 transition-colors"
+                    className="rounded-2xl border border-border bg-card shadow-none hover:border-primary/50 transition-colors"
                   >
                     <CardBody className="p-4">
                       <div className="flex items-center justify-between gap-4">

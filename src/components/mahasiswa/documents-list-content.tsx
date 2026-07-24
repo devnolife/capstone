@@ -161,7 +161,7 @@ export function DocumentsListContent({ projects }: Props) {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="border border-zinc-800 bg-card shadow-none">
+        <Card className="border border-border bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
@@ -175,7 +175,7 @@ export function DocumentsListContent({ projects }: Props) {
           </CardBody>
         </Card>
 
-        <Card className="border border-zinc-800 bg-card shadow-none">
+        <Card className="border border-border bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-success/10 text-success">
@@ -189,7 +189,7 @@ export function DocumentsListContent({ projects }: Props) {
           </CardBody>
         </Card>
 
-        <Card className="border border-zinc-800 bg-card shadow-none">
+        <Card className="border border-border bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning/10 text-warning">
@@ -203,7 +203,7 @@ export function DocumentsListContent({ projects }: Props) {
           </CardBody>
         </Card>
 
-        <Card className="border border-zinc-800 bg-card shadow-none">
+        <Card className="border border-border bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-quaternary text-app-secondary-invert">
@@ -220,7 +220,7 @@ export function DocumentsListContent({ projects }: Props) {
 
       {/* Template Downloads Section */}
       {projects.length > 0 && (
-        <Card className="border border-zinc-800 bg-card shadow-none">
+        <Card className="border border-border bg-card shadow-none">
           <CardBody className="p-5">
             <div className="flex items-start gap-4">
               <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
@@ -237,7 +237,7 @@ export function DocumentsListContent({ projects }: Props) {
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {/* Template Cards */}
-                  <div className="p-4 rounded-xl border border-zinc-800 bg-app-quinary">
+                  <div className="p-4 rounded-xl border border-border bg-app-quinary">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
                         <FileSignature size={18} />
@@ -282,7 +282,7 @@ export function DocumentsListContent({ projects }: Props) {
                     </Dropdown>
                   </div>
 
-                  <div className="p-4 rounded-xl border border-zinc-800 bg-app-quinary">
+                  <div className="p-4 rounded-xl border border-border bg-app-quinary">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
                         <FileCheck size={18} />
@@ -327,7 +327,7 @@ export function DocumentsListContent({ projects }: Props) {
                     </Dropdown>
                   </div>
 
-                  <div className="p-4 rounded-xl border border-zinc-800 bg-app-quinary">
+                  <div className="p-4 rounded-xl border border-border bg-app-quinary">
                     <div className="flex items-center gap-3 mb-3">
                       <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
                         <ScrollText size={18} />
@@ -375,7 +375,7 @@ export function DocumentsListContent({ projects }: Props) {
 
                 <div className="mt-4 p-3 rounded-lg bg-warning/10 border border-warning/30">
                   <p className="text-xs text-app-secondary-invert">
-                    <strong className="text-warning">💡 Petunjuk:</strong> Setelah download, buka file HTML di browser lalu klik tombol &quot;Cetak / Simpan PDF&quot; untuk menyimpan sebagai PDF. 
+                    <strong className="text-warning">ðŸ’¡ Petunjuk:</strong> Setelah download, buka file HTML di browser lalu klik tombol &quot;Cetak / Simpan PDF&quot; untuk menyimpan sebagai PDF. 
                     Pastikan data project sudah lengkap sebelum mencetak dokumen resmi.
                   </p>
                 </div>
@@ -386,7 +386,7 @@ export function DocumentsListContent({ projects }: Props) {
       )}
 
       {/* Search */}
-      <Card className="border border-zinc-800 bg-card shadow-none">
+      <Card className="border border-border bg-card shadow-none">
         <CardBody className="py-3">
           <Input
             placeholder="Cari proyek atau judul..."
@@ -404,7 +404,7 @@ export function DocumentsListContent({ projects }: Props) {
 
       {/* Project List */}
       {filteredProjects.length === 0 ? (
-        <Card className="border border-zinc-800 bg-card shadow-none">
+        <Card className="border border-border bg-card shadow-none">
           <CardBody className="py-12 text-center">
             <FolderOpen size={48} className="mx-auto text-app-teritary-invert mb-4" />
             <p className="text-lg font-medium text-foreground">
@@ -448,7 +448,7 @@ export function DocumentsListContent({ projects }: Props) {
                 <Card
                   as={Link}
                   href={`/mahasiswa/documents/${project.id}`}
-                  className="border border-zinc-800 bg-card shadow-none transition-colors hover:bg-app-quinary cursor-pointer"
+                  className="border border-border bg-card shadow-none transition-colors hover:bg-app-quinary cursor-pointer"
                   isPressable
                 >
                   <CardBody className="py-4">

@@ -167,7 +167,7 @@ export function StatisticsContent() {
 
   if (!stats) {
     return (
-      <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+      <Card className="rounded-2xl border border-border bg-card shadow-none">
         <CardBody className="text-center py-10">
           <AlertCircle className="w-12 h-12 mx-auto text-warning mb-4" />
           <p className="text-app-secondary-invert">Gagal memuat data statistik</p>
@@ -192,7 +192,7 @@ export function StatisticsContent() {
       />
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 gap-px border border-zinc-800 bg-zinc-800 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-px border border-border bg-border md:grid-cols-4">
         <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
           <div className="flex items-center justify-between gap-2">
             <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Total Review</span>
@@ -237,7 +237,7 @@ export function StatisticsContent() {
       {/* Progress & Score Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Completion Progress */}
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-border bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <Target className="w-5 h-5 text-app-teritary-invert" />
@@ -255,7 +255,7 @@ export function StatisticsContent() {
                     stroke="currentColor"
                     strokeWidth="12"
                     fill="none"
-                    className="text-zinc-800"
+                    className="text-app-primary"
                   />
                   <circle
                     cx="64"
@@ -305,7 +305,7 @@ export function StatisticsContent() {
         </Card>
 
         {/* Score Distribution */}
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-border bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <PieChart className="w-5 h-5 text-app-teritary-invert" />
@@ -404,7 +404,7 @@ export function StatisticsContent() {
       </div>
 
       {/* Monthly Trend Chart */}
-      <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+      <Card className="rounded-2xl border border-border bg-card shadow-none">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-app-teritary-invert" />
@@ -444,7 +444,7 @@ export function StatisticsContent() {
       </Card>
 
       {/* Kategori Performance */}
-      <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+      <Card className="rounded-2xl border border-border bg-card shadow-none">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 text-app-teritary-invert" />
@@ -458,7 +458,7 @@ export function StatisticsContent() {
               return (
                 <div
                   key={kategori.kategori}
-                  className="p-4 rounded-xl border border-zinc-800 bg-app-quinary"
+                  className="p-4 rounded-xl border border-border bg-app-quinary"
                 >
                   <div className="flex items-center gap-2 mb-3">
                     <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -491,7 +491,7 @@ export function StatisticsContent() {
 
       {/* Rubrik Details */}
       {rubrikAverages.length > 0 && (
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-border bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-app-teritary-invert" />
@@ -565,7 +565,7 @@ export function StatisticsContent() {
       {/* Recent Reviews & Project Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Reviews */}
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-border bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-app-teritary-invert" />
@@ -580,7 +580,7 @@ export function StatisticsContent() {
                 {recentReviews.slice(0, 5).map((review) => (
                   <div
                     key={review.id}
-                    className="flex items-center justify-between p-3 rounded-lg border border-zinc-800 bg-app-quinary hover:bg-app-quaternary transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg border border-border bg-app-quinary hover:bg-app-quaternary transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{review.projectTitle}</p>
@@ -612,7 +612,7 @@ export function StatisticsContent() {
         </Card>
 
         {/* Project Status Distribution */}
-        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <Card className="rounded-2xl border border-border bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <PieChart className="w-5 h-5 text-app-teritary-invert" />

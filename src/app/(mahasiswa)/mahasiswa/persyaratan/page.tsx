@@ -194,7 +194,7 @@ export default function PersyaratanPage() {
       />
 
       {/* Info */}
-      <div className="flex items-start gap-3 border border-zinc-800 bg-card p-4">
+      <div className="flex items-start gap-3 border border-border bg-card p-4">
         <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
           <Info size={16} />
         </span>
@@ -210,7 +210,7 @@ export default function PersyaratanPage() {
       </div>
 
       {/* Summary bento */}
-      <div className="grid grid-cols-1 gap-px border border-zinc-800 bg-zinc-800 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-px border border-border bg-border sm:grid-cols-3">
         {PERSYARATAN_SECTIONS.map((section, index) => {
           const SectionIcon = section.icon;
           return (
@@ -249,9 +249,9 @@ export default function PersyaratanPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + sectionIndex * 0.1 }}
             >
-              <Card className="overflow-hidden border border-zinc-800 bg-card shadow-none">
+              <Card className="overflow-hidden border border-border bg-card shadow-none">
                 {/* Section Header */}
-                <div className="border-b border-zinc-800 bg-app-quinary p-5">
+                <div className="border-b border-border bg-app-quinary p-5">
                   <div className="flex items-center gap-4">
                     <span className="bg-app-primary text-foreground flex size-11 items-center justify-center rounded-xl">
                       <SectionIcon size={20} />
@@ -262,7 +262,7 @@ export default function PersyaratanPage() {
                       </h2>
                       <p className="text-app-secondary-invert text-sm">{section.subtitle}</p>
                     </div>
-                    <span className="text-app-teritary-invert ml-auto rounded-full border border-zinc-800 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider">
+                    <span className="text-app-teritary-invert ml-auto rounded-full border border-border px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider">
                       {section.requirements.length} item
                     </span>
                   </div>
@@ -270,7 +270,7 @@ export default function PersyaratanPage() {
 
                 {/* Requirements List */}
                 <CardBody className="p-0">
-                  <div className="divide-y divide-zinc-800">
+                  <div className="divide-y divide-border">
                     {section.requirements.map((req, reqIndex) => {
                       const ReqIcon = req.icon;
                       return (
@@ -294,7 +294,7 @@ export default function PersyaratanPage() {
                               </p>
 
                               {/* Tips */}
-                              <div className="rounded-xl border border-zinc-800 bg-app-quinary p-3">
+                              <div className="rounded-xl border border-border bg-app-quinary p-3">
                                 <p className="text-app-teritary-invert mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em]">
                                   <Lightbulb size={12} />
                                   Tips pengisian
@@ -328,7 +328,7 @@ export default function PersyaratanPage() {
       </div>
 
       {/* CTA */}
-      <div className="flex flex-col items-center gap-4 border border-zinc-800 bg-app-primary p-6 text-center sm:flex-row sm:text-left">
+      <div className="flex flex-col items-center gap-4 border border-border bg-app-primary p-6 text-center sm:flex-row sm:text-left">
         <span className="bg-background text-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
           <FileText size={22} />
         </span>

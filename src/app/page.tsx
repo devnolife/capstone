@@ -12,7 +12,8 @@ import { ScrollAnimations } from '@/components/caret/ScrollAnimations';
 
 export default function Home() {
   return (
-    <>
+    // Dark island: landing tetap memakai palette zinc gelap Caret
+    <div className="dark bg-background text-foreground">
       <SmoothScroll />
       <ScrollAnimations />
       <CaretHeader />
@@ -26,6 +27,6 @@ export default function Home() {
         <CtaSection />
       </main>
       <CaretFooter />
-    </>
+    </div>
   );
 }

@@ -56,7 +56,7 @@ export function MobileBottomNav() {
         : mahasiswaNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-lg border-t border-zinc-800 safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-lg border-t border-border safe-area-inset-bottom">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const Icon = item.icon;

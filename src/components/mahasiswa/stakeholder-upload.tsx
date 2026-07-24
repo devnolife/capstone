@@ -327,7 +327,7 @@ export default function StakeholderUpload({
 
       {/* Documents Grid */}
       {documents.length === 0 ? (
-        <Card className="border-2 border-dashed border-zinc-800 bg-app-quinary">
+        <Card className="border-2 border-dashed border-border bg-app-quinary">
           <CardBody className="flex flex-col items-center justify-center py-12">
             <div className="w-16 h-16 rounded-full bg-app-primary flex items-center justify-center mb-4">
               <FileSignature className="w-8 h-8 text-app-teritary-invert" />
@@ -361,7 +361,7 @@ export default function StakeholderUpload({
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="overflow-hidden border border-zinc-800 bg-card hover:shadow-lg transition-shadow">
+                  <Card className="overflow-hidden border border-border bg-card hover:shadow-lg transition-shadow">
                     {/* Preview Thumbnail */}
                     {isImage ? (
                       <div className="relative h-40 bg-app-quinary overflow-hidden">
@@ -487,7 +487,7 @@ export default function StakeholderUpload({
             <div className="space-y-3">
               <label className="text-sm font-medium">File Dokumen *</label>
               <div
-                className={`border-2 border-dashed rounded-xl p-6 transition-colors cursor-pointer hover:bg-app-quaternary ${selectedFile ? "border-success/40 bg-success/10" : "border-zinc-800 bg-app-quinary"
+                className={`border-2 border-dashed rounded-xl p-6 transition-colors cursor-pointer hover:bg-app-quaternary ${selectedFile ? "border-success/40 bg-success/10" : "border-border bg-app-quinary"
                   }`}
                 onClick={() => fileInputRef.current?.click()}
               >

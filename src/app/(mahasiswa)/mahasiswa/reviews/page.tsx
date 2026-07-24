@@ -3,17 +3,10 @@ import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { MahasiswaReviewsContent } from '@/components/mahasiswa/reviews-content';
 
-export default async function MahasiswaReviewsPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect('/login');
-  }
-
-  // Fetch reviews for user's projects
-  const reviews = await prisma.review.findMany({
+async function getReviews(userId: string) {
+  return prisma.review.findMany({
     where: {
-      project: { mahasiswaId: session.user.id },
+      project: { mahasiswaId: userId },
     },
     include: {
       project: {
@@ -83,6 +76,27 @@ export default async function MahasiswaReviewsPage() {
     },
     orderBy: { updatedAt: 'desc' },
   });
+}
+
+export default async function MahasiswaReviewsPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  // Fallback kosong bila DB down / sesi fake
+  let reviews: Awaited<ReturnType<typeof getReviews>> = [];
+  if (!session.user.id.startsWith('dev-')) {
+    try {
+      reviews = await getReviews(session.user.id);
+    } catch (error) {
+      console.warn(
+        '[mahasiswa/reviews] DB tidak tersedia — daftar kosong:',
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
 
   // Calculate stats
   const stats = {

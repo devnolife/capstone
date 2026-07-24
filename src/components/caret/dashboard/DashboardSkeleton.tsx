@@ -21,7 +21,7 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Stats */}
-      <div className="border-zinc-800 grid grid-cols-2 gap-px border bg-zinc-800 lg:grid-cols-4">
+      <div className="border-border grid grid-cols-2 gap-px border bg-border lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="bg-background flex flex-col gap-3 px-5 py-4 md:px-6 md:py-5">
             <div className="h-3 w-24 rounded bg-app-quaternary" />
@@ -38,7 +38,7 @@ export function DashboardSkeleton() {
       </div>
 
       {/* Chart + list */}
-      <div className="border-zinc-800 grid gap-px border bg-zinc-800 lg:grid-cols-[1.1fr_1fr]">
+      <div className="border-border grid gap-px border bg-border lg:grid-cols-[1.1fr_1fr]">
         <div className="bg-background flex h-72 flex-col px-5 py-4 md:px-6 md:py-5">
           <div className="mb-4 flex items-baseline justify-between">
             <div className="h-5 w-40 rounded bg-app-primary" />

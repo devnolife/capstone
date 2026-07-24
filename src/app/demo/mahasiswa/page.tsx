@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /** Preview publik dashboard mahasiswa dengan data mock (tanpa login). */
 export default function DemoMahasiswaPage() {
   return (
-    <main className="min-h-screen px-4 py-6 md:px-6">
+    <main className="dark min-h-screen bg-background px-4 py-6 text-foreground md:px-6">
       <MahasiswaDashboardContent
         userName="Aldi Pratama"
         hasGitHubConnected={MOCK_MAHASISWA.hasGitHubConnected}

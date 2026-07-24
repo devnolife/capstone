@@ -5,7 +5,7 @@ export function StatCards() {
   return (
     <div
       data-reveal-group
-      className="border-zinc-800 grid grid-cols-2 gap-px border bg-zinc-800 lg:grid-cols-4"
+      className="border-border grid grid-cols-2 gap-px border bg-border lg:grid-cols-4"
     >
       {STATS.map((stat) => (
         <div key={stat.label} className="bg-background flex flex-col gap-3 px-5 py-4 md:px-6 md:py-5">

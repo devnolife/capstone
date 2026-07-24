@@ -190,9 +190,9 @@ function LoginForm() {
           className="mt-8"
         >
           <div className="mb-3 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-app-teritary-invert">
-            <span className="h-px flex-1 bg-zinc-800" />
-            <span className="rounded-full border border-zinc-800 px-2.5 py-0.5">Dev mode</span>
-            <span className="h-px flex-1 bg-zinc-800" />
+            <span className="h-px flex-1 bg-border" />
+            <span className="rounded-full border border-border px-2.5 py-0.5">Dev mode</span>
+            <span className="h-px flex-1 bg-border" />
           </div>
           <div className="grid grid-cols-3 gap-2">
             {devAccounts.map((acc) => {
@@ -203,7 +203,7 @@ function LoginForm() {
                   type="button"
                   disabled={isLoading}
                   onClick={() => handleDevLogin(acc.username, acc.password)}
-                  className="group flex flex-col items-center gap-1.5 rounded-xl border border-zinc-800 bg-app-quinary py-3 transition-colors hover:bg-app-quaternary disabled:pointer-events-none disabled:opacity-50"
+                  className="group flex flex-col items-center gap-1.5 rounded-xl border border-border bg-app-quinary py-3 transition-colors hover:bg-app-quaternary disabled:pointer-events-none disabled:opacity-50"
                 >
                   <span className="flex size-7 items-center justify-center rounded-full bg-app-primary text-foreground">
                     <Icon size={13} />
@@ -230,7 +230,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen w-full overflow-hidden bg-background text-foreground">
       {/* ============ LEFT — Branding ============ */}
-      <aside className="relative hidden flex-col justify-between border-r border-zinc-800 p-10 lg:flex lg:w-[52%]">
+      <aside className="relative hidden flex-col justify-between border-r border-border p-10 lg:flex lg:w-[52%]">
         {/* Top row */}
         <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-app-teritary-invert">
           <Link href="/" className="flex items-center gap-2.5">
@@ -264,7 +264,7 @@ export default function LoginPage() {
           </p>
 
           {/* Mini feature row */}
-          <div className="mt-10 grid max-w-md grid-cols-3 gap-px border border-zinc-800 bg-zinc-800">
+          <div className="mt-10 grid max-w-md grid-cols-3 gap-px border border-border bg-border">
             {[
               { icon: Github, label: 'GitHub sync' },
               { icon: GraduationCap, label: 'SIMAK' },

@@ -677,7 +677,7 @@ export default function ProjectRequirementsFormPage() {
       )}
 
       {/* Progress Card */}
-      <Card className="mb-6 border border-zinc-800 bg-card shadow-none overflow-hidden">
+      <Card className="mb-6 border border-border bg-card shadow-none overflow-hidden">
         <CardBody className="p-0">
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
@@ -721,7 +721,7 @@ export default function ProjectRequirementsFormPage() {
           </div>
 
           {/* Section Quick Status */}
-          <div className="grid divide-x divide-zinc-800 border-t border-zinc-800" style={{ gridTemplateColumns: `repeat(${visibleSections.length}, minmax(0, 1fr))` }}>
+          <div className="grid divide-x divide-border border-t border-border" style={{ gridTemplateColumns: `repeat(${visibleSections.length}, minmax(0, 1fr))` }}>
             {visibleSections.map((section) => {
               const sectionCompletion = getSectionCompletion(section);
               const SectionIcon = section.icon;
@@ -765,7 +765,7 @@ export default function ProjectRequirementsFormPage() {
             <Card
               key={section.id}
               id={section.id}
-              className="border border-zinc-800 bg-card shadow-none overflow-hidden scroll-mt-4"
+              className="border border-border bg-card shadow-none overflow-hidden scroll-mt-4"
             >
               {/* Section Header */}
               <button
@@ -843,7 +843,7 @@ export default function ProjectRequirementsFormPage() {
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 pb-6 pt-2 border-t border-zinc-800">
+                    <div className="px-4 pb-6 pt-2 border-t border-border">
                       <div className="grid gap-6">
                         {section.fields.map((field, fieldIndex) => {
                           const FieldIcon = field.icon;
@@ -860,7 +860,7 @@ export default function ProjectRequirementsFormPage() {
                                 ? 'border-ring bg-app-quinary'
                                 : isFilled
                                   ? 'border-success/30 bg-success/5'
-                                  : 'border-zinc-800 bg-background'
+                                  : 'border-border bg-background'
                                 }`}
                             >
                               {/* Field Header */}
@@ -928,7 +928,7 @@ export default function ProjectRequirementsFormPage() {
                                           className={`text-left p-3 rounded-xl border transition-all ${
                                             isSelected
                                               ? 'border-ring bg-app-quinary ring-1 ring-ring/40'
-                                              : 'border-zinc-800 hover:bg-app-quinary'
+                                              : 'border-border hover:bg-app-quinary'
                                           } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
                                         >
                                           <div className="flex items-center justify-between mb-1">
@@ -990,7 +990,7 @@ export default function ProjectRequirementsFormPage() {
                                 // Get selected platform's category to filter tool categories
                                 const selectedPlatform = getDeploymentPlatform(formData.deploymentPlatform);
                                 if (!selectedPlatform) return (
-                                  <div className="p-4 rounded-xl border border-dashed border-zinc-800 text-center">
+                                  <div className="p-4 rounded-xl border border-dashed border-border text-center">
                                     <Wrench size={24} className="mx-auto text-app-teritary-invert mb-2" />
                                     <p className="text-sm text-app-teritary-invert">Pilih platform deployment terlebih dahulu untuk melihat tools yang tersedia</p>
                                   </div>
@@ -1000,7 +1000,7 @@ export default function ProjectRequirementsFormPage() {
                                 const selectedTools = parseDeploymentTools(formData[field.key]);
 
                                 if (toolCategories.length === 0) return (
-                                  <div className="p-4 rounded-xl border border-dashed border-zinc-800 text-center">
+                                  <div className="p-4 rounded-xl border border-dashed border-border text-center">
                                     <p className="text-sm text-app-teritary-invert">Tidak ada tools checklist untuk platform ini</p>
                                   </div>
                                 );
@@ -1027,7 +1027,7 @@ export default function ProjectRequirementsFormPage() {
                                       <motion.div
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="p-3 rounded-xl bg-app-quinary border border-zinc-800"
+                                        className="p-3 rounded-xl bg-app-quinary border border-border"
                                       >
                                         <div className="flex items-center gap-2">
                                           <CheckCircle2 size={16} className="text-primary" />
@@ -1067,7 +1067,7 @@ export default function ProjectRequirementsFormPage() {
                                                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                                                     isActive
                                                       ? 'border-ring bg-app-quaternary text-foreground ring-1 ring-ring/30'
-                                                      : 'border-zinc-800 bg-app-quinary text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground'
+                                                      : 'border-border bg-app-quinary text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground'
                                                   } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
                                                   title={tool.description}
                                                 >
@@ -1096,7 +1096,7 @@ export default function ProjectRequirementsFormPage() {
                                       isReadOnly={!isOwner}
                                       startContent={<Globe size={16} className="text-app-teritary-invert" />}
                                       classNames={{
-                                        inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                        inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
                                           focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
                                         input: 'placeholder:text-app-teritary-invert',
                                       }}
@@ -1178,7 +1178,7 @@ export default function ProjectRequirementsFormPage() {
                                   variant="bordered"
                                   isReadOnly={!isOwner}
                                   classNames={{
-                                    inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                    inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
                                       focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
                                     input: 'placeholder:text-app-teritary-invert',
                                   }}
@@ -1194,7 +1194,7 @@ export default function ProjectRequirementsFormPage() {
                                   variant="bordered"
                                   isReadOnly={!isOwner}
                                   classNames={{
-                                    inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                    inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
                                       focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
                                     input: 'placeholder:text-app-teritary-invert',
                                   }}
@@ -1211,7 +1211,7 @@ export default function ProjectRequirementsFormPage() {
                                   variant="bordered"
                                   isReadOnly={!isOwner}
                                   classNames={{
-                                    inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                    inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
                                       focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
                                     input: 'placeholder:text-app-teritary-invert',
                                   }}
@@ -1257,7 +1257,7 @@ export default function ProjectRequirementsFormPage() {
 
       {/* Bottom Save Bar (Mobile) - Only for owners */}
       {isOwner ? (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-xl border-t border-zinc-800 sm:hidden z-50">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-xl border-t border-border sm:hidden z-50">
           <div className="flex items-center gap-3">
             <div className="flex-1">
               <div className="flex items-center justify-between text-xs mb-1.5">

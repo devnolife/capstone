@@ -288,8 +288,8 @@ export default function NotificationsPage() {
 
       {/* Team Invitations Section */}
       {invitations.length > 0 && (
-        <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
-          <CardHeader className="border-b border-zinc-800 bg-app-quinary p-4 md:p-5">
+        <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
+          <CardHeader className="border-b border-border bg-app-quinary p-4 md:p-5">
             <div className="flex items-center gap-3">
               <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <Users size={16} />
@@ -301,7 +301,7 @@ export default function NotificationsPage() {
             </div>
           </CardHeader>
           <CardBody className="p-0">
-            <div className="divide-y divide-zinc-800">
+            <div className="divide-y divide-border">
               {invitations.map((invitation) => (
                 <div
                   key={invitation.id}
@@ -312,7 +312,7 @@ export default function NotificationsPage() {
                       name={invitation.inviter.name}
                       src={invitation.inviter.image || undefined}
                       size="md"
-                      className="ring-2 ring-zinc-800"
+                      className="ring-2 ring-border"
                     />
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -327,7 +327,7 @@ export default function NotificationsPage() {
                             )}
                             {' '}mengundang Anda bergabung ke project:
                           </p>
-                          <div className="mt-2 rounded-lg border border-zinc-800 bg-background p-3">
+                          <div className="mt-2 rounded-lg border border-border bg-background p-3">
                             <p className="font-medium text-foreground">{invitation.project.title}</p>
                             {invitation.project.description && (
                               <p className="text-app-teritary-invert mt-1 line-clamp-2 text-sm">
@@ -379,8 +379,8 @@ export default function NotificationsPage() {
       )}
 
       {/* Notifications List */}
-      <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
-        <CardHeader className="border-b border-zinc-800 p-4 md:p-5">
+      <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
+        <CardHeader className="border-b border-border p-4 md:p-5">
           <h2 className="font-display text-lg font-[450] tracking-tight">
             Daftar Notifikasi (<span className="tabular-nums">{notifications.length}</span>)
           </h2>
@@ -394,7 +394,7 @@ export default function NotificationsPage() {
               <p className="text-app-teritary-invert">Tidak ada notifikasi</p>
             </div>
           ) : (
-            <div className="divide-y divide-zinc-800">
+            <div className="divide-y divide-border">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}

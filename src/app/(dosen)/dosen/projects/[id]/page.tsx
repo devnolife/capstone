@@ -375,7 +375,7 @@ export default function DosenProjectDetailPage({
           }
         />
 
-        <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden mt-3">
+        <Card className="border border-border bg-card shadow-none overflow-hidden mt-3">
           <CardBody className="p-5">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -452,8 +452,8 @@ export default function DosenProjectDetailPage({
         <div className="lg:col-span-2 space-y-6">
           {/* Mahasiswa & Deskripsi Card */}
           <motion.div variants={itemVariants}>
-            <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-              <div className="p-4 bg-app-quinary border-b border-zinc-800">
+            <Card className="border border-border bg-card shadow-none overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-border">
                 <div className="flex items-center gap-2">
                   <Users size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Tim Project</h3>
@@ -464,11 +464,11 @@ export default function DosenProjectDetailPage({
               </div>
               <CardBody className="p-4 space-y-4">
                 {/* Ketua (Owner) */}
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quaternary border border-zinc-800">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quaternary border border-border">
                   <Avatar
                     name={project.mahasiswa.name}
                     src={avatarUrl}
-                    className="w-10 h-10 ring-2 ring-zinc-700"
+                    className="w-10 h-10 ring-2 ring-border"
                     imgProps={{ referrerPolicy: "no-referrer" }}
                   />
                   <div className="flex-1 min-w-0">
@@ -487,7 +487,7 @@ export default function DosenProjectDetailPage({
                       href={`https://github.com/${project.mahasiswa.githubUsername}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-app-quinary hover:bg-app-quaternary transition-colors text-xs"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-app-quinary hover:bg-app-quaternary transition-colors text-xs"
                     >
                       <Github size={12} />
                       @{project.mahasiswa.githubUsername}
@@ -499,12 +499,12 @@ export default function DosenProjectDetailPage({
                 {project.members?.filter(m => m.role !== 'leader').map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-border"
                   >
                     <Avatar
                       name={member.user?.name || member.name || 'Member'}
                       src={member.user?.image || member.githubAvatarUrl || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
-                      className="w-10 h-10 ring-2 ring-zinc-700"
+                      className="w-10 h-10 ring-2 ring-border"
                       imgProps={{ referrerPolicy: "no-referrer" }}
                     />
                     <div className="flex-1 min-w-0">
@@ -520,7 +520,7 @@ export default function DosenProjectDetailPage({
                         href={`https://github.com/${member.user?.githubUsername || member.githubUsername}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-app-quinary hover:bg-app-quaternary transition-colors text-xs"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border bg-app-quinary hover:bg-app-quaternary transition-colors text-xs"
                       >
                         <Github size={12} />
                         @{member.user?.githubUsername || member.githubUsername}
@@ -533,12 +533,12 @@ export default function DosenProjectDetailPage({
                 {project.invitations?.filter(i => i.status === 'pending').map((invitation) => (
                   <div
                     key={invitation.id}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-border"
                   >
                     <Avatar
                       name={invitation.invitee.name}
                       src={invitation.invitee.image || undefined}
-                      className="w-10 h-10 ring-2 ring-zinc-700 opacity-75"
+                      className="w-10 h-10 ring-2 ring-border opacity-75"
                       imgProps={{ referrerPolicy: "no-referrer" }}
                     />
                     <div className="flex-1 min-w-0">
@@ -572,8 +572,8 @@ export default function DosenProjectDetailPage({
           {/* Requirements Card */}
           {project.requirements && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-                <div className="p-3 bg-app-quinary border-b border-zinc-800">
+              <Card className="border border-border bg-card shadow-none overflow-hidden">
+                <div className="p-3 bg-app-quinary border-b border-border">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <ListChecks size={16} className="text-app-secondary-invert" />
@@ -601,7 +601,7 @@ export default function DosenProjectDetailPage({
                           key={section.key}
                           aria-label={section.title}
                           classNames={{
-                            base: 'border border-zinc-800 rounded-lg bg-app-quinary',
+                            base: 'border border-border rounded-lg bg-app-quinary',
                             title: 'font-medium text-sm',
                             trigger: 'px-3 py-2',
                             content: 'px-3 pb-3',
@@ -627,7 +627,7 @@ export default function DosenProjectDetailPage({
                                 : String(value);
 
                               return (
-                                <div key={field.key} className="bg-background rounded-md p-2.5 border border-zinc-800">
+                                <div key={field.key} className="bg-background rounded-md p-2.5 border border-border">
                                   <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert mb-1">{field.label}</p>
                                   <p className="text-sm text-app-secondary-invert whitespace-pre-wrap">{displayValue}</p>
                                 </div>
@@ -646,9 +646,9 @@ export default function DosenProjectDetailPage({
           {/* GitHub Repository Card */}
           {project.githubRepoUrl && githubInfo && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+              <Card className="border border-border bg-card shadow-none overflow-hidden">
                 <CardBody className="p-0">
-                  <div className="flex items-center gap-3 p-3 border-b border-zinc-800">
+                  <div className="flex items-center gap-3 p-3 border-b border-border">
                     <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                       <Github size={18} />
                     </div>
@@ -703,7 +703,7 @@ export default function DosenProjectDetailPage({
                         className="overflow-hidden"
                       >
                         <div className="p-3 bg-app-quinary">
-                          <div className="rounded-lg overflow-hidden border border-zinc-800">
+                          <div className="rounded-lg overflow-hidden border border-border">
                             <GitHubCodeViewer
                               owner={githubInfo.owner}
                               repo={githubInfo.repo}
@@ -726,7 +726,7 @@ export default function DosenProjectDetailPage({
         <div className="space-y-6">
           {/* Review Action Card */}
           <motion.div variants={itemVariants}>
-            <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+            <Card className="border border-border bg-card shadow-none overflow-hidden">
               <CardBody className="p-4">
                 {canReview ? (
                   <div className="p-3 rounded-xl bg-warning/10 border border-warning/40">
@@ -767,8 +767,8 @@ export default function DosenProjectDetailPage({
           {/* Reviews Card */}
           {project.reviews.length > 0 && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-                <div className="p-3 bg-app-quinary border-b border-zinc-800">
+              <Card className="border border-border bg-card shadow-none overflow-hidden">
+                <div className="p-3 bg-app-quinary border-b border-border">
                   <div className="flex items-center gap-2">
                     <MessageSquare size={16} className="text-app-secondary-invert" />
                     <h4 className="font-semibold text-sm">Review Sebelumnya</h4>
@@ -777,7 +777,7 @@ export default function DosenProjectDetailPage({
                 <CardBody className="p-3">
                   <div className="space-y-2">
                     {project.reviews.map((review) => (
-                      <div key={review.id} className="p-2.5 rounded-lg bg-app-quinary border border-zinc-800">
+                      <div key={review.id} className="p-2.5 rounded-lg bg-app-quinary border border-border">
                         <div className="flex items-center justify-between mb-1">
                           <p className="font-medium text-sm">{review.reviewer.name}</p>
                           <Chip size="sm" color={getStatusColor(review.status)} variant="flat" className="h-5 text-xs">
@@ -804,8 +804,8 @@ export default function DosenProjectDetailPage({
           {/* Stakeholder Documents Card - Moved to Sidebar */}
           {project.stakeholderDocuments && project.stakeholderDocuments.length > 0 && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-                <div className="p-3 bg-app-quinary border-b border-zinc-800">
+              <Card className="border border-border bg-card shadow-none overflow-hidden">
+                <div className="p-3 bg-app-quinary border-b border-border">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Building2 size={16} className="text-app-secondary-invert" />
@@ -817,7 +817,7 @@ export default function DosenProjectDetailPage({
                 <CardBody className="p-3">
                   <div className="space-y-2">
                     {project.stakeholderDocuments.map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between p-2.5 rounded-lg bg-app-quinary border border-zinc-800">
+                      <div key={doc.id} className="flex items-center justify-between p-2.5 rounded-lg bg-app-quinary border border-border">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <div className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-md">
                             <ShieldCheck size={14} />
@@ -842,8 +842,8 @@ export default function DosenProjectDetailPage({
 
           {/* Timeline Card */}
           <motion.div variants={itemVariants}>
-            <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
-              <div className="p-3 bg-app-quinary border-b border-zinc-800">
+            <Card className="border border-border bg-card shadow-none overflow-hidden">
+              <div className="p-3 bg-app-quinary border-b border-border">
                 <div className="flex items-center gap-2">
                   <Clock size={16} className="text-app-secondary-invert" />
                   <h4 className="font-semibold text-sm">Timeline</h4>

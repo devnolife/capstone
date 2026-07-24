@@ -30,7 +30,7 @@ export function StatsCard({
   progress,
 }: StatsCardProps) {
   return (
-    <div className="border-zinc-800 bg-background hover:bg-app-quinary group flex h-full w-full flex-col gap-3 border px-5 py-4 transition-colors md:px-6 md:py-5">
+    <div className="border-border bg-background hover:bg-app-quinary group flex h-full w-full flex-col gap-3 border px-5 py-4 transition-colors md:px-6 md:py-5">
       <div className="flex items-center justify-between gap-2">
         <span className="text-app-teritary-invert truncate font-mono text-[10px] tracking-wider uppercase md:text-xs">
           {title}

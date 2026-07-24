@@ -82,7 +82,7 @@ function getProgress(status: string): number {
 }
 
 const statChipClass =
-  'flex items-center gap-1.5 rounded-full border border-zinc-800 bg-app-quinary px-2.5 py-1 font-mono text-[10px] tracking-wider text-app-secondary-invert';
+  'flex items-center gap-1.5 rounded-full border border-border bg-app-quinary px-2.5 py-1 font-mono text-[10px] tracking-wider text-app-secondary-invert';
 
 /**
  * Kartu project mahasiswa — sel bento Caret (dirender di dalam grid
@@ -137,12 +137,12 @@ export function ProjectCard({
         {/* Peran */}
         <div className="flex flex-wrap items-center gap-2">
           {isOwner ? (
-            <span className="text-app-primary-invert inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-app-quaternary px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest">
+            <span className="text-app-primary-invert inline-flex items-center gap-1.5 rounded-full border border-border bg-app-quaternary px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest">
               <Crown size={10} /> Ketua Kelompok
             </span>
           ) : (
             <Tooltip content={`Ketua: ${ownerName || 'Tidak diketahui'}`}>
-              <span className="text-app-teritary-invert inline-flex cursor-help items-center gap-1.5 rounded-full border border-zinc-800 px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest">
+              <span className="text-app-teritary-invert inline-flex cursor-help items-center gap-1.5 rounded-full border border-border px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest">
                 <Users size={10} /> Anggota
               </span>
             </Tooltip>
@@ -202,7 +202,7 @@ export function ProjectCard({
       </div>
 
       {/* Footer */}
-      <div className="mt-4 space-y-3 border-t border-zinc-800 pt-4">
+      <div className="mt-4 space-y-3 border-t border-border pt-4">
         {showActions && (
           <div className="flex items-center gap-2">
             <Link

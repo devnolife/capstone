@@ -16,7 +16,9 @@ export default async function ProjectDetailPage({
 
   const { id } = await params;
 
-  const project = await prisma.project.findUnique({
+  let project = null;
+  try {
+    project = await prisma.project.findUnique({
     where: { id },
     include: {
       mahasiswa: {
@@ -111,6 +113,12 @@ export default async function ProjectDetailPage({
       },
     },
   });
+  } catch (error) {
+    console.warn(
+      '[mahasiswa/projects/detail] DB tidak tersedia:',
+      error instanceof Error ? error.message : error,
+    );
+  }
 
   if (!project) {
     notFound();

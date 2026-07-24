@@ -19,7 +19,7 @@ export function BentoStats({ stats }: { stats: BentoStat[] }) {
   return (
     <div
       data-reveal-group
-      className="border-zinc-800 grid grid-cols-2 gap-px border bg-zinc-800 lg:grid-cols-4"
+      className="border-border grid grid-cols-2 gap-px border bg-border lg:grid-cols-4"
     >
       {stats.map((stat) => {
         const content = (

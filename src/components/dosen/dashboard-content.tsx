@@ -136,7 +136,7 @@ export function DosenDashboardContent({
       <LabelRow left="[SEL] AKTIVITAS" right="/ REVIEW" />
       <div
         data-reveal
-        className="border-zinc-800 grid gap-px border bg-zinc-800 lg:grid-cols-[1.1fr_1fr]"
+        className="border-border grid gap-px border bg-border lg:grid-cols-[1.1fr_1fr]"
       >
         <BentoChart
           title="Aktivitas review"

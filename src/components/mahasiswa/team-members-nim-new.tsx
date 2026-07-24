@@ -157,7 +157,7 @@ export default function TeamMembersNimNew({
   const totalMembers = pendingMembers.length + 1; // +1 for owner
 
   return (
-    <Card className="border border-zinc-800 bg-card shadow-sm">
+    <Card className="border border-border bg-card shadow-sm">
       <CardBody className="p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -214,14 +214,14 @@ export default function TeamMembersNimNew({
         {/* Team Members Grid */}
         <div className="space-y-2">
           {/* Owner Card */}
-          <div className="flex items-center gap-3 p-3 bg-app-quinary rounded-xl border border-zinc-800">
+          <div className="flex items-center gap-3 p-3 bg-app-quinary rounded-xl border border-border">
             <div className="relative">
               <Avatar
                 src={getSimakPhotoUrl(ownerNim) || ownerImage}
                 name={ownerName || 'Owner'}
-                className="w-11 h-11 ring-2 ring-zinc-800"
+                className="w-11 h-11 ring-2 ring-border"
               />
-              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-app-primary rounded-full border-2 border-zinc-900 flex items-center justify-center shadow-sm">
+              <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-app-primary rounded-full border-2 border-background flex items-center justify-center shadow-sm">
                 <Crown size={10} className="text-warning" />
               </div>
             </div>
@@ -241,7 +241,7 @@ export default function TeamMembersNimNew({
             <Chip
               size="sm"
               classNames={{
-                base: 'bg-app-quaternary border border-zinc-800',
+                base: 'bg-app-quaternary border border-border',
                 content: 'text-app-primary-invert font-medium text-[10px]'
               }}
             >
@@ -258,7 +258,7 @@ export default function TeamMembersNimNew({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20, height: 0, marginBottom: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-3 p-3 bg-app-quinary rounded-xl border border-zinc-800 group hover:bg-app-quaternary transition-colors"
+                className="flex items-center gap-3 p-3 bg-app-quinary rounded-xl border border-border group hover:bg-app-quaternary transition-colors"
               >
                 <div className="relative">
                   <Avatar
@@ -266,7 +266,7 @@ export default function TeamMembersNimNew({
                     name={member.name}
                     className="w-11 h-11"
                   />
-                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-zinc-900 flex items-center justify-center">
+                  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-success rounded-full border-2 border-background flex items-center justify-center">
                     <UserCheck size={10} className="text-white" />
                   </div>
                 </div>
@@ -357,7 +357,7 @@ export default function TeamMembersNimNew({
                   )
                 }
                 classNames={{
-                  inputWrapper: 'border-zinc-800 hover:border-ring data-[focused=true]:border-ring',
+                  inputWrapper: 'border-border hover:border-ring data-[focused=true]:border-ring',
                 }}
               />
 
@@ -368,7 +368,7 @@ export default function TeamMembersNimNew({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute z-50 w-full mt-2 bg-card border border-zinc-800 rounded-xl shadow-lg overflow-hidden"
+                    className="absolute z-50 w-full mt-2 bg-card border border-border rounded-xl shadow-lg overflow-hidden"
                   >
                     <div className="max-h-[240px] overflow-y-auto">
                       {searchResults.map((user, index) => (
@@ -379,7 +379,7 @@ export default function TeamMembersNimNew({
                           transition={{ delay: index * 0.03 }}
                           type="button"
                           onClick={() => handleAddMember(user)}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-app-quaternary transition-colors text-left border-b border-zinc-800 last:border-b-0 group"
+                          className="w-full flex items-center gap-3 p-3 hover:bg-app-quaternary transition-colors text-left border-b border-border last:border-b-0 group"
                         >
                           <Avatar
                             src={getSimakPhotoUrl(user.nim) || user.image || user.simakPhoto || undefined}
@@ -423,7 +423,7 @@ export default function TeamMembersNimNew({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="absolute z-50 w-full mt-2 bg-card border border-zinc-800 rounded-xl shadow-lg p-4"
+                  className="absolute z-50 w-full mt-2 bg-card border border-border rounded-xl shadow-lg p-4"
                 >
                   <div className="text-center text-app-teritary-invert">
                     <Users size={24} className="mx-auto mb-2 text-app-teritary-invert" />
@@ -435,7 +435,7 @@ export default function TeamMembersNimNew({
             </div>
 
             {/* Info */}
-            <div className="flex items-start gap-2 p-3 bg-app-quinary border border-zinc-800 rounded-lg">
+            <div className="flex items-start gap-2 p-3 bg-app-quinary border border-border rounded-lg">
               <Info size={14} className="shrink-0 mt-0.5 text-app-secondary-invert" />
               <p className="text-xs text-app-secondary-invert">
                 Hanya mahasiswa yang sudah <strong>terdaftar</strong> dan <strong>menghubungkan GitHub</strong> yang dapat ditambahkan.

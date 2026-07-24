@@ -432,7 +432,7 @@ export default function NewProjectPage() {
               <Tooltip content={`${formCompletion.filledCount}/${formCompletion.total} field terisi`}>
                 <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${formCompletion.percentage === 100
                   ? 'border-success/40 bg-success/10'
-                  : 'border-zinc-800 bg-app-quinary'
+                  : 'border-border bg-app-quinary'
                   }`}>
                   {/* Progress Circle */}
                   <div className="relative w-7 h-7">
@@ -444,7 +444,7 @@ export default function NewProjectPage() {
                         fill="none"
                         stroke="currentColor"
                         strokeWidth="3"
-                        className="text-zinc-800"
+                        className="text-app-primary"
                       />
                       <circle
                         cx="14"
@@ -526,7 +526,7 @@ export default function NewProjectPage() {
         <div className={`space-y-5 ${showPreview ? 'lg:flex-1 lg:min-w-0' : 'w-full'}`}>
 
           {/* Card 1: Basic Info */}
-          <Card className="border border-zinc-800 bg-card">
+          <Card className="border border-border bg-card">
             <CardBody className="p-5">
               <SectionHeader
                 icon={FileText}
@@ -646,7 +646,7 @@ export default function NewProjectPage() {
                 />
 
                 {/* Visibility Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-lg border border-zinc-800 bg-app-quinary">
+                <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-app-quinary">
                   <div className="flex items-center gap-2">
                     {isPublic ? <Globe size={16} className="text-primary" /> : <Shield size={16} className="text-warning" />}
                     <div>
@@ -667,7 +667,7 @@ export default function NewProjectPage() {
           </Card>
 
           {/* Card 2: Category & Tech */}
-          <Card className="border border-zinc-800 bg-card">
+          <Card className="border border-border bg-card">
             <CardBody className="p-5">
               <SectionHeader
                 icon={Tag}
@@ -701,7 +701,7 @@ export default function NewProjectPage() {
                               relative p-2.5 rounded-xl transition-all duration-200 flex flex-col items-center gap-1
                               ${isSelected
                                 ? 'bg-primary/10 ring-2 ring-primary'
-                                : 'bg-app-quinary hover:bg-app-quaternary border border-zinc-800'
+                                : 'bg-app-quinary hover:bg-app-quaternary border border-border'
                               }
                             `}
                           >
@@ -759,7 +759,7 @@ export default function NewProjectPage() {
                   </Autocomplete>
 
                   {/* Selected Techs */}
-                  <div className="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 bg-app-quinary rounded-lg border border-dashed border-zinc-800">
+                  <div className="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 bg-app-quinary rounded-lg border border-dashed border-border">
                     {selectedTechs.length === 0 ? (
                       <div className="flex items-center gap-1.5 text-app-teritary-invert text-xs">
                         <Info size={12} />
@@ -797,7 +797,7 @@ export default function NewProjectPage() {
                         size="sm"
                         variant="bordered"
                         radius="full"
-                        className="h-6 text-[10px] px-2 border-zinc-800"
+                        className="h-6 text-[10px] px-2 border-border"
                         isDisabled={selectedTechs.includes(tech)}
                         onPress={() => handleAddTech(tech)}
                         startContent={<Plus size={10} />}
@@ -814,7 +814,7 @@ export default function NewProjectPage() {
           {/* Card 3: GitHub & Team - Side by Side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* GitHub Repository */}
-            <Card className="border border-zinc-800 bg-card">
+            <Card className="border border-border bg-card">
               <CardBody className="p-5">
                 <SectionHeader
                   icon={Github}
@@ -896,7 +896,7 @@ export default function NewProjectPage() {
                   <div className="space-y-3">
                     <Button
                       variant="bordered"
-                      className="w-full h-14 border-dashed border-zinc-800"
+                      className="w-full h-14 border-dashed border-border"
                       startContent={<FolderGit2 size={18} />}
                       onPress={() => setIsRepoSelectorOpen(true)}
                     >
@@ -940,7 +940,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* Production URL & Testing Credentials - di bawah GitHub & Team */}
-          <Card className="border border-zinc-800 bg-card">
+          <Card className="border border-border bg-card">
             <CardBody className="p-5">
               <div className="space-y-5">
                 {/* Production URL */}
@@ -1086,7 +1086,7 @@ export default function NewProjectPage() {
           />
 
           {/* Card 4: Optional Fields (Collapsible) */}
-          <Card className="border border-zinc-800 bg-card">
+          <Card className="border border-border bg-card">
             <CardBody className="p-0">
               <button
                 onClick={() => setShowOptional(!showOptional)}
@@ -1118,7 +1118,7 @@ export default function NewProjectPage() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-5 pb-6 pt-4 border-t border-zinc-800">
+                    <div className="px-5 pb-6 pt-4 border-t border-border">
                       <div className="grid gap-6">
                         {/* Methodology */}
                         <Textarea
@@ -1170,7 +1170,7 @@ export default function NewProjectPage() {
               className="hidden lg:block w-[340px] flex-shrink-0 space-y-4"
             >
                 {/* Live Preview Card - Clean Design */}
-                <Card className="border border-zinc-800 bg-card rounded-2xl overflow-hidden">
+                <Card className="border border-border bg-card rounded-2xl overflow-hidden">
                   <CardBody className="p-5 space-y-4">
                     {/* Header: Category + Title */}
                     <div className="space-y-3">
@@ -1181,7 +1181,7 @@ export default function NewProjectPage() {
                           if (cat) {
                             const Icon = cat.icon;
                             return (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-zinc-800 bg-app-quaternary text-foreground text-xs font-medium">
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border bg-app-quaternary text-foreground text-xs font-medium">
                                 <Icon size={12} />
                                 <span>{cat.label}</span>
                               </div>
@@ -1190,7 +1190,7 @@ export default function NewProjectPage() {
                           return null;
                         })()
                       ) : (
-                        <div className="inline-flex items-center px-2.5 py-1 rounded-full border border-dashed border-zinc-800 bg-app-quinary text-app-teritary-invert text-xs">
+                        <div className="inline-flex items-center px-2.5 py-1 rounded-full border border-dashed border-border bg-app-quinary text-app-teritary-invert text-xs">
                           Pilih Kategori
                         </div>
                       )}
@@ -1204,7 +1204,7 @@ export default function NewProjectPage() {
                       <div className="flex items-center gap-2 text-sm text-app-secondary-invert">
                         <Calendar size={14} />
                         <span>{formData.semester || 'Ganjil 2025/2026'}</span>
-                        <span className="text-zinc-600">•</span>
+                        <span className="text-app-teritary-invert">•</span>
                         <span>{formData.tahunAkademik || '2025/2026'}</span>
                       </div>
                     </div>
@@ -1222,7 +1222,7 @@ export default function NewProjectPage() {
                         {selectedTechs.slice(0, 4).map((tech) => (
                           <span
                             key={tech}
-                            className="px-2 py-0.5 rounded-md border border-zinc-800 bg-app-quinary text-app-secondary-invert text-xs font-medium"
+                            className="px-2 py-0.5 rounded-md border border-border bg-app-quinary text-app-secondary-invert text-xs font-medium"
                           >
                             {tech}
                           </span>
@@ -1236,7 +1236,7 @@ export default function NewProjectPage() {
                     )}
 
                     {/* Divider */}
-                    <div className="border-t border-zinc-800" />
+                    <div className="border-t border-border" />
 
                     {/* Stats Row */}
                     <div className="grid grid-cols-4 gap-2">
@@ -1271,7 +1271,7 @@ export default function NewProjectPage() {
                           size="sm"
                           className="w-10 h-10"
                         />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-success rounded-full border-2 border-zinc-900 flex items-center justify-center">
+                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-success rounded-full border-2 border-background flex items-center justify-center">
                           <Check size={8} className="text-white" />
                         </div>
                       </div>
@@ -1287,8 +1287,8 @@ export default function NewProjectPage() {
                 </Card>
 
                 {/* Checklist Card - Enhanced */}
-                <Card className="border border-zinc-800 bg-card overflow-hidden">
-                  <div className="p-4 border-b border-zinc-800 bg-app-quinary">
+                <Card className="border border-border bg-card overflow-hidden">
+                  <div className="p-4 border-b border-border bg-app-quinary">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className="p-1.5 rounded-lg bg-success/10">
@@ -1323,7 +1323,7 @@ export default function NewProjectPage() {
                           transition={{ delay: index * 0.05 }}
                           className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${field.filled
                             ? 'bg-success/10 border border-success/30'
-                            : 'bg-app-quinary border border-transparent hover:border-zinc-800'
+                            : 'bg-app-quinary border border-transparent hover:border-border'
                             }`}
                         >
                           <span className={`font-medium ${field.filled ? 'text-success' : 'text-app-secondary-invert'}`}>
@@ -1338,7 +1338,7 @@ export default function NewProjectPage() {
                               <CheckCircle2 size={14} className="text-success" />
                             </motion.div>
                           ) : (
-                            <div className="w-4 h-4 rounded-full border-2 border-zinc-800 border-dashed" />
+                            <div className="w-4 h-4 rounded-full border-2 border-border border-dashed" />
                           )}
                         </motion.div>
                       ))}
@@ -1347,7 +1347,7 @@ export default function NewProjectPage() {
                 </Card>
 
                 {/* Tips Card - Enhanced */}
-                <Card className="border border-zinc-800 bg-card overflow-hidden">
+                <Card className="border border-border bg-card overflow-hidden">
                   <CardBody className="p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="bg-app-primary text-foreground flex size-7 items-center justify-center rounded-lg">

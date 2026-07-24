@@ -172,8 +172,8 @@ export default function InvitationsContent() {
       )}
 
       {/* Pending Invitations */}
-      <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
-        <CardHeader className="border-b border-zinc-800 bg-app-quinary p-4 md:p-5">
+      <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
+        <CardHeader className="border-b border-border bg-app-quinary p-4 md:p-5">
           <div className="flex items-center gap-3">
             <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
               <Mail size={16} />
@@ -204,7 +204,7 @@ export default function InvitationsContent() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ delay: index * 0.1 }}
-                    className="rounded-xl border border-zinc-800 bg-app-quinary p-4"
+                    className="rounded-xl border border-border bg-app-quinary p-4"
                   >
                     <div className="flex items-start gap-4">
                       {/* Inviter Avatar */}
@@ -236,7 +236,7 @@ export default function InvitationsContent() {
                         </p>
 
                         {/* Project Info */}
-                        <div className="mb-3 rounded-lg border border-zinc-800 bg-background p-3">
+                        <div className="mb-3 rounded-lg border border-border bg-background p-3">
                           <div className="mb-1 flex items-center gap-2">
                             <FolderGit2 size={14} className="text-primary" />
                             <p className="truncate text-sm font-medium">
@@ -306,8 +306,8 @@ export default function InvitationsContent() {
 
       {/* History */}
       {historyInvitations.length > 0 && (
-        <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
-          <CardHeader className="border-b border-zinc-800 bg-app-quinary p-4 md:p-5">
+        <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
+          <CardHeader className="border-b border-border bg-app-quinary p-4 md:p-5">
             <div className="flex items-center gap-3">
               <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <Users size={16} />
@@ -325,7 +325,7 @@ export default function InvitationsContent() {
               {historyInvitations.map((invitation) => (
                 <div
                   key={invitation.id}
-                  className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-app-quinary p-3"
+                  className="flex items-center gap-3 rounded-lg border border-border bg-app-quinary p-3"
                 >
                   <Avatar
                     src={invitation.inviter.image || undefined}

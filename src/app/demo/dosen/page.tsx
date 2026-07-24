@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 /** Preview publik dashboard dosen dengan data mock (tanpa login). */
 export default function DemoDosenPage() {
   return (
-    <main className="min-h-screen px-4 py-6 md:px-6">
+    <main className="dark min-h-screen bg-background px-4 py-6 text-foreground md:px-6">
       <DosenDashboardContent
         userName="Dr. Andi Rahman"
         stats={MOCK_DOSEN.stats}

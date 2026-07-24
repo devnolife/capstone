@@ -3,17 +3,8 @@ import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { DosenReviewsClient } from './client';
 
-export default async function DosenReviewsPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect('/login');
-  }
-
-  const userId = session.user.id;
-
-  // Fetch reviews by this dosen
-  const reviews = await prisma.review.findMany({
+async function getReviews(userId: string) {
+  return prisma.review.findMany({
     where: { reviewerId: userId },
     include: {
       project: {
@@ -34,9 +25,10 @@ export default async function DosenReviewsPage() {
     },
     orderBy: { updatedAt: 'desc' },
   });
+}
 
-  // Fetch pending assignments (projects assigned but not yet reviewed)
-  const pendingAssignments = await prisma.projectAssignment.findMany({
+async function getPendingAssignments(userId: string) {
+  return prisma.projectAssignment.findMany({
     where: {
       dosenId: userId,
       project: {
@@ -68,6 +60,33 @@ export default async function DosenReviewsPage() {
     },
     orderBy: { assignedAt: 'desc' },
   });
+}
+
+export default async function DosenReviewsPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  const userId = session.user.id;
+
+  // Fallback kosong bila DB down / sesi fake
+  let reviews: Awaited<ReturnType<typeof getReviews>> = [];
+  let pendingAssignments: Awaited<ReturnType<typeof getPendingAssignments>> = [];
+  if (!userId.startsWith('dev-')) {
+    try {
+      [reviews, pendingAssignments] = await Promise.all([
+        getReviews(userId),
+        getPendingAssignments(userId),
+      ]);
+    } catch (error) {
+      console.warn(
+        '[dosen/reviews] DB tidak tersedia — daftar kosong:',
+        error instanceof Error ? error.message : error,
+      );
+    }
+  }
 
   // Transform data for client
   const reviewsData = reviews.map((review) => ({
