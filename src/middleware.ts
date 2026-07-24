@@ -28,11 +28,6 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Redirect /register to /login (registration disabled)
-  if (nextUrl.pathname === '/register') {
-    return NextResponse.redirect(new URL('/login', nextUrl));
-  }
-
   // Legacy dashboard route - redirect to role-based dashboard
   if (nextUrl.pathname === '/dashboard' || nextUrl.pathname.startsWith('/dashboard/')) {
     if (isLoggedIn) {

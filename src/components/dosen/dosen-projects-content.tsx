@@ -23,6 +23,7 @@ import {
 } from '@heroui/react';
 import { Search, FolderGit2, FileText, Calendar, ChevronRight, ClipboardCheck, Eye, Users } from 'lucide-react';
 import { getStatusColor, getStatusLabel } from '@/lib/utils';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface Review {
   id: string;
@@ -77,24 +78,6 @@ const itemVariants = {
   },
 };
 
-// Get status gradient
-const getStatusGradient = (status: string) => {
-  switch (status) {
-    case 'APPROVED':
-      return 'from-emerald-500 to-green-400';
-    case 'REJECTED':
-      return 'from-red-500 to-rose-400';
-    case 'IN_REVIEW':
-      return 'from-amber-500 to-orange-400';
-    case 'SUBMITTED':
-      return 'from-blue-500 to-indigo-400';
-    case 'REVISION_NEEDED':
-      return 'from-orange-500 to-amber-400';
-    default:
-      return 'from-zinc-500 to-zinc-400';
-  }
-};
-
 // Get progress based on status
 const getProgress = (status: string) => {
   switch (status) {
@@ -127,32 +110,32 @@ function MobileProjectCard({
 
   return (
     <motion.div variants={itemVariants}>
-      <Card className="mb-3 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+      <Card className="mb-3 border border-zinc-800 bg-card shadow-none overflow-hidden">
         <CardBody className="p-4">
           <div className="space-y-3">
             {/* Mahasiswa Info */}
-            <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700">
+            <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800">
               <Avatar
                 name={project.mahasiswa.name}
                 src={project.mahasiswa.image || undefined}
                 size="sm"
-                className="ring-2 ring-white dark:ring-zinc-700"
+                className="ring-2 ring-zinc-700"
               />
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">
                   {project.mahasiswa.name}
                 </p>
-                <p className="text-xs text-default-500">
+                <p className="text-xs text-app-secondary-invert">
                   @{project.mahasiswa.username}
                 </p>
               </div>
             </div>
 
-            {/* Project Title with gradient icon */}
+            {/* Project Title with icon tile */}
             <div className="flex items-start gap-3">
-              <div className={`p-2 rounded-xl bg-gradient-to-br ${getStatusGradient(project.status)} text-white shrink-0`}>
+              <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <FolderGit2 size={16} />
-              </div>
+              </span>
               <Link
                 href={`/dosen/projects/${project.id}`}
                 className="font-semibold text-sm hover:text-primary transition-colors line-clamp-2 flex-1"
@@ -188,19 +171,20 @@ function MobileProjectCard({
             {/* Progress bar */}
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
-                <span className="text-default-400">Progress</span>
-                <span className="font-medium">{getProgress(project.status)}%</span>
+                <span className="text-app-teritary-invert">Progress</span>
+                <span className="font-medium tabular-nums">{getProgress(project.status)}%</span>
               </div>
               <Progress
                 value={getProgress(project.status)}
                 color={getStatusColor(project.status)}
                 size="sm"
                 className="h-1.5"
+                classNames={{ track: 'bg-app-primary' }}
               />
             </div>
 
             {/* Info Row */}
-            <div className="flex items-center gap-3 text-xs text-default-500">
+            <div className="flex items-center gap-3 text-xs text-app-secondary-invert">
               <div className="flex items-center gap-1">
                 <Calendar size={12} />
                 <span>
@@ -209,11 +193,11 @@ function MobileProjectCard({
               </div>
               <div className="flex items-center gap-1">
                 <FileText size={12} />
-                <span>{project._count.documents} dok</span>
+                <span className="tabular-nums">{project._count.documents} dok</span>
               </div>
               <div className="flex items-center gap-1">
                 <ClipboardCheck size={12} />
-                <span>{project._count.reviews} review</span>
+                <span className="tabular-nums">{project._count.reviews} review</span>
               </div>
             </div>
 
@@ -289,26 +273,26 @@ export function DosenProjectsContent({
     >
       {/* Header */}
       <motion.div variants={itemVariants}>
-        <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-semibold text-default-900">Project Mahasiswa</h1>
-            <p className="text-sm text-default-500 mt-0.5">
-              Daftar project yang ditugaskan untuk Anda review
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="px-3 py-1.5 rounded-lg border border-divider/60 bg-content1">
-              <span className="text-sm font-semibold text-default-900 tabular-nums">{projects.length}</span>
-              <span className="text-xs text-default-500 ml-1.5">Total</span>
-            </div>
-            <div className="px-3 py-1.5 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
-              <span className="text-sm font-semibold text-amber-700 dark:text-amber-300 tabular-nums">
-                {projects.filter(p => p.status === 'SUBMITTED' || p.status === 'IN_REVIEW').length}
-              </span>
-              <span className="text-xs text-amber-700 dark:text-amber-300 ml-1.5">Perlu Review</span>
-            </div>
-          </div>
-        </header>
+        <PageHeader
+          label="[01] PROJECT"
+          labelRight="/ DITUGASKAN"
+          title="Project Mahasiswa"
+          description="Daftar project yang ditugaskan untuk Anda review"
+          actions={
+            <>
+              <div className="rounded-full border border-zinc-800 bg-app-quinary px-3 py-1.5">
+                <span className="text-sm font-semibold tabular-nums">{projects.length}</span>
+                <span className="text-xs text-app-teritary-invert ml-1.5">Total</span>
+              </div>
+              <div className="rounded-full border border-warning/40 bg-warning/10 px-3 py-1.5">
+                <span className="text-sm font-semibold text-warning tabular-nums">
+                  {projects.filter(p => p.status === 'SUBMITTED' || p.status === 'IN_REVIEW').length}
+                </span>
+                <span className="text-xs text-warning ml-1.5">Perlu Review</span>
+              </div>
+            </>
+          }
+        />
       </motion.div>
 
       {/* Filters */}
@@ -346,10 +330,10 @@ export function DosenProjectsContent({
 
       {/* Projects List/Table */}
       <motion.div variants={itemVariants}>
-        <Card shadow="none" className="border border-divider/60 overflow-hidden">
-          <div className="px-4 py-2.5 border-b border-divider/60 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-default-700">Project Ditugaskan</h2>
-            <span className="text-xs text-default-500 tabular-nums">
+        <Card shadow="none" className="border border-zinc-800 bg-card overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
+            <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Project Ditugaskan</h2>
+            <span className="text-xs text-app-teritary-invert tabular-nums">
               {filteredProjects.length} hasil
             </span>
           </div>
@@ -357,13 +341,13 @@ export function DosenProjectsContent({
           <CardBody className="p-0">
             {filteredProjects.length === 0 ? (
               <div className="text-center py-12 px-4">
-                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 flex items-center justify-center">
-                  <FolderGit2 size={36} className="text-emerald-500" />
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-app-quaternary flex items-center justify-center">
+                  <FolderGit2 size={36} className="text-app-teritary-invert" />
                 </div>
                 <h3 className="font-semibold text-lg mb-2">
                   {projects.length === 0 ? 'Belum Ada Project' : 'Tidak Ada Hasil'}
                 </h3>
-                <p className="text-default-500 text-sm max-w-sm mx-auto">
+                <p className="text-app-secondary-invert text-sm max-w-sm mx-auto">
                   {projects.length === 0
                     ? 'Belum ada project yang ditugaskan kepada Anda'
                     : 'Tidak ada project yang cocok dengan pencarian atau filter Anda'}
@@ -403,20 +387,20 @@ export function DosenProjectsContent({
                         );
 
                         return (
-                          <TableRow key={project.id} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
+                          <TableRow key={project.id} className="hover:bg-app-quinary">
                             <TableCell>
                               <div className="flex items-center gap-3">
                                 <Avatar
                                   name={project.mahasiswa.name}
                                   src={project.mahasiswa.image || undefined}
                                   size="sm"
-                                  className="ring-2 ring-zinc-200 dark:ring-zinc-700"
+                                  className="ring-2 ring-zinc-700"
                                 />
                                 <div>
                                   <p className="font-medium text-sm">
                                     {project.mahasiswa.name}
                                   </p>
-                                  <p className="text-xs text-default-500">
+                                  <p className="text-xs text-app-secondary-invert">
                                     @{project.mahasiswa.username}
                                   </p>
                                 </div>
@@ -429,13 +413,13 @@ export function DosenProjectsContent({
                               >
                                 {project.title}
                               </Link>
-                              <p className="text-xs text-default-500">
+                              <p className="text-xs text-app-secondary-invert tabular-nums">
                                 {project._count.documents} dokumen • {project._count.reviews} review
                               </p>
                             </TableCell>
                             <TableCell>
                               <p className="text-sm font-medium">{project.semester}</p>
-                              <p className="text-xs text-default-500">
+                              <p className="text-xs text-app-secondary-invert">
                                 {project.tahunAkademik}
                               </p>
                             </TableCell>
@@ -455,8 +439,9 @@ export function DosenProjectsContent({
                                   color={getStatusColor(project.status)}
                                   size="sm"
                                   className="h-1.5"
+                                  classNames={{ track: 'bg-app-primary' }}
                                 />
-                                <p className="text-xs text-default-500 mt-1">
+                                <p className="text-xs text-app-secondary-invert mt-1 tabular-nums">
                                   {getProgress(project.status)}%
                                 </p>
                               </div>

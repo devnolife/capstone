@@ -5,11 +5,9 @@ import {
   CardBody,
   Button,
   Chip,
-  Divider,
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import {
-  BookOpen,
   GraduationCap,
   Rocket,
   Lightbulb,
@@ -26,9 +24,9 @@ import {
   Shield,
   ArrowRight,
   Info,
-  ClipboardList,
 } from 'lucide-react';
 import Link from 'next/link';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface RequirementItem {
   key: string;
@@ -43,9 +41,6 @@ interface Section {
   title: string;
   subtitle: string;
   icon: React.ElementType;
-  gradient: string;
-  bgColor: string;
-  iconBg: string;
   requirements: RequirementItem[];
 }
 
@@ -55,9 +50,6 @@ const PERSYARATAN_SECTIONS: Section[] = [
     title: 'Aspek Akademik',
     subtitle: 'Integrasi pembelajaran dan metodologi pengembangan',
     icon: GraduationCap,
-    gradient: 'from-violet-500 to-purple-600',
-    bgColor: 'bg-gradient-to-br',
-    iconBg: 'bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400',
     requirements: [
       {
         key: 'integrasiMatakuliah',
@@ -88,9 +80,6 @@ const PERSYARATAN_SECTIONS: Section[] = [
     title: 'Teknis & Implementasi',
     subtitle: 'Ruang lingkup, sumber daya, dan fitur sistem',
     icon: Rocket,
-    gradient: 'from-orange-500 to-amber-500',
-    bgColor: 'bg-gradient-to-br',
-    iconBg: 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400',
     requirements: [
       {
         key: 'ruangLingkup',
@@ -132,9 +121,6 @@ const PERSYARATAN_SECTIONS: Section[] = [
     title: 'Analisis & Evaluasi',
     subtitle: 'Temuan, presentasi, stakeholder, dan aspek etika',
     icon: Lightbulb,
-    gradient: 'from-emerald-500 to-teal-500',
-    bgColor: 'bg-gradient-to-br',
-    iconBg: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400',
     requirements: [
       {
         key: 'analisisTemuan',
@@ -191,57 +177,40 @@ export default function PersyaratanPage() {
   );
 
   return (
-    <div className="w-full space-y-5 pb-8">
-      {/* Header */}
-      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+    <div className="mx-auto w-full max-w-6xl space-y-5 pb-8">
+      <PageHeader
+        label="[02] PERSYARATAN"
+        labelRight="/ PANDUAN"
+        title="Persyaratan capstone"
+        description={`${totalRequirements} persyaratan dalam ${PERSYARATAN_SECTIONS.length} kategori yang harus dipenuhi sebelum review.`}
+        actions={
+          <Link
+            href="/mahasiswa/projects"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-9 items-center gap-2 rounded-full px-4 text-sm font-medium shadow-xs transition-all active:scale-[0.98]"
+          >
+            Lihat Project Saya <ArrowRight size={15} />
+          </Link>
+        }
+      />
+
+      {/* Info */}
+      <div className="flex items-start gap-3 border border-zinc-800 bg-card p-4">
+        <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+          <Info size={16} />
+        </span>
         <div>
-          <h1 className="text-2xl font-semibold text-default-900">Persyaratan Capstone</h1>
-          <p className="text-sm text-default-500 mt-0.5">
-            Panduan lengkap persyaratan dokumen yang harus dipenuhi
+          <h4 className="text-sm font-semibold">Tentang persyaratan dokumen</h4>
+          <p className="text-app-secondary-invert mt-1 text-xs leading-relaxed">
+            Setiap project capstone harus memenuhi{' '}
+            <strong className="text-foreground">{totalRequirements} persyaratan</strong> yang
+            terbagi dalam {PERSYARATAN_SECTIONS.length} kategori. Semua persyaratan harus
+            dilengkapi sebelum project dapat diajukan untuk review oleh dosen penguji.
           </p>
-          <div className="flex items-center gap-2 mt-2">
-            <Chip size="sm" variant="flat" color="primary">
-              {PERSYARATAN_SECTIONS.length} Kategori
-            </Chip>
-            <Chip size="sm" variant="flat" color="primary">
-              {totalRequirements} Persyaratan
-            </Chip>
-          </div>
         </div>
-        <Button
-          as={Link}
-          href="/mahasiswa/projects"
-          color="primary"
-          endContent={<ArrowRight size={16} />}
-          size="sm"
-        >
-          Lihat Proyek Saya
-        </Button>
-      </header>
+      </div>
 
-      {/* Info Card */}
-      <Card className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30">
-        <CardBody className="p-4">
-          <div className="flex items-start gap-3">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/50">
-              <Info size={18} className="text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-100">
-                Tentang Persyaratan Dokumen
-              </h4>
-              <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
-                Setiap proyek capstone harus memenuhi <strong>{totalRequirements} persyaratan</strong> yang
-                terbagi dalam {PERSYARATAN_SECTIONS.length} kategori. Semua persyaratan harus dilengkapi
-                sebelum proyek dapat diajukan untuk review oleh dosen penguji.
-              </p>
-            </div>
-          </div>
-        </CardBody>
-      </Card>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      {/* Summary bento */}
+      <div className="grid grid-cols-1 gap-px border border-zinc-800 bg-zinc-800 sm:grid-cols-3">
         {PERSYARATAN_SECTIONS.map((section, index) => {
           const SectionIcon = section.icon;
           return (
@@ -250,21 +219,20 @@ export default function PersyaratanPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
+              className="bg-background p-4 transition-colors hover:bg-app-quinary"
             >
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm h-full">
-                <CardBody className="p-4">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className={`p-2.5 rounded-xl ${section.bgColor} ${section.gradient} text-white`}>
-                      <SectionIcon size={20} />
-                    </div>
-                    <div>
-                      <h3 className="font-bold">{section.title}</h3>
-                      <p className="text-xs text-default-500">{section.requirements.length} persyaratan</p>
-                    </div>
-                  </div>
-                  <p className="text-sm text-default-600">{section.subtitle}</p>
-                </CardBody>
-              </Card>
+              <div className="mb-3 flex items-center gap-3">
+                <span className="bg-app-primary text-foreground flex size-9 items-center justify-center rounded-lg">
+                  <SectionIcon size={18} />
+                </span>
+                <div>
+                  <h3 className="font-semibold">{section.title}</h3>
+                  <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">
+                    {section.requirements.length} persyaratan
+                  </p>
+                </div>
+              </div>
+              <p className="text-app-secondary-invert text-sm">{section.subtitle}</p>
             </motion.div>
           );
         })}
@@ -281,56 +249,66 @@ export default function PersyaratanPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 + sectionIndex * 0.1 }}
             >
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <Card className="overflow-hidden border border-zinc-800 bg-card shadow-none">
                 {/* Section Header */}
-                <div className={`p-5 ${section.bgColor} ${section.gradient} text-white`}>
+                <div className="border-b border-zinc-800 bg-app-quinary p-5">
                   <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
-                      <SectionIcon size={24} />
-                    </div>
+                    <span className="bg-app-primary text-foreground flex size-11 items-center justify-center rounded-xl">
+                      <SectionIcon size={20} />
+                    </span>
                     <div>
-                      <h2 className="text-xl font-bold">{section.title}</h2>
-                      <p className="text-white/80 text-sm">{section.subtitle}</p>
+                      <h2 className="font-display text-xl font-[450] tracking-tight">
+                        {section.title}
+                      </h2>
+                      <p className="text-app-secondary-invert text-sm">{section.subtitle}</p>
                     </div>
-                    <Chip className="ml-auto bg-white/20 text-white" size="sm">
-                      {section.requirements.length} Item
-                    </Chip>
+                    <span className="text-app-teritary-invert ml-auto rounded-full border border-zinc-800 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider">
+                      {section.requirements.length} item
+                    </span>
                   </div>
                 </div>
 
                 {/* Requirements List */}
                 <CardBody className="p-0">
-                  <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                  <div className="divide-y divide-zinc-800">
                     {section.requirements.map((req, reqIndex) => {
                       const ReqIcon = req.icon;
                       return (
-                        <div key={req.key} className="p-5 hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-colors">
+                        <div
+                          key={req.key}
+                          className="p-5 transition-colors hover:bg-app-quinary"
+                        >
                           <div className="flex items-start gap-4">
-                            <div className={`p-2.5 rounded-xl ${section.iconBg} shrink-0`}>
-                              <ReqIcon size={20} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
+                            <span className="bg-app-primary text-foreground flex size-10 shrink-0 items-center justify-center rounded-xl">
+                              <ReqIcon size={18} />
+                            </span>
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-1 flex items-center gap-2">
                                 <h3 className="font-semibold">{req.label}</h3>
-                                <Chip size="sm" variant="flat" color="default">
+                                <span className="text-app-teritary-invert font-mono text-[10px] tracking-wider tabular-nums">
                                   #{sectionIndex + 1}.{reqIndex + 1}
-                                </Chip>
+                                </span>
                               </div>
-                              <p className="text-sm text-default-600 mb-3">{req.description}</p>
+                              <p className="text-app-secondary-invert mb-3 text-sm">
+                                {req.description}
+                              </p>
 
                               {/* Tips */}
-                              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-3">
-                                <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 mb-2 flex items-center gap-1">
+                              <div className="rounded-xl border border-zinc-800 bg-app-quinary p-3">
+                                <p className="text-app-teritary-invert mb-2 flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.18em]">
                                   <Lightbulb size={12} />
-                                  Tips Pengisian:
+                                  Tips pengisian
                                 </p>
                                 <ul className="space-y-1">
                                   {req.tips.map((tip, tipIndex) => (
                                     <li
                                       key={tipIndex}
-                                      className="text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2"
+                                      className="text-app-secondary-invert flex items-start gap-2 text-xs"
                                     >
-                                      <CheckCircle2 size={12} className="shrink-0 mt-0.5 text-amber-600" />
+                                      <CheckCircle2
+                                        size={12}
+                                        className="text-success mt-0.5 shrink-0"
+                                      />
                                       <span>{tip}</span>
                                     </li>
                                   ))}
@@ -349,31 +327,29 @@ export default function PersyaratanPage() {
         })}
       </div>
 
-      {/* CTA Card */}
-      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30">
-        <CardBody className="p-6">
-          <div className="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left">
-            <div className="p-4 rounded-2xl bg-indigo-100 dark:bg-indigo-900/50">
-              <FileText size={32} className="text-indigo-600 dark:text-indigo-400" />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold">Siap Mengisi Persyaratan?</h3>
-              <p className="text-sm text-default-600 mt-1">
-                Pilih proyek Anda dan mulai lengkapi semua persyaratan dokumen capstone.
-              </p>
-            </div>
-            <Button
-              as={Link}
-              href="/mahasiswa/projects"
-              color="primary"
-              size="lg"
-              endContent={<ArrowRight size={18} />}
-            >
-              Pilih Proyek
-            </Button>
-          </div>
-        </CardBody>
-      </Card>
+      {/* CTA */}
+      <div className="flex flex-col items-center gap-4 border border-zinc-800 bg-app-primary p-6 text-center sm:flex-row sm:text-left">
+        <span className="bg-background text-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
+          <FileText size={22} />
+        </span>
+        <div className="flex-1">
+          <h3 className="font-display text-lg font-[450] tracking-tight">
+            Siap mengisi persyaratan?
+          </h3>
+          <p className="text-app-secondary-invert mt-1 text-sm">
+            Pilih projectmu dan mulai lengkapi semua persyaratan dokumen capstone.
+          </p>
+        </div>
+        <Button
+          as={Link}
+          href="/mahasiswa/projects"
+          color="primary"
+          radius="full"
+          endContent={<ArrowRight size={16} />}
+        >
+          Pilih Project
+        </Button>
+      </div>
     </div>
   );
 }

@@ -11,18 +11,22 @@ import {
   Lock,
   Eye,
   EyeOff,
-  ArrowUpRight,
-  Sparkles,
   User,
   ArrowLeft,
+  ArrowRight,
   Shield,
   BookOpen,
   UserRound,
-  Asterisk,
   Github,
   GraduationCap,
   Layers,
 } from 'lucide-react';
+
+const inputClass =
+  'w-full rounded-xl border border-input bg-input/30 py-3 pl-11 pr-4 text-sm text-foreground placeholder:text-app-teritary-invert outline-none transition-all focus:border-ring focus:ring-[3px] focus:ring-ring/50';
+
+const labelClass =
+  'mb-2 block font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert';
 
 function LoginForm() {
   const searchParams = useSearchParams();
@@ -35,9 +39,9 @@ function LoginForm() {
   const isDev = process.env.NODE_ENV === 'development';
 
   const devAccounts = [
-    { label: 'Admin', username: 'devnolife', password: 'hanyaAdmin@25', icon: Shield, color: 'var(--ae-coral)' },
-    { label: 'Dosen', username: 'dosen', password: 'password123', icon: BookOpen, color: 'var(--ae-cobalt)' },
-    { label: 'Mahasiswa', username: 'mahasiswa', password: 'password123', icon: UserRound, color: 'var(--ae-lime)' },
+    { label: 'Admin', username: 'devnolife', password: 'hanyaAdmin@25', icon: Shield },
+    { label: 'Dosen', username: 'dosen', password: 'password123', icon: BookOpen },
+    { label: 'Mahasiswa', username: 'mahasiswa', password: 'password123', icon: UserRound },
   ];
 
   const handleDevLogin = async (username: string, password: string) => {
@@ -79,45 +83,35 @@ function LoginForm() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       className="w-full max-w-md"
     >
       {/* Top meta */}
-      <div className="flex items-center justify-between mb-10 font-mono-display text-[10px] uppercase tracking-[0.2em] opacity-70">
-        <Link href="/" className="inline-flex items-center gap-1.5 hover:text-[var(--ae-coral)] transition-colors">
+      <div className="mb-10 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-app-teritary-invert">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
+        >
           <ArrowLeft size={12} /> Beranda
         </Link>
-        <span>auth · v3</span>
+        <span>[AUTH] MASUK</span>
       </div>
 
-      {/* Sticker */}
-      <motion.span
-        initial={{ scale: 0.9, rotate: -8, opacity: 0 }}
-        animate={{ scale: 1, rotate: -3, opacity: 1 }}
-        transition={{ type: 'spring', duration: 0.6 }}
-        className="ae-sticker inline-flex mb-6"
-      >
-        <Sparkles size={12} /> Welcome back
-      </motion.span>
-
-      <h1 className="font-sans-display font-semibold leading-[0.95] tracking-[-0.035em] text-5xl sm:text-6xl">
-        Masuk
-        <br />
-        <span className="font-serif-display italic text-[var(--ae-coral)]">capstone</span>
-        <span aria-hidden className="inline-block w-3 h-3 rounded-full bg-[var(--ae-lime)] border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] translate-y-[-0.4em] ml-1" />
+      <h1 className="font-display text-4xl leading-none font-[450] tracking-tight text-balance sm:text-5xl">
+        Masuk ke{' '}
+        <span className="font-editorial tracking-tight">capstone</span>
       </h1>
-      <p className="mt-4 opacity-75">
-        Pakai akun kampus kamu. Auto-sync dengan{' '}
-        <em className="font-serif-display">SIMIKAD</em>.
+      <p className="mt-4 text-app-secondary-invert">
+        Pakai akun kampus kamu. Auto-sync dengan SIMAK.
       </p>
 
       {(error || callbackError) && (
         <motion.div
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-6 px-4 py-3 border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] rounded-2xl bg-[var(--ae-coral)] text-white text-sm font-medium shadow-[3px_3px_0_0_var(--ae-ink)] dark:shadow-[3px_3px_0_0_var(--ae-cream)]"
+          className="mt-6 rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive"
         >
           {error || 'Terjadi kesalahan saat login.'}
         </motion.div>
@@ -125,11 +119,12 @@ function LoginForm() {
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-4">
         <div>
-          <label className="block font-mono-display text-[10px] uppercase tracking-[0.2em] opacity-70 mb-2">
-            Username / NIM
-          </label>
+          <label className={labelClass}>Username / NIM</label>
           <div className="relative">
-            <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-60" />
+            <User
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+            />
             <input
               type="text"
               placeholder="ex: 123456789"
@@ -137,17 +132,18 @@ function LoginForm() {
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
               required
               autoComplete="username"
-              className="w-full pl-11 pr-4 py-3.5 rounded-2xl border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] bg-[var(--ae-cream)] dark:bg-[var(--ae-ink-2)] text-current placeholder:opacity-40 focus:outline-none focus:shadow-[4px_4px_0_0_var(--ae-ink)] dark:focus:shadow-[4px_4px_0_0_var(--ae-cream)] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all"
+              className={inputClass}
             />
           </div>
         </div>
 
         <div>
-          <label className="block font-mono-display text-[10px] uppercase tracking-[0.2em] opacity-70 mb-2">
-            Password
-          </label>
+          <label className={labelClass}>Password</label>
           <div className="relative">
-            <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 opacity-60" />
+            <Lock
+              size={16}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+            />
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
@@ -155,12 +151,12 @@ function LoginForm() {
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               required
               autoComplete="current-password"
-              className="w-full pl-11 pr-12 py-3.5 rounded-2xl border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] bg-[var(--ae-cream)] dark:bg-[var(--ae-ink-2)] text-current placeholder:opacity-40 focus:outline-none focus:shadow-[4px_4px_0_0_var(--ae-ink)] dark:focus:shadow-[4px_4px_0_0_var(--ae-cream)] focus:-translate-x-0.5 focus:-translate-y-0.5 transition-all"
+              className={`${inputClass} pr-12`}
             />
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center hover:bg-[var(--ae-lime)] hover:text-[var(--ae-ink)] transition-colors"
+              className="absolute right-3 top-1/2 flex size-8 -translate-y-1/2 items-center justify-center rounded-full text-app-teritary-invert transition-colors hover:bg-app-quaternary hover:text-foreground"
               aria-label="Toggle password visibility"
             >
               {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
@@ -171,7 +167,7 @@ function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="ae-btn ae-btn-lime w-full justify-center !py-4 mt-2 disabled:opacity-60 disabled:cursor-not-allowed"
+          className="mt-2 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-primary text-sm font-medium text-primary-foreground shadow-xs transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isLoading ? (
             <>
@@ -179,7 +175,7 @@ function LoginForm() {
             </>
           ) : (
             <>
-              Masuk <ArrowUpRight size={18} />
+              Masuk <ArrowRight size={16} />
             </>
           )}
         </button>
@@ -193,12 +189,10 @@ function LoginForm() {
           transition={{ delay: 0.3 }}
           className="mt-8"
         >
-          <div className="flex items-center gap-3 mb-3 font-mono-display text-[10px] uppercase tracking-[0.2em] opacity-60">
-            <span className="h-px flex-1 bg-current" />
-            <span className="px-2 py-0.5 rounded-full border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] bg-[var(--ae-peach)] text-[var(--ae-ink)]">
-              Dev mode
-            </span>
-            <span className="h-px flex-1 bg-current" />
+          <div className="mb-3 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-app-teritary-invert">
+            <span className="h-px flex-1 bg-zinc-800" />
+            <span className="rounded-full border border-zinc-800 px-2.5 py-0.5">Dev mode</span>
+            <span className="h-px flex-1 bg-zinc-800" />
           </div>
           <div className="grid grid-cols-3 gap-2">
             {devAccounts.map((acc) => {
@@ -209,15 +203,14 @@ function LoginForm() {
                   type="button"
                   disabled={isLoading}
                   onClick={() => handleDevLogin(acc.username, acc.password)}
-                  className="group flex flex-col items-center gap-1.5 py-3 rounded-2xl border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] bg-[var(--ae-cream)] dark:bg-[var(--ae-ink-2)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_0_var(--ae-ink)] dark:hover:shadow-[3px_3px_0_0_var(--ae-cream)] transition-all disabled:opacity-50 disabled:pointer-events-none"
+                  className="group flex flex-col items-center gap-1.5 rounded-xl border border-zinc-800 bg-app-quinary py-3 transition-colors hover:bg-app-quaternary disabled:pointer-events-none disabled:opacity-50"
                 >
-                  <span
-                    className="w-7 h-7 rounded-full flex items-center justify-center border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)]"
-                    style={{ background: acc.color }}
-                  >
-                    <Icon size={13} color="#0e0e10" />
+                  <span className="flex size-7 items-center justify-center rounded-full bg-app-primary text-foreground">
+                    <Icon size={13} />
                   </span>
-                  <span className="font-mono-display text-[10px] uppercase tracking-widest">{acc.label}</span>
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-app-secondary-invert group-hover:text-foreground">
+                    {acc.label}
+                  </span>
                 </button>
               );
             })}
@@ -225,8 +218,9 @@ function LoginForm() {
         </motion.div>
       )}
 
-      <p className="mt-8 text-center text-xs opacity-60">
-        Ada kendala? Hubungi <span className="underline decoration-dashed">administrator prodi</span>.
+      <p className="mt-8 text-center text-xs text-app-teritary-invert">
+        Ada kendala? Hubungi{' '}
+        <span className="underline decoration-border underline-offset-2">administrator prodi</span>.
       </p>
     </motion.div>
   );
@@ -234,86 +228,82 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen w-full flex ae-bg-cream dark:ae-bg-ink ae-text-ink dark:ae-text-cream overflow-hidden">
-      {/* Atmospheric blobs */}
-      <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="ae-blob" style={{ top: '-15%', left: '-10%', width: '38rem', height: '38rem', background: 'radial-gradient(circle, var(--ae-lime), transparent 65%)' }} />
-        <div className="ae-blob" style={{ bottom: '-20%', right: '-10%', width: '42rem', height: '42rem', background: 'radial-gradient(circle, var(--ae-coral), transparent 65%)' }} />
-      </div>
-
-      {/* ============ LEFT — Editorial Branding ============ */}
-      <aside className="hidden lg:flex lg:w-[52%] relative p-10 flex-col justify-between border-r-[1.5px] ae-border-ink dark:border-[var(--ae-cream)]">
+    <div className="flex min-h-screen w-full overflow-hidden bg-background text-foreground">
+      {/* ============ LEFT — Branding ============ */}
+      <aside className="relative hidden flex-col justify-between border-r border-zinc-800 p-10 lg:flex lg:w-[52%]">
         {/* Top row */}
-        <div className="flex items-center justify-between font-mono-display text-[11px] uppercase tracking-[0.2em] opacity-80">
+        <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-app-teritary-invert">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image src="/logo.png" alt="Capstone" width={32} height={32} className="rounded-md" />
-            <span className="font-serif-display italic text-lg normal-case tracking-normal">
-              capstone<span className="text-[var(--ae-coral)]">.</span>
+            <Image src="/logo.png" alt="Capstone" width={26} height={26} className="rounded-md" />
+            <span className="font-editorial text-xl normal-case leading-none tracking-tight text-foreground">
+              capstone
             </span>
           </Link>
           <span className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> live
+            <span className="size-1.5 animate-pulse rounded-full bg-green-500" /> Semester aktif
           </span>
         </div>
 
         {/* Hero */}
         <div className="relative z-10">
-          <motion.span
-            initial={{ rotate: -10, opacity: 0 }}
-            animate={{ rotate: -4, opacity: 1 }}
-            transition={{ type: 'spring', duration: 0.7 }}
-            className="ae-sticker mb-6"
-          >
-            <Asterisk size={12} /> Capstone OS · 2026
-          </motion.span>
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-app-secondary px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-app-primary-invert">
+            Prodi Informatika · Unismuh Makassar
+          </span>
 
-          <h1 className="font-sans-display font-semibold tracking-[-0.04em] leading-[0.92] text-[clamp(2.8rem,5.5vw,4.5rem)]">
-            Build, ship,
+          <h1 className="font-display text-[clamp(2.6rem,5vw,4.2rem)] leading-[0.95] font-[450] tracking-tight">
+            Bangun, rilis,
             <br />
-            <span className="font-serif-display italic">defend</span>{' '}
-            <span className="ae-underline-scribble">capstone</span>
+            <span className="font-editorial italic">presentasikan</span> capstone
             <br />
-            tanpa <span className="font-serif-display italic opacity-80">drama</span>.
+            <span className="text-app-secondary-invert">tanpa drama.</span>
           </h1>
 
-          <p className="mt-6 max-w-md opacity-75 text-lg">
-            Workspace satu pintu — submit dokumen, hubungkan GitHub,
-            dan dapatkan review real-time dari dosen pembimbing.
+          <p className="mt-6 max-w-md text-lg text-app-secondary-invert">
+            Workspace satu pintu — submit project, hubungkan GitHub, dan dapatkan
+            review real-time dari dosen penguji.
           </p>
 
           {/* Mini feature row */}
-          <div className="mt-10 grid grid-cols-3 gap-3 max-w-md">
+          <div className="mt-10 grid max-w-md grid-cols-3 gap-px border border-zinc-800 bg-zinc-800">
             {[
               { icon: Github, label: 'GitHub sync' },
-              { icon: GraduationCap, label: 'SIMIKAD' },
-              { icon: Layers, label: 'SIMTEKMU' },
+              { icon: GraduationCap, label: 'SIMAK' },
+              { icon: Layers, label: 'Rubrik' },
             ].map((f) => (
               <div
                 key={f.label}
-                className="px-3 py-3 rounded-2xl border-[1.5px] ae-border-ink dark:border-[var(--ae-cream)] bg-[var(--ae-cream-2)] dark:bg-[var(--ae-ink-2)] flex flex-col items-start gap-2"
+                className="flex flex-col items-start gap-2 bg-background px-3 py-3"
               >
-                <f.icon size={16} />
-                <span className="font-mono-display text-[10px] uppercase tracking-widest">{f.label}</span>
+                <f.icon size={16} className="text-app-primary-invert" />
+                <span className="font-mono text-[10px] uppercase tracking-widest text-app-teritary-invert">
+                  {f.label}
+                </span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Bottom row */}
-        <div className="flex items-end justify-between font-mono-display text-[10px] uppercase tracking-[0.2em] opacity-60">
-          <p>Prodi Informatika · Unismuh Makassar</p>
-          <p>v3 — Acid Edition</p>
+        <div className="relative z-10 flex items-end justify-between font-mono text-[10px] uppercase tracking-[0.2em] text-app-teritary-invert">
+          <p>Platform Capstone Project</p>
+          <p>[01] AUTH</p>
         </div>
+
+        {/* Watermark */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute -bottom-8 right-4 select-none font-editorial text-[9vw] leading-none tracking-tight text-app-quaternary"
+        >
+          capstone
+        </span>
       </aside>
 
       {/* ============ RIGHT — Form ============ */}
-      <main className="w-full lg:w-[48%] flex items-center justify-center p-6 md:p-12 relative">
+      <main className="relative flex w-full items-center justify-center p-6 md:p-12 lg:w-[48%]">
         {/* Mobile logo */}
-        <Link href="/" className="lg:hidden absolute top-6 left-6 flex items-center gap-2.5">
-          <Image src="/logo.png" alt="Capstone" width={30} height={30} className="rounded-md" />
-          <span className="font-serif-display italic text-lg">
-            capstone<span className="text-[var(--ae-coral)]">.</span>
-          </span>
+        <Link href="/" className="absolute left-6 top-6 flex items-center gap-2.5 lg:hidden">
+          <Image src="/logo.png" alt="Capstone" width={24} height={24} className="rounded-md" />
+          <span className="font-editorial text-lg leading-none tracking-tight">capstone</span>
         </Link>
 
         <Suspense fallback={<Spinner size="lg" />}>

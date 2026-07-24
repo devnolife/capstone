@@ -9,7 +9,6 @@ import {
   Button,
   Spinner,
   Chip,
-  Divider,
   Avatar,
 } from '@heroui/react';
 import {
@@ -28,6 +27,7 @@ import {
 import { formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface Notification {
   id: string;
@@ -63,17 +63,17 @@ interface TeamInvitation {
 const getNotificationIcon = (type: string) => {
   switch (type) {
     case 'assignment':
-      return <UserCog size={20} className="text-primary" />;
+      return <UserCog size={16} className="text-app-secondary-invert" />;
     case 'review':
-      return <ClipboardCheck size={20} className="text-success" />;
+      return <ClipboardCheck size={16} className="text-app-secondary-invert" />;
     case 'submission':
-      return <FileText size={20} className="text-secondary" />;
+      return <FileText size={16} className="text-app-secondary-invert" />;
     case 'invitation':
-      return <Users size={20} className="text-emerald-500" />;
+      return <Users size={16} className="text-app-secondary-invert" />;
     case 'system':
-      return <AlertCircle size={20} className="text-warning" />;
+      return <AlertCircle size={16} className="text-warning" />;
     default:
-      return <Bell size={20} className="text-default-500" />;
+      return <Bell size={16} className="text-app-secondary-invert" />;
   }
 };
 
@@ -241,7 +241,7 @@ export default function NotificationsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-[60vh]">
+      <div className="flex h-[60vh] items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -250,93 +250,97 @@ export default function NotificationsPage() {
   return (
     <div className="space-y-5">
       {/* Header */}
-      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-semibold text-default-900">Notifikasi</h1>
-          <p className="text-sm text-default-500 mt-0.5">
-            {unreadCount > 0
-              ? `${unreadCount} notifikasi belum dibaca`
-              : 'Semua notifikasi sudah dibaca'}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {unreadCount > 0 && (
-            <Button
-              size="sm"
-              variant="flat"
-              startContent={<CheckCheck size={16} />}
-              onPress={handleMarkAllAsRead}
-            >
-              Tandai Semua Dibaca
-            </Button>
-          )}
-          {notifications.some((n) => n.isRead) && (
-            <Button
-              size="sm"
-              variant="flat"
-              color="danger"
-              startContent={<Trash2 size={16} />}
-              onPress={handleDeleteAllRead}
-            >
-              Hapus Dibaca
-            </Button>
-          )}
-        </div>
-      </header>
+      <PageHeader
+        label="[05] NOTIFIKASI"
+        labelRight="/ SEMUA"
+        title="Notifikasi"
+        description={
+          unreadCount > 0
+            ? `${unreadCount} notifikasi belum dibaca`
+            : 'Semua notifikasi sudah dibaca'
+        }
+        actions={
+          <>
+            {unreadCount > 0 && (
+              <Button
+                size="sm"
+                variant="flat"
+                startContent={<CheckCheck size={16} />}
+                onPress={handleMarkAllAsRead}
+              >
+                Tandai Semua Dibaca
+              </Button>
+            )}
+            {notifications.some((n) => n.isRead) && (
+              <Button
+                size="sm"
+                variant="flat"
+                color="danger"
+                startContent={<Trash2 size={16} />}
+                onPress={handleDeleteAllRead}
+              >
+                Hapus Dibaca
+              </Button>
+            )}
+          </>
+        }
+      />
 
       {/* Team Invitations Section */}
       {invitations.length > 0 && (
-        <Card className="border-2 border-emerald-200 dark:border-emerald-800">
-          <CardHeader className="bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30">
-            <div className="flex items-center gap-2">
-              <Users size={20} className="text-emerald-600 dark:text-emerald-400" />
-              <h2 className="text-lg font-semibold">
-                Undangan Tim ({invitations.length})
+        <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
+          <CardHeader className="border-b border-zinc-800 bg-app-quinary p-4 md:p-5">
+            <div className="flex items-center gap-3">
+              <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                <Users size={16} />
+              </span>
+              <h2 className="font-display text-lg font-[450] tracking-tight">
+                Undangan Tim (<span className="tabular-nums">{invitations.length}</span>)
               </h2>
               <Chip size="sm" color="warning" variant="flat">Perlu Respon</Chip>
             </div>
           </CardHeader>
           <CardBody className="p-0">
-            <div className="divide-y divide-divider">
+            <div className="divide-y divide-zinc-800">
               {invitations.map((invitation) => (
                 <div
                   key={invitation.id}
-                  className="p-4 bg-emerald-50/50 dark:bg-emerald-950/20"
+                  className="bg-app-quinary p-4"
                 >
                   <div className="flex items-start gap-4">
                     <Avatar
                       name={invitation.inviter.name}
                       src={invitation.inviter.image || undefined}
                       size="md"
-                      className="ring-2 ring-emerald-200 dark:ring-emerald-700"
+                      className="ring-2 ring-zinc-800"
                     />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2 flex-wrap">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
                         <div>
-                          <h3 className="font-semibold text-emerald-800 dark:text-emerald-200">
+                          <h3 className="font-semibold text-foreground">
                             Undangan Bergabung Tim
                           </h3>
-                          <p className="text-sm text-default-600 mt-1">
+                          <p className="text-app-secondary-invert mt-1 text-sm">
                             <span className="font-medium">{invitation.inviter.name}</span>
                             {invitation.inviter.nim && (
-                              <span className="text-default-400"> ({invitation.inviter.nim})</span>
+                              <span className="text-app-teritary-invert"> ({invitation.inviter.nim})</span>
                             )}
                             {' '}mengundang Anda bergabung ke project:
                           </p>
-                          <div className="mt-2 p-3 rounded-lg bg-white dark:bg-zinc-800 border border-emerald-100 dark:border-emerald-800">
-                            <p className="font-medium text-default-800">{invitation.project.title}</p>
+                          <div className="mt-2 rounded-lg border border-zinc-800 bg-background p-3">
+                            <p className="font-medium text-foreground">{invitation.project.title}</p>
                             {invitation.project.description && (
-                              <p className="text-sm text-default-500 mt-1 line-clamp-2">
+                              <p className="text-app-teritary-invert mt-1 line-clamp-2 text-sm">
                                 {invitation.project.description}
                               </p>
                             )}
-                            <div className="flex items-center gap-2 mt-2">
-                              <Chip size="sm" variant="flat">
+                            <div className="mt-2 flex items-center gap-2">
+                              <Chip size="sm" variant="flat" className="bg-app-quaternary text-app-secondary-invert">
                                 {invitation.project.semester} {invitation.project.tahunAkademik}
                               </Chip>
                             </div>
                           </div>
-                          <p className="text-xs text-default-400 mt-2">
+                          <p className="text-app-teritary-invert mt-2 font-mono text-[10px] tracking-wider">
                             Dikirim {formatDate(invitation.createdAt)}
                           </p>
                         </div>
@@ -375,36 +379,38 @@ export default function NotificationsPage() {
       )}
 
       {/* Notifications List */}
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold">
-            Daftar Notifikasi ({notifications.length})
+      <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <CardHeader className="border-b border-zinc-800 p-4 md:p-5">
+          <h2 className="font-display text-lg font-[450] tracking-tight">
+            Daftar Notifikasi (<span className="tabular-nums">{notifications.length}</span>)
           </h2>
         </CardHeader>
         <CardBody className="p-0">
           {notifications.length === 0 ? (
-            <div className="text-center py-12">
-              <Bell size={64} className="mx-auto text-default-300 mb-4" />
-              <p className="text-default-500">Tidak ada notifikasi</p>
+            <div className="py-12 text-center">
+              <div className="bg-app-primary text-app-teritary-invert mx-auto mb-4 flex size-16 items-center justify-center rounded-full">
+                <Bell size={28} />
+              </div>
+              <p className="text-app-teritary-invert">Tidak ada notifikasi</p>
             </div>
           ) : (
-            <div className="divide-y divide-divider">
+            <div className="divide-y divide-zinc-800">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-default-50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary-50/50' : ''
+                  className={`cursor-pointer p-4 transition-colors ${!notification.isRead ? 'bg-app-quaternary' : 'hover:bg-app-quinary'
                     }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-full bg-default-100">
+                    <div className="bg-app-primary flex size-9 shrink-0 items-center justify-center rounded-lg">
                       {getNotificationIcon(notification.type)}
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-start justify-between gap-2">
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="font-medium">
+                            <h3 className="text-sm font-medium">
                               {notification.title}
                             </h3>
                             {!notification.isRead && (
@@ -413,15 +419,15 @@ export default function NotificationsPage() {
                               </Chip>
                             )}
                           </div>
-                          <p className="text-sm text-default-600 mt-1">
+                          <p className="text-app-secondary-invert mt-1 text-sm">
                             {notification.message}
                           </p>
-                          <div className="flex items-center gap-4 mt-2">
-                            <span className="text-xs text-default-400">
+                          <div className="mt-2 flex items-center gap-4">
+                            <span className="text-app-teritary-invert font-mono text-[10px] tracking-wider">
                               {formatDate(notification.createdAt)}
                             </span>
                             {notification.link && (
-                              <span className="text-xs text-primary flex items-center gap-1">
+                              <span className="flex items-center gap-1 text-xs text-primary">
                                 <ExternalLink size={12} />
                                 Lihat detail
                               </span>

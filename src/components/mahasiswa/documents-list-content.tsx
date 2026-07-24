@@ -18,6 +18,7 @@ import {
   addToast,
 } from '@heroui/react';
 import { motion } from 'framer-motion';
+import { PageHeader } from '@/components/caret/PageHeader';
 import {
   FileText,
   Search,
@@ -150,78 +151,67 @@ export function DocumentsListContent({ projects }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Page Header - Soft Colored */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-50 via-sky-50 to-blue-50 dark:from-cyan-950/40 dark:via-sky-950/30 dark:to-blue-950/40 border border-cyan-200/50 dark:border-cyan-800/30 p-6 md:p-8">
-        {/* Subtle Background Accents */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-cyan-400/20 to-sky-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-blue-400/15 to-cyan-400/15 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
-        
-        <div className="relative flex items-center gap-4">
-          <div className="p-3 rounded-2xl bg-gradient-to-br from-cyan-500 to-sky-600 text-white shadow-lg shadow-cyan-500/25">
-            <FileText size={28} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-zinc-800 dark:text-zinc-100">Persyaratan Proyek</h1>
-            <p className="text-sm text-cyan-600/70 dark:text-cyan-400/60 mt-1">
-              Kelola persyaratan dan dokumentasi untuk setiap proyek capstone
-            </p>
-          </div>
-        </div>
-      </div>
+      {/* Page Header */}
+      <PageHeader
+        label="[02] PERSYARATAN"
+        labelRight="/ DOKUMEN"
+        title="Persyaratan proyek"
+        description="Kelola persyaratan dan dokumentasi untuk setiap proyek capstone."
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-        <Card className="shadow-sm">
+        <Card className="border border-zinc-800 bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-primary/10">
-                <FolderOpen size={20} className="text-primary" />
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
+                <FolderOpen size={20} />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.total}</p>
-                <p className="text-xs text-default-500">Total Proyek</p>
+                <p className="text-2xl font-bold tabular-nums">{stats.total}</p>
+                <p className="text-xs text-app-teritary-invert">Total Proyek</p>
               </div>
             </div>
           </CardBody>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="border border-zinc-800 bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-success/10">
-                <CheckCircle2 size={20} className="text-success" />
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-success/10 text-success">
+                <CheckCircle2 size={20} />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.completed}</p>
-                <p className="text-xs text-default-500">Lengkap</p>
+                <p className="text-2xl font-bold tabular-nums">{stats.completed}</p>
+                <p className="text-xs text-app-teritary-invert">Lengkap</p>
               </div>
             </div>
           </CardBody>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="border border-zinc-800 bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-warning/10">
-                <Edit3 size={20} className="text-warning" />
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning/10 text-warning">
+                <Edit3 size={20} />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.inProgress}</p>
-                <p className="text-xs text-default-500">Dalam Proses</p>
+                <p className="text-2xl font-bold tabular-nums">{stats.inProgress}</p>
+                <p className="text-xs text-app-teritary-invert">Dalam Proses</p>
               </div>
             </div>
           </CardBody>
         </Card>
 
-        <Card className="shadow-sm">
+        <Card className="border border-zinc-800 bg-card shadow-none">
           <CardBody className="py-4">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-default/10">
-                <AlertCircle size={20} className="text-default-500" />
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-quaternary text-app-secondary-invert">
+                <AlertCircle size={20} />
               </div>
               <div>
-                <p className="text-2xl font-bold">{stats.notStarted}</p>
-                <p className="text-xs text-default-500">Belum Mulai</p>
+                <p className="text-2xl font-bold tabular-nums">{stats.notStarted}</p>
+                <p className="text-xs text-app-teritary-invert">Belum Mulai</p>
               </div>
             </div>
           </CardBody>
@@ -230,31 +220,31 @@ export function DocumentsListContent({ projects }: Props) {
 
       {/* Template Downloads Section */}
       {projects.length > 0 && (
-        <Card className="shadow-sm border border-amber-200/50 dark:border-amber-800/30 bg-gradient-to-br from-amber-50/50 to-orange-50/30 dark:from-amber-950/20 dark:to-orange-950/10">
+        <Card className="border border-zinc-800 bg-card shadow-none">
           <CardBody className="p-5">
             <div className="flex items-start gap-4">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/25">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
                 <Download size={22} />
               </div>
               <div className="flex-1">
-                <h3 className="font-bold text-lg text-amber-900 dark:text-amber-100">
+                <h3 className="font-display text-lg font-[450] tracking-tight">
                   Download Template Dokumen
                 </h3>
-                <p className="text-sm text-amber-700/70 dark:text-amber-300/60 mt-1 mb-4">
+                <p className="text-sm text-app-secondary-invert mt-1 mb-4">
                   Template surat pernyataan hak cipta, serah terima, dan keaslian karya untuk project capstone.
                   Project dapat dimodifikasi oleh mahasiswa angkatan selanjutnya dengan ketentuan yang berlaku.
                 </p>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {/* Template Cards */}
-                  <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                  <div className="p-4 rounded-xl border border-zinc-800 bg-app-quinary">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-                        <FileSignature size={18} className="text-violet-600 dark:text-violet-400" />
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
+                        <FileSignature size={18} />
                       </div>
                       <div>
                         <h4 className="font-semibold text-sm">Surat Hak Cipta & Lisensi</h4>
-                        <p className="text-xs text-default-400">Izin modifikasi untuk mahasiswa</p>
+                        <p className="text-xs text-app-teritary-invert">Izin modifikasi untuk mahasiswa</p>
                       </div>
                     </div>
                     <Dropdown>
@@ -292,14 +282,14 @@ export function DocumentsListContent({ projects }: Props) {
                     </Dropdown>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                  <div className="p-4 rounded-xl border border-zinc-800 bg-app-quinary">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-900/30">
-                        <FileCheck size={18} className="text-emerald-600 dark:text-emerald-400" />
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
+                        <FileCheck size={18} />
                       </div>
                       <div>
                         <h4 className="font-semibold text-sm">Berita Acara Serah Terima</h4>
-                        <p className="text-xs text-default-400">Penyerahan project ke prodi</p>
+                        <p className="text-xs text-app-teritary-invert">Penyerahan project ke prodi</p>
                       </div>
                     </div>
                     <Dropdown>
@@ -337,14 +327,14 @@ export function DocumentsListContent({ projects }: Props) {
                     </Dropdown>
                   </div>
 
-                  <div className="p-4 rounded-xl bg-white dark:bg-zinc-900 border border-amber-200 dark:border-amber-800/50 shadow-sm">
+                  <div className="p-4 rounded-xl border border-zinc-800 bg-app-quinary">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                        <ScrollText size={18} className="text-blue-600 dark:text-blue-400" />
+                      <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
+                        <ScrollText size={18} />
                       </div>
                       <div>
                         <h4 className="font-semibold text-sm">Pernyataan Keaslian Karya</h4>
-                        <p className="text-xs text-default-400">Surat bebas plagiarisme</p>
+                        <p className="text-xs text-app-teritary-invert">Surat bebas plagiarisme</p>
                       </div>
                     </div>
                     <Dropdown>
@@ -383,9 +373,9 @@ export function DocumentsListContent({ projects }: Props) {
                   </div>
                 </div>
 
-                <div className="mt-4 p-3 rounded-lg bg-amber-100/50 dark:bg-amber-900/20 border border-amber-200/50 dark:border-amber-800/30">
-                  <p className="text-xs text-amber-800 dark:text-amber-300">
-                    <strong>💡 Petunjuk:</strong> Setelah download, buka file HTML di browser lalu klik tombol &quot;Cetak / Simpan PDF&quot; untuk menyimpan sebagai PDF. 
+                <div className="mt-4 p-3 rounded-lg bg-warning/10 border border-warning/30">
+                  <p className="text-xs text-app-secondary-invert">
+                    <strong className="text-warning">💡 Petunjuk:</strong> Setelah download, buka file HTML di browser lalu klik tombol &quot;Cetak / Simpan PDF&quot; untuk menyimpan sebagai PDF. 
                     Pastikan data project sudah lengkap sebelum mencetak dokumen resmi.
                   </p>
                 </div>
@@ -396,17 +386,17 @@ export function DocumentsListContent({ projects }: Props) {
       )}
 
       {/* Search */}
-      <Card className="shadow-sm">
+      <Card className="border border-zinc-800 bg-card shadow-none">
         <CardBody className="py-3">
           <Input
             placeholder="Cari proyek atau judul..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            startContent={<Search size={18} className="text-default-400" />}
+            startContent={<Search size={18} className="text-app-teritary-invert" />}
             isClearable
             onClear={() => setSearchQuery('')}
             classNames={{
-              inputWrapper: 'bg-default-100',
+              inputWrapper: 'bg-app-quinary',
             }}
           />
         </CardBody>
@@ -414,13 +404,13 @@ export function DocumentsListContent({ projects }: Props) {
 
       {/* Project List */}
       {filteredProjects.length === 0 ? (
-        <Card className="shadow-sm">
+        <Card className="border border-zinc-800 bg-card shadow-none">
           <CardBody className="py-12 text-center">
-            <FolderOpen size={48} className="mx-auto text-default-300 mb-4" />
-            <p className="text-lg font-medium text-default-600">
+            <FolderOpen size={48} className="mx-auto text-app-teritary-invert mb-4" />
+            <p className="text-lg font-medium text-foreground">
               {projects.length === 0 ? 'Belum ada proyek' : 'Proyek tidak ditemukan'}
             </p>
-            <p className="text-sm text-default-400 mt-1">
+            <p className="text-sm text-app-teritary-invert mt-1">
               {projects.length === 0
                 ? 'Buat proyek terlebih dahulu untuk mengisi persyaratan'
                 : 'Coba kata kunci lain'}
@@ -458,7 +448,7 @@ export function DocumentsListContent({ projects }: Props) {
                 <Card
                   as={Link}
                   href={`/mahasiswa/documents/${project.id}`}
-                  className="shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  className="border border-zinc-800 bg-card shadow-none transition-colors hover:bg-app-quinary cursor-pointer"
                   isPressable
                 >
                   <CardBody className="py-4">
@@ -466,21 +456,21 @@ export function DocumentsListContent({ projects }: Props) {
                       {/* Project Info */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start gap-3">
-                          <div className="p-2.5 rounded-xl bg-primary/10 shrink-0">
-                            <Target size={22} className="text-primary" />
+                          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
+                            <Target size={22} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <h3 className="font-semibold text-base truncate">
                               {project.requirements?.judulProyek || project.title}
                             </h3>
                             {project.requirements?.judulProyek && project.requirements.judulProyek !== project.title && (
-                              <p className="text-xs text-default-400 truncate">{project.title}</p>
+                              <p className="text-xs text-app-teritary-invert truncate">{project.title}</p>
                             )}
                             <div className="flex flex-wrap items-center gap-2 mt-1.5">
                               <Chip size="sm" variant="flat" color={status.color}>
                                 {status.label}
                               </Chip>
-                              <span className="text-xs text-default-400">{project.semester}</span>
+                              <span className="text-xs text-app-teritary-invert">{project.semester}</span>
                               {deadline && (
                                 <Chip 
                                   size="sm" 
@@ -499,16 +489,17 @@ export function DocumentsListContent({ projects }: Props) {
                       {/* Progress */}
                       <div className="sm:w-48">
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs text-default-500">Kelengkapan</span>
-                          <span className="text-xs font-medium">{progress}%</span>
+                          <span className="text-xs text-app-teritary-invert">Kelengkapan</span>
+                          <span className="text-xs font-medium tabular-nums">{progress}%</span>
                         </div>
                         <Progress
                           value={progress}
                           size="sm"
                           color={progress === 100 ? 'success' : progress > 0 ? 'primary' : 'default'}
+                          classNames={{ track: 'bg-app-primary' }}
                         />
                         {lastUpdated && (
-                          <div className="flex items-center gap-1 mt-2 text-[10px] text-default-400">
+                          <div className="flex items-center gap-1 mt-2 text-[10px] text-app-teritary-invert">
                             <Clock size={10} />
                             <span>
                               Diupdate {lastUpdated.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
@@ -518,7 +509,7 @@ export function DocumentsListContent({ projects }: Props) {
                       </div>
 
                       {/* Arrow */}
-                      <ChevronRight size={20} className="text-default-300 hidden sm:block" />
+                      <ChevronRight size={20} className="text-app-teritary-invert hidden sm:block" />
                     </div>
                   </CardBody>
                 </Card>

@@ -45,6 +45,7 @@ import {
 } from 'lucide-react';
 import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
+import { PageHeader } from '@/components/caret/PageHeader';
 import {
   formatDateTime,
   getStatusColor,
@@ -185,20 +186,21 @@ const itemVariants = {
   },
 };
 
-const getStatusGradient = (status: string) => {
+/** Titik status semantik kecil di dalam chip (satu-satunya warna di header). */
+const statusDotClass = (status: string) => {
   switch (status) {
     case 'APPROVED':
-      return 'from-emerald-500 via-green-500 to-teal-500';
+      return 'bg-success';
     case 'REJECTED':
-      return 'from-red-500 via-rose-500 to-pink-500';
+      return 'bg-danger';
     case 'IN_REVIEW':
-      return 'from-amber-500 via-orange-500 to-yellow-500';
-    case 'SUBMITTED':
-      return 'from-blue-500 via-indigo-500 to-violet-500';
+      return 'bg-warning animate-pulse';
     case 'REVISION_NEEDED':
-      return 'from-orange-500 via-amber-500 to-yellow-500';
+      return 'bg-warning';
+    case 'SUBMITTED':
+      return 'bg-primary';
     default:
-      return 'from-blue-600 via-indigo-600 to-violet-600';
+      return 'bg-app-teritary-invert';
   }
 };
 
@@ -217,8 +219,6 @@ const REQUIREMENTS_SECTIONS = [
     key: 'basic',
     title: 'Informasi Dasar',
     icon: Target,
-    color: 'from-blue-500 to-indigo-500',
-    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
     fields: [
       { key: 'judulProyek', label: 'Judul Proyek' },
       { key: 'targetPengguna', label: 'Target Pengguna' },
@@ -231,8 +231,6 @@ const REQUIREMENTS_SECTIONS = [
     key: 'academic',
     title: 'Aspek Akademik',
     icon: BookOpen,
-    color: 'from-violet-500 to-purple-500',
-    bgColor: 'bg-violet-50 dark:bg-violet-900/20',
     fields: [
       { key: 'integrasiMatakuliah', label: 'Integrasi Mata Kuliah' },
       { key: 'metodologi', label: 'Metodologi Pengembangan' },
@@ -243,8 +241,6 @@ const REQUIREMENTS_SECTIONS = [
     key: 'technical',
     title: 'Teknis & Implementasi',
     icon: Cpu,
-    color: 'from-emerald-500 to-teal-500',
-    bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
     fields: [
       { key: 'ruangLingkup', label: 'Ruang Lingkup' },
       { key: 'sumberDayaBatasan', label: 'Sumber Daya & Batasan' },
@@ -256,8 +252,6 @@ const REQUIREMENTS_SECTIONS = [
     key: 'analysis',
     title: 'Analisis & Evaluasi',
     icon: BarChart3,
-    color: 'from-amber-500 to-orange-500',
-    bgColor: 'bg-amber-50 dark:bg-amber-900/20',
     fields: [
       { key: 'analisisTemuan', label: 'Rencana Analisis & Temuan' },
       { key: 'presentasiUjian', label: 'Rencana Presentasi & Ujian' },
@@ -269,8 +263,6 @@ const REQUIREMENTS_SECTIONS = [
     key: 'timeline',
     title: 'Timeline',
     icon: CalendarDays,
-    color: 'from-pink-500 to-rose-500',
-    bgColor: 'bg-pink-50 dark:bg-pink-900/20',
     fields: [
       { key: 'timeline', label: 'Deskripsi Timeline' },
       { key: 'kerangkaWaktu', label: 'Kerangka Waktu' },
@@ -321,8 +313,8 @@ export default function DosenProjectDetailPage({
   if (error || !project) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-          <AlertCircle size={32} className="text-red-500" />
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+          <AlertCircle size={32} className="text-destructive" />
         </div>
         <p className="text-danger text-lg font-medium">{error || 'Project tidak ditemukan'}</p>
         <Button
@@ -350,24 +342,19 @@ export default function DosenProjectDetailPage({
       animate="visible"
       className="w-full space-y-6 pb-8"
     >
-      {/* Hero Header Card */}
+      {/* Hero Header */}
       <motion.div variants={itemVariants}>
-        <Card className={`border-0 bg-gradient-to-br ${getStatusGradient(project.status)} text-white overflow-hidden`}>
-          <div
-            className="absolute inset-0 opacity-20"
-            style={{
-              backgroundImage:
-                "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-            }}
-          />
-          <CardBody className="p-5 relative">
-            <div className="flex items-center justify-between mb-4">
+        <PageHeader
+          label="[02] PROJECT"
+          labelRight="/ DETAIL"
+          title={project.title}
+          actions={
+            <>
               <Button
                 as={Link}
                 href="/dosen/projects"
                 variant="flat"
                 size="sm"
-                className="bg-white/20 text-white hover:bg-white/30"
                 startContent={<ArrowLeft size={16} />}
               >
                 Kembali
@@ -384,21 +371,23 @@ export default function DosenProjectDetailPage({
                   {hasExistingReview ? 'Lanjutkan Review' : 'Mulai Review'}
                 </Button>
               )}
-            </div>
+            </>
+          }
+        />
 
+        <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden mt-3">
+          <CardBody className="p-5">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-white/20 backdrop-blur-sm">
+                <div className="bg-app-primary text-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
                   <FolderGit2 size={24} />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Chip size="sm" className="bg-white/20 text-white h-5 text-xs">
-                      {getStatusLabel(project.status)}
-                    </Chip>
-                  </div>
-                  <h1 className="text-xl md:text-2xl font-bold">{project.title}</h1>
-                  <div className="flex flex-wrap items-center gap-3 text-white/80 text-xs mt-1">
+                  <span className="border-app-secondary bg-app-quinary text-app-secondary-invert inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium whitespace-nowrap">
+                    <span className={`size-1.5 rounded-full ${statusDotClass(project.status)}`} />
+                    {getStatusLabel(project.status)}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-3 text-app-secondary-invert text-xs mt-1.5">
                     <span className="flex items-center gap-1">
                       <Calendar size={12} />
                       {project.semester} {project.tahunAkademik}
@@ -408,7 +397,7 @@ export default function DosenProjectDetailPage({
                         href={project.githubRepoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1 hover:text-white transition-colors"
+                        className="flex items-center gap-1 hover:text-foreground transition-colors"
                       >
                         <Github size={12} />
                         {project.githubRepoName?.split('/')[1] || 'Repository'}
@@ -422,23 +411,31 @@ export default function DosenProjectDetailPage({
               {project.requirements && (
                 <div className="flex items-center gap-3">
                   <div className="text-right">
-                    <p className="text-white/70 text-xs">Kelengkapan</p>
-                    <p className="text-2xl font-bold">{project.requirements.completionPercent}%</p>
+                    <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Kelengkapan</p>
+                    <p className="text-2xl font-bold tabular-nums">{project.requirements.completionPercent}%</p>
                   </div>
                   <div className="relative w-14 h-14">
                     <svg className="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
-                      <circle cx="28" cy="28" r="22" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="5" />
                       <circle
                         cx="28"
                         cy="28"
                         r="22"
                         fill="none"
-                        stroke="white"
+                        stroke="currentColor"
+                        strokeWidth="5"
+                        className="text-app-primary"
+                      />
+                      <circle
+                        cx="28"
+                        cy="28"
+                        r="22"
+                        fill="none"
+                        stroke="currentColor"
                         strokeWidth="5"
                         strokeLinecap="round"
                         strokeDasharray={138}
                         strokeDashoffset={138 - (138 * project.requirements.completionPercent) / 100}
-                        className="transition-all duration-1000"
+                        className="text-primary transition-all duration-1000"
                       />
                     </svg>
                   </div>
@@ -455,31 +452,31 @@ export default function DosenProjectDetailPage({
         <div className="lg:col-span-2 space-y-6">
           {/* Mahasiswa & Deskripsi Card */}
           <motion.div variants={itemVariants}>
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border-b border-zinc-100 dark:border-zinc-800">
+            <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <Users size={18} className="text-violet-600 dark:text-violet-400" />
+                  <Users size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Tim Project</h3>
-                  <Chip size="sm" variant="flat" color="primary">
+                  <Chip size="sm" variant="flat" color="primary" className="tabular-nums">
                     {1 + (project.members?.filter(m => m.role !== 'leader').length || 0)} anggota
                   </Chip>
                 </div>
               </div>
               <CardBody className="p-4 space-y-4">
                 {/* Ketua (Owner) */}
-                <div className="flex items-center gap-3 p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
+                <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quaternary border border-zinc-800">
                   <Avatar
                     name={project.mahasiswa.name}
                     src={avatarUrl}
-                    className="w-10 h-10 ring-2 ring-primary-200 dark:ring-primary-700"
+                    className="w-10 h-10 ring-2 ring-zinc-700"
                     imgProps={{ referrerPolicy: "no-referrer" }}
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <p className="font-semibold text-sm">{project.mahasiswa.name}</p>
-                      <Crown size={14} className="text-amber-500" />
+                      <Crown size={14} className="text-warning" />
                     </div>
-                    <p className="text-xs text-default-500">
+                    <p className="text-xs text-app-secondary-invert">
                       {project.mahasiswa.nim || project.mahasiswa.username}
                       {project.mahasiswa.prodi && ` - ${project.mahasiswa.prodi}`}
                     </p>
@@ -490,7 +487,7 @@ export default function DosenProjectDetailPage({
                       href={`https://github.com/${project.mahasiswa.githubUsername}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-xs"
+                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-app-quinary hover:bg-app-quaternary transition-colors text-xs"
                     >
                       <Github size={12} />
                       @{project.mahasiswa.githubUsername}
@@ -502,17 +499,17 @@ export default function DosenProjectDetailPage({
                 {project.members?.filter(m => m.role !== 'leader').map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800"
                   >
                     <Avatar
                       name={member.user?.name || member.name || 'Member'}
                       src={member.user?.image || member.githubAvatarUrl || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
-                      className="w-10 h-10 ring-2 ring-white dark:ring-zinc-700"
+                      className="w-10 h-10 ring-2 ring-zinc-700"
                       imgProps={{ referrerPolicy: "no-referrer" }}
                     />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{member.user?.name || member.name || member.githubUsername}</p>
-                      <p className="text-xs text-default-500">
+                      <p className="text-xs text-app-secondary-invert">
                         {member.user?.nim || member.user?.username}
                         {member.user?.prodi && ` - ${member.user.prodi}`}
                       </p>
@@ -523,7 +520,7 @@ export default function DosenProjectDetailPage({
                         href={`https://github.com/${member.user?.githubUsername || member.githubUsername}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors text-xs"
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-zinc-800 bg-app-quinary hover:bg-app-quaternary transition-colors text-xs"
                       >
                         <Github size={12} />
                         @{member.user?.githubUsername || member.githubUsername}
@@ -536,17 +533,17 @@ export default function DosenProjectDetailPage({
                 {project.invitations?.filter(i => i.status === 'pending').map((invitation) => (
                   <div
                     key={invitation.id}
-                    className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50"
+                    className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800"
                   >
                     <Avatar
                       name={invitation.invitee.name}
                       src={invitation.invitee.image || undefined}
-                      className="w-10 h-10 ring-2 ring-amber-200 dark:ring-amber-700 opacity-75"
+                      className="w-10 h-10 ring-2 ring-zinc-700 opacity-75"
                       imgProps={{ referrerPolicy: "no-referrer" }}
                     />
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm text-default-700 dark:text-default-300">{invitation.invitee.name}</p>
-                      <p className="text-xs text-default-500">
+                      <p className="font-medium text-sm text-app-secondary-invert">{invitation.invitee.name}</p>
+                      <p className="text-xs text-app-secondary-invert">
                         {invitation.invitee.nim || invitation.invitee.username}
                         {invitation.invitee.prodi && ` - ${invitation.invitee.prodi}`}
                       </p>
@@ -561,10 +558,10 @@ export default function DosenProjectDetailPage({
                     <Divider />
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <FileText size={14} className="text-blue-600 dark:text-blue-400" />
+                        <FileText size={14} className="text-app-secondary-invert" />
                         <h3 className="font-semibold text-sm">Deskripsi Project</h3>
                       </div>
-                      <p className="text-default-600 text-sm leading-relaxed whitespace-pre-wrap">{project.description}</p>
+                      <p className="text-app-secondary-invert text-sm leading-relaxed whitespace-pre-wrap">{project.description}</p>
                     </div>
                   </>
                 )}
@@ -575,14 +572,14 @@ export default function DosenProjectDetailPage({
           {/* Requirements Card */}
           {project.requirements && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-                <div className="p-3 bg-gradient-to-r from-indigo-50 to-violet-50 dark:from-indigo-950/30 dark:to-violet-950/30 border-b border-zinc-100 dark:border-zinc-800">
+              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+                <div className="p-3 bg-app-quinary border-b border-zinc-800">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <ListChecks size={16} className="text-indigo-600 dark:text-indigo-400" />
+                      <ListChecks size={16} className="text-app-secondary-invert" />
                       <h3 className="font-semibold text-sm">Persyaratan Proyek</h3>
                     </div>
-                    <Chip size="sm" variant="flat" color={project.requirements.completionPercent >= 80 ? 'success' : project.requirements.completionPercent >= 50 ? 'warning' : 'default'} className="h-5 text-xs">
+                    <Chip size="sm" variant="flat" color={project.requirements.completionPercent >= 80 ? 'success' : project.requirements.completionPercent >= 50 ? 'warning' : 'default'} className="h-5 text-xs tabular-nums">
                       {project.requirements.completionPercent}% Lengkap
                     </Chip>
                   </div>
@@ -604,18 +601,18 @@ export default function DosenProjectDetailPage({
                           key={section.key}
                           aria-label={section.title}
                           classNames={{
-                            base: `border border-zinc-200 dark:border-zinc-700 rounded-lg ${section.bgColor}`,
+                            base: 'border border-zinc-800 rounded-lg bg-app-quinary',
                             title: 'font-medium text-sm',
                             trigger: 'px-3 py-2',
                             content: 'px-3 pb-3',
                           }}
                           title={
                             <div className="flex items-center gap-2">
-                              <div className={`p-1.5 rounded-md bg-gradient-to-br ${section.color} text-white`}>
+                              <div className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-md">
                                 <SectionIcon size={14} />
                               </div>
                               <span className="flex-1 text-sm">{section.title}</span>
-                              <Chip size="sm" variant="flat" color={filledFields.length === totalFields ? 'success' : 'default'} className="h-5 text-xs">
+                              <Chip size="sm" variant="flat" color={filledFields.length === totalFields ? 'success' : 'default'} className="h-5 text-xs tabular-nums">
                                 {filledFields.length}/{totalFields}
                               </Chip>
                             </div>
@@ -630,9 +627,9 @@ export default function DosenProjectDetailPage({
                                 : String(value);
 
                               return (
-                                <div key={field.key} className="bg-white dark:bg-zinc-800 rounded-md p-2.5 border border-zinc-100 dark:border-zinc-700">
-                                  <p className="text-xs font-medium text-default-500 uppercase tracking-wide mb-1">{field.label}</p>
-                                  <p className="text-sm text-default-700 dark:text-default-300 whitespace-pre-wrap">{displayValue}</p>
+                                <div key={field.key} className="bg-background rounded-md p-2.5 border border-zinc-800">
+                                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert mb-1">{field.label}</p>
+                                  <p className="text-sm text-app-secondary-invert whitespace-pre-wrap">{displayValue}</p>
                                 </div>
                               );
                             })}
@@ -649,15 +646,15 @@ export default function DosenProjectDetailPage({
           {/* GitHub Repository Card */}
           {project.githubRepoUrl && githubInfo && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
                 <CardBody className="p-0">
-                  <div className="flex items-center gap-3 p-3 border-b border-zinc-100 dark:border-zinc-800">
-                    <div className="p-2 rounded-lg bg-zinc-900 dark:bg-zinc-700 text-white">
+                  <div className="flex items-center gap-3 p-3 border-b border-zinc-800">
+                    <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                       <Github size={18} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-sm">{project.githubRepoName || 'GitHub Repository'}</p>
-                      <p className="text-xs text-default-500 truncate">{project.githubRepoUrl}</p>
+                      <p className="text-xs text-app-secondary-invert truncate">{project.githubRepoUrl}</p>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Button
@@ -705,8 +702,8 @@ export default function DosenProjectDetailPage({
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-3 bg-zinc-50 dark:bg-zinc-900">
-                          <div className="rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
+                        <div className="p-3 bg-app-quinary">
+                          <div className="rounded-lg overflow-hidden border border-zinc-800">
                             <GitHubCodeViewer
                               owner={githubInfo.owner}
                               repo={githubInfo.repo}
@@ -729,17 +726,17 @@ export default function DosenProjectDetailPage({
         <div className="space-y-6">
           {/* Review Action Card */}
           <motion.div variants={itemVariants}>
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
               <CardBody className="p-4">
                 {canReview ? (
-                  <div className="p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                  <div className="p-3 rounded-xl bg-warning/10 border border-warning/40">
                     <div className="flex items-start gap-2">
-                      <CheckCircle2 size={18} className="text-amber-600 dark:text-amber-400 mt-0.5" />
+                      <CheckCircle2 size={18} className="text-warning mt-0.5" />
                       <div className="flex-1">
-                        <p className="font-medium text-sm text-amber-800 dark:text-amber-200">
+                        <p className="font-medium text-sm text-foreground">
                           {hasExistingReview ? 'Review Sudah Dimulai' : 'Siap untuk Review'}
                         </p>
-                        <p className="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+                        <p className="text-xs text-app-secondary-invert mt-0.5">
                           {hasExistingReview ? 'Lanjutkan review project ini.' : 'Project siap untuk direview.'}
                         </p>
                       </div>
@@ -757,8 +754,8 @@ export default function DosenProjectDetailPage({
                   </div>
                 ) : (
                   <div className="text-center py-2">
-                    <AlertCircle size={20} className="mx-auto mb-1.5 text-zinc-400" />
-                    <p className="text-sm text-default-500">
+                    <AlertCircle size={20} className="mx-auto mb-1.5 text-app-teritary-invert" />
+                    <p className="text-sm text-app-secondary-invert">
                       Status <strong>{getStatusLabel(project.status)}</strong> tidak dapat direview
                     </p>
                   </div>
@@ -770,17 +767,17 @@ export default function DosenProjectDetailPage({
           {/* Reviews Card */}
           {project.reviews.length > 0 && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-                <div className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-b border-zinc-100 dark:border-zinc-800">
+              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+                <div className="p-3 bg-app-quinary border-b border-zinc-800">
                   <div className="flex items-center gap-2">
-                    <MessageSquare size={16} className="text-blue-600 dark:text-blue-400" />
+                    <MessageSquare size={16} className="text-app-secondary-invert" />
                     <h4 className="font-semibold text-sm">Review Sebelumnya</h4>
                   </div>
                 </div>
                 <CardBody className="p-3">
                   <div className="space-y-2">
                     {project.reviews.map((review) => (
-                      <div key={review.id} className="p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700">
+                      <div key={review.id} className="p-2.5 rounded-lg bg-app-quinary border border-zinc-800">
                         <div className="flex items-center justify-between mb-1">
                           <p className="font-medium text-sm">{review.reviewer.name}</p>
                           <Chip size="sm" color={getStatusColor(review.status)} variant="flat" className="h-5 text-xs">
@@ -789,12 +786,12 @@ export default function DosenProjectDetailPage({
                         </div>
                         {review.overallScore !== null && (
                           <div className="flex items-center gap-1 text-sm">
-                            <Star size={12} className="text-amber-500" />
-                            <span className="font-semibold">{review.overallScore}</span>
+                            <Star size={12} className="text-warning" />
+                            <span className="font-semibold tabular-nums">{review.overallScore}</span>
                           </div>
                         )}
                         {review.overallComment && (
-                          <p className="text-xs text-default-500 mt-1 line-clamp-2">{review.overallComment}</p>
+                          <p className="text-xs text-app-secondary-invert mt-1 line-clamp-2">{review.overallComment}</p>
                         )}
                       </div>
                     ))}
@@ -807,27 +804,27 @@ export default function DosenProjectDetailPage({
           {/* Stakeholder Documents Card - Moved to Sidebar */}
           {project.stakeholderDocuments && project.stakeholderDocuments.length > 0 && (
             <motion.div variants={itemVariants}>
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-                <div className="p-3 bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30 border-b border-zinc-100 dark:border-zinc-800">
+              <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+                <div className="p-3 bg-app-quinary border-b border-zinc-800">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Building2 size={16} className="text-teal-600 dark:text-teal-400" />
+                      <Building2 size={16} className="text-app-secondary-invert" />
                       <h3 className="font-semibold text-sm">Dokumen Stakeholder</h3>
                     </div>
-                    <Chip size="sm" variant="flat" color="primary" className="h-5 text-xs">{project.stakeholderDocuments.length}</Chip>
+                    <Chip size="sm" variant="flat" color="primary" className="h-5 text-xs tabular-nums">{project.stakeholderDocuments.length}</Chip>
                   </div>
                 </div>
                 <CardBody className="p-3">
                   <div className="space-y-2">
                     {project.stakeholderDocuments.map((doc) => (
-                      <div key={doc.id} className="flex items-center justify-between p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700">
+                      <div key={doc.id} className="flex items-center justify-between p-2.5 rounded-lg bg-app-quinary border border-zinc-800">
                         <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <div className="p-1.5 rounded-md bg-teal-100 dark:bg-teal-900/30">
-                            <ShieldCheck size={14} className="text-teal-600 dark:text-teal-400" />
+                          <div className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-md">
+                            <ShieldCheck size={14} />
                           </div>
                           <div className="min-w-0 flex-1">
                             <p className="font-medium text-sm truncate">{doc.stakeholderName}</p>
-                            <p className="text-xs text-default-500 truncate">
+                            <p className="text-xs text-app-secondary-invert truncate">
                               {doc.stakeholderRole} • {formatFileSize(doc.fileSize)}
                             </p>
                           </div>
@@ -845,34 +842,34 @@ export default function DosenProjectDetailPage({
 
           {/* Timeline Card */}
           <motion.div variants={itemVariants}>
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-3 bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
+            <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
+              <div className="p-3 bg-app-quinary border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <Clock size={16} className="text-zinc-600 dark:text-zinc-400" />
+                  <Clock size={16} className="text-app-secondary-invert" />
                   <h4 className="font-semibold text-sm">Timeline</h4>
                 </div>
               </div>
               <CardBody className="p-3">
                 <div className="space-y-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-2 h-2 rounded-full bg-blue-500" />
+                    <div className="w-2 h-2 rounded-full bg-app-teritary-invert" />
                     <div className="flex-1">
-                      <p className="text-xs text-default-500">Dibuat</p>
+                      <p className="text-xs text-app-secondary-invert">Dibuat</p>
                       <p className="text-sm font-medium">{formatDateTime(project.createdAt)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2.5">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <div className="w-2 h-2 rounded-full bg-success" />
                     <div className="flex-1">
-                      <p className="text-xs text-default-500">Terakhir Diperbarui</p>
+                      <p className="text-xs text-app-secondary-invert">Terakhir Diperbarui</p>
                       <p className="text-sm font-medium">{formatDateTime(project.updatedAt)}</p>
                     </div>
                   </div>
                   {project.submittedAt && (
                     <div className="flex items-center gap-2.5">
-                      <div className="w-2 h-2 rounded-full bg-violet-500" />
+                      <div className="w-2 h-2 rounded-full bg-primary" />
                       <div className="flex-1">
-                        <p className="text-xs text-default-500">Disubmit</p>
+                        <p className="text-xs text-app-secondary-invert">Disubmit</p>
                         <p className="text-sm font-medium">{formatDateTime(project.submittedAt)}</p>
                       </div>
                     </div>

@@ -111,8 +111,8 @@ export default function ProjectCodeViewerPage({
   if (error || !project) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-          <AlertCircle size={32} className="text-red-500" />
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+          <AlertCircle size={32} className="text-destructive" />
         </div>
         <p className="text-danger text-lg font-medium">
           {error || 'Project tidak ditemukan'}
@@ -133,10 +133,10 @@ export default function ProjectCodeViewerPage({
   if (!project.githubRepoUrl) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-          <Github size={32} className="text-amber-500" />
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-warning/10 flex items-center justify-center">
+          <Github size={32} className="text-warning" />
         </div>
-        <p className="text-amber-600 dark:text-amber-400 text-lg font-medium">
+        <p className="text-warning text-lg font-medium">
           Project ini tidak memiliki repository GitHub
         </p>
         <Button
@@ -157,8 +157,8 @@ export default function ProjectCodeViewerPage({
   if (!githubInfo) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-          <AlertCircle size={32} className="text-red-500" />
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+          <AlertCircle size={32} className="text-destructive" />
         </div>
         <p className="text-danger text-lg font-medium">
           URL GitHub tidak valid
@@ -179,7 +179,7 @@ export default function ProjectCodeViewerPage({
   return (
     <div className="w-full space-y-4 pb-8">
       {/* Header */}
-      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
+      <Card className="border border-zinc-800 bg-card shadow-none">
         <CardBody className="p-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -193,12 +193,12 @@ export default function ProjectCodeViewerPage({
                 Kembali
               </Button>
               <div className="flex items-center gap-3">
-                <div className="p-2 rounded-xl bg-zinc-900 dark:bg-zinc-700 text-white">
-                  <Github size={20} />
+                <div className="bg-app-primary text-foreground flex size-9 items-center justify-center rounded-lg">
+                  <Github size={18} />
                 </div>
                 <div>
                   <h1 className="font-semibold text-lg">{project.title}</h1>
-                  <p className="text-sm text-default-500">
+                  <p className="text-sm text-app-secondary-invert">
                     {project.githubRepoName || 'Repository'}
                   </p>
                 </div>
@@ -223,7 +223,7 @@ export default function ProjectCodeViewerPage({
       </Card>
 
       {/* Full Height Code Viewer */}
-      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+      <Card className="border border-zinc-800 bg-card shadow-none overflow-hidden">
         <CardBody className="p-0">
           <div className="min-h-[calc(100vh-220px)]">
             <GitHubCodeViewer

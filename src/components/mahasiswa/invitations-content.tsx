@@ -9,7 +9,6 @@ import {
   Avatar,
   Chip,
   Spinner,
-  Divider,
 } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -22,6 +21,7 @@ import {
   Users,
   Inbox,
 } from 'lucide-react';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface Invitation {
   id: string;
@@ -137,7 +137,7 @@ export default function InvitationsContent() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-64">
+      <div className="flex h-64 items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -145,11 +145,19 @@ export default function InvitationsContent() {
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
+      <PageHeader
+        label="[04] UNDANGAN"
+        labelRight="/ TIM"
+        title="Undangan tim"
+        description="Kelola undangan dari ketua project untuk bergabung ke tim."
+      />
+
       {/* Error Message */}
       {error && (
-        <div className="flex items-center gap-2 p-4 bg-danger-50 text-danger rounded-lg">
-          <AlertCircle size={18} />
-          <p>{error}</p>
+        <div className="flex items-center gap-2.5 rounded-xl border border-danger/40 bg-danger/10 p-4 text-danger">
+          <AlertCircle size={18} className="shrink-0" />
+          <p className="text-sm font-medium">{error}</p>
           <Button
             size="sm"
             variant="light"
@@ -164,24 +172,26 @@ export default function InvitationsContent() {
       )}
 
       {/* Pending Invitations */}
-      <Card className="shadow-sm">
-        <CardHeader className="bg-gradient-to-r from-warning-50 to-transparent dark:from-warning-900/20">
+      <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
+        <CardHeader className="border-b border-zinc-800 bg-app-quinary p-4 md:p-5">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-warning/10 text-warning">
-              <Mail size={22} />
-            </div>
+            <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+              <Mail size={16} />
+            </span>
             <div>
-              <h2 className="text-lg font-semibold">Undangan Masuk</h2>
-              <p className="text-xs text-default-500">
-                {pendingInvitations.length} undangan menunggu konfirmasi
+              <h2 className="font-display text-lg font-[450] leading-tight tracking-tight">Undangan Masuk</h2>
+              <p className="text-app-teritary-invert text-xs">
+                <span className="tabular-nums">{pendingInvitations.length}</span> undangan menunggu konfirmasi
               </p>
             </div>
           </div>
         </CardHeader>
-        <CardBody>
+        <CardBody className="p-4 md:p-5">
           {pendingInvitations.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-default-400">
-              <Inbox size={48} className="mb-3" />
+            <div className="text-app-teritary-invert flex flex-col items-center justify-center py-8">
+              <span className="bg-app-primary mb-3 flex size-14 items-center justify-center rounded-full">
+                <Inbox size={24} />
+              </span>
               <p className="text-sm">Tidak ada undangan menunggu</p>
             </div>
           ) : (
@@ -194,7 +204,7 @@ export default function InvitationsContent() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ delay: index * 0.1 }}
-                    className="p-4 border rounded-xl bg-default-50"
+                    className="rounded-xl border border-zinc-800 bg-app-quinary p-4"
                   >
                     <div className="flex items-start gap-4">
                       {/* Inviter Avatar */}
@@ -207,38 +217,38 @@ export default function InvitationsContent() {
                       />
 
                       {/* Content */}
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0 flex-1">
                         {/* Inviter Info */}
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium text-sm">
+                        <div className="mb-1 flex items-center gap-2">
+                          <p className="text-sm font-medium">
                             {invitation.inviter.name || invitation.inviter.username}
                           </p>
                           {invitation.inviter.nim && (
-                            <Chip size="sm" variant="flat">
+                            <Chip size="sm" variant="flat" className="bg-app-quaternary text-app-secondary-invert">
                               {invitation.inviter.nim}
                             </Chip>
                           )}
                         </div>
 
                         {/* Message */}
-                        <p className="text-xs text-default-500 mb-3">
+                        <p className="text-app-teritary-invert mb-3 text-xs">
                           mengundang Anda bergabung ke tim project
                         </p>
 
                         {/* Project Info */}
-                        <div className="p-3 bg-white dark:bg-default-100 rounded-lg mb-3">
-                          <div className="flex items-center gap-2 mb-1">
+                        <div className="mb-3 rounded-lg border border-zinc-800 bg-background p-3">
+                          <div className="mb-1 flex items-center gap-2">
                             <FolderGit2 size={14} className="text-primary" />
-                            <p className="font-medium text-sm truncate">
+                            <p className="truncate text-sm font-medium">
                               {invitation.project.title}
                             </p>
                           </div>
                           {invitation.project.description && (
-                            <p className="text-xs text-default-500 line-clamp-2">
+                            <p className="text-app-teritary-invert line-clamp-2 text-xs">
                               {invitation.project.description}
                             </p>
                           )}
-                          <div className="flex items-center gap-2 mt-2 text-xs text-default-400">
+                          <div className="text-app-teritary-invert mt-2 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
                             <Clock size={12} />
                             <span>{invitation.project.semester} {invitation.project.tahunAkademik}</span>
                           </div>
@@ -246,7 +256,7 @@ export default function InvitationsContent() {
 
                         {/* Custom Message */}
                         {invitation.message && (
-                          <p className="text-xs text-default-600 italic mb-3 p-2 bg-default-100 rounded">
+                          <p className="text-app-secondary-invert mb-3 rounded-lg bg-app-quaternary p-2 text-xs italic">
                             &ldquo;{invitation.message}&rdquo;
                           </p>
                         )}
@@ -296,37 +306,37 @@ export default function InvitationsContent() {
 
       {/* History */}
       {historyInvitations.length > 0 && (
-        <Card className="shadow-sm">
-          <CardHeader className="bg-gradient-to-r from-default-50 to-transparent dark:from-default-100/20">
+        <Card className="overflow-hidden rounded-2xl border border-zinc-800 bg-card shadow-none">
+          <CardHeader className="border-b border-zinc-800 bg-app-quinary p-4 md:p-5">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-default-100 text-default-500">
-                <Users size={22} />
-              </div>
+              <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                <Users size={16} />
+              </span>
               <div>
-                <h2 className="text-lg font-semibold">Riwayat Undangan</h2>
-                <p className="text-xs text-default-500">
-                  {historyInvitations.length} undangan telah diproses
+                <h2 className="font-display text-lg font-[450] leading-tight tracking-tight">Riwayat Undangan</h2>
+                <p className="text-app-teritary-invert text-xs">
+                  <span className="tabular-nums">{historyInvitations.length}</span> undangan telah diproses
                 </p>
               </div>
             </div>
           </CardHeader>
-          <CardBody>
+          <CardBody className="p-4 md:p-5">
             <div className="space-y-3">
               {historyInvitations.map((invitation) => (
                 <div
                   key={invitation.id}
-                  className="flex items-center gap-3 p-3 bg-default-50 rounded-lg"
+                  className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-app-quinary p-3"
                 >
                   <Avatar
                     src={invitation.inviter.image || undefined}
                     name={invitation.inviter.name || invitation.inviter.username}
                     size="sm"
                   />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">
                       {invitation.project.title}
                     </p>
-                    <p className="text-xs text-default-500">
+                    <p className="text-app-teritary-invert text-xs">
                       Diundang oleh {invitation.inviter.name || invitation.inviter.username}
                     </p>
                   </div>

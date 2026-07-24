@@ -175,15 +175,15 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       <Link
         href={item.href}
         className={cn(
-          'flex items-center gap-2.5 px-3 h-9 rounded-lg text-sm transition-colors',
+          'flex items-center gap-2.5 px-4 h-9 rounded-full text-sm transition-all',
           isActive
-            ? 'bg-primary/10 text-primary font-medium'
-            : 'text-default-600 hover:bg-default-100 hover:text-default-900',
+            ? 'bg-app-primary text-foreground font-medium'
+            : 'text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground',
           isCollapsed && 'justify-center px-0 w-9 mx-auto',
         )}
         onClick={onMobileClose}
       >
-        <span className={cn('shrink-0', isActive && 'text-primary')}>{item.icon}</span>
+        <span className="shrink-0">{item.icon}</span>
         {!isCollapsed && <span className="truncate">{item.title}</span>}
       </Link>
     );
@@ -206,27 +206,22 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       {/* Brand */}
       <div
         className={cn(
-          'flex items-center h-14 px-3 border-b border-divider/60',
-          isCollapsed ? 'justify-center' : 'justify-start gap-2.5',
+          'flex items-center h-14 px-4 border-b border-zinc-800',
+          isCollapsed ? 'justify-center px-0' : 'justify-start gap-2.5',
         )}
       >
-        <Link href={dashboardUrl} className="flex items-center gap-2.5 min-w-0">
+        <Link href={dashboardUrl} className="flex items-center gap-2 min-w-0">
           <Image
             src="/logo.png"
             alt="Capstone"
-            width={32}
-            height={32}
+            width={26}
+            height={26}
             className="object-contain shrink-0"
           />
           {!isCollapsed && (
-            <div className="min-w-0">
-              <p className="font-semibold text-sm text-default-900 leading-tight truncate">
-                Capstone
-              </p>
-              <p className="text-[10px] text-default-500 leading-tight truncate">
-                Prodi Informatika
-              </p>
-            </div>
+            <span className="font-editorial text-xl leading-none tracking-tight text-foreground truncate">
+              capstone
+            </span>
           )}
         </Link>
       </div>
@@ -237,12 +232,12 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
           {sections.map((section, sectionIdx) => (
             <div key={section.label}>
               {!isCollapsed && (
-                <p className="text-[10px] font-semibold text-default-400 uppercase tracking-wider px-3 mb-1.5">
+                <p className="font-dm-mono text-[10px] text-app-teritary-invert uppercase tracking-[0.18em] px-4 mb-1.5">
                   {section.label}
                 </p>
               )}
               {isCollapsed && sectionIdx > 0 && (
-                <div className="h-px bg-divider/50 mx-2 mb-2" />
+                <div className="h-px bg-zinc-800 mx-2 mb-2" />
               )}
               <div className="space-y-0.5">{section.items.map(renderItem)}</div>
             </div>
@@ -251,7 +246,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       </nav>
 
       {/* User Section */}
-      <div className="p-2 border-t border-divider/60">
+      <div className="p-2 border-t border-zinc-800">
         {isCollapsed ? (
           <Tooltip content={session?.user?.name || 'User'} placement="right">
             <div className="flex justify-center py-1">
@@ -267,7 +262,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
             </div>
           </Tooltip>
         ) : (
-          <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg">
+          <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-full">
             <Avatar
               src={
                 getSimakPhotoUrl((session?.user as { nim?: string })?.nim) ||
@@ -278,16 +273,18 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
               size="sm"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold truncate text-default-900">
+              <p className="text-xs font-semibold truncate text-foreground">
                 {session?.user?.name}
               </p>
-              <p className="text-[10px] text-default-500 truncate">{roleLabel}</p>
+              <p className="font-dm-mono text-[10px] text-app-teritary-invert uppercase tracking-wider truncate">
+                {roleLabel}
+              </p>
             </div>
           </div>
         )}
 
         {/* Collapse Toggle - Desktop Only */}
-        <div className="hidden md:block pt-2 mt-2 border-t border-divider/60">
+        <div className="hidden md:block pt-2 mt-2 border-t border-zinc-800">
           {isCollapsed ? (
             <Tooltip content="Perluas" placement="right">
               <Button
@@ -322,7 +319,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       <div className="hidden md:block h-screen">
         <aside
           className={cn(
-            'flex flex-col h-full bg-content1 border-r border-divider/60 transition-[width] duration-200 overflow-hidden',
+            'flex flex-col h-full bg-background border-r border-zinc-800 transition-[width] duration-200 overflow-hidden',
             isCollapsed ? 'w-[60px]' : 'w-60',
           )}
         >
@@ -341,7 +338,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       {/* Mobile Sidebar Drawer */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-72 bg-content1 transition-transform duration-200 ease-out md:hidden',
+          'fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-zinc-800 transition-transform duration-200 ease-out md:hidden',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >

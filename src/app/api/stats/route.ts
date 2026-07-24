@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { MOCK_LANDING_STATS } from '@/lib/mock-dashboard';
 
 // GET /api/stats - Get public stats for landing page
 export async function GET() {
@@ -37,10 +38,8 @@ export async function GET() {
       successRate,
     });
   } catch (error) {
-    console.error('Error fetching stats:', error);
-    return NextResponse.json(
-      { error: 'Terjadi kesalahan server' },
-      { status: 500 }
-    );
+    console.error('Error fetching stats (fallback to mock):', error);
+    // Database tidak tersedia — kirim data mock agar landing tetap hidup
+    return NextResponse.json(MOCK_LANDING_STATS);
   }
 }

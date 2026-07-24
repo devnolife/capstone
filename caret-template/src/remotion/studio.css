@@ -1,0 +1,91 @@
+/*
+ * Styles for Remotion Studio previews only (imported by Root.tsx, never by Next).
+ * Scans just src/remotion so app-level url() utilities are never generated
+ * (webpack cannot resolve Next-style absolute /images/... urls in CSS).
+ * Token values mirror src/app/globals.css (caret.so dark theme).
+ */
+@import "tailwindcss" source(none);
+@source "./";
+
+@theme inline {
+  --font-sans: Figtree, ui-sans-serif, system-ui, sans-serif;
+  --font-serif: ppEditorialNew, serif;
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-app-primary: var(--app-primary);
+  --color-app-secondary: var(--app-secondary);
+  --color-app-teritary: var(--app-teritary);
+  --color-app-quaternary: var(--app-quaternary);
+  --color-app-quinary: var(--app-quinary);
+  --color-app-primary-invert: var(--app-primary-invert);
+  --color-app-secondary-invert: var(--app-secondary-invert);
+  --color-app-teritary-invert: var(--app-teritary-invert);
+  --color-app-quaternary-invert: var(--app-quaternary-invert);
+  --color-app-quinary-invert: var(--app-quinary-invert);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
+  --primary: #e4e4e7;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #9f9fa9;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #ff6568;
+  --border: #ffffff1a;
+  --input: #ffffff26;
+  --ring: #71717b;
+
+  --app-primary-invert: #fafafad9;
+  --app-secondary-invert: #fafafa8c;
+  --app-teritary-invert: #fafafa40;
+  --app-quaternary-invert: #fafafa1a;
+  --app-quinary-invert: #fafafa80;
+  --app-primary: #fafafa1a;
+  --app-secondary: #fafafa14;
+  --app-teritary: #fafafa0d;
+  --app-quaternary: #fafafa08;
+  --app-quinary: #fafafa04;
+}
+
+@utility font-sans-alt {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+@utility font-display {
+  font-family: "Google Sans Flex", ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "ss01";
+  font-variation-settings: "wdth" 96;
+}

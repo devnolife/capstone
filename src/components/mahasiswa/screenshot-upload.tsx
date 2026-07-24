@@ -308,16 +308,16 @@ export default function ScreenshotUpload({
 
   return (
     <>
-      <Card className="border border-default-200 shadow-sm">
-        <CardHeader className="bg-gradient-to-r from-purple-50 to-transparent dark:from-purple-900/20 pb-4">
+      <Card className="border border-zinc-800 bg-card shadow-sm">
+        <CardHeader className="border-b border-zinc-800 pb-4">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400">
+              <div className="p-2.5 rounded-lg bg-app-primary text-foreground">
                 <Camera size={22} />
               </div>
               <div>
                 <h2 className="text-lg font-semibold">Screenshot Aplikasi</h2>
-                <p className="text-xs text-default-500">
+                <p className="text-xs text-app-teritary-invert">
                   Upload screenshot tampilan aplikasi/sistem
                 </p>
               </div>
@@ -342,11 +342,11 @@ export default function ScreenshotUpload({
             </div>
           ) : screenshots.length === 0 ? (
             <div className="text-center py-10">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
-                <ImageIcon size={32} className="text-default-400" />
+              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-app-primary flex items-center justify-center">
+                <ImageIcon size={32} className="text-app-teritary-invert" />
               </div>
-              <p className="text-default-500 mb-2">Belum ada screenshot</p>
-              <p className="text-xs text-default-400 mb-4">
+              <p className="text-app-secondary-invert mb-2">Belum ada screenshot</p>
+              <p className="text-xs text-app-teritary-invert mb-4">
                 Upload screenshot tampilan aplikasi untuk dokumentasi
               </p>
               {!readOnly && (
@@ -377,7 +377,7 @@ export default function ScreenshotUpload({
                       transition={{ delay: index * 0.05 }}
                       className="group relative"
                     >
-                      <div className="aspect-video rounded-lg overflow-hidden border border-default-200 bg-default-100 relative">
+                      <div className="aspect-video rounded-lg overflow-hidden border border-zinc-800 bg-app-quinary relative">
                         {/* Clickable image for preview */}
                         <div
                           className="w-full h-full cursor-pointer"
@@ -418,7 +418,7 @@ export default function ScreenshotUpload({
                           >
                             {categoryConfig.label}
                           </Chip>
-                          <span className="text-xs text-default-400">
+                          <span className="text-xs text-app-teritary-invert">
                             {formatFileSize(screenshot.fileSize)}
                           </span>
                         </div>
@@ -436,7 +436,7 @@ export default function ScreenshotUpload({
       <Modal isOpen={uploadModal.isOpen} onClose={uploadModal.onClose} size="2xl">
         <ModalContent>
           <ModalHeader className="flex items-center gap-2">
-            <Camera size={20} className="text-purple-500" />
+            <Camera size={20} className="text-foreground" />
             Upload Screenshot Baru
           </ModalHeader>
           <ModalBody className="pb-6">
@@ -446,8 +446,8 @@ export default function ScreenshotUpload({
                 className={`
                   border-2 border-dashed rounded-xl p-6 text-center transition-all cursor-pointer
                   ${previewDataUrl
-                    ? 'border-primary bg-primary/5'
-                    : 'border-default-300 hover:border-primary hover:bg-default-50'
+                    ? 'border-ring bg-app-quaternary'
+                    : 'border-zinc-800 bg-app-quinary hover:bg-app-quaternary'
                   }
                 `}
                 onClick={() => fileInputRef.current?.click()}
@@ -481,17 +481,17 @@ export default function ScreenshotUpload({
                     >
                       <X size={14} />
                     </Button>
-                    <p className="mt-2 text-sm text-default-500">
+                    <p className="mt-2 text-sm text-app-secondary-invert">
                       {selectedFile?.name} ({formatFileSize(selectedFile?.size || 0)})
                     </p>
                   </div>
                 ) : (
                   <>
-                    <Upload size={40} className="mx-auto mb-3 text-default-400" />
-                    <p className="text-default-600 mb-1">
+                    <Upload size={40} className="mx-auto mb-3 text-app-teritary-invert" />
+                    <p className="text-foreground mb-1">
                       Klik atau drag file screenshot ke sini
                     </p>
-                    <p className="text-xs text-default-400">
+                    <p className="text-xs text-app-teritary-invert">
                       PNG, JPG, GIF, WEBP (Maks. 10MB)
                     </p>
                   </>
@@ -617,7 +617,7 @@ export default function ScreenshotUpload({
             Konfirmasi Hapus
           </ModalHeader>
           <ModalBody>
-            <p className="text-default-600">
+            <p className="text-app-secondary-invert">
               Yakin ingin menghapus screenshot ini? Tindakan ini tidak dapat dibatalkan.
             </p>
           </ModalBody>

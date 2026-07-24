@@ -13,7 +13,6 @@ import {
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
-  Bot,
   RefreshCw,
   Zap,
   Palette,
@@ -39,6 +38,7 @@ import {
   Construction,
 } from 'lucide-react';
 import { getSimakPhotoUrl } from '@/lib/utils';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface AspectDetail {
   item: string;
@@ -100,25 +100,16 @@ const ASPECT_ICONS: Record<string, React.ComponentType<{ size?: number; classNam
   documentation: BookMarked,
 };
 
-const ASPECT_COLORS: Record<string, string> = {
-  functionality: 'emerald',
-  uiux: 'violet',
-  codeQuality: 'blue',
-  performance: 'orange',
-  security: 'green',
-  documentation: 'pink',
-};
-
 const getScoreColor = (score: number) => {
-  if (score >= 80) return 'text-emerald-600 dark:text-emerald-400';
-  if (score >= 60) return 'text-amber-600 dark:text-amber-400';
-  return 'text-red-600 dark:text-red-400';
+  if (score >= 80) return 'text-success';
+  if (score >= 60) return 'text-warning';
+  return 'text-danger';
 };
 
 const getScoreBgColor = (score: number) => {
-  if (score >= 80) return 'bg-emerald-500';
-  if (score >= 60) return 'bg-amber-500';
-  return 'bg-red-500';
+  if (score >= 80) return 'bg-success';
+  if (score >= 60) return 'bg-warning';
+  return 'bg-danger';
 };
 
 const getStatusConfig = (status: string) => {
@@ -139,13 +130,13 @@ const getStatusConfig = (status: string) => {
 const getItemStatusIcon = (status: string) => {
   switch (status) {
     case 'pass':
-      return <CheckCircle2 size={14} className="text-emerald-500" />;
+      return <CheckCircle2 size={14} className="text-success" />;
     case 'warning':
-      return <AlertTriangle size={14} className="text-amber-500" />;
+      return <AlertTriangle size={14} className="text-warning" />;
     case 'fail':
-      return <XCircle size={14} className="text-red-500" />;
+      return <XCircle size={14} className="text-danger" />;
     default:
-      return <Minus size={14} className="text-zinc-400" />;
+      return <Minus size={14} className="text-app-teritary-invert" />;
   }
 };
 
@@ -192,7 +183,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
     >
       {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex items-start gap-3 mb-4">
           <Button
             as={Link}
             href="/dosen/auto-review"
@@ -200,39 +191,43 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
             isIconOnly
             radius="full"
             size="sm"
+            className="mt-1 shrink-0"
           >
             <ArrowLeft size={18} />
           </Button>
-          <div className="flex-1">
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <Bot className="text-violet-500" size={22} />
-              Detail Auto Review
-            </h1>
-            <p className="text-sm text-default-500">Analisis otomatis kualitas project</p>
+          <div className="flex-1 min-w-0">
+            <PageHeader
+              label="[03] AUTO REVIEW"
+              labelRight="/ HASIL"
+              title="Detail Auto Review"
+              description="Analisis otomatis kualitas project"
+              actions={
+                <Button
+                  color="secondary"
+                  variant="flat"
+                  startContent={<RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />}
+                  onPress={handleRefresh}
+                  isLoading={isRefreshing}
+                >
+                  {isRefreshing ? 'Menganalisis...' : 'Re-analyze'}
+                </Button>
+              }
+            />
           </div>
-          <Button
-            color="secondary"
-            variant="flat"
-            startContent={<RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />}
-            onPress={handleRefresh}
-            isLoading={isRefreshing}
-          >
-            {isRefreshing ? 'Menganalisis...' : 'Re-analyze'}
-          </Button>
         </div>
       </motion.div>
 
       {/* Development Notice */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-dashed border-amber-300 dark:border-amber-700 bg-amber-50/50 dark:bg-amber-500/5">
+        <Card className="rounded-2xl border border-dashed border-warning/30 bg-warning/5 shadow-none">
           <CardBody className="p-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-500/20">
-                <Construction size={20} className="text-amber-600 dark:text-amber-400" />
+              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning/10 text-warning">
+                <Construction size={18} />
               </div>
               <div>
                 <h4 className="font-semibold text-sm mb-1">Fitur dalam Pengembangan</h4>
-                <p className="text-xs text-default-500 leading-relaxed">
+                <p className="text-xs text-app-secondary-invert leading-relaxed">
                   Sistem AI Auto Review sedang dalam tahap pengembangan. Skor dan detail analisis yang ditampilkan 
                   saat ini adalah estimasi placeholder berdasarkan status project. Analisis kode dan AI scoring 
                   akan segera tersedia.
@@ -245,8 +240,8 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
       {/* Project Overview Card */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-          <div className="p-4 bg-gradient-to-r from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-950/30 dark:via-purple-950/30 dark:to-fuchsia-950/30 border-b border-zinc-100 dark:border-zinc-800">
+        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none overflow-hidden">
+          <div className="p-4 bg-app-quinary border-b border-zinc-800">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 {/* Score Circle */}
@@ -259,7 +254,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="6"
-                      className="text-zinc-200 dark:text-zinc-700"
+                      className="text-zinc-800"
                     />
                     <circle
                       cx="40"
@@ -275,10 +270,10 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className={`text-2xl font-bold ${getScoreColor(project.overallScore)}`}>
+                    <span className={`text-2xl font-bold tabular-nums ${getScoreColor(project.overallScore)}`}>
                       {project.overallScore}
                     </span>
-                    <span className="text-[10px] text-default-400">/ 100</span>
+                    <span className="text-[10px] text-app-teritary-invert">/ 100</span>
                   </div>
                 </div>
 
@@ -290,10 +285,10 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                     <span
                       className={`flex items-center gap-1 text-sm ${
                         project.trend === 'up'
-                          ? 'text-emerald-500'
+                          ? 'text-success'
                           : project.trend === 'down'
-                          ? 'text-red-500'
-                          : 'text-zinc-400'
+                          ? 'text-danger'
+                          : 'text-app-teritary-invert'
                       }`}
                     >
                       {project.trend === 'up' && <TrendingUp size={14} />}
@@ -304,7 +299,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                     </span>
                   </div>
                   <h2 className="font-bold text-lg">{project.title}</h2>
-                  <p className="text-sm text-default-500 mt-1 line-clamp-2">{project.description || 'Tidak ada deskripsi'}</p>
+                  <p className="text-sm text-app-secondary-invert mt-1 line-clamp-2">{project.description || 'Tidak ada deskripsi'}</p>
                 </div>
               </div>
             </div>
@@ -313,7 +308,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
           <CardBody className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Mahasiswa Info */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+              <div className="flex items-center gap-3 p-3 rounded-xl border border-zinc-800 bg-app-quinary">
                 <Avatar 
                   name={project.mahasiswa.name} 
                   src={avatarSrc}
@@ -321,7 +316,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                 />
                 <div>
                   <p className="font-semibold text-sm">{project.mahasiswa.name}</p>
-                  <p className="text-xs text-default-500">
+                  <p className="text-xs text-app-teritary-invert">
                     {project.mahasiswa.username} - {project.mahasiswa.prodi}
                   </p>
                 </div>
@@ -329,12 +324,12 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
               {/* Meta Info */}
               <div className="grid grid-cols-2 gap-2">
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
-                  <Calendar size={14} className="text-default-400" />
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-app-quinary">
+                  <Calendar size={14} className="text-app-teritary-invert" />
                   <span className="text-xs">{project.semester} {project.tahunAkademik}</span>
                 </div>
-                <div className="flex items-center gap-2 p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/50">
-                  <Clock size={14} className="text-default-400" />
+                <div className="flex items-center gap-2 p-2 rounded-lg bg-app-quinary">
+                  <Clock size={14} className="text-app-teritary-invert" />
                   <span className="text-xs">
                     {new Date(project.lastAnalyzed).toLocaleDateString('id-ID', {
                       day: 'numeric',
@@ -391,10 +386,10 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
       {/* Analysis History */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-200 dark:border-zinc-800">
+        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex items-center gap-2 mb-4">
-              <History size={16} className="text-violet-500" />
+              <History size={16} className="text-app-teritary-invert" />
               <h3 className="font-semibold text-sm">Riwayat Analisis</h3>
               <Chip size="sm" variant="flat" color="warning">Placeholder</Chip>
             </div>
@@ -405,10 +400,10 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                     className={`w-full rounded-t-md ${getScoreBgColor(history.score)}`}
                     style={{ height: `${history.score}%` }}
                   />
-                  <span className={`text-xs font-medium ${getScoreColor(history.score)}`}>
+                  <span className={`text-xs font-medium tabular-nums ${getScoreColor(history.score)}`}>
                     {history.score}
                   </span>
-                  <span className="text-[10px] text-default-400">
+                  <span className="text-[10px] text-app-teritary-invert">
                     {new Date(history.date).toLocaleDateString('id-ID', {
                       day: 'numeric',
                       month: 'short',
@@ -426,7 +421,6 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
         <div className="space-y-4">
           {project.aspects.map((aspect) => {
             const AspectIcon = ASPECT_ICONS[aspect.key] || FileText;
-            const aspectColor = ASPECT_COLORS[aspect.key] || 'zinc';
             const aspectStatus = getStatusConfig(
               aspect.score >= 80 ? 'excellent' : 
               aspect.score >= 70 ? 'good' : 
@@ -435,27 +429,27 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
             const scoreDiff = aspect.score - aspect.previousScore;
 
             return (
-              <Card key={aspect.key} className="border border-zinc-200 dark:border-zinc-800 overflow-hidden">
-                <div className="p-4 bg-gradient-to-r from-zinc-50 to-zinc-50/50 dark:from-zinc-800/50 dark:to-zinc-800/30 border-b border-zinc-100 dark:border-zinc-800">
+              <Card key={aspect.key} className="rounded-2xl border border-zinc-800 bg-card shadow-none overflow-hidden">
+                <div className="p-4 bg-app-quinary border-b border-zinc-800">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-700">
-                        <AspectIcon size={18} className="text-zinc-600 dark:text-zinc-300" />
+                      <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <AspectIcon size={16} />
                       </div>
                       <div>
                         <h3 className="font-semibold">{aspect.label}</h3>
-                        <p className="text-xs text-default-500">{aspect.summary}</p>
+                        <p className="text-xs text-app-secondary-invert">{aspect.summary}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
                         <div className="flex items-center gap-2">
-                          <span className={`text-2xl font-bold ${getScoreColor(aspect.score)}`}>
+                          <span className={`text-2xl font-bold tabular-nums ${getScoreColor(aspect.score)}`}>
                             {aspect.score}
                           </span>
                           <span
                             className={`text-xs flex items-center gap-0.5 ${
-                              scoreDiff > 0 ? 'text-emerald-500' : scoreDiff < 0 ? 'text-red-500' : 'text-zinc-400'
+                              scoreDiff > 0 ? 'text-success' : scoreDiff < 0 ? 'text-danger' : 'text-app-teritary-invert'
                             }`}
                           >
                             {scoreDiff > 0 ? <TrendingUp size={12} /> : scoreDiff < 0 ? <TrendingDown size={12} /> : <Minus size={12} />}
@@ -472,7 +466,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
                   {/* Progress Bar */}
                   <div className="mt-3">
-                    <div className="h-2 bg-zinc-200 dark:bg-zinc-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-app-primary rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full ${getScoreBgColor(aspect.score)} transition-all duration-500`}
                         style={{ width: `${aspect.score}%` }}
@@ -485,7 +479,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                   {/* Details Table */}
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium flex items-center gap-2">
-                      <FileText size={14} className="text-default-400" />
+                      <FileText size={14} className="text-app-teritary-invert" />
                       Detail Analisis
                       <Chip size="sm" variant="flat" color="warning">Placeholder</Chip>
                     </h4>
@@ -493,13 +487,13 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                       {aspect.details.map((detail, idx) => (
                         <div
                           key={idx}
-                          className="flex items-center justify-between p-2.5 rounded-lg bg-zinc-50 dark:bg-zinc-800/50"
+                          className="flex items-center justify-between p-2.5 rounded-lg bg-app-quinary"
                         >
                           <div className="flex items-center gap-2">
                             {getItemStatusIcon(detail.status)}
                             <span className="text-sm">{detail.item}</span>
                           </div>
-                          <span className="text-sm text-default-500">{detail.value}</span>
+                          <span className="text-sm text-app-secondary-invert">{detail.value}</span>
                         </div>
                       ))}
                     </div>
@@ -509,14 +503,14 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                   {aspect.suggestions.length > 0 && (
                     <div className="space-y-2">
                       <h4 className="text-sm font-medium flex items-center gap-2">
-                        <Lightbulb size={14} className="text-amber-500" />
+                        <Lightbulb size={14} className="text-warning" />
                         Saran Perbaikan
                       </h4>
-                      <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-500/10 border border-amber-100 dark:border-amber-500/20">
+                      <div className="p-3 rounded-lg bg-warning/10 border border-warning/20">
                         <ul className="space-y-1.5">
                           {aspect.suggestions.map((suggestion, idx) => (
-                            <li key={idx} className="flex items-start gap-2 text-sm text-amber-800 dark:text-amber-200">
-                              <span className="text-amber-500 mt-1">•</span>
+                            <li key={idx} className="flex items-start gap-2 text-sm text-app-secondary-invert">
+                              <span className="text-warning mt-1">•</span>
                               <span>{suggestion}</span>
                             </li>
                           ))}
@@ -533,15 +527,15 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
       {/* Info Card */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-dashed border-violet-300 dark:border-violet-700 bg-violet-50/50 dark:bg-violet-500/5">
+        <Card className="rounded-2xl border border-dashed border-zinc-800 bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-500/20">
-                <AlertCircle size={20} className="text-violet-600 dark:text-violet-400" />
+              <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                <AlertCircle size={18} />
               </div>
               <div>
                 <h4 className="font-semibold text-sm mb-1">Catatan</h4>
-                <p className="text-xs text-default-500 leading-relaxed">
+                <p className="text-xs text-app-secondary-invert leading-relaxed">
                   Hasil analisis ini akan dihasilkan secara otomatis oleh sistem AI dan bersifat sebagai referensi.
                   Penilaian akhir tetap berada di tangan dosen penguji berdasarkan rubrik penilaian yang berlaku.
                   Saat ini fitur AI analysis masih dalam pengembangan.

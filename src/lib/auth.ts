@@ -40,6 +40,44 @@ declare module '@auth/core/jwt' {
 const useSecureCookies = false; // Disable for reverse proxy setup
 const cookiePrefix = ''; // No prefix needed
 
+/**
+ * Akun fake untuk development (login tanpa database).
+ * Aktif ketika NODE_ENV=development, atau ALLOW_FAKE_LOGIN=true di .env.
+ * Kredensial ini sinkron dengan tombol "Dev mode" di halaman login.
+ */
+const FAKE_LOGIN_ENABLED =
+  process.env.NODE_ENV === 'development' || process.env.ALLOW_FAKE_LOGIN === 'true';
+
+const FAKE_ACCOUNTS: Array<{
+  id: string;
+  username: string;
+  password: string;
+  name: string;
+  role: Role;
+}> = [
+  {
+    id: 'dev-admin',
+    username: 'devnolife',
+    password: 'hanyaAdmin@25',
+    name: 'Admin Prodi',
+    role: 'ADMIN' as Role,
+  },
+  {
+    id: 'dev-dosen',
+    username: 'dosen',
+    password: 'password123',
+    name: 'Dr. Andi Rahman',
+    role: 'DOSEN_PENGUJI' as Role,
+  },
+  {
+    id: 'dev-mahasiswa',
+    username: 'mahasiswa',
+    password: 'password123',
+    name: 'Aldi Pratama',
+    role: 'MAHASISWA' as Role,
+  },
+];
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   session: {
@@ -101,6 +139,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const username = credentials.username as string;
         const password = credentials.password as string;
+
+        // ---------- DEV: fake accounts (tanpa database) ----------
+        // Hanya cocok jika username + password sama persis dengan akun fake;
+        // selain itu jatuh ke alur normal (DB/SIMAK) supaya akun asli tetap jalan.
+        if (FAKE_LOGIN_ENABLED) {
+          const fake = FAKE_ACCOUNTS.find(
+            (acc) => acc.username === username && acc.password === password,
+          );
+          if (fake) {
+            console.warn(`[auth] Fake login (dev): ${fake.username} sebagai ${fake.role}`);
+            return {
+              id: fake.id,
+              username: fake.username,
+              name: fake.name,
+              role: fake.role,
+              image: null,
+              githubUsername: null,
+            };
+          }
+        }
 
         // Check if user exists locally first
         const existingUser = await prisma.user.findUnique({
@@ -350,16 +408,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             token.githubUsername = dbUser.githubUsername;
           }
         } else {
-          // For credentials login
-          const dbUser = await prisma.user.findUnique({
-            where: { username: (user as { username: string }).username },
-          });
+          // For credentials login: percayai nilai dari authorize() dulu
+          // (agar fake login & kondisi DB-down tetap jalan), lalu coba
+          // segarkan dari database jika tersedia.
+          const authUser = user as {
+            id: string;
+            username: string;
+            role: Role;
+            githubUsername?: string | null;
+          };
+          token.id = authUser.id;
+          token.username = authUser.username;
+          token.role = authUser.role;
+          token.githubUsername = authUser.githubUsername ?? null;
 
-          if (dbUser) {
-            token.id = dbUser.id;
-            token.username = dbUser.username;
-            token.role = dbUser.role;
-            token.githubUsername = dbUser.githubUsername;
+          try {
+            const dbUser = await prisma.user.findUnique({
+              where: { username: authUser.username },
+            });
+
+            if (dbUser) {
+              token.id = dbUser.id;
+              token.username = dbUser.username;
+              token.role = dbUser.role;
+              token.githubUsername = dbUser.githubUsername;
+            }
+          } catch (error) {
+            console.warn(
+              '[auth] DB tidak tersedia saat refresh JWT — pakai data dari authorize().',
+              error instanceof Error ? error.message : error,
+            );
           }
         }
       }

@@ -254,20 +254,21 @@ const REQUIREMENTS = [
   { key: 'kepatuhanEtika', label: 'Kepatuhan Etika', icon: Lightbulb, category: 'analisis' },
 ];
 
-const getStatusGradient = (status: string) => {
+/** Titik status semantik kecil di dalam chip (satu-satunya warna di header). */
+const statusDotClass = (status: string) => {
   switch (status) {
     case 'APPROVED':
-      return 'from-emerald-500 via-green-500 to-teal-500';
+      return 'bg-success';
     case 'REJECTED':
-      return 'from-red-500 via-rose-500 to-pink-500';
+      return 'bg-danger';
     case 'IN_REVIEW':
-      return 'from-amber-500 via-orange-500 to-yellow-500';
-    case 'SUBMITTED':
-      return 'from-blue-500 via-indigo-500 to-violet-500';
+      return 'bg-warning animate-pulse';
     case 'REVISION_NEEDED':
-      return 'from-orange-500 via-amber-500 to-yellow-500';
+      return 'bg-warning';
+    case 'SUBMITTED':
+      return 'bg-primary';
     default:
-      return 'from-blue-600 via-indigo-600 to-violet-600';
+      return 'bg-app-teritary-invert';
   }
 };
 
@@ -367,14 +368,7 @@ export function ProjectDetailContent({
   return (
     <div className="w-full space-y-6 pb-8">
       {/* Hero Header Card */}
-      <Card className={`border-0 bg-gradient-to-br ${getStatusGradient(project.status)} text-white overflow-hidden`}>
-        <div
-          className="absolute inset-0 opacity-20"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
-          }}
-        />
+      <Card className="border border-zinc-800 bg-card overflow-hidden">
         <CardBody className="p-6 relative">
           {/* Top Actions */}
           <div className="flex items-center justify-between mb-6">
@@ -383,7 +377,6 @@ export function ProjectDetailContent({
               href="/mahasiswa/projects"
               variant="flat"
               size="sm"
-              className="bg-white/20 text-white hover:bg-white/30"
               startContent={<ArrowLeft size={16} />}
             >
               Kembali
@@ -395,7 +388,6 @@ export function ProjectDetailContent({
                   href={`/mahasiswa/projects/${project.id}/edit`}
                   variant="flat"
                   size="sm"
-                  className="bg-white/20 text-white hover:bg-white/30"
                   startContent={<Edit size={16} />}
                 >
                   Edit
@@ -414,21 +406,18 @@ export function ProjectDetailContent({
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div className="space-y-3">
               <div className="flex items-center gap-3">
-                <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm">
-                  <FolderGit2 size={28} />
+                <div className="bg-app-primary text-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
+                  <FolderGit2 size={24} />
                 </div>
                 <div>
-                  <Chip
-                    size="sm"
-                    className="bg-white/20 text-white mb-2"
-                    startContent={project.status === 'APPROVED' ? <Sparkles size={12} /> : undefined}
-                  >
+                  <span className="border-app-secondary bg-app-quinary text-app-secondary-invert mb-2 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium whitespace-nowrap">
+                    <span className={`size-1.5 rounded-full ${statusDotClass(project.status)}`} />
                     {getStatusLabel(project.status)}
-                  </Chip>
-                  <h1 className="text-2xl md:text-3xl font-bold">{project.title}</h1>
+                  </span>
+                  <h1 className="font-display text-2xl md:text-3xl font-[450] tracking-tight">{project.title}</h1>
                 </div>
               </div>
-              <div className="flex flex-wrap items-center gap-4 text-white/80 text-sm">
+              <div className="flex flex-wrap items-center gap-4 text-app-secondary-invert text-sm">
                 <span className="flex items-center gap-1.5">
                   <Calendar size={14} />
                   {project.semester}
@@ -442,7 +431,7 @@ export function ProjectDetailContent({
                     href={project.githubRepoUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 hover:text-white transition-colors"
+                    className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                   >
                     <Github size={14} />
                     {project.githubRepoName?.split('/')[1] || 'Repository'}
@@ -455,8 +444,8 @@ export function ProjectDetailContent({
             {/* Progress Circle */}
             <div className="flex items-center gap-4">
               <div className="text-right hidden md:block">
-                <p className="text-white/70 text-sm">Progress</p>
-                <p className="text-3xl font-bold">{progressValue}%</p>
+                <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Progress</p>
+                <p className="text-3xl font-bold tabular-nums">{progressValue}%</p>
               </div>
               <div className="relative w-20 h-20">
                 <svg className="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
@@ -465,24 +454,25 @@ export function ProjectDetailContent({
                     cy="40"
                     r="32"
                     fill="none"
-                    stroke="rgba(255,255,255,0.2)"
+                    stroke="currentColor"
                     strokeWidth="8"
+                    className="text-app-primary"
                   />
                   <circle
                     cx="40"
                     cy="40"
                     r="32"
                     fill="none"
-                    stroke="white"
+                    stroke="currentColor"
                     strokeWidth="8"
                     strokeLinecap="round"
                     strokeDasharray={201}
                     strokeDashoffset={201 - (201 * progressValue) / 100}
-                    className="transition-all duration-1000"
+                    className="text-primary transition-all duration-1000"
                   />
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center md:hidden">
-                  <span className="text-lg font-bold">{progressValue}%</span>
+                  <span className="text-lg font-bold tabular-nums">{progressValue}%</span>
                 </div>
               </div>
             </div>
@@ -501,15 +491,15 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
+              <Card className="border border-zinc-800 shadow-sm">
                 <CardBody className="p-5">
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30">
-                      <FileText size={18} className="text-blue-600 dark:text-blue-400" />
+                    <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                      <FileText size={18} />
                     </div>
                     <h2 className="font-semibold text-lg">Deskripsi Project</h2>
                   </div>
-                  <p className="text-default-600 leading-relaxed">{project.description}</p>
+                  <p className="text-app-secondary-invert leading-relaxed">{project.description}</p>
                 </CardBody>
               </Card>
             </motion.div>
@@ -522,18 +512,18 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15 }}
             >
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <Card className="border border-zinc-800 shadow-sm overflow-hidden">
                 <CardBody className="p-0">
                   {/* Repository Header */}
-                  <div className="flex items-center gap-4 p-5 border-b border-zinc-100 dark:border-zinc-800">
-                    <div className="p-3 rounded-2xl bg-zinc-900 dark:bg-zinc-700 text-white">
+                  <div className="flex items-center gap-4 p-5 border-b border-zinc-800">
+                    <div className="bg-app-primary text-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
                       <Github size={24} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-lg">
                         {project.githubRepoName || 'GitHub Repository'}
                       </p>
-                      <p className="text-sm text-default-500 truncate">{project.githubRepoUrl}</p>
+                      <p className="text-sm text-app-secondary-invert truncate">{project.githubRepoUrl}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
@@ -579,8 +569,8 @@ export function ProjectDetailContent({
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="p-4 bg-zinc-50 dark:bg-zinc-900">
-                          <div className="rounded-lg overflow-hidden border border-zinc-200 dark:border-zinc-700">
+                        <div className="p-4 bg-app-quinary">
+                          <div className="rounded-lg overflow-hidden border border-zinc-800">
                             <GitHubCodeViewer
                               owner={githubInfo.owner}
                               repo={githubInfo.repo}
@@ -603,20 +593,20 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
               <CardBody className="p-0">
                 {/* Header */}
-                <div className="p-5 bg-gradient-to-r from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="p-5 bg-app-quinary border-b border-zinc-800">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 text-white">
+                      <div className="bg-app-primary text-foreground flex size-10 shrink-0 items-center justify-center rounded-lg">
                         <ClipboardList size={20} />
                       </div>
                       <div>
                         <h2 className="font-bold text-lg">Persyaratan Dokumen</h2>
-                        <p className="text-xs text-default-500">
+                        <p className="text-xs text-app-secondary-invert tabular-nums">
                           {requirementsComplete ? (
-                            <span className="text-emerald-600 dark:text-emerald-400 font-medium">Semua persyaratan lengkap!</span>
+                            <span className="text-success font-medium">Semua persyaratan lengkap!</span>
                           ) : (
                             <span>{requirementsPercent}% terisi - {Object.values(filledRequirements).filter(Boolean).length}/9 persyaratan</span>
                           )}
@@ -634,7 +624,7 @@ export function ProjectDetailContent({
                             fill="none"
                             stroke="currentColor"
                             strokeWidth="4"
-                            className="text-zinc-200 dark:text-zinc-700"
+                            className="text-app-primary"
                           />
                           <circle
                             cx="24"
@@ -646,11 +636,11 @@ export function ProjectDetailContent({
                             strokeLinecap="round"
                             strokeDasharray={113}
                             strokeDashoffset={113 - (113 * requirementsPercent) / 100}
-                            className={`transition-all duration-500 ${requirementsComplete ? 'text-emerald-500' : 'text-violet-500'
+                            className={`transition-all duration-500 ${requirementsComplete ? 'text-success' : 'text-primary'
                               }`}
                           />
                         </svg>
-                        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold">
+                        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold tabular-nums">
                           {requirementsPercent}%
                         </span>
                       </div>
@@ -672,13 +662,13 @@ export function ProjectDetailContent({
                 <div className="p-5">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
                     {/* Akademik */}
-                    <div className="p-4 rounded-xl bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-800">
+                    <div className="p-4 rounded-xl bg-app-quinary border border-zinc-800">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <GraduationCap size={16} className="text-violet-600 dark:text-violet-400" />
-                          <span className="text-sm font-semibold text-violet-700 dark:text-violet-300">Akademik</span>
+                          <GraduationCap size={16} className="text-app-secondary-invert" />
+                          <span className="text-sm font-semibold">Akademik</span>
                         </div>
-                        <span className="text-[10px] font-medium text-violet-600 dark:text-violet-400">
+                        <span className="font-mono text-[10px] tabular-nums text-app-teritary-invert">
                           {REQUIREMENTS.filter(r => r.category === 'akademik' && filledRequirements[r.key as keyof typeof filledRequirements]).length}/
                           {REQUIREMENTS.filter(r => r.category === 'akademik').length}
                         </span>
@@ -688,8 +678,8 @@ export function ProjectDetailContent({
                           const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
                           return (
                             <div key={req.key} className={`flex items-center gap-2 text-xs ${isFilled
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-violet-600 dark:text-violet-400'
+                              ? 'text-success'
+                              : 'text-app-secondary-invert'
                               }`}>
                               {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                               <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
@@ -700,13 +690,13 @@ export function ProjectDetailContent({
                     </div>
 
                     {/* Teknis */}
-                    <div className="p-4 rounded-xl bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800">
+                    <div className="p-4 rounded-xl bg-app-quinary border border-zinc-800">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <Rocket size={16} className="text-orange-600 dark:text-orange-400" />
-                          <span className="text-sm font-semibold text-orange-700 dark:text-orange-300">Teknis</span>
+                          <Rocket size={16} className="text-app-secondary-invert" />
+                          <span className="text-sm font-semibold">Teknis</span>
                         </div>
-                        <span className="text-[10px] font-medium text-orange-600 dark:text-orange-400">
+                        <span className="font-mono text-[10px] tabular-nums text-app-teritary-invert">
                           {REQUIREMENTS.filter(r => r.category === 'teknis' && filledRequirements[r.key as keyof typeof filledRequirements]).length}/
                           {REQUIREMENTS.filter(r => r.category === 'teknis').length}
                         </span>
@@ -716,8 +706,8 @@ export function ProjectDetailContent({
                           const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
                           return (
                             <div key={req.key} className={`flex items-center gap-2 text-xs ${isFilled
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-orange-600 dark:text-orange-400'
+                              ? 'text-success'
+                              : 'text-app-secondary-invert'
                               }`}>
                               {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                               <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
@@ -728,13 +718,13 @@ export function ProjectDetailContent({
                     </div>
 
                     {/* Analisis */}
-                    <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800">
+                    <div className="p-4 rounded-xl bg-app-quinary border border-zinc-800">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <Lightbulb size={16} className="text-emerald-600 dark:text-emerald-400" />
-                          <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Analisis</span>
+                          <Lightbulb size={16} className="text-app-secondary-invert" />
+                          <span className="text-sm font-semibold">Analisis</span>
                         </div>
-                        <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400">
+                        <span className="font-mono text-[10px] tabular-nums text-app-teritary-invert">
                           {REQUIREMENTS.filter(r => r.category === 'analisis' && filledRequirements[r.key as keyof typeof filledRequirements]).length}/
                           {REQUIREMENTS.filter(r => r.category === 'analisis').length}
                         </span>
@@ -744,8 +734,8 @@ export function ProjectDetailContent({
                           const isFilled = filledRequirements[req.key as keyof typeof filledRequirements];
                           return (
                             <div key={req.key} className={`flex items-center gap-2 text-xs ${isFilled
-                              ? 'text-emerald-600 dark:text-emerald-400'
-                              : 'text-emerald-600/60 dark:text-emerald-400/60'
+                              ? 'text-success'
+                              : 'text-app-secondary-invert'
                               }`}>
                               {isFilled ? <CheckCircle2 size={12} /> : <Circle size={12} />}
                               <span className={isFilled ? 'line-through opacity-70' : ''}>{req.label}</span>
@@ -784,15 +774,15 @@ export function ProjectDetailContent({
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.21 }}
               >
-                <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+                <Card className="border border-zinc-800 shadow-sm overflow-hidden">
                   <CardBody className="p-5">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="p-2 rounded-xl bg-indigo-100 dark:bg-indigo-900/30">
-                        <Server size={18} className="text-indigo-600 dark:text-indigo-400" />
+                      <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                        <Server size={18} />
                       </div>
                       <div className="flex-1">
                         <h2 className="font-semibold text-lg">Deployment Setup</h2>
-                        <p className="text-xs text-default-500">Konfigurasi deployment aplikasi</p>
+                        <p className="text-xs text-app-secondary-invert">Konfigurasi deployment aplikasi</p>
                       </div>
                       <Chip
                         size="sm"
@@ -805,17 +795,17 @@ export function ProjectDetailContent({
 
                     <div className="space-y-3">
                       {/* Platform Info */}
-                      <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
-                        <p className="text-xs text-default-400 mb-1">Platform</p>
+                      <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                        <p className="text-xs text-app-teritary-invert mb-1">Platform</p>
                         <p className="text-sm font-semibold">{platform.label}</p>
-                        <p className="text-xs text-default-500 mt-0.5">{platform.description}</p>
+                        <p className="text-xs text-app-secondary-invert mt-0.5">{platform.description}</p>
                       </div>
 
                       {/* Bonus Points */}
-                      <div className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800">
+                      <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
                         <div className="flex items-center gap-2">
-                          <Trophy size={16} className="text-amber-600 dark:text-amber-400" />
-                          <span className="text-sm font-bold text-amber-800 dark:text-amber-300">
+                          <Trophy size={16} className="text-warning" />
+                          <span className="text-sm font-bold tabular-nums">
                             +{project.requirements.deploymentBonusPoints} poin bonus deployment
                           </span>
                         </div>
@@ -834,12 +824,12 @@ export function ProjectDetailContent({
                           .filter((cat) => cat.selected.length > 0);
 
                         return (
-                          <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
-                            <p className="text-xs text-default-400 mb-2">Tools & Services ({tools.length})</p>
+                          <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                            <p className="text-xs text-app-teritary-invert mb-2 tabular-nums">Tools & Services ({tools.length})</p>
                             <div className="space-y-2.5">
                               {groupedTools.map((cat) => (
                                 <div key={cat.key}>
-                                  <p className="text-xs text-default-500 font-medium mb-1">{cat.label}</p>
+                                  <p className="text-xs text-app-secondary-invert font-medium mb-1">{cat.label}</p>
                                   <div className="flex flex-wrap gap-1.5">
                                     {cat.selected.map((tool) => (
                                       <Chip
@@ -862,9 +852,9 @@ export function ProjectDetailContent({
 
                       {/* Description */}
                       {project.requirements.deploymentDescription && (
-                        <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
-                          <p className="text-xs text-default-400 mb-1">Deskripsi Deployment</p>
-                          <p className="text-xs text-default-600 whitespace-pre-wrap">
+                        <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                          <p className="text-xs text-app-teritary-invert mb-1">Deskripsi Deployment</p>
+                          <p className="text-xs text-app-secondary-invert whitespace-pre-wrap">
                             {project.requirements.deploymentDescription}
                           </p>
                         </div>
@@ -872,9 +862,9 @@ export function ProjectDetailContent({
 
                       {/* Evidence */}
                       {project.requirements.deploymentEvidence && (
-                        <div className="p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700">
-                          <p className="text-xs text-default-400 mb-1">Bukti/Evidence</p>
-                          <p className="text-xs text-default-600 whitespace-pre-wrap">
+                        <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                          <p className="text-xs text-app-teritary-invert mb-1">Bukti/Evidence</p>
+                          <p className="text-xs text-app-secondary-invert whitespace-pre-wrap">
                             {project.requirements.deploymentEvidence}
                           </p>
                         </div>
@@ -892,7 +882,7 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.22 }}
           >
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
               <CardBody className="p-5">
                 <StakeholderUpload
                   projectId={project.id}
@@ -910,7 +900,7 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.23 }}
           >
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
               <CardBody className="p-5">
                 <ProjectScreenshotUpload
                   projectId={project.id}
@@ -927,15 +917,15 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
+              <Card className="border border-zinc-800 shadow-sm">
                 <CardBody className="p-5">
                   <div className="flex items-center gap-3 mb-5">
-                    <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/30">
-                      <MessageSquare size={18} className="text-amber-600 dark:text-amber-400" />
+                    <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                      <MessageSquare size={18} />
                     </div>
                     <div>
                       <h2 className="font-semibold text-lg">Review & Feedback</h2>
-                      <p className="text-xs text-default-500">{project.reviews.length} review</p>
+                      <p className="text-xs text-app-secondary-invert tabular-nums">{project.reviews.length} review</p>
                     </div>
                   </div>
 
@@ -943,7 +933,7 @@ export function ProjectDetailContent({
                     {project.reviews.map((review) => (
                       <div
                         key={review.id}
-                        className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50"
+                        className="p-4 rounded-xl border border-zinc-800 bg-app-quinary"
                       >
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-3">
@@ -951,11 +941,11 @@ export function ProjectDetailContent({
                               name={review.reviewer.name}
                               src={review.reviewer.image || undefined}
                               size="sm"
-                              className="ring-2 ring-white dark:ring-zinc-800"
+                              className="ring-2 ring-zinc-800"
                             />
                             <div>
                               <p className="font-medium text-sm">{review.reviewer.name}</p>
-                              <p className="text-xs text-default-500">
+                              <p className="text-xs text-app-secondary-invert">
                                 {formatDateTime(review.updatedAt)}
                               </p>
                             </div>
@@ -977,19 +967,19 @@ export function ProjectDetailContent({
                         </div>
 
                         {review.overallComment && (
-                          <div className="bg-white dark:bg-zinc-900 rounded-lg p-3 mb-3 border border-zinc-100 dark:border-zinc-700">
-                            <p className="text-sm text-default-600">{review.overallComment}</p>
+                          <div className="bg-background rounded-lg p-3 mb-3 border border-zinc-800">
+                            <p className="text-sm text-app-secondary-invert">{review.overallComment}</p>
                           </div>
                         )}
 
                         {review.scores.length > 0 && (
                           <div className="space-y-2">
-                            <p className="text-xs font-medium text-default-500">Skor per Kategori</p>
+                            <p className="text-xs font-medium text-app-secondary-invert">Skor per Kategori</p>
                             {review.scores.map((score) => (
                               <div key={score.id} className="space-y-1">
                                 <div className="flex justify-between text-xs">
-                                  <span className="text-default-600">{score.rubrik.name}</span>
-                                  <span className="font-medium">
+                                  <span className="text-app-secondary-invert">{score.rubrik.name}</span>
+                                  <span className="font-medium tabular-nums">
                                     {score.score}/{score.rubrik.bobotMax}
                                   </span>
                                 </div>
@@ -1021,18 +1011,10 @@ export function ProjectDetailContent({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
             >
-              <Card className={`border shadow-sm overflow-hidden ${
-                project.presentationSchedule 
-                  ? 'border-emerald-200 dark:border-emerald-800' 
-                  : 'border-amber-200 dark:border-amber-800'
-              }`}>
-                <div className={`p-4 border-b ${
-                  project.presentationSchedule
-                    ? 'bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-emerald-100 dark:border-emerald-800'
-                    : 'bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30 border-amber-100 dark:border-amber-800'
-                }`}>
+              <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+                <div className="p-4 border-b border-zinc-800 bg-app-quinary">
                   <div className="flex items-center gap-2">
-                    <CalendarCheck size={18} className={project.presentationSchedule ? 'text-emerald-600 dark:text-emerald-400' : 'text-amber-600 dark:text-amber-400'} />
+                    <CalendarCheck size={18} className={project.presentationSchedule ? 'text-success' : 'text-warning'} />
                     <h3 className="font-semibold">Jadwal Presentasi</h3>
                   </div>
                 </div>
@@ -1040,12 +1022,12 @@ export function ProjectDetailContent({
                   {project.presentationSchedule ? (
                     <div className="space-y-4">
                       {/* Scheduled Date & Time */}
-                      <div className="flex items-start gap-3 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
-                        <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-800">
-                          <Calendar size={16} className="text-emerald-600 dark:text-emerald-400" />
+                      <div className="flex items-start gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                        <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                          <Calendar size={16} />
                         </div>
                         <div>
-                          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">Tanggal & Waktu</p>
+                          <p className="text-xs text-success font-medium">Tanggal & Waktu</p>
                           <p className="text-sm font-semibold">
                             {new Date(project.presentationSchedule.scheduledDate).toLocaleDateString('id-ID', {
                               weekday: 'long',
@@ -1054,7 +1036,7 @@ export function ProjectDetailContent({
                               day: 'numeric',
                             })}
                           </p>
-                          <p className="text-sm text-default-600">
+                          <p className="text-sm text-app-secondary-invert tabular-nums">
                             {project.presentationSchedule.startTime}
                             {project.presentationSchedule.endTime && ` - ${project.presentationSchedule.endTime}`}
                           </p>
@@ -1063,12 +1045,12 @@ export function ProjectDetailContent({
 
                       {/* Location */}
                       {project.presentationSchedule.location && (
-                        <div className="flex items-start gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
-                          <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-700">
-                            <MapPin size={16} className="text-zinc-600 dark:text-zinc-400" />
+                        <div className="flex items-start gap-3 p-3 rounded-xl bg-app-quinary">
+                          <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
+                            <MapPin size={16} />
                           </div>
                           <div>
-                            <p className="text-xs text-default-500 font-medium">Lokasi</p>
+                            <p className="text-xs text-app-teritary-invert font-medium">Lokasi</p>
                             <p className="text-sm font-medium">{project.presentationSchedule.location}</p>
                           </div>
                         </div>
@@ -1076,15 +1058,15 @@ export function ProjectDetailContent({
 
                       {/* Notes */}
                       {project.presentationSchedule.notes && (
-                        <div className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
-                          <p className="text-xs text-blue-600 dark:text-blue-400 font-medium mb-1">Catatan</p>
-                          <p className="text-sm text-default-600">{project.presentationSchedule.notes}</p>
+                        <div className="p-3 rounded-xl bg-app-quinary border border-zinc-800">
+                          <p className="text-xs text-app-primary-invert font-medium mb-1">Catatan</p>
+                          <p className="text-sm text-app-secondary-invert">{project.presentationSchedule.notes}</p>
                         </div>
                       )}
 
                       {/* Status Badge */}
-                      <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                        <span className="text-xs text-default-500">Status</span>
+                      <div className="flex items-center justify-between pt-2 border-t border-zinc-800">
+                        <span className="text-xs text-app-secondary-invert">Status</span>
                         <Chip
                           size="sm"
                           color={
@@ -1104,11 +1086,11 @@ export function ProjectDetailContent({
                     </div>
                   ) : (
                     <div className="text-center py-6">
-                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-                        <Clock size={24} className="text-amber-500" />
+                      <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-app-primary flex items-center justify-center">
+                        <Clock size={24} className="text-warning" />
                       </div>
-                      <p className="text-sm font-medium text-amber-700 dark:text-amber-300">Menunggu Penjadwalan</p>
-                      <p className="text-xs text-default-500 mt-1">
+                      <p className="text-sm font-medium text-warning">Menunggu Penjadwalan</p>
+                      <p className="text-xs text-app-teritary-invert mt-1">
                         Project Anda sudah di-ACC oleh dosen.<br/>Admin akan segera menjadwalkan presentasi.
                       </p>
                     </div>
@@ -1124,10 +1106,10 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-b border-zinc-100 dark:border-zinc-800">
+            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <TrendingUp size={18} className="text-blue-600 dark:text-blue-400" />
+                  <TrendingUp size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Progress Project</h3>
                 </div>
               </div>
@@ -1144,12 +1126,12 @@ export function ProjectDetailContent({
                         <div className="flex flex-col items-center">
                           <div
                             className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${status === 'completed'
-                              ? 'bg-emerald-500 text-white'
+                              ? 'bg-success text-success-foreground'
                               : status === 'current'
-                                ? 'bg-blue-500 text-white ring-4 ring-blue-100 dark:ring-blue-900'
+                                ? 'bg-primary text-primary-foreground ring-4 ring-primary/20'
                                 : status === 'rejected'
-                                  ? 'bg-red-500 text-white'
-                                  : 'bg-zinc-200 dark:bg-zinc-700 text-zinc-400'
+                                  ? 'bg-danger text-danger-foreground'
+                                  : 'bg-app-primary text-app-teritary-invert'
                               }`}
                           >
                             {status === 'completed' ? (
@@ -1163,8 +1145,8 @@ export function ProjectDetailContent({
                           {!isLast && (
                             <div
                               className={`w-0.5 h-8 my-1 ${status === 'completed'
-                                ? 'bg-emerald-500'
-                                : 'bg-zinc-200 dark:bg-zinc-700'
+                                ? 'bg-success'
+                                : 'bg-zinc-800'
                                 }`}
                             />
                           )}
@@ -1174,12 +1156,12 @@ export function ProjectDetailContent({
                         <div className="pt-1">
                           <p
                             className={`text-sm font-medium ${status === 'completed'
-                              ? 'text-emerald-600 dark:text-emerald-400'
+                              ? 'text-success'
                               : status === 'current'
-                                ? 'text-blue-600 dark:text-blue-400'
+                                ? 'text-foreground'
                                 : status === 'rejected'
-                                  ? 'text-red-600 dark:text-red-400'
-                                  : 'text-zinc-400'
+                                  ? 'text-danger'
+                                  : 'text-app-teritary-invert'
                               }`}
                           >
                             {step.label}
@@ -1199,37 +1181,37 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
           >
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-950/30 dark:to-purple-950/30 border-b border-zinc-100 dark:border-zinc-800">
+            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <Users size={18} className="text-violet-600 dark:text-violet-400" />
+                  <Users size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Dosen Penguji</h3>
                 </div>
               </div>
               <CardBody className="p-4">
                 {project.assignments.length === 0 ? (
                   <div className="text-center py-6">
-                    <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
-                      <Users size={24} className="text-zinc-400" />
+                    <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-app-primary flex items-center justify-center">
+                      <Users size={24} className="text-app-teritary-invert" />
                     </div>
-                    <p className="text-sm text-default-500">Belum ada dosen yang ditugaskan</p>
+                    <p className="text-sm text-app-secondary-invert">Belum ada dosen yang ditugaskan</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {project.assignments.map((assignment) => (
                       <div
                         key={assignment.id}
-                        className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50"
+                        className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary"
                       >
                         <Avatar
                           name={assignment.dosen.name}
                           src={assignment.dosen.image || undefined}
                           size="sm"
-                          className="ring-2 ring-white dark:ring-zinc-700"
+                          className="ring-2 ring-zinc-700"
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{assignment.dosen.name}</p>
-                          <p className="text-xs text-default-500">@{assignment.dosen.username}</p>
+                          <p className="text-xs text-app-secondary-invert">@{assignment.dosen.username}</p>
                         </div>
                       </div>
                     ))}
@@ -1245,12 +1227,12 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.38 }}
           >
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-950/30 dark:to-green-950/30 border-b border-zinc-100 dark:border-zinc-800">
+            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <Users size={18} className="text-emerald-600 dark:text-emerald-400" />
+                  <Users size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Tim Project</h3>
-                  <Chip size="sm" variant="flat" color="primary">
+                  <Chip size="sm" variant="flat" color="primary" className="tabular-nums">
                     {1 + (project.members?.filter(m => m.role !== 'leader').length || 0) + (project.invitations?.filter(i => i.status === 'pending').length || 0)} anggota
                   </Chip>
                 </div>
@@ -1258,19 +1240,19 @@ export function ProjectDetailContent({
               <CardBody className="p-4">
                 <div className="space-y-3">
                   {/* Owner/Ketua */}
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quaternary border border-zinc-800">
                     <Avatar
                       name={project.mahasiswa.name}
                       src={project.mahasiswa.image || undefined}
                       size="sm"
-                      className="ring-2 ring-primary-200 dark:ring-primary-700"
+                      className="ring-2 ring-zinc-700"
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         <p className="text-sm font-medium truncate">{project.mahasiswa.name}</p>
-                        <Crown size={14} className="text-amber-500 flex-shrink-0" />
+                        <Crown size={14} className="text-warning flex-shrink-0" />
                       </div>
-                      <p className="text-xs text-default-500">{project.mahasiswa.nim || `@${project.mahasiswa.username}`}</p>
+                      <p className="text-xs text-app-secondary-invert">{project.mahasiswa.nim || `@${project.mahasiswa.username}`}</p>
                     </div>
                     <Chip size="sm" color="primary" variant="flat">Ketua</Chip>
                   </div>
@@ -1279,17 +1261,17 @@ export function ProjectDetailContent({
                   {project.members?.filter(m => m.role !== 'leader' && m.user).map((member) => (
                     <div
                       key={member.id}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary"
                     >
                       <Avatar
                         name={member.user!.name}
                         src={member.user!.image || undefined}
                         size="sm"
-                        className="ring-2 ring-white dark:ring-zinc-700"
+                        className="ring-2 ring-zinc-700"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{member.user!.name}</p>
-                        <p className="text-xs text-default-500">{member.user!.nim || `@${member.user!.username}`}</p>
+                        <p className="text-xs text-app-secondary-invert">{member.user!.nim || `@${member.user!.username}`}</p>
                       </div>
                       <Chip size="sm" color="success" variant="flat">Anggota</Chip>
                     </div>
@@ -1299,17 +1281,17 @@ export function ProjectDetailContent({
                   {project.invitations?.filter(i => i.status === 'pending').map((invitation) => (
                     <div
                       key={invitation.id}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-zinc-800"
                     >
                       <Avatar
                         name={invitation.invitee.name}
                         src={invitation.invitee.image || undefined}
                         size="sm"
-                        className="ring-2 ring-amber-200 dark:ring-amber-700 opacity-75"
+                        className="ring-2 ring-zinc-700 opacity-75"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate text-default-700 dark:text-default-300">{invitation.invitee.name}</p>
-                        <p className="text-xs text-default-500">{invitation.invitee.nim || `@${invitation.invitee.username}`}</p>
+                        <p className="text-sm font-medium truncate text-app-secondary-invert">{invitation.invitee.name}</p>
+                        <p className="text-xs text-app-secondary-invert">{invitation.invitee.nim || `@${invitation.invitee.username}`}</p>
                       </div>
                       <Chip size="sm" color="warning" variant="flat">Menunggu</Chip>
                     </div>
@@ -1318,7 +1300,7 @@ export function ProjectDetailContent({
                   {/* Empty state if only owner */}
                   {(!project.members || project.members.filter(m => m.role !== 'leader').length === 0) && 
                    (!project.invitations || project.invitations.filter(i => i.status === 'pending').length === 0) && (
-                    <p className="text-xs text-center text-default-400 py-2">Belum ada anggota tim lainnya</p>
+                    <p className="text-xs text-center text-app-teritary-invert py-2">Belum ada anggota tim lainnya</p>
                   )}
                 </div>
               </CardBody>
@@ -1331,34 +1313,34 @@ export function ProjectDetailContent({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-              <div className="p-4 bg-gradient-to-r from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-zinc-800 border-b border-zinc-100 dark:border-zinc-800">
+            <Card className="border border-zinc-800 shadow-sm overflow-hidden">
+              <div className="p-4 bg-app-quinary border-b border-zinc-800">
                 <div className="flex items-center gap-2">
-                  <Clock size={18} className="text-zinc-600 dark:text-zinc-400" />
+                  <Clock size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Timeline</h3>
                 </div>
               </div>
               <CardBody className="p-4">
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 mt-2 rounded-full bg-blue-500" />
+                    <div className="w-2 h-2 mt-2 rounded-full bg-app-teritary-invert" />
                     <div>
-                      <p className="text-xs text-default-500">Dibuat</p>
+                      <p className="text-xs text-app-secondary-invert">Dibuat</p>
                       <p className="text-sm font-medium">{formatDateTime(project.createdAt)}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-2 h-2 mt-2 rounded-full bg-emerald-500" />
+                    <div className="w-2 h-2 mt-2 rounded-full bg-success" />
                     <div>
-                      <p className="text-xs text-default-500">Terakhir Diperbarui</p>
+                      <p className="text-xs text-app-secondary-invert">Terakhir Diperbarui</p>
                       <p className="text-sm font-medium">{formatDateTime(project.updatedAt)}</p>
                     </div>
                   </div>
                   {project.submittedAt && (
                     <div className="flex items-start gap-3">
-                      <div className="w-2 h-2 mt-2 rounded-full bg-violet-500" />
+                      <div className="w-2 h-2 mt-2 rounded-full bg-primary" />
                       <div>
-                        <p className="text-xs text-default-500">Disubmit</p>
+                        <p className="text-xs text-app-secondary-invert">Disubmit</p>
                         <p className="text-sm font-medium">{formatDateTime(project.submittedAt)}</p>
                       </div>
                     </div>

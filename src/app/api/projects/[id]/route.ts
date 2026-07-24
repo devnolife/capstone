@@ -333,7 +333,7 @@ export async function PUT(
           break;
         case 'REJECTED':
           notificationTitle = 'Project Ditolak';
-          notificationMessage = `Project "${project.title}" tidak disetujui. Silakan hubungi dosen pembimbing.`;
+          notificationMessage = `Project "${project.title}" tidak disetujui. Silakan hubungi dosen penguji.`;
           break;
       }
 

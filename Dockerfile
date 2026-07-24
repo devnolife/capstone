@@ -50,9 +50,9 @@ RUN chmod +x ./docker-entrypoint.sh
 
 USER nextjs
 
-EXPOSE 3012
+EXPOSE 3099
 
-ENV PORT=3012
+ENV PORT=3099
 ENV HOSTNAME="0.0.0.0"
 
 ENTRYPOINT ["./docker-entrypoint.sh"]

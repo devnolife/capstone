@@ -310,7 +310,7 @@ export default function StakeholderUpload({
           <h3 className="text-lg font-semibold text-foreground">
             Dokumen Stakeholder
           </h3>
-          <p className="text-sm text-default-500">
+          <p className="text-sm text-app-secondary-invert">
             Upload tanda tangan, foto, dan dokumen pendukung lainnya
           </p>
         </div>
@@ -327,12 +327,12 @@ export default function StakeholderUpload({
 
       {/* Documents Grid */}
       {documents.length === 0 ? (
-        <Card className="border-2 border-dashed border-default-200">
+        <Card className="border-2 border-dashed border-zinc-800 bg-app-quinary">
           <CardBody className="flex flex-col items-center justify-center py-12">
-            <div className="w-16 h-16 rounded-full bg-default-100 flex items-center justify-center mb-4">
-              <FileSignature className="w-8 h-8 text-default-400" />
+            <div className="w-16 h-16 rounded-full bg-app-primary flex items-center justify-center mb-4">
+              <FileSignature className="w-8 h-8 text-app-teritary-invert" />
             </div>
-            <p className="text-default-500 text-center">
+            <p className="text-app-secondary-invert text-center">
               Belum ada dokumen stakeholder.
               {!readOnly && (
                 <>
@@ -361,10 +361,10 @@ export default function StakeholderUpload({
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ delay: index * 0.05 }}
                 >
-                  <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+                  <Card className="overflow-hidden border border-zinc-800 bg-card hover:shadow-lg transition-shadow">
                     {/* Preview Thumbnail */}
                     {isImage ? (
-                      <div className="relative h-40 bg-default-100 overflow-hidden">
+                      <div className="relative h-40 bg-app-quinary overflow-hidden">
                         <Image
                           src={doc.fileUrl}
                           alt={doc.fileName}
@@ -395,8 +395,8 @@ export default function StakeholderUpload({
                         </div>
                       </div>
                     ) : (
-                      <div className="relative h-40 bg-gradient-to-br from-default-100 to-default-200 flex items-center justify-center">
-                        <FileText className="w-16 h-16 text-default-400" />
+                      <div className="relative h-40 bg-app-quinary flex items-center justify-center">
+                        <FileText className="w-16 h-16 text-app-teritary-invert" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button
                             isIconOnly
@@ -436,23 +436,23 @@ export default function StakeholderUpload({
                       {/* Stakeholder Info */}
                       <div className="space-y-1">
                         <div className="flex items-center gap-2">
-                          <User className="w-3.5 h-3.5 text-default-400" />
+                          <User className="w-3.5 h-3.5 text-app-teritary-invert" />
                           <span className="text-sm font-medium truncate">
                             {doc.stakeholderName}
                           </span>
                         </div>
                         {doc.stakeholderRole && (
                           <div className="flex items-center gap-2">
-                            <Briefcase className="w-3.5 h-3.5 text-default-400" />
-                            <span className="text-xs text-default-500 truncate">
+                            <Briefcase className="w-3.5 h-3.5 text-app-teritary-invert" />
+                            <span className="text-xs text-app-secondary-invert truncate">
                               {doc.stakeholderRole}
                             </span>
                           </div>
                         )}
                         {doc.organization && (
                           <div className="flex items-center gap-2">
-                            <Building2 className="w-3.5 h-3.5 text-default-400" />
-                            <span className="text-xs text-default-500 truncate">
+                            <Building2 className="w-3.5 h-3.5 text-app-teritary-invert" />
+                            <span className="text-xs text-app-secondary-invert truncate">
                               {doc.organization}
                             </span>
                           </div>
@@ -460,7 +460,7 @@ export default function StakeholderUpload({
                       </div>
 
                       {/* File Info */}
-                      <div className="flex items-center justify-between text-xs text-default-400">
+                      <div className="flex items-center justify-between text-xs text-app-teritary-invert">
                         <span className="truncate max-w-[60%]">{doc.fileName}</span>
                         <span>{formatFileSize(doc.fileSize)}</span>
                       </div>
@@ -478,7 +478,7 @@ export default function StakeholderUpload({
         <ModalContent>
           <ModalHeader className="flex flex-col gap-1">
             <h3 className="text-lg font-semibold">Tambah Dokumen Stakeholder</h3>
-            <p className="text-sm text-default-500 font-normal">
+            <p className="text-sm text-app-secondary-invert font-normal">
               Upload dokumen seperti tanda tangan, foto, atau surat persetujuan
             </p>
           </ModalHeader>
@@ -487,7 +487,7 @@ export default function StakeholderUpload({
             <div className="space-y-3">
               <label className="text-sm font-medium">File Dokumen *</label>
               <div
-                className={`border-2 border-dashed rounded-xl p-6 transition-colors cursor-pointer hover:border-primary hover:bg-primary/5 ${selectedFile ? "border-success bg-success/5" : "border-default-200"
+                className={`border-2 border-dashed rounded-xl p-6 transition-colors cursor-pointer hover:bg-app-quaternary ${selectedFile ? "border-success/40 bg-success/10" : "border-zinc-800 bg-app-quinary"
                   }`}
                 onClick={() => fileInputRef.current?.click()}
               >
@@ -508,13 +508,13 @@ export default function StakeholderUpload({
                         className="w-20 h-20 object-cover rounded-lg"
                       />
                     ) : (
-                      <div className="w-20 h-20 bg-default-100 rounded-lg flex items-center justify-center">
-                        <FileText className="w-8 h-8 text-default-400" />
+                      <div className="w-20 h-20 bg-app-primary rounded-lg flex items-center justify-center">
+                        <FileText className="w-8 h-8 text-app-teritary-invert" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{selectedFile.name}</p>
-                      <p className="text-sm text-default-500">
+                      <p className="text-sm text-app-secondary-invert">
                         {formatFileSize(selectedFile.size)}
                       </p>
                     </div>
@@ -534,11 +534,11 @@ export default function StakeholderUpload({
                   </div>
                 ) : (
                   <div className="text-center">
-                    <Upload className="w-10 h-10 mx-auto text-default-400 mb-3" />
+                    <Upload className="w-10 h-10 mx-auto text-app-teritary-invert mb-3" />
                     <p className="text-sm font-medium mb-1">
                       Klik atau drag file ke sini
                     </p>
-                    <p className="text-xs text-default-400">
+                    <p className="text-xs text-app-teritary-invert">
                       JPG, PNG, WebP, atau PDF (Maks. 10MB)
                     </p>
                   </div>
@@ -573,7 +573,7 @@ export default function StakeholderUpload({
                 placeholder="Contoh: Budi Santoso"
                 value={stakeholderName}
                 onValueChange={setStakeholderName}
-                startContent={<User className="w-4 h-4 text-default-400" />}
+                startContent={<User className="w-4 h-4 text-app-teritary-invert" />}
                 isRequired
               />
               <Input
@@ -582,7 +582,7 @@ export default function StakeholderUpload({
                 placeholder="Contoh: Direktur IT"
                 value={stakeholderRole}
                 onValueChange={setStakeholderRole}
-                startContent={<Briefcase className="w-4 h-4 text-default-400" />}
+                startContent={<Briefcase className="w-4 h-4 text-app-teritary-invert" />}
               />
             </div>
 
@@ -592,7 +592,7 @@ export default function StakeholderUpload({
               placeholder="Contoh: PT Teknologi Indonesia"
               value={organization}
               onValueChange={setOrganization}
-              startContent={<Building2 className="w-4 h-4 text-default-400" />}
+              startContent={<Building2 className="w-4 h-4 text-app-teritary-invert" />}
             />
 
             <Textarea
@@ -608,7 +608,7 @@ export default function StakeholderUpload({
             {isUploading && (
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-default-600">Mengupload...</span>
+                  <span className="text-app-secondary-invert">Mengupload...</span>
                   <span className="text-primary font-medium">{uploadProgress}%</span>
                 </div>
                 <Progress

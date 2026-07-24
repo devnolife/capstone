@@ -204,12 +204,12 @@ export default function ConsentFileUpload({
   };
 
   return (
-    <Card className="border border-default-100 shadow-sm">
+    <Card className="border border-zinc-800 bg-card shadow-sm">
       <CardBody className="p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 text-emerald-600">
+            <div className="p-2 rounded-lg bg-app-primary text-foreground">
               <Shield size={18} />
             </div>
             <div>
@@ -217,7 +217,7 @@ export default function ConsentFileUpload({
                 Surat Persetujuan
                 {isRequired && <span className="text-danger">*</span>}
               </h3>
-              <p className="text-xs text-default-400">
+              <p className="text-xs text-app-teritary-invert">
                 Persetujuan bahwa project dapat digunakan/dipelajari
               </p>
             </div>
@@ -230,12 +230,12 @@ export default function ConsentFileUpload({
         </div>
 
         {/* Info Box */}
-        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800/30">
+        <div className="mb-4 p-3 bg-app-quinary rounded-lg border border-zinc-800">
           <div className="flex gap-2">
-            <Info size={16} className="text-blue-500 flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-blue-700 dark:text-blue-300">
-              <p className="font-medium mb-1">Dokumen ini menyatakan:</p>
-              <ul className="list-disc list-inside space-y-0.5 text-blue-600 dark:text-blue-400">
+            <Info size={16} className="text-app-secondary-invert flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-app-secondary-invert">
+              <p className="font-medium mb-1 text-foreground">Dokumen ini menyatakan:</p>
+              <ul className="list-disc list-inside space-y-0.5 text-app-teritary-invert">
                 <li>Project dapat digunakan untuk keperluan akademik</li>
                 <li>Project dapat dipelajari oleh mahasiswa lain</li>
                 <li>Source code dapat di-fork dan dikembangkan lebih lanjut</li>
@@ -252,20 +252,20 @@ export default function ConsentFileUpload({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-4 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-100 dark:border-emerald-800/30"
+              className="p-4 bg-success/10 rounded-xl border border-success/40"
             >
               <div className="flex items-start gap-3">
-                <div className="p-2.5 bg-emerald-100 dark:bg-emerald-800/50 rounded-lg">
+                <div className="p-2.5 bg-success/15 rounded-lg">
                   {(() => {
                     const Icon = getFileIcon(document.mimeType);
-                    return <Icon size={20} className="text-emerald-600 dark:text-emerald-400" />;
+                    return <Icon size={20} className="text-success" />;
                   })()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate text-emerald-900 dark:text-emerald-100">
+                  <p className="font-medium text-sm truncate text-foreground">
                     {document.fileName}
                   </p>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                  <p className="text-xs text-success">
                     {formatFileSize(document.fileSize)}
                   </p>
                 </div>
@@ -319,7 +319,7 @@ export default function ConsentFileUpload({
                       size="sm"
                       className="max-w-xs mx-auto"
                     />
-                    <p className="text-xs text-default-400 mt-2">{uploadProgress}%</p>
+                    <p className="text-xs text-app-teritary-invert mt-2">{uploadProgress}%</p>
                   </div>
                 </div>
               ) : (
@@ -334,8 +334,8 @@ export default function ConsentFileUpload({
                     ${readOnly ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}
                     ${
                       isDragOver
-                        ? 'border-primary bg-primary/5'
-                        : 'border-default-200 hover:border-primary/50 hover:bg-default-50'
+                        ? 'border-ring bg-app-quaternary'
+                        : 'border-zinc-800 bg-app-quinary hover:bg-app-quaternary'
                     }
                   `}
                 >
@@ -343,18 +343,18 @@ export default function ConsentFileUpload({
                     <div
                       className={`
                         w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center transition-colors
-                        ${isDragOver ? 'bg-primary/20' : 'bg-default-100'}
+                        ${isDragOver ? 'bg-app-quaternary' : 'bg-app-primary'}
                       `}
                     >
                       <Upload
                         size={24}
-                        className={isDragOver ? 'text-primary' : 'text-default-400'}
+                        className={isDragOver ? 'text-foreground' : 'text-app-teritary-invert'}
                       />
                     </div>
-                    <p className="text-sm font-medium text-default-700 mb-1">
+                    <p className="text-sm font-medium text-foreground mb-1">
                       {isDragOver ? 'Lepas file di sini' : 'Klik atau drag file ke sini'}
                     </p>
-                    <p className="text-xs text-default-400">
+                    <p className="text-xs text-app-teritary-invert">
                       PDF, Gambar (JPG/PNG), atau Word (DOC/DOCX) - Maks 10MB
                     </p>
                   </div>

@@ -18,7 +18,6 @@ import {
   Tooltip,
 } from '@heroui/react';
 import {
-  BarChart3,
   TrendingUp,
   CheckCircle2,
   Clock,
@@ -34,6 +33,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface ReviewStats {
   summary: {
@@ -135,21 +135,6 @@ function getKategoriIcon(kategori: string) {
   }
 }
 
-function getKategoriColor(kategori: string): string {
-  switch (kategori.toLowerCase()) {
-    case 'teknis':
-      return 'bg-blue-500';
-    case 'dokumentasi':
-      return 'bg-emerald-500';
-    case 'presentasi':
-      return 'bg-purple-500';
-    case 'umum':
-      return 'bg-amber-500';
-    default:
-      return 'bg-gray-500';
-  }
-}
-
 export function StatisticsContent() {
   const [stats, setStats] = useState<ReviewStats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -182,10 +167,10 @@ export function StatisticsContent() {
 
   if (!stats) {
     return (
-      <Card>
+      <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
         <CardBody className="text-center py-10">
           <AlertCircle className="w-12 h-12 mx-auto text-warning mb-4" />
-          <p className="text-default-500">Gagal memuat data statistik</p>
+          <p className="text-app-secondary-invert">Gagal memuat data statistik</p>
         </CardBody>
       </Card>
     );
@@ -199,82 +184,63 @@ export function StatisticsContent() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-3 bg-primary/10 rounded-xl">
-          <BarChart3 className="w-6 h-6 text-primary" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold">Statistik Review</h1>
-          <p className="text-default-500 text-sm">Analisis dan insight dari data penilaian</p>
-        </div>
-      </div>
+      <PageHeader
+        label="[05] STATISTIK"
+        labelRight="/ REVIEW"
+        title="Statistik Review"
+        description="Analisis dan insight dari data penilaian"
+      />
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-gradient-to-br from-primary/10 to-primary/5">
-          <CardBody className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/20 rounded-lg">
-                <FileText className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{summary.totalReviews}</p>
-                <p className="text-xs text-default-500">Total Review</p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
+      <div className="grid grid-cols-2 gap-px border border-zinc-800 bg-zinc-800 md:grid-cols-4">
+        <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Total Review</span>
+            <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+              <FileText className="size-3.5" />
+            </span>
+          </div>
+          <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{summary.totalReviews}</p>
+        </div>
 
-        <Card className="bg-gradient-to-br from-success/10 to-success/5">
-          <CardBody className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-success/20 rounded-lg">
-                <CheckCircle2 className="w-5 h-5 text-success" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{summary.completedReviews}</p>
-                <p className="text-xs text-default-500">Selesai</p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
+        <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Selesai</span>
+            <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+              <CheckCircle2 className="size-3.5" />
+            </span>
+          </div>
+          <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{summary.completedReviews}</p>
+        </div>
 
-        <Card className="bg-gradient-to-br from-warning/10 to-warning/5">
-          <CardBody className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-warning/20 rounded-lg">
-                <Clock className="w-5 h-5 text-warning" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{summary.inProgressReviews + summary.pendingReviews}</p>
-                <p className="text-xs text-default-500">Pending</p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
+        <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Pending</span>
+            <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+              <Clock className="size-3.5" />
+            </span>
+          </div>
+          <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{summary.inProgressReviews + summary.pendingReviews}</p>
+        </div>
 
-        <Card className="bg-gradient-to-br from-secondary/10 to-secondary/5">
-          <CardBody className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-secondary/20 rounded-lg">
-                <Star className="w-5 h-5 text-secondary" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{summary.averageScore}</p>
-                <p className="text-xs text-default-500">Rata-rata Nilai</p>
-              </div>
-            </div>
-          </CardBody>
-        </Card>
+        <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Rata-rata Nilai</span>
+            <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+              <Star className="size-3.5" />
+            </span>
+          </div>
+          <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{summary.averageScore}</p>
+        </div>
       </div>
 
       {/* Progress & Score Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Completion Progress */}
-        <Card>
+        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <Target className="w-5 h-5 text-primary" />
+              <Target className="w-5 h-5 text-app-teritary-invert" />
               <h3 className="font-semibold">Progress Review</h3>
             </div>
           </CardHeader>
@@ -289,7 +255,7 @@ export function StatisticsContent() {
                     stroke="currentColor"
                     strokeWidth="12"
                     fill="none"
-                    className="text-default-200"
+                    className="text-zinc-800"
                   />
                   <circle
                     cx="64"
@@ -304,8 +270,8 @@ export function StatisticsContent() {
                   />
                 </svg>
                 <div className="absolute text-center">
-                  <p className="text-3xl font-bold">{summary.completionRate}%</p>
-                  <p className="text-xs text-default-500">Selesai</p>
+                  <p className="text-3xl font-bold tabular-nums">{summary.completionRate}%</p>
+                  <p className="text-xs text-app-teritary-invert">Selesai</p>
                 </div>
               </div>
             </div>
@@ -314,35 +280,35 @@ export function StatisticsContent() {
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-default-600 flex items-center gap-2">
+                <span className="text-sm text-app-secondary-invert flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-success"></span>
                   Selesai
                 </span>
-                <span className="font-semibold">{summary.completedReviews}</span>
+                <span className="font-semibold tabular-nums">{summary.completedReviews}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-default-600 flex items-center gap-2">
+                <span className="text-sm text-app-secondary-invert flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-primary"></span>
                   Sedang Dikerjakan
                 </span>
-                <span className="font-semibold">{summary.inProgressReviews}</span>
+                <span className="font-semibold tabular-nums">{summary.inProgressReviews}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-default-600 flex items-center gap-2">
+                <span className="text-sm text-app-secondary-invert flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-warning"></span>
                   Belum Dimulai
                 </span>
-                <span className="font-semibold">{summary.pendingReviews}</span>
+                <span className="font-semibold tabular-nums">{summary.pendingReviews}</span>
               </div>
             </div>
           </CardBody>
         </Card>
 
         {/* Score Distribution */}
-        <Card>
+        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <PieChart className="w-5 h-5 text-primary" />
+              <PieChart className="w-5 h-5 text-app-teritary-invert" />
               <h3 className="font-semibold">Distribusi Nilai</h3>
             </div>
           </CardHeader>
@@ -354,13 +320,14 @@ export function StatisticsContent() {
                     <Award className="w-4 h-4 text-success" />
                     Sangat Baik (90-100)
                   </span>
-                  <span className="font-semibold">{scoreDistribution.excellent}</span>
+                  <span className="font-semibold tabular-nums">{scoreDistribution.excellent}</span>
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.excellent / summary.completedReviews) * 100 : 0}
                   color="success"
                   size="sm"
                   className="h-2"
+                  classNames={{ track: 'bg-app-primary' }}
                 />
               </div>
 
@@ -370,13 +337,14 @@ export function StatisticsContent() {
                     <Star className="w-4 h-4 text-primary" />
                     Baik (75-89)
                   </span>
-                  <span className="font-semibold">{scoreDistribution.good}</span>
+                  <span className="font-semibold tabular-nums">{scoreDistribution.good}</span>
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.good / summary.completedReviews) * 100 : 0}
                   color="primary"
                   size="sm"
                   className="h-2"
+                  classNames={{ track: 'bg-app-primary' }}
                 />
               </div>
 
@@ -386,13 +354,14 @@ export function StatisticsContent() {
                     <TrendingUp className="w-4 h-4 text-secondary" />
                     Cukup (60-74)
                   </span>
-                  <span className="font-semibold">{scoreDistribution.average}</span>
+                  <span className="font-semibold tabular-nums">{scoreDistribution.average}</span>
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.average / summary.completedReviews) * 100 : 0}
                   color="secondary"
                   size="sm"
                   className="h-2"
+                  classNames={{ track: 'bg-app-primary' }}
                 />
               </div>
 
@@ -402,13 +371,14 @@ export function StatisticsContent() {
                     <AlertCircle className="w-4 h-4 text-warning" />
                     Kurang (40-59)
                   </span>
-                  <span className="font-semibold">{scoreDistribution.belowAverage}</span>
+                  <span className="font-semibold tabular-nums">{scoreDistribution.belowAverage}</span>
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.belowAverage / summary.completedReviews) * 100 : 0}
                   color="warning"
                   size="sm"
                   className="h-2"
+                  classNames={{ track: 'bg-app-primary' }}
                 />
               </div>
 
@@ -418,13 +388,14 @@ export function StatisticsContent() {
                     <AlertCircle className="w-4 h-4 text-danger" />
                     Sangat Kurang (0-39)
                   </span>
-                  <span className="font-semibold">{scoreDistribution.poor}</span>
+                  <span className="font-semibold tabular-nums">{scoreDistribution.poor}</span>
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.poor / summary.completedReviews) * 100 : 0}
                   color="danger"
                   size="sm"
                   className="h-2"
+                  classNames={{ track: 'bg-app-primary' }}
                 />
               </div>
             </div>
@@ -433,10 +404,10 @@ export function StatisticsContent() {
       </div>
 
       {/* Monthly Trend Chart */}
-      <Card>
+      <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <TrendingUp className="w-5 h-5 text-primary" />
+            <TrendingUp className="w-5 h-5 text-app-teritary-invert" />
             <h3 className="font-semibold">Tren Review 6 Bulan Terakhir</h3>
           </div>
         </CardHeader>
@@ -457,14 +428,14 @@ export function StatisticsContent() {
                   <div
                     className={cn(
                       'w-full rounded-t-lg transition-all duration-300 hover:opacity-80 cursor-pointer',
-                      month.completed > 0 ? 'bg-gradient-to-t from-primary to-primary/60' : 'bg-default-200'
+                      month.completed > 0 ? 'bg-primary' : 'bg-app-quaternary'
                     )}
                     style={{
                       height: `${(month.completed / maxMonthlyCompleted) * 100}%`,
                       minHeight: month.completed > 0 ? '20px' : '4px',
                     }}
                   />
-                  <span className="text-xs text-default-500">{month.month}</span>
+                  <span className="text-xs text-app-teritary-invert">{month.month}</span>
                 </div>
               </Tooltip>
             ))}
@@ -473,10 +444,10 @@ export function StatisticsContent() {
       </Card>
 
       {/* Kategori Performance */}
-      <Card>
+      <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-primary" />
+            <Activity className="w-5 h-5 text-app-teritary-invert" />
             <h3 className="font-semibold">Performa per Kategori</h3>
           </div>
         </CardHeader>
@@ -487,18 +458,18 @@ export function StatisticsContent() {
               return (
                 <div
                   key={kategori.kategori}
-                  className="p-4 rounded-xl bg-default-50 border border-default-200"
+                  className="p-4 rounded-xl border border-zinc-800 bg-app-quinary"
                 >
                   <div className="flex items-center gap-2 mb-3">
-                    <div className={cn('p-2 rounded-lg text-white', getKategoriColor(kategori.kategori))}>
+                    <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                       {getKategoriIcon(kategori.kategori)}
                     </div>
                     <span className="font-medium">{kategori.kategori}</span>
                   </div>
                   <div className="flex items-end justify-between">
                     <div>
-                      <p className="text-2xl font-bold">{Math.round(kategori.averagePercentage)}%</p>
-                      <p className="text-xs text-default-500">{kategori.totalReviews} review</p>
+                      <p className="text-2xl font-bold tabular-nums">{Math.round(kategori.averagePercentage)}%</p>
+                      <p className="text-xs text-app-teritary-invert">{kategori.totalReviews} review</p>
                     </div>
                     <Chip color={grade.color} size="sm" variant="flat">
                       {grade.label}
@@ -509,6 +480,7 @@ export function StatisticsContent() {
                     color={grade.color}
                     size="sm"
                     className="mt-3"
+                    classNames={{ track: 'bg-app-primary' }}
                   />
                 </div>
               );
@@ -519,10 +491,10 @@ export function StatisticsContent() {
 
       {/* Rubrik Details */}
       {rubrikAverages.length > 0 && (
-        <Card>
+        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
+              <FileText className="w-5 h-5 text-app-teritary-invert" />
               <h3 className="font-semibold">Detail per Rubrik Penilaian</h3>
             </div>
           </CardHeader>
@@ -555,7 +527,7 @@ export function StatisticsContent() {
                         </Chip>
                       </TableCell>
                       <TableCell className="text-center">
-                        <span className="font-semibold">
+                        <span className="font-semibold tabular-nums">
                           {Math.round(rubrik.averageScore * 10) / 10} / {rubrik.maxScore}
                         </span>
                       </TableCell>
@@ -566,8 +538,9 @@ export function StatisticsContent() {
                             color={grade.color}
                             size="sm"
                             className="max-w-20"
+                            classNames={{ track: 'bg-app-primary' }}
                           />
-                          <span className="text-sm font-medium w-12">
+                          <span className="text-sm font-medium w-12 tabular-nums">
                             {Math.round(rubrik.averagePercentage)}%
                           </span>
                         </div>
@@ -577,7 +550,7 @@ export function StatisticsContent() {
                           {grade.label}
                         </Chip>
                       </TableCell>
-                      <TableCell className="text-center text-default-500">
+                      <TableCell className="text-center text-app-secondary-invert">
                         {rubrik.totalReviews}
                       </TableCell>
                     </TableRow>
@@ -592,26 +565,26 @@ export function StatisticsContent() {
       {/* Recent Reviews & Project Status */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Reviews */}
-        <Card>
+        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-primary" />
+              <Clock className="w-5 h-5 text-app-teritary-invert" />
               <h3 className="font-semibold">Review Terbaru</h3>
             </div>
           </CardHeader>
           <CardBody>
             {recentReviews.length === 0 ? (
-              <p className="text-center text-default-500 py-8">Belum ada review</p>
+              <p className="text-center text-app-secondary-invert py-8">Belum ada review</p>
             ) : (
               <div className="space-y-3">
                 {recentReviews.slice(0, 5).map((review) => (
                   <div
                     key={review.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-default-50 hover:bg-default-100 transition-colors"
+                    className="flex items-center justify-between p-3 rounded-lg border border-zinc-800 bg-app-quinary hover:bg-app-quaternary transition-colors"
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{review.projectTitle}</p>
-                      <p className="text-xs text-default-500">{review.mahasiswaName}</p>
+                      <p className="text-xs text-app-teritary-invert">{review.mahasiswaName}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {review.overallScore !== null && (
@@ -639,10 +612,10 @@ export function StatisticsContent() {
         </Card>
 
         {/* Project Status Distribution */}
-        <Card>
+        <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
-              <PieChart className="w-5 h-5 text-primary" />
+              <PieChart className="w-5 h-5 text-app-teritary-invert" />
               <h3 className="font-semibold">Status Project</h3>
             </div>
           </CardHeader>
@@ -663,13 +636,14 @@ export function StatisticsContent() {
                   <div key={status}>
                     <div className="flex justify-between text-sm mb-1">
                       <span>{getProjectStatusLabel(status)}</span>
-                      <span className="font-semibold">{count}</span>
+                      <span className="font-semibold tabular-nums">{count}</span>
                     </div>
                     <Progress
                       value={percentage}
                       color={colorMap[status] || 'default'}
                       size="sm"
                       className="h-2"
+                      classNames={{ track: 'bg-app-primary' }}
                     />
                   </div>
                 );

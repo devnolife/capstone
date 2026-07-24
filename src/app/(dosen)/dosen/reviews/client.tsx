@@ -12,7 +12,6 @@ import {
 } from '@heroui/react';
 import { motion } from 'framer-motion';
 import {
-  ClipboardCheck,
   Clock,
   CheckCircle2,
   FileText,
@@ -24,6 +23,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { getSimakPhotoUrl } from '@/lib/utils';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface Review {
   id: string;
@@ -139,50 +139,53 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
     >
       {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30">
-            <ClipboardCheck size={24} />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold">Review Project</h1>
-            <p className="text-sm text-default-500">
-              Kelola review project mahasiswa
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          label="[04] REVIEW"
+          labelRight="/ SAYA"
+          title="Review Project"
+          description="Kelola review project mahasiswa"
+        />
       </motion.div>
 
       {/* Stats Cards */}
       <motion.div variants={itemVariants}>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <Card className="border border-zinc-200 dark:border-zinc-800">
-            <CardBody className="p-4 text-center">
-              <Hourglass size={20} className="mx-auto mb-2 text-amber-500" />
-              <p className="text-2xl font-bold">{stats.pendingAssignments}</p>
-              <p className="text-xs text-default-500">Perlu Direview</p>
-            </CardBody>
-          </Card>
-          <Card className="border border-zinc-200 dark:border-zinc-800">
-            <CardBody className="p-4 text-center">
-              <Clock size={20} className="mx-auto mb-2 text-blue-500" />
-              <p className="text-2xl font-bold">{stats.inProgressReviews}</p>
-              <p className="text-xs text-default-500">Sedang Berjalan</p>
-            </CardBody>
-          </Card>
-          <Card className="border border-zinc-200 dark:border-zinc-800">
-            <CardBody className="p-4 text-center">
-              <CheckCircle2 size={20} className="mx-auto mb-2 text-emerald-500" />
-              <p className="text-2xl font-bold">{stats.completedReviews}</p>
-              <p className="text-xs text-default-500">Selesai</p>
-            </CardBody>
-          </Card>
-          <Card className="border border-zinc-200 dark:border-zinc-800">
-            <CardBody className="p-4 text-center">
-              <BarChart3 size={20} className="mx-auto mb-2 text-violet-500" />
-              <p className="text-2xl font-bold">{stats.totalReviews}</p>
-              <p className="text-xs text-default-500">Total Review</p>
-            </CardBody>
-          </Card>
+        <div className="grid grid-cols-2 gap-px border border-zinc-800 bg-zinc-800 md:grid-cols-4">
+          <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Perlu Direview</span>
+              <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+                <Hourglass size={14} />
+              </span>
+            </div>
+            <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{stats.pendingAssignments}</p>
+          </div>
+          <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Sedang Berjalan</span>
+              <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+                <Clock size={14} />
+              </span>
+            </div>
+            <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{stats.inProgressReviews}</p>
+          </div>
+          <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Selesai</span>
+              <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+                <CheckCircle2 size={14} />
+              </span>
+            </div>
+            <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{stats.completedReviews}</p>
+          </div>
+          <div className="bg-background px-5 py-4 transition-colors hover:bg-app-quinary">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-app-teritary-invert truncate font-mono text-[10px] uppercase tracking-[0.18em]">Total Review</span>
+              <span className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-lg">
+                <BarChart3 size={14} />
+              </span>
+            </div>
+            <p className="font-display mt-2 text-2xl font-[450] tracking-tight tabular-nums md:text-3xl">{stats.totalReviews}</p>
+          </div>
         </div>
       </motion.div>
 
@@ -233,11 +236,11 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
         {selectedTab === 'pending' ? (
           <>
             {pendingAssignments.length === 0 ? (
-              <Card className="border border-zinc-200 dark:border-zinc-800">
+              <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
                 <CardBody className="p-8 text-center">
-                  <CheckCircle2 size={48} className="mx-auto mb-4 text-emerald-500" />
+                  <CheckCircle2 size={48} className="mx-auto mb-4 text-success" />
                   <p className="font-semibold">Tidak ada project yang perlu direview</p>
-                  <p className="text-sm text-default-500 mt-1">
+                  <p className="text-sm text-app-secondary-invert mt-1">
                     Semua project yang ditugaskan sudah direview
                   </p>
                 </CardBody>
@@ -249,7 +252,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                 return (
                   <Card
                     key={assignment.id}
-                    className="border border-zinc-200 dark:border-zinc-800 hover:border-primary/50 transition-colors"
+                    className="rounded-2xl border border-zinc-800 bg-card shadow-none hover:border-primary/50 transition-colors"
                   >
                     <CardBody className="p-4">
                       <div className="flex items-center justify-between gap-4">
@@ -264,7 +267,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                             <h3 className="font-semibold text-sm truncate">
                               {assignment.project.title}
                             </h3>
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-app-secondary-invert">
                               {assignment.project.mahasiswa.name} ({assignment.project.mahasiswa.username})
                             </p>
                             <div className="flex items-center gap-2 mt-1">
@@ -276,7 +279,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                                 {getStatusLabel(assignment.project.status)}
                               </Chip>
                               {assignment.project.submittedAt && (
-                                <span className="text-xs text-default-400 flex items-center gap-1">
+                                <span className="text-xs text-app-teritary-invert flex items-center gap-1">
                                   <Calendar size={10} />
                                   {new Date(assignment.project.submittedAt).toLocaleDateString('id-ID', {
                                     day: 'numeric',
@@ -318,11 +321,11 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
         ) : (
           <>
             {reviews.length === 0 ? (
-              <Card className="border border-zinc-200 dark:border-zinc-800">
+              <Card className="rounded-2xl border border-zinc-800 bg-card shadow-none">
                 <CardBody className="p-8 text-center">
-                  <FileText size={48} className="mx-auto mb-4 text-default-300" />
+                  <FileText size={48} className="mx-auto mb-4 text-app-teritary-invert" />
                   <p className="font-semibold">Belum ada riwayat review</p>
-                  <p className="text-sm text-default-500 mt-1">
+                  <p className="text-sm text-app-secondary-invert mt-1">
                     Review yang sudah selesai akan muncul di sini
                   </p>
                 </CardBody>
@@ -334,7 +337,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                 return (
                   <Card
                     key={review.id}
-                    className="border border-zinc-200 dark:border-zinc-800 hover:border-primary/50 transition-colors"
+                    className="rounded-2xl border border-zinc-800 bg-card shadow-none hover:border-primary/50 transition-colors"
                   >
                     <CardBody className="p-4">
                       <div className="flex items-center justify-between gap-4">
@@ -349,7 +352,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                             <h3 className="font-semibold text-sm truncate">
                               {review.project.title}
                             </h3>
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-app-secondary-invert">
                               {review.project.mahasiswa.name} ({review.project.mahasiswa.username})
                             </p>
                             <div className="flex items-center gap-2 mt-1">
@@ -365,7 +368,7 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                                   Skor: {review.overallScore}
                                 </Chip>
                               )}
-                              <span className="text-xs text-default-400 flex items-center gap-1">
+                              <span className="text-xs text-app-teritary-invert flex items-center gap-1">
                                 <Clock size={10} />
                                 {new Date(review.updatedAt).toLocaleDateString('id-ID', {
                                   day: 'numeric',

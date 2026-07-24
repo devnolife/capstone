@@ -11,6 +11,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Sesi akun fake (dev) — jangan sentuh database, balas kosong
+    if (session.user.id.startsWith('dev-')) {
+      return NextResponse.json({ notifications: [], unreadCount: 0 });
+    }
+
     const { searchParams } = new URL(request.url);
     const unreadOnly = searchParams.get('unread') === 'true';
     const limit = parseInt(searchParams.get('limit') || '20');
@@ -42,11 +47,9 @@ export async function GET(request: Request) {
       unreadCount,
     });
   } catch (error) {
-    console.error('Error fetching notifications:', error);
-    return NextResponse.json(
-      { error: 'Terjadi kesalahan server' },
-      { status: 500 },
-    );
+    console.error('Error fetching notifications (fallback kosong):', error);
+    // DB tidak tersedia — balas kosong agar polling header tidak spam error
+    return NextResponse.json({ notifications: [], unreadCount: 0 });
   }
 }
 

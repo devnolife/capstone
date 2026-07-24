@@ -229,7 +229,7 @@ export default function TeamMembers({
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{ownerName}</p>
             {ownerGithubUsername && (
-              <p className="text-xs text-default-500">@{ownerGithubUsername}</p>
+              <p className="text-xs text-app-secondary-invert">@{ownerGithubUsername}</p>
             )}
           </div>
           <Chip size="sm" color="primary" variant="flat" startContent={<Crown size={10} />}>
@@ -254,7 +254,7 @@ export default function TeamMembers({
                 <p className="text-sm font-medium truncate">
                   {member.name || member.githubUsername}
                 </p>
-                <p className="text-xs text-default-500">@{member.githubUsername}</p>
+                <p className="text-xs text-app-secondary-invert">@{member.githubUsername}</p>
               </div>
               {isEditable && (
                 <Button
@@ -289,17 +289,17 @@ export default function TeamMembers({
   }
 
   return (
-    <Card className="shadow-sm">
+    <Card className="border border-zinc-800 bg-card shadow-sm">
       {showHeader && (
-        <CardHeader className="bg-gradient-to-r from-success-50 to-transparent dark:from-success-900/20 pb-4">
+        <CardHeader className="border-b border-zinc-800 pb-4">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-xl bg-success/10 text-success">
+              <div className="p-2.5 rounded-lg bg-app-primary text-foreground">
                 <Users size={22} />
               </div>
               <div>
                 <h2 className="text-lg font-semibold">Tim Project</h2>
-                <p className="text-xs text-default-500">Anggota kolaborator GitHub</p>
+                <p className="text-xs text-app-teritary-invert">Anggota kolaborator GitHub</p>
               </div>
             </div>
             <Chip size="sm" variant="flat">
@@ -312,7 +312,7 @@ export default function TeamMembers({
       <CardBody className="space-y-4 pt-2">
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-danger-50 text-danger rounded-lg text-sm">
+          <div className="flex items-center gap-2 p-3 bg-danger/10 text-danger rounded-lg text-sm">
             <AlertCircle size={16} />
             {error}
             <Button
@@ -329,7 +329,7 @@ export default function TeamMembers({
         )}
 
         {/* Owner - Team Lead */}
-        <div className="flex items-center gap-3 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl">
+        <div className="flex items-center gap-3 p-3 bg-app-quinary border border-zinc-800 rounded-xl">
           <Avatar
             src={ownerImage}
             name={ownerName || 'Owner'}
@@ -340,7 +340,7 @@ export default function TeamMembers({
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm truncate">{ownerName}</p>
             {ownerGithubUsername && (
-              <p className="text-xs text-default-500 flex items-center gap-1">
+              <p className="text-xs text-app-secondary-invert flex items-center gap-1">
                 <Github size={10} />
                 @{ownerGithubUsername}
               </p>
@@ -365,7 +365,7 @@ export default function TeamMembers({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 10 }}
-                className="flex items-center gap-3 p-3 bg-default-50 rounded-xl group"
+                className="flex items-center gap-3 p-3 bg-app-quinary border border-zinc-800 rounded-xl group"
               >
                 <Avatar
                   src={avatarUrl}
@@ -376,7 +376,7 @@ export default function TeamMembers({
                   <p className="text-sm font-medium truncate">
                     {member.name || member.githubUsername}
                   </p>
-                  <p className="text-xs text-default-500 flex items-center gap-1">
+                  <p className="text-xs text-app-secondary-invert flex items-center gap-1">
                     <Github size={10} />
                     @{member.githubUsername}
                   </p>
@@ -426,7 +426,7 @@ export default function TeamMembers({
                       isSearching ? (
                         <Spinner size="sm" />
                       ) : (
-                        <Search size={16} className="text-default-400" />
+                        <Search size={16} className="text-app-teritary-invert" />
                       )
                     }
                     size="sm"
@@ -454,7 +454,7 @@ export default function TeamMembers({
                         key={user.id}
                         initial={{ opacity: 0, y: 5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center gap-3 p-2 hover:bg-default-100 rounded-lg cursor-pointer transition-colors"
+                        className="flex items-center gap-3 p-2 hover:bg-app-quaternary rounded-lg cursor-pointer transition-colors"
                         onClick={() => handleAddMember(user)}
                       >
                         <Avatar src={user.avatar_url} name={user.login} size="sm" />
@@ -462,7 +462,7 @@ export default function TeamMembers({
                           <p className="text-sm font-medium truncate">
                             {user.name || user.login}
                           </p>
-                          <p className="text-xs text-default-500 truncate">
+                          <p className="text-xs text-app-secondary-invert truncate">
                             @{user.login}
                             {user.bio && ` • ${user.bio}`}
                           </p>
@@ -483,14 +483,14 @@ export default function TeamMembers({
 
                 {/* No Results */}
                 {searchQuery.length >= 2 && !isSearching && searchResults.length === 0 && (
-                  <p className="text-sm text-default-500 text-center py-4">
+                  <p className="text-sm text-app-secondary-invert text-center py-4">
                     Tidak ditemukan pengguna dengan username &quot;{searchQuery}&quot;
                   </p>
                 )}
 
                 {/* Search Hint */}
                 {searchQuery.length < 2 && (
-                  <p className="text-xs text-default-400 text-center">
+                  <p className="text-xs text-app-teritary-invert text-center">
                     Ketik minimal 2 karakter untuk mencari
                   </p>
                 )}
@@ -504,7 +504,7 @@ export default function TeamMembers({
               >
                 <div className="text-left">
                   <p className="font-medium">Tambah Anggota Tim</p>
-                  <p className="text-xs text-default-500">
+                  <p className="text-xs text-app-secondary-invert">
                     Cari berdasarkan username GitHub ({members.length}/{maxMembers})
                   </p>
                 </div>
@@ -515,7 +515,7 @@ export default function TeamMembers({
 
         {/* Max Members Reached */}
         {!canAddMore && isEditable && (
-          <div className="flex items-center gap-2 p-3 bg-warning-50 text-warning-700 rounded-lg text-sm">
+          <div className="flex items-center gap-2 p-3 bg-warning/10 border border-warning/40 text-warning rounded-lg text-sm">
             <CheckCircle2 size={16} />
             Tim sudah lengkap (maksimal {maxMembers} anggota)
           </div>

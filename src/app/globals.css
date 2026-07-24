@@ -1,17 +1,54 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import '../styles/caret.css';
 @config "../../tailwind.config.ts";
 
-:root {
-  --background: #fafaf9;
-  --foreground: #0c0a09;
-  --gradient-start: #c1e1f7;
-  --gradient-mid: #3ba6f1;
-  --gradient-end: #3ba6f1;
+/* ============================================
+   ACCTUAL — Color Tokens (Tailwind v4 @theme)
+   Generates utilities like bg-paper-white, text-invoice-blue,
+   border-stone-edge, and exposes matching --color-* CSS variables.
+   ============================================ */
+@theme {
+  --color-paper-white: #ffffff;
+  --color-cool-mist: #f7fafc;
+  --color-stone-edge: #afb0b1;
+  --color-graphite-mute: #8d8d8d;
+  --color-charcoal-whisper: #1e1e1e;
+  --color-midnight-ink: #0f0f0f;
+  --color-onyx-button: #0d111b;
+  --color-tinted-shadow: #242628;
+  --color-invoice-blue: #0098f2;
+  --color-magenta-tile: #f200ca;
+  --color-iris-glow: #6d56fc;
+  --color-wash-sky: #cfeafa;
+  --color-wash-lilac: #e1e0fc;
+  --color-wash-petal: #f6d2f4;
+
+  /* ============================================
+     POLO — Markopolo-inspired global palette
+     Exact values from getComputedStyle extraction
+     (docs/research/extraction-raw.json)
+     ============================================ */
+  --color-polo-lime: #d8fe91;
+  --color-polo-lime-bright: #e9ffb8;
+  --color-polo-lime-deep: #a8d95c;
+  --color-polo-olive: #3c4f18;
+  --color-polo-ink: #000000;
+  --color-polo-coal: #0f0f0f;
+  --color-polo-panel: #141414;
+  --color-polo-line: rgba(255, 255, 255, 0.08);
+  --color-polo-cream: #f6f7f1;
+  --color-polo-fog: #eceee4;
+  --color-polo-slate: #a3a3a3;
+  --color-polo-mute: #cccccc;
 }
 
-.dark {
-  --background: #0a0a0b;
-  --foreground: #fafafa;
+/* Legacy palettes (di-override oleh caret.css — dark-only zinc).
+   Gradient vars masih dipakai komponen lama. */
+:root {
+  --gradient-start: #e0fb96;
+  --gradient-mid: #cdf46a;
+  --gradient-end: #9fce35;
 }
 
 body {

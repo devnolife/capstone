@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { useTheme } from 'next-themes';
 import {
   Button,
   Avatar,
@@ -17,14 +16,11 @@ import {
 } from '@heroui/react';
 import {
   Bell,
-  Moon,
-  Sun,
   Search,
   LogOut,
   User,
   Settings,
   Menu,
-  GitBranch,
   Command,
   Check,
   FileText,
@@ -34,6 +30,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getSimakPhotoUrl } from '@/lib/utils';
 import { useNotifications, type Notification } from '@/hooks/use-notifications';
@@ -79,7 +76,6 @@ function formatRelativeTime(dateString: string): string {
 
 export function Header({ title, onMenuClick }: HeaderProps) {
   const { data: session } = useSession();
-  const { theme, setTheme } = useTheme();
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -142,10 +138,6 @@ export function Header({ title, onMenuClick }: HeaderProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
-
   const handleLogout = useCallback(async () => {
     if (isLoggingOut) return;
 
@@ -186,14 +178,14 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   // Show skeleton while mounting to prevent hydration mismatch
   if (!mounted) {
     return (
-      <header className="h-16 flex items-center justify-between px-4 md:px-6">
+      <header className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-zinc-800 bg-background">
         <div className="flex items-center gap-3">
-          <Skeleton className="w-10 h-10 rounded-lg md:hidden" />
+          <Skeleton className="w-10 h-10 rounded-full md:hidden" />
           <Skeleton className="w-24 h-6 rounded-lg md:hidden" />
           {title && <Skeleton className="hidden md:block w-32 h-6 rounded-lg" />}
         </div>
         <div className="hidden md:flex flex-1 max-w-xl mx-8">
-          <Skeleton className="w-full h-10 rounded-lg" />
+          <Skeleton className="w-full h-9 rounded-full" />
         </div>
         <div className="flex items-center gap-1">
           <Skeleton className="w-8 h-8 rounded-full" />
@@ -205,7 +197,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="h-16 flex items-center justify-between px-4 md:px-6">
+    <header className="h-14 flex items-center justify-between px-4 md:px-6 border-b border-zinc-800 bg-background">
       {/* Left Side */}
       <div className="flex items-center gap-3">
         {/* Mobile Menu Button */}
@@ -220,18 +212,16 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
         {/* Mobile Logo */}
         <Link href={`${basePath}/dashboard`} className="flex items-center gap-2 md:hidden">
-          <div className="p-1.5 rounded-lg bg-primary">
-            <GitBranch className="text-white" size={16} />
-          </div>
-          <span className="font-semibold text-sm text-default-900">
-            Capstone
+          <Image src="/logo.png" alt="Capstone" width={22} height={22} className="object-contain" />
+          <span className="font-editorial text-lg leading-none tracking-tight text-foreground">
+            capstone
           </span>
         </Link>
 
         {/* Breadcrumbs - Desktop */}
         <div className="hidden md:flex items-center min-w-0">
           {title ? (
-            <h1 className="text-lg font-semibold text-default-900 truncate">{title}</h1>
+            <h1 className="text-lg font-semibold text-foreground truncate">{title}</h1>
           ) : (
             <Breadcrumbs />
           )}
@@ -244,23 +234,26 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           ref={searchInputRef}
           classNames={{
             base: 'w-full',
-            inputWrapper: 'bg-default-100/70 hover:bg-default-100 border-transparent shadow-sm',
+            inputWrapper:
+              'bg-app-quinary hover:bg-app-quaternary border border-zinc-800 shadow-none rounded-full h-9',
           }}
           placeholder="Cari project, mahasiswa, NIM..."
           size="sm"
-          radius="lg"
+          radius="full"
           value={searchQuery}
           onValueChange={setSearchQuery}
           onKeyDown={handleSearchKeyDown}
           isClearable
           onClear={() => setSearchQuery('')}
-          startContent={<Search size={18} className="text-default-400" />}
+          startContent={<Search size={18} className="text-app-teritary-invert" />}
           endContent={
-            <div className="hidden lg:flex items-center gap-1 text-default-400">
-              <kbd className="px-1.5 py-0.5 text-[10px] font-medium bg-default-200 rounded">
+            <div className="hidden lg:flex items-center gap-1 text-app-teritary-invert">
+              <kbd className="px-1.5 py-0.5 text-[10px] font-medium border border-zinc-800 rounded-md font-dm-mono">
                 <Command size={10} className="inline" />
               </kbd>
-              <kbd className="px-1.5 py-0.5 text-[10px] font-medium bg-default-200 rounded">K</kbd>
+              <kbd className="px-1.5 py-0.5 text-[10px] font-medium border border-zinc-800 rounded-md font-dm-mono">
+                K
+              </kbd>
             </div>
           }
           type="search"
@@ -281,16 +274,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           <Search size={20} />
         </Button>
 
-        {/* Theme Toggle - Desktop */}
-        <Button
-          isIconOnly
-          variant="light"
-          onPress={toggleTheme}
-          size="sm"
-          className="hidden md:flex"
-        >
-          {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
-        </Button>
+        {/* Theme dinonaktifkan — aplikasi dark-only (Caret design system) */}
 
         {/* Notifications - Real-time with polling */}
         <Dropdown
@@ -455,15 +439,6 @@ export function Header({ title, onMenuClick }: HeaderProps) {
               startContent={<Settings size={18} />}
             >
               Pengaturan
-            </DropdownItem>
-            {/* Mobile Theme Toggle */}
-            <DropdownItem
-              key="theme"
-              className="md:hidden"
-              startContent={theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-              onPress={toggleTheme}
-            >
-              {theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
             </DropdownItem>
             <DropdownItem
               key="logout"

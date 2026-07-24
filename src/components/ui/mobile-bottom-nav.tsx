@@ -56,7 +56,7 @@ export function MobileBottomNav() {
         : mahasiswaNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-content1/95 backdrop-blur-lg border-t border-divider safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-lg border-t border-zinc-800 safe-area-inset-bottom">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -80,7 +80,7 @@ export function MobileBottomNav() {
               className={cn(
                 'flex flex-col items-center justify-center w-full h-full relative',
                 'transition-colors duration-200',
-                isActive ? 'text-primary' : 'text-default-500',
+                isActive ? 'text-foreground' : 'text-app-teritary-invert',
               )}
             >
               {isActive && (
@@ -100,7 +100,7 @@ export function MobileBottomNav() {
               <span
                 className={cn(
                   'text-[10px] mt-1 font-medium',
-                  isActive ? 'text-primary' : 'text-default-500',
+                  isActive ? 'text-foreground' : 'text-app-teritary-invert',
                 )}
               >
                 {item.title}

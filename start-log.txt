@@ -1,0 +1,67 @@
+▲ Next.js 16.1.2
+- Local:         http://localhost:3013
+- Network:       http://169.254.219.4:3013
+
+✓ Starting...
+⚠ "next start" does not work with "output: standalone" configuration. Use "node .next/standalone/server.js" instead.
+✓ Ready in 561ms
+[31m[auth][error][0m MissingSecret: Please define a `secret`. Read more at https://errors.authjs.dev#missingsecret
+    at D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:51325
+    at ik (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:53913)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async rU.do (D:\devnolife\apps-ft\capstone\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:20169)
+[31m[auth][error][0m MissingSecret: Please define a `secret`. Read more at https://errors.authjs.dev#missingsecret
+    at D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:51325
+    at ik (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:53913)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async rU.do (D:\devnolife\apps-ft\capstone\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:20169)
+prisma:error 
+Invalid `prisma.project.count()` invocation:
+
+
+
+Error fetching stats: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.project.count()` invocation:
+
+
+
+    at Bv.handleRequestError (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:62:7873)
+    at Bv.handleAndLogRequestError (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:62:6885)
+    at Bv.request (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:62:6592)
+    at async B (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:72:6209)
+    at async s (D:\devnolife\apps-ft\capstone\.next\server\chunks\[root-of-the-server]__d4aed738._.js:1:1764)
+    at async u (D:\devnolife\apps-ft\capstone\.next\server\chunks\[root-of-the-server]__d4aed738._.js:1:5592) {
+  code: 'ECONNREFUSED',
+  meta: [Object],
+  clientVersion: '7.2.0'
+}
+[31m[auth][error][0m MissingSecret: Please define a `secret`. Read more at https://errors.authjs.dev#missingsecret
+    at D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:51325
+    at ik (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:53913)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async rU.do (D:\devnolife\apps-ft\capstone\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:20169)
+[31m[auth][error][0m MissingSecret: Please define a `secret`. Read more at https://errors.authjs.dev#missingsecret
+    at D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:51325
+    at ik (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c722ca35._.js:404:53913)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async rU.do (D:\devnolife\apps-ft\capstone\node_modules\next\dist\compiled\next-server\app-route-turbo.runtime.prod.js:5:20169)
+prisma:error 
+Invalid `prisma.project.count()` invocation:
+
+
+
+Error fetching stats: Error [PrismaClientKnownRequestError]: 
+Invalid `prisma.project.count()` invocation:
+
+
+
+    at Bv.handleRequestError (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:62:7873)
+    at Bv.handleAndLogRequestError (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:62:6885)
+    at Bv.request (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:62:6592)
+    at async B (D:\devnolife\apps-ft\capstone\.next\server\chunks\_c9e008ce._.js:72:6209)
+    at async s (D:\devnolife\apps-ft\capstone\.next\server\chunks\[root-of-the-server]__d4aed738._.js:1:1764)
+    at async u (D:\devnolife\apps-ft\capstone\.next\server\chunks\[root-of-the-server]__d4aed738._.js:1:5592) {
+  code: 'ECONNREFUSED',
+  meta: [Object],
+  clientVersion: '7.2.0'
+}

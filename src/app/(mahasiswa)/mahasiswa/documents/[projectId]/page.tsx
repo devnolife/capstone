@@ -60,6 +60,7 @@ import {
   Wrench,
 } from 'lucide-react';
 import Link from 'next/link';
+import { PageHeader } from '@/components/caret/PageHeader';
 import { 
   DEPLOYMENT_PLATFORMS, 
   getDeploymentPlatform, 
@@ -130,8 +131,6 @@ interface SectionConfig {
   title: string;
   subtitle: string;
   icon: React.ElementType;
-  gradient: string;
-  bgColor: string;
   fields: FieldConfig[];
   conditional?: (formData: Record<string, string>) => boolean;
 }
@@ -143,8 +142,6 @@ const REQUIREMENT_SECTIONS: SectionConfig[] = [
     title: 'Aspek Akademik',
     subtitle: 'Integrasi pembelajaran dan metodologi',
     icon: GraduationCap,
-    gradient: 'from-violet-500 to-purple-600',
-    bgColor: 'bg-gradient-to-br',
     fields: [
       {
         key: 'integrasiMatakuliah',
@@ -179,8 +176,6 @@ const REQUIREMENT_SECTIONS: SectionConfig[] = [
     title: 'Teknis & Implementasi',
     subtitle: 'Ruang lingkup dan fitur sistem',
     icon: Rocket,
-    gradient: 'from-orange-500 to-amber-500',
-    bgColor: 'bg-gradient-to-br',
     fields: [
       {
         key: 'ruangLingkup',
@@ -228,8 +223,6 @@ const REQUIREMENT_SECTIONS: SectionConfig[] = [
     title: 'Analisis & Evaluasi',
     subtitle: 'Temuan, presentasi, dan aspek etika',
     icon: Lightbulb,
-    gradient: 'from-emerald-500 to-teal-500',
-    bgColor: 'bg-gradient-to-br',
     fields: [
       {
         key: 'analisisTemuan',
@@ -290,8 +283,6 @@ const REQUIREMENT_SECTIONS: SectionConfig[] = [
     title: 'Production & Demo',
     subtitle: 'URL aplikasi dan akun testing',
     icon: Globe,
-    gradient: 'from-cyan-500 to-blue-500',
-    bgColor: 'bg-gradient-to-br',
     fields: [
       {
         key: 'productionUrl',
@@ -346,8 +337,6 @@ const REQUIREMENT_SECTIONS: SectionConfig[] = [
     title: 'Deployment Setup',
     subtitle: 'Konfigurasi dan platform deployment',
     icon: Server,
-    gradient: 'from-indigo-500 to-violet-500',
-    bgColor: 'bg-gradient-to-br',
     conditional: (formData) => !!formData.productionUrl?.trim(),
     fields: [
       {
@@ -634,7 +623,7 @@ export default function ProjectRequirementsFormPage() {
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
           <Spinner size="lg" color="primary" />
-          <p className="text-default-500">Memuat persyaratan...</p>
+          <p className="text-app-secondary-invert">Memuat persyaratan...</p>
         </div>
       </div>
     );
@@ -643,7 +632,7 @@ export default function ProjectRequirementsFormPage() {
   if (!project) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="p-4 rounded-full bg-danger-100">
+        <div className="p-4 rounded-full bg-danger/10">
           <AlertCircle size={48} className="text-danger" />
         </div>
         <p className="text-lg font-medium">Project tidak ditemukan</p>
@@ -656,75 +645,57 @@ export default function ProjectRequirementsFormPage() {
 
   return (
     <div className="w-full pb-24 sm:pb-8">
-      {/* Header Card */}
-      <Card className="mb-6 border-0 bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-50" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(255,255,255,0.07)'%3E%3C/path%3E%3C/svg%3E\")" }} />
-        <CardBody className="p-6 relative">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex items-start gap-4">
-              <Button
-                as={Link}
-                href={`/mahasiswa/projects/${projectId}`}
-                variant="flat"
-                isIconOnly
-                radius="full"
-                size="sm"
-                className="bg-white/20 text-white hover:bg-white/30"
-              >
-                <ArrowLeft size={18} />
-              </Button>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <FileText size={20} />
-                  <span className="text-sm font-medium text-white/80">Dokumen Persyaratan</span>
-                </div>
-                <h1 className="text-xl font-bold mb-2">{project.title}</h1>
-                <div className="flex items-center gap-3 text-sm text-white/70">
-                  <span>{project.semester}</span>
-                  <span>•</span>
-                  <Chip size="sm" variant="flat" className="bg-white/20 text-white">
-                    {project.status}
-                  </Chip>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardBody>
-      </Card>
+      {/* Header */}
+      <div className="mb-6">
+        <PageHeader
+          label="[02] PERSYARATAN"
+          labelRight="/ DOKUMEN"
+          title={project.title}
+          description={`${project.semester} · ${project.status}`}
+          actions={
+            <Link
+              href={`/mahasiswa/projects/${projectId}`}
+              className="border-input bg-input/30 hover:bg-input/50 inline-flex h-9 items-center gap-2 rounded-full border px-4 text-sm font-medium text-foreground transition-all active:scale-[0.98]"
+            >
+              <ArrowLeft size={15} /> Kembali
+            </Link>
+          }
+        />
+      </div>
 
       {/* Read-only Banner for non-owners */}
       {!isOwner && (
-        <div className="mb-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-center gap-3">
-          <div className="p-2 rounded-full bg-amber-100 dark:bg-amber-900/40">
-            <Eye size={18} className="text-amber-600 dark:text-amber-400" />
+        <div className="mb-6 p-4 rounded-xl bg-warning/10 border border-warning/40 flex items-center gap-3">
+          <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-warning/15 text-warning">
+            <Eye size={18} />
           </div>
           <div>
-            <p className="font-medium text-amber-800 dark:text-amber-300">Mode Lihat Saja</p>
-            <p className="text-sm text-amber-600 dark:text-amber-400">Anda adalah anggota tim. Hanya ketua tim yang dapat mengedit persyaratan ini.</p>
+            <p className="font-medium text-warning">Mode Lihat Saja</p>
+            <p className="text-sm text-app-secondary-invert">Anda adalah anggota tim. Hanya ketua tim yang dapat mengedit persyaratan ini.</p>
           </div>
         </div>
       )}
 
       {/* Progress Card */}
-      <Card className="mb-6 border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+      <Card className="mb-6 border border-zinc-800 bg-card shadow-none overflow-hidden">
         <CardBody className="p-0">
-          <div className="p-4 bg-gradient-to-r from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-800">
+          <div className="p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-xl ${completion.percent === 100 ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-blue-100 dark:bg-blue-900/30'}`}>
+                <div className={`flex size-9 items-center justify-center rounded-lg ${completion.percent === 100 ? 'bg-success/15 text-success' : 'bg-app-primary text-foreground'}`}>
                   {completion.percent === 100 ? (
-                    <CheckCircle2 size={20} className="text-emerald-600 dark:text-emerald-400" />
+                    <CheckCircle2 size={20} />
                   ) : (
-                    <TrendingUp size={20} className="text-blue-600 dark:text-blue-400" />
+                    <TrendingUp size={20} />
                   )}
                 </div>
                 <div>
                   <h3 className="font-semibold">Progress Kelengkapan</h3>
-                  <p className="text-xs text-default-500">{completion.filled} dari {completion.total} field terisi</p>
+                  <p className="text-xs text-app-teritary-invert tabular-nums">{completion.filled} dari {completion.total} field terisi</p>
                 </div>
               </div>
               <div className="text-right">
-                <span className={`text-3xl font-bold ${completion.percent === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>
+                <span className={`text-3xl font-bold tabular-nums ${completion.percent === 100 ? 'text-success' : 'text-foreground'}`}>
                   {completion.percent}%
                 </span>
               </div>
@@ -733,17 +704,15 @@ export default function ProjectRequirementsFormPage() {
               value={completion.percent}
               size="md"
               classNames={{
-                track: 'h-3 bg-zinc-200 dark:bg-zinc-700',
-                indicator: completion.percent === 100
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-400'
-                  : 'bg-gradient-to-r from-blue-500 to-cyan-400',
+                track: 'h-3 bg-app-primary',
+                indicator: completion.percent === 100 ? 'bg-success' : 'bg-primary',
               }}
             />
             {completion.percent === 100 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 mt-3 text-emerald-600 dark:text-emerald-400 text-sm font-medium"
+                className="flex items-center gap-2 mt-3 text-success text-sm font-medium"
               >
                 <CheckCircle2 size={16} />
                 <span>Semua persyaratan telah dilengkapi!</span>
@@ -752,7 +721,7 @@ export default function ProjectRequirementsFormPage() {
           </div>
 
           {/* Section Quick Status */}
-          <div className="grid divide-x divide-zinc-200 dark:divide-zinc-700 border-t border-zinc-200 dark:border-zinc-700" style={{ gridTemplateColumns: `repeat(${visibleSections.length}, minmax(0, 1fr))` }}>
+          <div className="grid divide-x divide-zinc-800 border-t border-zinc-800" style={{ gridTemplateColumns: `repeat(${visibleSections.length}, minmax(0, 1fr))` }}>
             {visibleSections.map((section) => {
               const sectionCompletion = getSectionCompletion(section);
               const SectionIcon = section.icon;
@@ -769,13 +738,13 @@ export default function ProjectRequirementsFormPage() {
                     });
                     document.getElementById(section.id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }}
-                  className="p-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors text-center"
+                  className="p-3 hover:bg-app-quinary transition-colors text-center"
                 >
-                  <div className={`inline-flex p-1.5 rounded-lg bg-gradient-to-br ${section.gradient} text-white mb-2`}>
+                  <div className="inline-flex p-1.5 rounded-lg bg-app-primary text-foreground mb-2">
                     <SectionIcon size={14} />
                   </div>
                   <p className="text-xs font-medium truncate">{section.title.split(' ')[0]}</p>
-                  <p className={`text-xs ${sectionCompletion.percent === 100 ? 'text-emerald-600' : 'text-default-400'}`}>
+                  <p className={`text-xs tabular-nums ${sectionCompletion.percent === 100 ? 'text-success' : 'text-app-teritary-invert'}`}>
                     {sectionCompletion.filled}/{sectionCompletion.total}
                   </p>
                 </button>
@@ -796,20 +765,20 @@ export default function ProjectRequirementsFormPage() {
             <Card
               key={section.id}
               id={section.id}
-              className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden scroll-mt-4"
+              className="border border-zinc-800 bg-card shadow-none overflow-hidden scroll-mt-4"
             >
               {/* Section Header */}
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full p-4 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/30 transition-all"
+                className="w-full p-4 flex items-center justify-between hover:bg-app-quinary transition-all"
               >
                 <div className="flex items-center gap-4">
-                  <div className={`p-3 rounded-2xl ${section.bgColor} ${section.gradient} text-white shadow-lg`}>
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-app-primary text-foreground">
                     <SectionIcon size={22} />
                   </div>
                   <div className="text-left">
-                    <h2 className="font-bold text-lg">{section.title}</h2>
-                    <p className="text-sm text-default-500">{section.subtitle}</p>
+                    <h2 className="font-display text-lg font-[450] tracking-tight">{section.title}</h2>
+                    <p className="text-sm text-app-secondary-invert">{section.subtitle}</p>
                   </div>
                 </div>
 
@@ -825,7 +794,7 @@ export default function ProjectRequirementsFormPage() {
                           fill="none"
                           stroke="currentColor"
                           strokeWidth="5"
-                          className="text-zinc-200 dark:text-zinc-700"
+                          className="text-app-primary"
                         />
                         <circle
                           cx="28"
@@ -837,11 +806,11 @@ export default function ProjectRequirementsFormPage() {
                           strokeLinecap="round"
                           strokeDasharray={138}
                           strokeDashoffset={138 - (138 * sectionCompletion.percent) / 100}
-                          className={`transition-all duration-500 ${sectionCompletion.percent === 100 ? 'text-emerald-500' : 'text-blue-500'
+                          className={`transition-all duration-500 ${sectionCompletion.percent === 100 ? 'text-success' : 'text-primary'
                             }`}
                         />
                       </svg>
-                      <span className={`absolute inset-0 flex items-center justify-center font-bold ${sectionCompletion.percent === 100 ? 'text-[11px]' : 'text-xs'
+                      <span className={`absolute inset-0 flex items-center justify-center font-bold tabular-nums ${sectionCompletion.percent === 100 ? 'text-[11px]' : 'text-xs'
                         }`}>
                         {sectionCompletion.percent}%
                       </span>
@@ -857,9 +826,9 @@ export default function ProjectRequirementsFormPage() {
                   <motion.div
                     animate={{ rotate: isExpanded ? 180 : 0 }}
                     transition={{ duration: 0.2 }}
-                    className="p-2 rounded-full bg-zinc-100 dark:bg-zinc-800"
+                    className="p-2 rounded-full bg-app-quaternary"
                   >
-                    <ChevronDown size={18} className="text-default-500" />
+                    <ChevronDown size={18} className="text-app-secondary-invert" />
                   </motion.div>
                 </div>
               </button>
@@ -874,7 +843,7 @@ export default function ProjectRequirementsFormPage() {
                     transition={{ duration: 0.3, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 pb-6 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                    <div className="px-4 pb-6 pt-2 border-t border-zinc-800">
                       <div className="grid gap-6">
                         {section.fields.map((field, fieldIndex) => {
                           const FieldIcon = field.icon;
@@ -887,25 +856,25 @@ export default function ProjectRequirementsFormPage() {
                               initial={{ opacity: 0, y: 15 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: fieldIndex * 0.08 }}
-                              className={`relative p-4 rounded-2xl border-2 transition-all duration-300 ${isActive
-                                ? 'border-blue-400 dark:border-blue-500 bg-blue-50/50 dark:bg-blue-900/10'
+                              className={`relative p-4 rounded-xl border transition-all duration-300 ${isActive
+                                ? 'border-ring bg-app-quinary'
                                 : isFilled
-                                  ? 'border-emerald-200 dark:border-emerald-800 bg-emerald-50/30 dark:bg-emerald-900/10'
-                                  : 'border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900'
+                                  ? 'border-success/30 bg-success/5'
+                                  : 'border-zinc-800 bg-background'
                                 }`}
                             >
                               {/* Field Header */}
                               <div className="flex items-start justify-between mb-3">
                                 <div className="flex items-center gap-3">
-                                  <div className={`p-2 rounded-xl ${isFilled
-                                    ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600'
-                                    : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'
+                                  <div className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${isFilled
+                                    ? 'bg-success/15 text-success'
+                                    : 'bg-app-primary text-foreground'
                                     }`}>
                                     <FieldIcon size={18} />
                                   </div>
                                   <div>
                                     <label className="font-semibold text-base">{field.label}</label>
-                                    <p className="text-xs text-default-500 mt-0.5">{field.description}</p>
+                                    <p className="text-xs text-app-teritary-invert mt-0.5">{field.description}</p>
                                   </div>
                                 </div>
                                 {isFilled && (
@@ -922,15 +891,15 @@ export default function ProjectRequirementsFormPage() {
 
                               {/* Tips */}
                               {field.tips && !isFilled && (
-                                <div className="mb-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                                  <p className="text-xs font-medium text-amber-700 dark:text-amber-400 mb-1.5 flex items-center gap-1">
+                                <div className="mb-3 p-3 rounded-xl bg-warning/10 border border-warning/30">
+                                  <p className="text-xs font-medium text-warning mb-1.5 flex items-center gap-1">
                                     <Lightbulb size={12} />
                                     Tips pengisian:
                                   </p>
-                                  <ul className="text-xs text-amber-600 dark:text-amber-500 space-y-1">
+                                  <ul className="text-xs text-app-secondary-invert space-y-1">
                                     {field.tips.map((tip, i) => (
                                       <li key={i} className="flex items-start gap-1.5">
-                                        <span className="text-amber-400 mt-0.5">•</span>
+                                        <span className="text-warning mt-0.5">•</span>
                                         {tip}
                                       </li>
                                     ))}
@@ -956,14 +925,14 @@ export default function ProjectRequirementsFormPage() {
                                               isSelected ? '' : option.key
                                             );
                                           }}
-                                          className={`text-left p-3 rounded-xl border-2 transition-all ${
+                                          className={`text-left p-3 rounded-xl border transition-all ${
                                             isSelected
-                                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 ring-1 ring-blue-500/30'
-                                              : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600'
+                                              ? 'border-ring bg-app-quinary ring-1 ring-ring/40'
+                                              : 'border-zinc-800 hover:bg-app-quinary'
                                           } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
                                         >
                                           <div className="flex items-center justify-between mb-1">
-                                            <span className={`text-sm font-semibold ${isSelected ? 'text-blue-700 dark:text-blue-300' : ''}`}>
+                                            <span className={`text-sm font-semibold ${isSelected ? 'text-foreground' : ''}`}>
                                               {option.label}
                                             </span>
                                             {option.bonusPoints !== undefined && (
@@ -977,7 +946,7 @@ export default function ProjectRequirementsFormPage() {
                                               </Chip>
                                             )}
                                           </div>
-                                          <p className="text-xs text-default-500 line-clamp-2">{option.description}</p>
+                                          <p className="text-xs text-app-teritary-invert line-clamp-2">{option.description}</p>
                                         </button>
                                       );
                                     })}
@@ -991,15 +960,15 @@ export default function ProjectRequirementsFormPage() {
                                       <motion.div
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="p-3 rounded-xl bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800"
+                                        className="p-3 rounded-xl bg-warning/10 border border-warning/30"
                                       >
                                         <div className="flex items-center gap-2">
-                                          <Trophy size={18} className="text-amber-600 dark:text-amber-400" />
+                                          <Trophy size={18} className="text-warning" />
                                           <div>
-                                            <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+                                            <p className="text-sm font-semibold text-warning">
                                               Bonus Deployment: +{platform.bonusPoints} poin
                                             </p>
-                                            <p className="text-xs text-amber-600 dark:text-amber-400">
+                                            <p className="text-xs text-app-secondary-invert">
                                               Platform {platform.label} mendapat bonus karena{' '}
                                               {platform.category === 'manual'
                                                 ? 'memerlukan konfigurasi server manual'
@@ -1021,9 +990,9 @@ export default function ProjectRequirementsFormPage() {
                                 // Get selected platform's category to filter tool categories
                                 const selectedPlatform = getDeploymentPlatform(formData.deploymentPlatform);
                                 if (!selectedPlatform) return (
-                                  <div className="p-4 rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-center">
-                                    <Wrench size={24} className="mx-auto text-zinc-400 mb-2" />
-                                    <p className="text-sm text-default-400">Pilih platform deployment terlebih dahulu untuk melihat tools yang tersedia</p>
+                                  <div className="p-4 rounded-xl border border-dashed border-zinc-800 text-center">
+                                    <Wrench size={24} className="mx-auto text-app-teritary-invert mb-2" />
+                                    <p className="text-sm text-app-teritary-invert">Pilih platform deployment terlebih dahulu untuk melihat tools yang tersedia</p>
                                   </div>
                                 );
 
@@ -1031,8 +1000,8 @@ export default function ProjectRequirementsFormPage() {
                                 const selectedTools = parseDeploymentTools(formData[field.key]);
 
                                 if (toolCategories.length === 0) return (
-                                  <div className="p-4 rounded-xl border-2 border-dashed border-zinc-200 dark:border-zinc-700 text-center">
-                                    <p className="text-sm text-default-400">Tidak ada tools checklist untuk platform ini</p>
+                                  <div className="p-4 rounded-xl border border-dashed border-zinc-800 text-center">
+                                    <p className="text-sm text-app-teritary-invert">Tidak ada tools checklist untuk platform ini</p>
                                   </div>
                                 );
 
@@ -1058,11 +1027,11 @@ export default function ProjectRequirementsFormPage() {
                                       <motion.div
                                         initial={{ opacity: 0, y: -10 }}
                                         animate={{ opacity: 1, y: 0 }}
-                                        className="p-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800"
+                                        className="p-3 rounded-xl bg-app-quinary border border-zinc-800"
                                       >
                                         <div className="flex items-center gap-2">
-                                          <CheckCircle2 size={16} className="text-blue-600 dark:text-blue-400" />
-                                          <span className="text-sm font-semibold text-blue-800 dark:text-blue-300">
+                                          <CheckCircle2 size={16} className="text-primary" />
+                                          <span className="text-sm font-semibold tabular-nums">
                                             {selectedTools.length} tools/services dipilih
                                           </span>
                                         </div>
@@ -1076,8 +1045,8 @@ export default function ProjectRequirementsFormPage() {
                                       return (
                                         <div key={category.key} className="space-y-2">
                                           <div className="flex items-center gap-2">
-                                            <CategoryIcon size={14} className="text-default-500" />
-                                            <span className="text-xs font-semibold text-default-600 uppercase tracking-wide">
+                                            <CategoryIcon size={14} className="text-app-teritary-invert" />
+                                            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">
                                               {category.label}
                                             </span>
                                             {selectedInCategory.length > 0 && (
@@ -1097,12 +1066,12 @@ export default function ProjectRequirementsFormPage() {
                                                   onClick={() => toggleTool(tool.key)}
                                                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                                                     isActive
-                                                      ? 'border-blue-500 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 ring-1 ring-blue-500/20'
-                                                      : 'border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/50 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600'
+                                                      ? 'border-ring bg-app-quaternary text-foreground ring-1 ring-ring/30'
+                                                      : 'border-zinc-800 bg-app-quinary text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground'
                                                   } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
                                                   title={tool.description}
                                                 >
-                                                  {isActive && <CheckCircle2 size={12} className="text-blue-500" />}
+                                                  {isActive && <CheckCircle2 size={12} className="text-primary" />}
                                                   {tool.label}
                                                 </button>
                                               );
@@ -1125,11 +1094,11 @@ export default function ProjectRequirementsFormPage() {
                                       onBlur={() => setActiveField(null)}
                                       variant="bordered"
                                       isReadOnly={!isOwner}
-                                      startContent={<Globe size={16} className="text-default-400" />}
+                                      startContent={<Globe size={16} className="text-app-teritary-invert" />}
                                       classNames={{
-                                        inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
-                                          focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
-                                        input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                        inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                          focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
+                                        input: 'placeholder:text-app-teritary-invert',
                                       }}
                                     />
                                     {isOwner && (
@@ -1163,21 +1132,21 @@ export default function ProjectRequirementsFormPage() {
                                   {urlValidation.status !== 'idle' && urlValidation.status !== 'checking' && (
                                     <div className={`p-3 rounded-xl text-sm ${
                                       urlValidation.status === 'valid' 
-                                        ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800'
-                                        : 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+                                        ? 'bg-success/10 border border-success/30'
+                                        : 'bg-danger/10 border border-danger/30'
                                     }`}>
                                       <div className="flex items-center gap-2">
                                         {urlValidation.status === 'valid' ? (
-                                          <CheckCircle2 size={16} className="text-emerald-600" />
+                                          <CheckCircle2 size={16} className="text-success" />
                                         ) : (
-                                          <XCircle size={16} className="text-red-600" />
+                                          <XCircle size={16} className="text-danger" />
                                         )}
-                                        <span className={urlValidation.status === 'valid' ? 'text-emerald-700 dark:text-emerald-400' : 'text-red-700 dark:text-red-400'}>
+                                        <span className={urlValidation.status === 'valid' ? 'text-success' : 'text-danger'}>
                                           {urlValidation.message}
                                         </span>
                                       </div>
                                       {urlValidation.title && (
-                                        <p className="mt-1 text-xs text-emerald-600 dark:text-emerald-500">
+                                        <p className="mt-1 text-xs text-success">
                                           Judul halaman: {urlValidation.title}
                                         </p>
                                       )}
@@ -1209,9 +1178,9 @@ export default function ProjectRequirementsFormPage() {
                                   variant="bordered"
                                   isReadOnly={!isOwner}
                                   classNames={{
-                                    inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
-                                      focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
-                                    input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                    inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                      focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
+                                    input: 'placeholder:text-app-teritary-invert',
                                   }}
                                 />
                               ) : field.type === 'password' ? (
@@ -1225,9 +1194,9 @@ export default function ProjectRequirementsFormPage() {
                                   variant="bordered"
                                   isReadOnly={!isOwner}
                                   classNames={{
-                                    inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
-                                      focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
-                                    input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                    inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                      focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
+                                    input: 'placeholder:text-app-teritary-invert',
                                   }}
                                 />
                               ) : (
@@ -1242,9 +1211,9 @@ export default function ProjectRequirementsFormPage() {
                                   variant="bordered"
                                   isReadOnly={!isOwner}
                                   classNames={{
-                                    inputWrapper: `border-zinc-300 dark:border-zinc-600 hover:border-blue-400 
-                                      focus-within:!border-blue-500 bg-white dark:bg-zinc-800/50 shadow-sm ${!isOwner ? 'opacity-80' : ''}`,
-                                    input: 'placeholder:text-zinc-400 dark:placeholder:text-zinc-500',
+                                    inputWrapper: `border-zinc-800 bg-app-quinary hover:bg-app-quaternary 
+                                      focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
+                                    input: 'placeholder:text-app-teritary-invert',
                                   }}
                                 />
                               )}
@@ -1252,7 +1221,7 @@ export default function ProjectRequirementsFormPage() {
                               {/* Character count - only for textarea */}
                               {(!field.type || field.type === 'textarea') && (
                                 <div className="flex justify-end mt-2">
-                                  <span className="text-xs text-default-400">
+                                  <span className="text-xs text-app-teritary-invert tabular-nums">
                                     {(formData[field.key] || '').length} karakter
                                   </span>
                                 </div>
@@ -1279,7 +1248,7 @@ export default function ProjectRequirementsFormPage() {
             startContent={!isSaving && <Save size={18} />}
             isLoading={isSaving}
             onPress={handleSave}
-            className="font-semibold px-6 rounded-full shadow-xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-shadow"
+            className="font-semibold px-6 rounded-full shadow-lg"
           >
             Simpan Perubahan
           </Button>
@@ -1288,12 +1257,12 @@ export default function ProjectRequirementsFormPage() {
 
       {/* Bottom Save Bar (Mobile) - Only for owners */}
       {isOwner ? (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800 sm:hidden z-50">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-xl border-t border-zinc-800 sm:hidden z-50">
           <div className="flex items-center gap-3">
             <div className="flex-1">
               <div className="flex items-center justify-between text-xs mb-1.5">
-                <span className="text-default-500">Progress</span>
-                <span className={`font-bold ${completion.percent === 100 ? 'text-emerald-600' : 'text-blue-600'}`}>
+                <span className="text-app-teritary-invert">Progress</span>
+                <span className={`font-bold tabular-nums ${completion.percent === 100 ? 'text-success' : 'text-foreground'}`}>
                   {completion.percent}%
                 </span>
               </div>
@@ -1301,9 +1270,8 @@ export default function ProjectRequirementsFormPage() {
                 value={completion.percent}
                 size="sm"
                 classNames={{
-                  indicator: completion.percent === 100
-                    ? 'bg-gradient-to-r from-emerald-500 to-green-400'
-                    : 'bg-gradient-to-r from-blue-500 to-cyan-400',
+                  track: 'bg-app-primary',
+                  indicator: completion.percent === 100 ? 'bg-success' : 'bg-primary',
                 }}
               />
             </div>
@@ -1319,8 +1287,8 @@ export default function ProjectRequirementsFormPage() {
           </div>
         </div>
       ) : (
-        <div className="fixed bottom-0 left-0 right-0 p-4 bg-amber-50/95 dark:bg-amber-900/30 backdrop-blur-xl border-t border-amber-200 dark:border-amber-800 sm:hidden z-50">
-          <div className="flex items-center justify-center gap-2 text-sm text-amber-700 dark:text-amber-400">
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/95 backdrop-blur-xl border-t border-warning/40 sm:hidden z-50">
+          <div className="flex items-center justify-center gap-2 text-sm text-warning">
             <Eye size={16} />
             <span>Mode Lihat Saja - Hanya ketua tim yang dapat mengedit</span>
           </div>

@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { getSimakPhotoUrl } from '@/lib/utils';
+import { PageHeader } from '@/components/caret/PageHeader';
 
 interface Project {
   id: string;
@@ -178,55 +179,50 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
     >
       {/* Header */}
       <motion.div variants={itemVariants}>
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg shadow-blue-500/30">
-            <FolderGit2 size={24} />
-          </div>
-          <div>
-            <h1 className="text-xl font-bold">Project Mahasiswa</h1>
-            <p className="text-sm text-default-500">
-              Lihat dan review project capstone mahasiswa
-            </p>
-          </div>
-        </div>
+        <PageHeader
+          label="[01] PROJECT"
+          labelRight="/ DITUGASKAN"
+          title="Project Mahasiswa"
+          description="Lihat dan review project capstone mahasiswa"
+        />
       </motion.div>
 
       {/* Stats Cards */}
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-          <Card className="border border-zinc-200 dark:border-zinc-800">
+          <Card className="border border-zinc-800 bg-card shadow-none">
             <CardBody className="p-4 text-center">
-              <FolderGit2 size={20} className="mx-auto mb-2 text-violet-500" />
-              <p className="text-2xl font-bold">{stats.total}</p>
-              <p className="text-xs text-default-500">Total</p>
+              <FolderGit2 size={20} className="mx-auto mb-2 text-app-secondary-invert" />
+              <p className="text-2xl font-bold tabular-nums">{stats.total}</p>
+              <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Total</p>
             </CardBody>
           </Card>
-          <Card className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-500/10">
+          <Card className="border border-zinc-800 bg-card shadow-none">
             <CardBody className="p-4 text-center">
-              <FileText size={20} className="mx-auto mb-2 text-blue-500" />
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.submitted}</p>
-              <p className="text-xs text-blue-600/70 dark:text-blue-400/70">Menunggu</p>
+              <FileText size={20} className="mx-auto mb-2 text-primary" />
+              <p className="text-2xl font-bold text-primary tabular-nums">{stats.submitted}</p>
+              <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Menunggu</p>
             </CardBody>
           </Card>
-          <Card className="border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-500/10">
+          <Card className="border border-zinc-800 bg-card shadow-none">
             <CardBody className="p-4 text-center">
-              <Clock size={20} className="mx-auto mb-2 text-amber-500" />
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.inReview}</p>
-              <p className="text-xs text-amber-600/70 dark:text-amber-400/70">Direview</p>
+              <Clock size={20} className="mx-auto mb-2 text-warning" />
+              <p className="text-2xl font-bold text-warning tabular-nums">{stats.inReview}</p>
+              <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Direview</p>
             </CardBody>
           </Card>
-          <Card className="border border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-500/10">
+          <Card className="border border-zinc-800 bg-card shadow-none">
             <CardBody className="p-4 text-center">
-              <AlertTriangle size={20} className="mx-auto mb-2 text-orange-500" />
-              <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">{stats.revision}</p>
-              <p className="text-xs text-orange-600/70 dark:text-orange-400/70">Revisi</p>
+              <AlertTriangle size={20} className="mx-auto mb-2 text-warning" />
+              <p className="text-2xl font-bold text-warning tabular-nums">{stats.revision}</p>
+              <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Revisi</p>
             </CardBody>
           </Card>
-          <Card className="border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-500/10">
+          <Card className="border border-zinc-800 bg-card shadow-none">
             <CardBody className="p-4 text-center">
-              <CheckCircle2 size={20} className="mx-auto mb-2 text-emerald-500" />
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{stats.approved}</p>
-              <p className="text-xs text-emerald-600/70 dark:text-emerald-400/70">Disetujui</p>
+              <CheckCircle2 size={20} className="mx-auto mb-2 text-success" />
+              <p className="text-2xl font-bold text-success tabular-nums">{stats.approved}</p>
+              <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Disetujui</p>
             </CardBody>
           </Card>
         </div>
@@ -234,17 +230,17 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
 
       {/* Filters */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-zinc-200 dark:border-zinc-800">
+        <Card className="border border-zinc-800 bg-card shadow-none">
           <CardBody className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
               <Input
                 placeholder="Cari project atau mahasiswa..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                startContent={<Search size={16} className="text-default-400" />}
+                startContent={<Search size={16} className="text-app-teritary-invert" />}
                 variant="bordered"
                 classNames={{
-                  inputWrapper: 'border-default-200',
+                  inputWrapper: 'border-zinc-800',
                 }}
                 className="flex-1"
               />
@@ -253,9 +249,9 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                 selectedKeys={[statusFilter]}
                 onChange={(e) => setStatusFilter(e.target.value)}
                 variant="bordered"
-                startContent={<Filter size={16} className="text-default-400" />}
+                startContent={<Filter size={16} className="text-app-teritary-invert" />}
                 classNames={{
-                  trigger: 'border-default-200 min-w-[180px]',
+                  trigger: 'border-zinc-800 min-w-[180px]',
                 }}
               >
                 <SelectItem key="all">Semua Status</SelectItem>
@@ -273,11 +269,11 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
       {/* Project List */}
       <motion.div variants={itemVariants} className="space-y-3">
         {filteredProjects.length === 0 ? (
-          <Card className="border border-zinc-200 dark:border-zinc-800">
+          <Card className="border border-zinc-800 bg-card shadow-none">
             <CardBody className="p-8 text-center">
-              <FolderGit2 size={48} className="mx-auto mb-4 text-default-300" />
+              <FolderGit2 size={48} className="mx-auto mb-4 text-app-teritary-invert" />
               <p className="font-semibold">Tidak ada project ditemukan</p>
-              <p className="text-sm text-default-500 mt-1">
+              <p className="text-sm text-app-secondary-invert mt-1">
                 {projects.length === 0
                   ? 'Belum ada project yang ditugaskan kepada Anda'
                   : 'Coba ubah filter atau kata kunci pencarian'}
@@ -291,7 +287,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
 
             return (
               <motion.div key={project.id} variants={itemVariants}>
-                <Card className="border border-zinc-200 dark:border-zinc-800 hover:border-primary/50 transition-colors">
+                <Card className="border border-zinc-800 bg-card shadow-none hover:border-primary/50 transition-colors">
                   <CardBody className="p-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       {/* Left - Project Info */}
@@ -317,11 +313,11 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                             </Chip>
                           </div>
                           {project.description && (
-                            <p className="text-sm text-default-500 line-clamp-1 mb-2">
+                            <p className="text-sm text-app-secondary-invert line-clamp-1 mb-2">
                               {project.description}
                             </p>
                           )}
-                          <div className="flex flex-wrap items-center gap-3 text-xs text-default-400">
+                          <div className="flex flex-wrap items-center gap-3 text-xs text-app-teritary-invert">
                             <span className="flex items-center gap-1">
                               <Users size={12} />
                               {project.mahasiswa.name} ({project.mahasiswa.username})
@@ -330,7 +326,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                               <Calendar size={12} />
                               {project.semester} {project.tahunAkademik}
                             </span>
-                            <span className="flex items-center gap-1">
+                            <span className="flex items-center gap-1 tabular-nums">
                               <FileText size={12} />
                               {project._count.documents} dokumen
                             </span>

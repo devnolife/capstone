@@ -24,9 +24,9 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: 'Capstone Project & Skripsi - Prodi Informatika',
+  title: 'Capstone Project - Prodi Informatika',
   description:
-    'Dashboard untuk pengumpulan dan review capstone project mahasiswa Prodi Informatika Universitas Muhammadiyah Makassar',
+    'Platform pengumpulan, review, dan penilaian capstone project mahasiswa Prodi Informatika Universitas Muhammadiyah Makassar',
   icons: {
     icon: '/logo.png',
     apple: '/logo.png',
@@ -39,11 +39,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="id" className="dark" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="/fonts/caret/fonts.css" />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} dark antialiased`}
         suppressHydrationWarning
       >
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-foreground"
+        >
+          Lewati ke konten
+        </a>
         <Providers>{children}</Providers>
       </body>
     </html>

@@ -6,20 +6,6 @@ export const loginSchema = z.object({
   password: z.string().min(6, 'Password minimal 6 karakter'),
 });
 
-// Registration disabled - users are created by admin
-export const registerSchema = z
-  .object({
-    name: z.string().min(2, 'Nama minimal 2 karakter'),
-    username: z.string().min(1, 'NIM/Username wajib diisi'),
-    password: z.string().min(6, 'Password minimal 6 karakter'),
-    confirmPassword: z.string(),
-    role: z.enum(['MAHASISWA', 'DOSEN_PENGUJI', 'ADMIN']),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Password tidak cocok',
-    path: ['confirmPassword'],
-  });
-
 // Project Validations
 export const projectSchema = z.object({
   title: z.string().min(5, 'Judul minimal 5 karakter'),
@@ -98,7 +84,6 @@ export const semesterSchema = z.object({
 
 // Types from validations
 export type LoginInput = z.infer<typeof loginSchema>;
-export type RegisterInput = z.infer<typeof registerSchema>;
 export type ProjectInput = z.infer<typeof projectSchema>;
 export type DocumentUploadInput = z.infer<typeof documentUploadSchema>;
 export type ReviewCommentInput = z.infer<typeof reviewCommentSchema>;

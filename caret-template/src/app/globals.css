@@ -1,0 +1,275 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Keep Tailwind's source scanner away from static assets */
+@source not "../../public";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ------------------------------------------------------------------ */
+/*  Caret.so design tokens (extracted from live site, dark-only theme) */
+/* ------------------------------------------------------------------ */
+@theme inline {
+  --font-sans: Figtree, "Figtree Fallback", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-serif: ppEditorialNew, "ppEditorialNew Fallback", serif;
+  --font-mono: "DM Mono", "DM Mono Fallback", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-satoshi: satoshi, "satoshi Fallback", ui-sans-serif, system-ui, sans-serif;
+
+  /* shadcn token bridge */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Caret app overlay palette (note: "teritary" spelling matches source) */
+  --color-app-primary: var(--app-primary);
+  --color-app-secondary: var(--app-secondary);
+  --color-app-teritary: var(--app-teritary);
+  --color-app-quaternary: var(--app-quaternary);
+  --color-app-quinary: var(--app-quinary);
+  --color-app-primary-invert: var(--app-primary-invert);
+  --color-app-secondary-invert: var(--app-secondary-invert);
+  --color-app-teritary-invert: var(--app-teritary-invert);
+  --color-app-quaternary-invert: var(--app-quaternary-invert);
+  --color-app-quinary-invert: var(--app-quinary-invert);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/*
+ * caret.so renders permanently in dark mode (<body class="dark">).
+ * Values below are the exact .dark block hex fallbacks from the live CSS.
+ */
+:root,
+.dark {
+  --radius: 0.625rem;
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --card-foreground: #fafafa;
+  --popover: #18181b;
+  --popover-foreground: #fafafa;
+  --primary: #e4e4e7;
+  --primary-foreground: #18181b;
+  --secondary: #27272a;
+  --secondary-foreground: #fafafa;
+  --muted: #27272a;
+  --muted-foreground: #9f9fa9;
+  --accent: #27272a;
+  --accent-foreground: #fafafa;
+  --destructive: #ff6568;
+  --border: #ffffff1a;
+  --input: #ffffff26;
+  --ring: #71717b;
+
+  --app-primary-invert: #fafafad9;
+  --app-secondary-invert: #fafafa8c;
+  --app-teritary-invert: #fafafa40;
+  --app-quaternary-invert: #fafafa1a;
+  --app-quinary-invert: #fafafa80;
+  --app-primary: #fafafa1a;
+  --app-secondary: #fafafa14;
+  --app-teritary: #fafafa0d;
+  --app-quaternary: #fafafa08;
+  --app-quinary: #fafafa04;
+}
+
+html {
+  background-color: #09090b;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Keyframes (verbatim from caret.so stylesheets)                     */
+/* ------------------------------------------------------------------ */
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+  100% {
+    transform: translateX(calc(-100% - var(--gap)));
+  }
+}
+@keyframes marquee-vertical {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(calc(-100% - var(--gap)));
+  }
+}
+@keyframes audioBar1 {
+  0%,
+  100% {
+    height: 4px;
+  }
+  20% {
+    height: 9px;
+  }
+  40% {
+    height: 10px;
+  }
+  60% {
+    height: 6px;
+  }
+  80% {
+    height: 8px;
+  }
+}
+@keyframes audioBar2 {
+  0%,
+  100% {
+    height: 12px;
+  }
+  25% {
+    height: 14px;
+  }
+  50% {
+    height: 16px;
+  }
+  75% {
+    height: 14px;
+  }
+}
+@keyframes audioBar3 {
+  0%,
+  100% {
+    height: 6px;
+  }
+  30% {
+    height: 8px;
+  }
+  60% {
+    height: 3px;
+  }
+  90% {
+    height: 8px;
+  }
+}
+@keyframes thinking-gradient {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+@keyframes shimmer {
+  0% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: -50% center;
+  }
+}
+@keyframes caret-blink {
+  0%,
+  70%,
+  100% {
+    opacity: 1;
+  }
+  20%,
+  50% {
+    opacity: 0;
+  }
+}
+/* Orbit ring ripple (LearnFromPastCard) — measured on live site:
+   scale 1.000 → 1.010, period 2s, phase travels outward across rings */
+@keyframes orbit-ripple {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Animation utilities                                                */
+/* ------------------------------------------------------------------ */
+.animate-marquee {
+  animation: marquee var(--duration, 40s) infinite linear;
+}
+.animate-marquee-vertical {
+  animation: marquee-vertical var(--duration, 40s) linear infinite;
+}
+.animate-thinking-gradient {
+  background-image: linear-gradient(
+    to right,
+    var(--color-zinc-200, #e4e4e7),
+    var(--color-zinc-400, #9f9fa9),
+    var(--color-zinc-200, #e4e4e7)
+  );
+  color: #0000;
+  background-size: 230% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: 2s linear infinite thinking-gradient;
+}
+.animate-caret-blink {
+  animation: caret-blink 1.25s ease-out infinite;
+}
+.animate-orbit-ripple {
+  animation: orbit-ripple 2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-vertical,
+  .animate-thinking-gradient,
+  .animate-caret-blink,
+  .animate-orbit-ripple {
+    animation: none;
+  }
+}
+
+/* Hide scrollbars on horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Font utilities (match caret.so custom utilities)                   */
+/* ------------------------------------------------------------------ */
+@utility font-display {
+  font-family: "Google Sans Flex", ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "ss01";
+  font-variation-settings: "wdth" 96;
+}
+@utility font-sans-alt {
+  font-family: Inter, "Inter Fallback", ui-sans-serif, system-ui, sans-serif;
+}
