@@ -186,7 +186,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   // Show skeleton while mounting to prevent hydration mismatch
   if (!mounted) {
     return (
-      <header className="h-16 flex items-center justify-between px-4 md:px-6">
+      <header className="h-16 flex items-center justify-between px-4 md:px-6 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-snow)] dark:bg-zinc-950">
         <div className="flex items-center gap-3">
           <Skeleton className="w-10 h-10 rounded-lg md:hidden" />
           <Skeleton className="w-24 h-6 rounded-lg md:hidden" />
@@ -205,7 +205,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="h-16 flex items-center justify-between px-4 md:px-6">
+    <header className="h-16 flex items-center justify-between px-4 md:px-6 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-snow)] dark:bg-zinc-950">
       {/* Left Side */}
       <div className="flex items-center gap-3">
         {/* Mobile Menu Button */}
@@ -220,10 +220,10 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
         {/* Mobile Logo */}
         <Link href={`${basePath}/dashboard`} className="flex items-center gap-2 md:hidden">
-          <div className="p-1.5 rounded-lg bg-primary">
-            <GitBranch className="text-white" size={16} />
+          <div className="p-1.5 rounded-xl bg-[var(--color-obsidian)] dark:bg-white">
+            <GitBranch className="text-white dark:text-zinc-900" size={16} />
           </div>
-          <span className="font-semibold text-sm text-default-900">
+          <span className="font-sans-display font-bold tracking-tight text-sm text-[var(--color-obsidian)] dark:text-white">
             Capstone
           </span>
         </Link>
@@ -231,7 +231,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
         {/* Breadcrumbs - Desktop */}
         <div className="hidden md:flex items-center min-w-0">
           {title ? (
-            <h1 className="text-lg font-semibold text-default-900 truncate">{title}</h1>
+            <h1 className="font-sans-display text-lg font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white truncate">{title}</h1>
           ) : (
             <Breadcrumbs />
           )}
@@ -244,7 +244,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           ref={searchInputRef}
           classNames={{
             base: 'w-full',
-            inputWrapper: 'bg-default-100/70 hover:bg-default-100 border-transparent shadow-sm',
+            inputWrapper: 'bg-[var(--color-fog)] dark:bg-zinc-800/60 hover:bg-[var(--color-pebble)] dark:hover:bg-zinc-800 border-transparent shadow-none',
           }}
           placeholder="Cari project, mahasiswa, NIM..."
           size="sm"

@@ -56,7 +56,7 @@ export function MobileBottomNav() {
         : mahasiswaNavItems;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-content1/95 backdrop-blur-lg border-t border-divider safe-area-inset-bottom">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-[var(--color-snow)]/95 dark:bg-zinc-950/95 backdrop-blur-lg border-t border-[var(--color-pebble)] dark:border-[var(--color-graphite)] safe-area-inset-bottom">
       <div className="flex items-center justify-around h-16 px-2">
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -80,13 +80,13 @@ export function MobileBottomNav() {
               className={cn(
                 'flex flex-col items-center justify-center w-full h-full relative',
                 'transition-colors duration-200',
-                isActive ? 'text-primary' : 'text-default-500',
+                isActive ? 'text-[var(--color-obsidian)] dark:text-white' : 'text-[var(--color-steel)]',
               )}
             >
               {isActive && (
                 <motion.div
                   layoutId="bottomNavIndicator"
-                  className="absolute -top-0.5 w-8 h-1 bg-primary rounded-full"
+                  className="absolute -top-0.5 w-8 h-1 bg-[var(--color-ember)] rounded-full"
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 />
               )}
@@ -100,7 +100,7 @@ export function MobileBottomNav() {
               <span
                 className={cn(
                   'text-[10px] mt-1 font-medium',
-                  isActive ? 'text-primary' : 'text-default-500',
+                  isActive ? 'text-[var(--color-obsidian)] dark:text-white' : 'text-[var(--color-steel)]',
                 )}
               >
                 {item.title}

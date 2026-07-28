@@ -86,6 +86,9 @@ export function AdminDashboardContent({
   recentUsers,
   recentProjects,
 }: AdminDashboardProps) {
+  const iconContainerClass =
+    'border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40';
+
   const statItems: StatItem[] = [
     {
       label: 'Total User',
@@ -93,7 +96,7 @@ export function AdminDashboardContent({
       hint: `${stats.totalMahasiswa} mahasiswa · ${stats.totalDosen} dosen`,
       icon: Users,
       href: '/admin/users',
-      iconClass: 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300',
+      iconClass: `${iconContainerClass} text-[var(--color-ember)]`,
     },
     {
       label: 'Total Project',
@@ -101,21 +104,21 @@ export function AdminDashboardContent({
       hint: `${stats.submittedProjects} sudah submit`,
       icon: FolderGit2,
       href: '/admin/projects',
-      iconClass: 'bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300',
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
     },
     {
       label: 'Mahasiswa',
       value: stats.totalMahasiswa,
       icon: GraduationCap,
       href: '/admin/users?role=MAHASISWA',
-      iconClass: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300',
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
     },
     {
       label: 'Review Selesai',
       value: stats.completedReviews,
       icon: ClipboardCheck,
       href: '/admin/projects',
-      iconClass: 'bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300',
+      iconClass: `${iconContainerClass} text-emerald-600 dark:text-emerald-400`,
     },
   ];
 
@@ -125,28 +128,28 @@ export function AdminDashboardContent({
       description: 'Daftarkan mahasiswa, dosen, atau admin baru',
       href: '/admin/users?action=add',
       icon: UserPlus,
-      iconClass: 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300',
+      iconClass: `${iconContainerClass} text-[var(--color-ember)]`,
     },
     {
       label: 'Penugasan Dosen',
       description: 'Assign dosen penguji ke project',
       href: '/admin/assignments',
       icon: UserCog,
-      iconClass: 'bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300',
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
     },
     {
       label: 'Jadwal Presentasi',
       description: 'Atur jadwal sidang & presentasi',
       href: '/admin/presentations',
       icon: CalendarCheck,
-      iconClass: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300',
+      iconClass: `${iconContainerClass} text-amber-600 dark:text-amber-400`,
     },
     {
       label: 'Rubrik Penilaian',
       description: 'Kelola rubrik penilaian',
       href: '/admin/rubrik',
       icon: BookOpen,
-      iconClass: 'bg-amber-100 text-amber-600 dark:bg-amber-900/40 dark:text-amber-300',
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
     },
   ];
 
@@ -155,8 +158,13 @@ export function AdminDashboardContent({
       {/* Page Header */}
       <header className="flex items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-default-900">Dashboard</h1>
-          <p className="text-sm text-default-500 mt-0.5">
+          <p className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">
+            Panel Admin
+          </p>
+          <h1 className="font-sans-display text-2xl font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">
+            Dashboard
+          </h1>
+          <p className="text-sm text-[var(--color-steel)] mt-0.5">
             Ringkasan aktivitas sistem capstone
           </p>
         </div>
@@ -170,23 +178,23 @@ export function AdminDashboardContent({
             <Link
               key={s.label}
               href={s.href}
-              className="group block rounded-xl border border-divider/60 bg-content1 p-4 hover:border-default-300 hover:bg-content2 transition-colors"
+              className="group block bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl p-4 hover:shadow-xl transition-all"
             >
               <div className="flex items-start justify-between">
-                <div className={`p-2 rounded-lg ${s.iconClass}`}>
+                <div className={`p-2.5 rounded-2xl ${s.iconClass}`}>
                   <Icon size={18} />
                 </div>
                 <ArrowUpRight
                   size={14}
-                  className="text-default-300 group-hover:text-default-500 transition-colors"
+                  className="text-[var(--color-steel)] opacity-50 group-hover:text-[var(--color-ember)] group-hover:opacity-100 transition-colors"
                 />
               </div>
-              <p className="text-2xl font-semibold text-default-900 mt-3 tabular-nums">
+              <p className="font-sans-display text-2xl font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white mt-3 tabular-nums group-hover:text-[var(--color-ember)] transition-colors">
                 {s.value}
               </p>
-              <p className="text-xs text-default-600 mt-0.5">{s.label}</p>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)] mt-0.5">{s.label}</p>
               {s.hint && (
-                <p className="text-[11px] text-default-400 mt-1 truncate">{s.hint}</p>
+                <p className="text-[11px] text-[var(--color-steel)] mt-1 truncate">{s.hint}</p>
               )}
             </Link>
           );
@@ -196,7 +204,7 @@ export function AdminDashboardContent({
       {/* Quick Actions */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-default-700 uppercase tracking-wide">
+          <h2 className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">
             Aksi Cepat
           </h2>
         </div>
@@ -207,22 +215,22 @@ export function AdminDashboardContent({
               <Link
                 key={a.label}
                 href={a.href}
-                className="group flex items-start gap-3 rounded-xl border border-divider/60 bg-content1 p-3.5 hover:border-default-300 hover:bg-content2 transition-colors"
+                className="group flex items-start gap-3 bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl p-3.5 hover:shadow-xl transition-all"
               >
-                <div className={`p-2 rounded-lg ${a.iconClass} shrink-0`}>
+                <div className={`p-2.5 rounded-2xl ${a.iconClass} shrink-0`}>
                   <Icon size={16} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-default-900 leading-tight">
+                  <p className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white leading-tight">
                     {a.label}
                   </p>
-                  <p className="text-xs text-default-500 mt-0.5 line-clamp-2">
+                  <p className="text-xs text-[var(--color-steel)] mt-0.5 line-clamp-2">
                     {a.description}
                   </p>
                 </div>
                 <ChevronRight
                   size={14}
-                  className="text-default-300 group-hover:text-default-500 transition-colors mt-1 shrink-0"
+                  className="text-[var(--color-steel)] opacity-50 group-hover:text-[var(--color-ember)] group-hover:opacity-100 transition-colors mt-1 shrink-0"
                 />
               </Link>
             );
@@ -232,35 +240,37 @@ export function AdminDashboardContent({
 
       {/* Recent activity - 2 columns */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card shadow="none" className="border border-divider/60">
+        <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
           <CardHeader className="pb-2 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-default-900">User Terbaru</h3>
-              <p className="text-xs text-default-500">5 pendaftar terakhir</p>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Registrasi</p>
+              <h3 className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">User Terbaru</h3>
+              <p className="text-xs text-[var(--color-steel)]">5 pendaftar terakhir</p>
             </div>
             <Button
               as={Link}
               href="/admin/users"
               size="sm"
               variant="light"
+              className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] hover:text-[var(--color-ember)]"
               endContent={<ChevronRight size={14} />}
             >
               Semua
             </Button>
           </CardHeader>
-          <Divider />
+          <Divider className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
           <CardBody className="p-0">
             {recentUsers.length === 0 ? (
-              <p className="text-sm text-default-500 text-center py-8">
+              <p className="text-sm text-[var(--color-steel)] text-center py-8">
                 Belum ada user terdaftar
               </p>
             ) : (
-              <ul className="divide-y divide-divider/60">
+              <ul className="divide-y divide-[var(--color-pebble)] dark:divide-[var(--color-graphite)]">
                 {recentUsers.map((u) => (
                   <li key={u.id}>
                     <Link
                       href={`/admin/users?id=${u.id}`}
-                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-content2 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--color-mist)] dark:hover:bg-zinc-900/50 transition-colors"
                     >
                       <Avatar
                         name={u.name}
@@ -269,29 +279,22 @@ export function AdminDashboardContent({
                         className="shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-default-900 truncate">
+                        <p className="text-sm font-semibold text-[var(--color-obsidian)] dark:text-white truncate">
                           {u.name}
                         </p>
-                        <p className="text-xs text-default-500 truncate">
+                        <p className="text-xs text-[var(--color-steel)] truncate">
                           {u.username}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <Chip
                           size="sm"
-                          variant="flat"
-                          color={
-                            u.role === 'ADMIN'
-                              ? 'danger'
-                              : u.role === 'DOSEN_PENGUJI'
-                                ? 'secondary'
-                                : 'primary'
-                          }
-                          className="h-5 text-[10px]"
+                          variant="bordered"
+                          className="h-5 rounded-full border-current bg-transparent font-mono-display text-[10px] uppercase tracking-wider font-bold text-[var(--color-steel)]"
                         >
                           {getRoleLabel(u.role)}
                         </Chip>
-                        <span className="text-[10px] text-default-400 hidden sm:inline">
+                        <span className="text-[10px] text-[var(--color-steel)] hidden sm:inline">
                           {formatDate(u.createdAt)}
                         </span>
                       </div>
@@ -303,44 +306,46 @@ export function AdminDashboardContent({
           </CardBody>
         </Card>
 
-        <Card shadow="none" className="border border-divider/60">
+        <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
           <CardHeader className="pb-2 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-default-900">Project Terbaru</h3>
-              <p className="text-xs text-default-500">5 project terakhir dibuat</p>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Project</p>
+              <h3 className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">Project Terbaru</h3>
+              <p className="text-xs text-[var(--color-steel)]">5 project terakhir dibuat</p>
             </div>
             <Button
               as={Link}
               href="/admin/projects"
               size="sm"
               variant="light"
+              className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] hover:text-[var(--color-ember)]"
               endContent={<ChevronRight size={14} />}
             >
               Semua
             </Button>
           </CardHeader>
-          <Divider />
+          <Divider className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
           <CardBody className="p-0">
             {recentProjects.length === 0 ? (
-              <p className="text-sm text-default-500 text-center py-8">
+              <p className="text-sm text-[var(--color-steel)] text-center py-8">
                 Belum ada project
               </p>
             ) : (
-              <ul className="divide-y divide-divider/60">
+              <ul className="divide-y divide-[var(--color-pebble)] dark:divide-[var(--color-graphite)]">
                 {recentProjects.map((p) => (
                   <li key={p.id}>
                     <Link
                       href={`/admin/projects?id=${p.id}`}
-                      className="flex items-start gap-3 px-4 py-2.5 hover:bg-content2 transition-colors"
+                      className="flex items-start gap-3 px-4 py-2.5 hover:bg-[var(--color-mist)] dark:hover:bg-zinc-900/50 transition-colors"
                     >
-                      <div className="p-1.5 rounded-md bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300 shrink-0 mt-0.5">
-                        <FolderGit2 size={14} />
+                      <div className="p-2 rounded-2xl border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40 shrink-0 mt-0.5">
+                        <FolderGit2 size={14} className="text-[var(--color-ember)]" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-default-900 line-clamp-1">
+                        <p className="text-sm font-semibold text-[var(--color-obsidian)] dark:text-white line-clamp-1">
                           {p.title}
                         </p>
-                        <p className="text-xs text-default-500 truncate">
+                        <p className="text-xs text-[var(--color-steel)] truncate">
                           {p.mahasiswa.name} · {p.semester}
                         </p>
                       </div>
