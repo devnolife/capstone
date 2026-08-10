@@ -193,8 +193,8 @@ export function ProfilePageContent({ basePath = '' }: ProfilePageProps) {
 
   // Get avatar source
   const getAvatarSrc = () => {
-    if (profile?.profilePhoto) return profile.profilePhoto;
-    if (profile?.image) return profile.image;
+    if (profile?.profilePhoto) return getSimakPhotoUrl(profile.profilePhoto);
+    if (profile?.image) return getSimakPhotoUrl(profile.image);
     if (profile?.username) return getSimakPhotoUrl(profile.username);
     return undefined;
   };
@@ -242,7 +242,7 @@ export function ProfilePageContent({ basePath = '' }: ProfilePageProps) {
                 {profile.prodi && (
                   <p className="text-default-400 text-xs mb-4">{profile.prodi}</p>
                 )}
-                
+
                 <div className="flex flex-wrap gap-2 justify-center mb-4">
                   <Chip
                     color={
@@ -344,8 +344,8 @@ export function ProfilePageContent({ basePath = '' }: ProfilePageProps) {
 
         {/* Right Column - Tabs Content */}
         <div className="xl:col-span-2">
-          <Tabs 
-            aria-label="Profile sections" 
+          <Tabs
+            aria-label="Profile sections"
             variant="underlined"
             classNames={{
               tabList: "gap-6 w-full relative rounded-none p-0 border-b border-divider",
@@ -594,7 +594,7 @@ export function ProfilePageContent({ basePath = '' }: ProfilePageProps) {
 
                       <div className="flex items-center gap-4 p-4 bg-default-50 dark:bg-default-100/10 rounded-xl">
                         <Avatar
-                          src={profile.image || undefined}
+                          src={getSimakPhotoUrl(profile.image)}
                           name={profile.githubUsername}
                           size="lg"
                         />
@@ -614,7 +614,7 @@ export function ProfilePageContent({ basePath = '' }: ProfilePageProps) {
 
                       <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
                         <p className="text-sm text-blue-700 dark:text-blue-300">
-                          <strong>Tip:</strong> Dengan GitHub terhubung, Anda dapat dengan mudah mengimpor repositori 
+                          <strong>Tip:</strong> Dengan GitHub terhubung, Anda dapat dengan mudah mengimpor repositori
                           ke project capstone Anda dan melakukan sinkronisasi kode secara otomatis.
                         </p>
                       </div>
@@ -688,7 +688,7 @@ export function ProfilePageContent({ basePath = '' }: ProfilePageProps) {
 
                   {/* Activity Timeline Placeholder */}
                   <Divider className="my-6" />
-                  
+
                   <div className="text-center py-8">
                     <div className="w-16 h-16 rounded-full bg-default-100 flex items-center justify-center mx-auto mb-4">
                       <Activity size={28} className="text-default-400" />

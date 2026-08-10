@@ -340,6 +340,7 @@ export default function PresentationsPage() {
 
   const scheduledPresentations = presentations.filter(p => p.presentationStatus === 'scheduled');
   const completedPresentations = presentations.filter(p => p.presentationStatus === 'completed');
+  const cancelledPresentations = presentations.filter(p => p.presentationStatus === 'cancelled');
 
   // ---- Search + date filter helpers ----
   const matchesSearch = (text: string) => {
@@ -375,6 +376,11 @@ export default function PresentationsPage() {
     const text = `${p.project.title} ${p.project.mahasiswa.name} ${p.location ?? ''}`;
     return matchesSearch(text) && matchesDate(p.scheduledDate);
   }), [completedPresentations, searchQuery, dateFilter]);
+
+  const filteredCancelled = useMemo(() => cancelledPresentations.filter(p => {
+    const text = `${p.project.title} ${p.project.mahasiswa.name} ${p.location ?? ''}`;
+    return matchesSearch(text) && matchesDate(p.scheduledDate);
+  }), [cancelledPresentations, searchQuery, dateFilter]);
 
   if (isLoading) {
     return (
@@ -761,6 +767,81 @@ export default function PresentationsPage() {
                                 </div>
                               </>
                             )}
+                          </div>
+                        </CardBody>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </Tab>
+
+              <Tab
+                key="cancelled"
+                title={
+                  <div className="flex items-center gap-2">
+                    <XCircle size={16} />
+                    <span>Dibatalkan</span>
+                    {cancelledPresentations.length > 0 && (
+                      <Chip size="sm" color="danger" variant="flat">
+                        {cancelledPresentations.length}
+                      </Chip>
+                    )}
+                  </div>
+                }
+              >
+                <div className="p-4 space-y-4">
+                  {filteredCancelled.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
+                        <XCircle size={32} className="text-default-400" />
+                      </div>
+                      <p className="text-default-500">
+                        {cancelledPresentations.length === 0
+                          ? 'Tidak ada presentasi yang dibatalkan'
+                          : 'Tidak ada hasil yang cocok dengan pencarian'}
+                      </p>
+                    </div>
+                  ) : (
+                    filteredCancelled.map((presentation) => (
+                      <Card key={presentation.id} className="border border-default-200">
+                        <CardBody className="p-4">
+                          <div className="flex flex-col gap-4">
+                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+                              <div className="flex items-start gap-3">
+                                <div className="p-2.5 rounded-lg bg-danger/10 text-danger">
+                                  <XCircle size={20} />
+                                </div>
+                                <div>
+                                  <h3 className="font-semibold">{presentation.project.title}</h3>
+                                  <p className="text-sm text-default-500">
+                                    {presentation.project.mahasiswa.name}
+                                  </p>
+                                  <p className="text-xs text-default-400 mt-1">
+                                    Jadwal sebelumnya: {formatDate(presentation.scheduledDate)} {presentation.startTime}
+                                  </p>
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  size="sm"
+                                  color="primary"
+                                  variant="flat"
+                                  startContent={<CalendarClock size={16} />}
+                                  onPress={() => openEditModal(presentation)}
+                                >
+                                  Jadwalkan Ulang
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="flat"
+                                  color="danger"
+                                  isIconOnly
+                                  onPress={() => handleDelete(presentation.id)}
+                                >
+                                  <Trash2 size={16} />
+                                </Button>
+                              </div>
+                            </div>
                           </div>
                         </CardBody>
                       </Card>

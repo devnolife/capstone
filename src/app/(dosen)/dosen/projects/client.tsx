@@ -54,6 +54,7 @@ interface Project {
   };
   hasMyReview: boolean;
   myReviewStatus: string | null;
+  isAssigned: boolean;
 }
 
 interface DosenProjectsClientProps {
@@ -275,7 +276,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
               <p className="font-semibold">Tidak ada project ditemukan</p>
               <p className="text-sm text-app-secondary-invert mt-1">
                 {projects.length === 0
-                  ? 'Belum ada project yang ditugaskan kepada Anda'
+                  ? 'Belum ada project yang disubmit mahasiswa'
                   : 'Coba ubah filter atau kata kunci pencarian'}
               </p>
             </CardBody>
@@ -311,6 +312,11 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                             >
                               {getStatusLabel(project.status)}
                             </Chip>
+                            {project.isAssigned && (
+                              <Chip size="sm" color="secondary" variant="flat">
+                                Ditugaskan
+                              </Chip>
+                            )}
                           </div>
                           {project.description && (
                             <p className="text-sm text-app-secondary-invert line-clamp-1 mb-2">

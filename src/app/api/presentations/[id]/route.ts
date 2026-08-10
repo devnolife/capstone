@@ -128,6 +128,7 @@ export async function PUT(
             id: true,
             title: true,
             mahasiswa: { select: { id: true, name: true } },
+            members: { select: { userId: true } },
           },
         },
       },
@@ -162,6 +163,18 @@ export async function PUT(
           data: { status: "READY_FOR_PRESENTATION" },
         });
       }
+    } else if (
+      !presentationStatus &&
+      existing.presentationStatus === "cancelled" &&
+      (scheduledDate || startTime)
+    ) {
+      // Rescheduling a cancelled presentation revives it
+      updateData.presentationStatus = "scheduled";
+      updateData.completedAt = null;
+      await prisma.project.update({
+        where: { id: existing.project.id },
+        data: { status: "PRESENTATION_SCHEDULED" },
+      });
     }
 
     const presentation = await prisma.presentationSchedule.update({
@@ -177,20 +190,29 @@ export async function PUT(
       },
     });
 
-    // Notify mahasiswa about schedule change
+    // Notify mahasiswa (owner + team members) about schedule change
     if (scheduledDate || startTime || location || presentationStatus) {
-      await prisma.notification.create({
-        data: {
-          userId: existing.project.mahasiswa.id,
-          title: presentationStatus === "cancelled" 
-            ? "Jadwal Presentasi Dibatalkan" 
+      const recipientIds = Array.from(
+        new Set([
+          existing.project.mahasiswa.id,
+          ...existing.project.members
+            .map((m) => m.userId)
+            .filter((uid): uid is string => !!uid),
+        ])
+      );
+
+      await prisma.notification.createMany({
+        data: recipientIds.map((userId) => ({
+          userId,
+          title: presentationStatus === "cancelled"
+            ? "Jadwal Presentasi Dibatalkan"
             : "Jadwal Presentasi Diubah",
           message: presentationStatus === "cancelled"
             ? `Jadwal presentasi untuk project "${existing.project.title}" telah dibatalkan.`
             : `Jadwal presentasi untuk project "${existing.project.title}" telah diubah. Silakan cek detail terbaru.`,
           type: "presentation",
           link: `/mahasiswa/projects/${existing.project.id}`,
-        },
+        })),
       });
     }
 
@@ -237,6 +259,7 @@ export async function DELETE(
             id: true,
             title: true,
             mahasiswa: { select: { id: true } },
+            members: { select: { userId: true } },
           },
         },
       },
@@ -249,6 +272,15 @@ export async function DELETE(
       );
     }
 
+    const recipientIds = Array.from(
+      new Set([
+        existing.project.mahasiswa.id,
+        ...existing.project.members
+          .map((m) => m.userId)
+          .filter((uid): uid is string => !!uid),
+      ])
+    );
+
     // Delete presentation and revert project status
     await prisma.$transaction([
       prisma.presentationSchedule.delete({
@@ -258,14 +290,14 @@ export async function DELETE(
         where: { id: existing.project.id },
         data: { status: "READY_FOR_PRESENTATION" },
       }),
-      prisma.notification.create({
-        data: {
-          userId: existing.project.mahasiswa.id,
+      prisma.notification.createMany({
+        data: recipientIds.map((userId) => ({
+          userId,
           title: "Jadwal Presentasi Dihapus",
           message: `Jadwal presentasi untuk project "${existing.project.title}" telah dihapus. Admin akan menjadwalkan ulang.`,
           type: "presentation",
           link: `/mahasiswa/projects/${existing.project.id}`,
-        },
+        })),
       }),
     ]);
 

@@ -3,12 +3,23 @@ import prisma from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { DosenProjectsClient } from './client';
 
-async function getProjects(userId: string) {
-  return prisma.project.findMany({
+export default async function DosenProjectsPage() {
+  const session = await auth();
+
+  if (!session?.user) {
+    redirect('/login');
+  }
+
+  const userId = session.user.id;
+
+  // Fetch all submitted projects (any status except DRAFT) plus projects
+  // explicitly assigned to this dosen
+  const projects = await prisma.project.findMany({
     where: {
-      assignments: {
-        some: { dosenId: userId },
-      },
+      OR: [
+        { status: { not: 'DRAFT' } },
+        { assignments: { some: { dosenId: userId } } },
+      ],
     },
     include: {
       mahasiswa: {
@@ -24,6 +35,10 @@ async function getProjects(userId: string) {
         where: { reviewerId: userId },
         select: { id: true, status: true },
       },
+      assignments: {
+        where: { dosenId: userId },
+        select: { id: true },
+      },
       _count: {
         select: {
           documents: true,
@@ -33,29 +48,6 @@ async function getProjects(userId: string) {
     },
     orderBy: { updatedAt: 'desc' },
   });
-}
-
-export default async function DosenProjectsPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect('/login');
-  }
-
-  const userId = session.user.id;
-
-  // Fetch all projects assigned to this dosen (fallback kosong bila DB down / sesi fake)
-  let projects: Awaited<ReturnType<typeof getProjects>> = [];
-  if (!userId.startsWith('dev-')) {
-    try {
-      projects = await getProjects(userId);
-    } catch (error) {
-      console.warn(
-        '[dosen/projects] DB tidak tersedia — daftar kosong:',
-        error instanceof Error ? error.message : error,
-      );
-    }
-  }
 
   // Transform data for client
   const projectsData = projects.map((project) => ({
@@ -77,6 +69,7 @@ export default async function DosenProjectsPage() {
     _count: project._count,
     hasMyReview: project.reviews.length > 0,
     myReviewStatus: project.reviews[0]?.status || null,
+    isAssigned: project.assignments.length > 0,
   }));
 
   return <DosenProjectsClient projects={projectsData} />;

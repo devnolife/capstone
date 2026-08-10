@@ -42,6 +42,7 @@ import {
   Calendar,
   Search,
   Info,
+  Rocket,
   Target,
   BookOpen,
   Database,
@@ -73,7 +74,6 @@ import Link from 'next/link';
 import { GitHubRepoSelector } from '@/components/github/repo-selector';
 import TeamMembersNimNew from '@/components/mahasiswa/team-members-nim-new';
 import ConsentFileUpload from '@/components/mahasiswa/consent-file-upload';
-import { PageHeader } from '@/components/caret/PageHeader';
 
 interface Semester {
   id: string;
@@ -104,14 +104,14 @@ interface PendingMember {
 
 // Project categories with icons
 const PROJECT_CATEGORIES = [
-  { key: 'web', label: 'Web Application', icon: Globe },
-  { key: 'mobile', label: 'Mobile App', icon: Smartphone },
-  { key: 'desktop', label: 'Desktop App', icon: Monitor },
-  { key: 'backend', label: 'Backend/API', icon: Server },
-  { key: 'ai-ml', label: 'AI / ML', icon: Brain },
-  { key: 'iot', label: 'IoT', icon: Zap },
-  { key: 'security', label: 'Security', icon: Shield },
-  { key: 'data', label: 'Data Science', icon: Database },
+  { key: 'web', label: 'Web Application', icon: Globe, color: 'from-blue-500 to-blue-600' },
+  { key: 'mobile', label: 'Mobile App', icon: Smartphone, color: 'from-purple-500 to-purple-600' },
+  { key: 'desktop', label: 'Desktop App', icon: Monitor, color: 'from-green-500 to-green-600' },
+  { key: 'backend', label: 'Backend/API', icon: Server, color: 'from-orange-500 to-orange-600' },
+  { key: 'ai-ml', label: 'AI / ML', icon: Brain, color: 'from-pink-500 to-pink-600' },
+  { key: 'iot', label: 'IoT', icon: Zap, color: 'from-yellow-500 to-yellow-600' },
+  { key: 'security', label: 'Security', icon: Shield, color: 'from-red-500 to-red-600' },
+  { key: 'data', label: 'Data Science', icon: Database, color: 'from-cyan-500 to-cyan-600' },
 ];
 
 // Popular technologies grouped
@@ -135,12 +135,12 @@ const SectionHeader = ({ icon: Icon, title, subtitle, action }: {
 }) => (
   <div className="flex items-center justify-between mb-4">
     <div className="flex items-center gap-3">
-      <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
-        <Icon size={16} />
+      <div className="p-2 rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 text-primary">
+        <Icon size={18} />
       </div>
       <div>
         <h3 className="font-semibold text-foreground">{title}</h3>
-        {subtitle && <p className="text-xs text-app-teritary-invert">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-default-400">{subtitle}</p>}
       </div>
     </div>
     {action}
@@ -253,15 +253,20 @@ export default function NewProjectPage() {
     return { fields, filledCount, total: fields.length, percentage };
   }, [formData, selectedTechs, selectedRepo, consentDocument]);
 
-  // Form validation
-  const isFormValid = useMemo(() => {
-    return formData.title.length >= 5 &&
-      formData.description.length >= 20 &&
-      formData.semester &&
-      formData.category &&
-      formData.productionUrl.length > 0 &&
-      !!consentDocument;
+  // Required fields that are still missing (used to explain why submit is disabled)
+  const missingRequiredFields = useMemo(() => {
+    const missing: string[] = [];
+    if (formData.title.length < 5) missing.push('Judul minimal 5 karakter');
+    if (formData.description.length < 20) missing.push('Deskripsi minimal 20 karakter');
+    if (!formData.semester) missing.push('Semester');
+    if (!formData.category) missing.push('Kategori');
+    if (formData.productionUrl.length === 0) missing.push('URL Production');
+    if (!consentDocument) missing.push('Surat Persetujuan');
+    return missing;
   }, [formData, consentDocument]);
+
+  // Form validation
+  const isFormValid = missingRequiredFields.length === 0;
 
   useEffect(() => {
     const fetchSemesters = async () => {
@@ -412,80 +417,105 @@ export default function NewProjectPage() {
   return (
     <div className="max-w-[1400px] mx-auto">
       {/* Page Header */}
-      <div className="mb-6">
-        <PageHeader
-          label="[01] PROJECT"
-          labelRight="/ BARU"
-          title="Buat project baru"
-          description="Lengkapi informasi untuk memulai project capstone."
-          actions={
-            <div className="flex items-center gap-2">
-              <Link
-                href="/mahasiswa/projects"
-                title="Kembali ke daftar project"
-                className="border-input bg-input/30 text-app-secondary-invert hover:bg-input/50 hover:text-foreground flex size-9 items-center justify-center rounded-full border transition-all active:scale-[0.98]"
-              >
-                <ArrowLeft size={16} />
-              </Link>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+        <div className="flex items-center gap-3">
+          <Button
+            as={Link}
+            href="/mahasiswa/projects"
+            variant="light"
+            isIconOnly
+            radius="full"
+            size="sm"
+          >
+            <ArrowLeft size={18} />
+          </Button>
+          <div>
+            <h1 className="text-xl font-bold flex items-center gap-2">
+              <Rocket className="text-primary" size={22} />
+              Buat Project Baru
+            </h1>
+            <p className="text-xs text-default-400">
+              Lengkapi informasi untuk memulai project capstone
+            </p>
+          </div>
+        </div>
 
-              {/* Progress Indicator */}
-              <Tooltip content={`${formCompletion.filledCount}/${formCompletion.total} field terisi`}>
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${formCompletion.percentage === 100
-                  ? 'border-success/40 bg-success/10'
-                  : 'border-border bg-app-quinary'
-                  }`}>
-                  {/* Progress Circle */}
-                  <div className="relative w-7 h-7">
-                    <svg className="w-7 h-7 -rotate-90" viewBox="0 0 28 28">
-                      <circle
-                        cx="14"
-                        cy="14"
-                        r="10"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        className="text-app-primary"
-                      />
-                      <circle
-                        cx="14"
-                        cy="14"
-                        r="10"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        strokeLinecap="round"
-                        strokeDasharray={62.8}
-                        strokeDashoffset={62.8 - (62.8 * formCompletion.percentage) / 100}
-                        className={`transition-all duration-500 ${formCompletion.percentage === 100 ? 'text-success' : 'text-primary'
-                          }`}
-                      />
-                    </svg>
-                  </div>
-                  {/* Percentage Text */}
-                  <span className={`text-xs font-bold min-w-[32px] text-center tabular-nums ${formCompletion.percentage === 100
-                    ? 'text-success'
-                    : 'text-foreground'
-                    }`}>
-                    {formCompletion.percentage}%
-                  </span>
-                </div>
-              </Tooltip>
+        <div className="flex items-center gap-2">
+          {/* Progress Indicator */}
+          <Tooltip content={`${formCompletion.filledCount}/${formCompletion.total} field terisi`}>
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${formCompletion.percentage === 100
+              ? 'bg-emerald-50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30'
+              : 'bg-zinc-50 dark:bg-zinc-800/50 border-zinc-200 dark:border-zinc-700'
+              }`}>
+              {/* Progress Circle */}
+              <div className="relative w-7 h-7">
+                <svg className="w-7 h-7 -rotate-90" viewBox="0 0 28 28">
+                  <circle
+                    cx="14"
+                    cy="14"
+                    r="10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    className="text-zinc-200 dark:text-zinc-700"
+                  />
+                  <circle
+                    cx="14"
+                    cy="14"
+                    r="10"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeDasharray={62.8}
+                    strokeDashoffset={62.8 - (62.8 * formCompletion.percentage) / 100}
+                    className={`transition-all duration-500 ${formCompletion.percentage === 100 ? 'text-emerald-500' : 'text-blue-500'
+                      }`}
+                  />
+                </svg>
+              </div>
+              {/* Percentage Text */}
+              <span className={`text-xs font-bold min-w-[32px] text-center ${formCompletion.percentage === 100
+                ? 'text-emerald-600 dark:text-emerald-400'
+                : 'text-zinc-700 dark:text-zinc-300'
+                }`}>
+                {formCompletion.percentage}%
+              </span>
+            </div>
+          </Tooltip>
 
-              {/* Preview Toggle */}
-              <Tooltip content={showPreview ? 'Sembunyikan Preview' : 'Tampilkan Preview'}>
-                <Button
-                  variant="flat"
-                  size="sm"
-                  isIconOnly
-                  radius="full"
-                  onPress={() => setShowPreview(!showPreview)}
-                  className={`w-10 h-10 ${showPreview ? 'bg-primary/15 text-primary' : 'bg-app-quinary text-app-teritary-invert'}`}
-                >
-                  {showPreview ? <Eye size={18} /> : <EyeOff size={18} />}
-                </Button>
-              </Tooltip>
+          {/* Preview Toggle */}
+          <Tooltip content={showPreview ? 'Sembunyikan Preview' : 'Tampilkan Preview'}>
+            <Button
+              variant="flat"
+              size="sm"
+              isIconOnly
+              radius="full"
+              onPress={() => setShowPreview(!showPreview)}
+              className={`w-10 h-10 ${showPreview ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-500'}`}
+            >
+              {showPreview ? <Eye size={18} /> : <EyeOff size={18} />}
+            </Button>
+          </Tooltip>
 
-              {/* Save Button */}
+          {/* Save Button */}
+          <Tooltip
+            isDisabled={isFormValid}
+            content={
+              <div className="max-w-[220px] py-1">
+                <p className="font-semibold text-xs mb-1 flex items-center gap-1">
+                  <AlertCircle size={13} className="text-warning" />
+                  Lengkapi dulu untuk menyimpan:
+                </p>
+                <ul className="list-disc list-inside text-xs space-y-0.5">
+                  {missingRequiredFields.map((field) => (
+                    <li key={field}>{field}</li>
+                  ))}
+                </ul>
+              </div>
+            }
+          >
+            <span className="inline-block">
               <Button
                 color="primary"
                 size="sm"
@@ -493,13 +523,13 @@ export default function NewProjectPage() {
                 isLoading={isLoading}
                 isDisabled={!isFormValid}
                 onPress={handleSubmit}
-                className="font-semibold px-5 h-10 rounded-full"
+                className="font-semibold px-5 h-10 rounded-full shadow-md shadow-blue-500/20"
               >
                 Simpan
               </Button>
-            </div>
-          }
-        />
+            </span>
+          </Tooltip>
+        </div>
       </div>
 
       {/* Error Alert */}
@@ -509,7 +539,7 @@ export default function NewProjectPage() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mb-4 bg-destructive/10 text-destructive border border-destructive/40 rounded-lg p-3 flex items-center gap-2 text-sm"
+            className="mb-4 bg-danger-50 text-danger border border-danger-100 rounded-lg p-3 flex items-center gap-2 text-sm"
           >
             <AlertCircle size={16} />
             <span className="flex-1">{error}</span>
@@ -526,7 +556,7 @@ export default function NewProjectPage() {
         <div className={`space-y-5 ${showPreview ? 'lg:flex-1 lg:min-w-0' : 'w-full'}`}>
 
           {/* Card 1: Basic Info */}
-          <Card className="border border-border bg-card">
+          <Card className="border border-default-100 shadow-sm">
             <CardBody className="p-5">
               <SectionHeader
                 icon={FileText}
@@ -546,14 +576,14 @@ export default function NewProjectPage() {
                   variant="bordered"
                   classNames={{
                     label: 'text-sm font-medium',
-                    inputWrapper: 'border-input bg-input/30',
+                    inputWrapper: 'border-default-200 hover:border-primary data-[focused=true]:border-primary',
                   }}
-                  startContent={<Sparkles size={16} className="text-app-teritary-invert" />}
+                  startContent={<Sparkles size={16} className="text-default-400" />}
                   endContent={
                     formData.title.length >= 5 && <CheckCircle2 size={16} className="text-success" />
                   }
                   description={
-                    <span className={formData.title.length < 5 ? 'text-warning tabular-nums' : 'text-success tabular-nums'}>
+                    <span className={formData.title.length < 5 ? 'text-warning-500' : 'text-success-500'}>
                       {formData.title.length}/100 karakter (min. 5)
                     </span>
                   }
@@ -572,10 +602,10 @@ export default function NewProjectPage() {
                   variant="bordered"
                   classNames={{
                     label: 'text-sm font-medium',
-                    inputWrapper: 'border-input bg-input/30',
+                    inputWrapper: 'border-default-200 hover:border-primary data-[focused=true]:border-primary',
                   }}
                   description={
-                    <span className={formData.description.length < 20 ? 'text-warning tabular-nums' : 'text-success tabular-nums'}>
+                    <span className={formData.description.length < 20 ? 'text-warning-500' : 'text-success-500'}>
                       {formData.description.length}/1000 karakter (min. 20)
                     </span>
                   }
@@ -600,9 +630,9 @@ export default function NewProjectPage() {
                       }}
                       variant="bordered"
                       classNames={{
-                        trigger: 'border-input bg-input/30 h-10',
+                        trigger: 'border-default-200 hover:border-primary data-[open=true]:border-primary h-10',
                       }}
-                      startContent={<Calendar size={14} className="text-app-teritary-invert" />}
+                      startContent={<Calendar size={14} className="text-default-400" />}
                       aria-label="Pilih Semester"
                     >
                       {semesterOptions.map((sem) => (
@@ -621,9 +651,9 @@ export default function NewProjectPage() {
                       isReadOnly
                       variant="bordered"
                       classNames={{
-                        inputWrapper: 'border-input bg-input/20 h-10',
+                        inputWrapper: 'bg-default-50 border-default-200 h-10',
                       }}
-                      startContent={<BookOpen size={14} className="text-app-teritary-invert" />}
+                      startContent={<BookOpen size={14} className="text-default-400" />}
                       aria-label="Tahun Akademik"
                     />
                   </div>
@@ -640,18 +670,18 @@ export default function NewProjectPage() {
                   variant="bordered"
                   classNames={{
                     label: 'text-sm font-medium',
-                    inputWrapper: 'border-input bg-input/30',
+                    inputWrapper: 'border-default-200 hover:border-primary data-[focused=true]:border-primary',
                   }}
-                  startContent={<Target size={14} className="text-app-teritary-invert mt-2" />}
+                  startContent={<Target size={14} className="text-default-400 mt-2" />}
                 />
 
                 {/* Visibility Toggle */}
-                <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-app-quinary">
+                <div className="flex items-center justify-between p-3 bg-default-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     {isPublic ? <Globe size={16} className="text-primary" /> : <Shield size={16} className="text-warning" />}
                     <div>
                       <p className="text-sm font-medium">{isPublic ? 'Project Publik' : 'Project Privat'}</p>
-                      <p className="text-xs text-app-teritary-invert">
+                      <p className="text-xs text-default-400">
                         {isPublic ? 'Dapat dilihat semua user' : 'Hanya Anda dan dosen'}
                       </p>
                     </div>
@@ -667,7 +697,7 @@ export default function NewProjectPage() {
           </Card>
 
           {/* Card 2: Category & Tech */}
-          <Card className="border border-border bg-card">
+          <Card className="border border-default-100 shadow-sm">
             <CardBody className="p-5">
               <SectionHeader
                 icon={Tag}
@@ -700,8 +730,8 @@ export default function NewProjectPage() {
                             className={`
                               relative p-2.5 rounded-xl transition-all duration-200 flex flex-col items-center gap-1
                               ${isSelected
-                                ? 'bg-primary/10 ring-2 ring-primary'
-                                : 'bg-app-quinary hover:bg-app-quaternary border border-border'
+                                ? 'bg-primary/10 ring-2 ring-primary ring-offset-1'
+                                : 'bg-default-50 hover:bg-default-100 border border-default-200'
                               }
                             `}
                           >
@@ -711,10 +741,10 @@ export default function NewProjectPage() {
                                 animate={{ scale: 1 }}
                                 className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full flex items-center justify-center shadow-sm"
                               >
-                                <Check size={10} className="text-primary-foreground" />
+                                <Check size={10} className="text-white" />
                               </motion.div>
                             )}
-                            <div className="bg-app-primary text-foreground rounded-lg p-1.5">
+                            <div className={`p-1.5 rounded-lg bg-gradient-to-br ${cat.color} text-white`}>
                               <Icon size={16} />
                             </div>
                             <span className="text-[10px] font-medium text-center leading-tight truncate w-full">
@@ -740,7 +770,7 @@ export default function NewProjectPage() {
                     placeholder="Cari teknologi..."
                     size="sm"
                     variant="bordered"
-                    startContent={<Search size={14} className="text-app-teritary-invert" />}
+                    startContent={<Search size={14} className="text-default-400" />}
                     inputValue={techSearch}
                     onInputChange={setTechSearch}
                     onSelectionChange={(key) => {
@@ -759,9 +789,9 @@ export default function NewProjectPage() {
                   </Autocomplete>
 
                   {/* Selected Techs */}
-                  <div className="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 bg-app-quinary rounded-lg border border-dashed border-border">
+                  <div className="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 bg-default-50 rounded-lg border border-dashed border-default-200">
                     {selectedTechs.length === 0 ? (
-                      <div className="flex items-center gap-1.5 text-app-teritary-invert text-xs">
+                      <div className="flex items-center gap-1.5 text-default-400 text-xs">
                         <Info size={12} />
                         Pilih minimal 1 teknologi
                       </div>
@@ -797,7 +827,7 @@ export default function NewProjectPage() {
                         size="sm"
                         variant="bordered"
                         radius="full"
-                        className="h-6 text-[10px] px-2 border-border"
+                        className="h-6 text-[10px] px-2 border-default-200"
                         isDisabled={selectedTechs.includes(tech)}
                         onPress={() => handleAddTech(tech)}
                         startContent={<Plus size={10} />}
@@ -814,7 +844,7 @@ export default function NewProjectPage() {
           {/* Card 3: GitHub & Team - Side by Side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* GitHub Repository */}
-            <Card className="border border-border bg-card">
+            <Card className="border border-default-100 shadow-sm">
               <CardBody className="p-5">
                 <SectionHeader
                   icon={Github}
@@ -836,15 +866,15 @@ export default function NewProjectPage() {
                 {githubStatus.isLoading ? (
                   <div className="flex items-center justify-center p-6">
                     <Spinner size="sm" />
-                    <span className="ml-2 text-sm text-app-teritary-invert">Memeriksa status GitHub...</span>
+                    <span className="ml-2 text-sm text-default-400">Memeriksa status GitHub...</span>
                   </div>
                 ) : !hasGitHubConnected ? (
-                  <div className="p-3 bg-warning/10 rounded-lg border border-warning/40">
+                  <div className="p-3 bg-warning-50 rounded-lg border border-warning-100">
                     <div className="flex items-start gap-2">
                       <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-sm font-medium text-warning">GitHub Belum Terhubung</p>
-                        <p className="text-xs text-warning/80 mb-2">Hubungkan akun GitHub Anda di pengaturan untuk memilih repository</p>
+                        <p className="text-sm font-medium text-warning-700">GitHub Belum Terhubung</p>
+                        <p className="text-xs text-warning-600 mb-2">Hubungkan akun GitHub Anda di pengaturan untuk memilih repository</p>
                         <Button
                           as={Link}
                           href="/mahasiswa/settings"
@@ -859,15 +889,15 @@ export default function NewProjectPage() {
                     </div>
                   </div>
                 ) : selectedRepo ? (
-                  <div className="p-3 bg-success/10 rounded-lg border border-success/40">
+                  <div className="p-3 bg-success-50 rounded-lg border border-success-100">
                     <div className="flex items-start gap-2">
-                      <div className="p-1.5 bg-success/15 rounded-md">
-                        <FolderGit2 size={16} className="text-success" />
+                      <div className="p-1.5 bg-success-100 rounded-md">
+                        <FolderGit2 size={16} className="text-success-600" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium text-sm truncate">{selectedRepo.name}</p>
-                        <p className="text-xs text-app-secondary-invert truncate">{selectedRepo.full_name}</p>
-                        <div className="flex items-center gap-2 mt-1 text-xs text-app-teritary-invert">
+                        <p className="text-xs text-default-500 truncate">{selectedRepo.full_name}</p>
+                        <div className="flex items-center gap-2 mt-1 text-xs text-default-400">
                           {selectedRepo.language && (
                             <span className="flex items-center gap-1">
                               <span className="w-2 h-2 rounded-full bg-primary" />
@@ -896,19 +926,19 @@ export default function NewProjectPage() {
                   <div className="space-y-3">
                     <Button
                       variant="bordered"
-                      className="w-full h-14 border-dashed border-border"
+                      className="w-full h-14 border-dashed border-default-300"
                       startContent={<FolderGit2 size={18} />}
                       onPress={() => setIsRepoSelectorOpen(true)}
                     >
                       <div className="text-left">
                         <p className="font-medium text-sm">Pilih Repository</p>
-                        <p className="text-xs text-app-teritary-invert">dari akun GitHub Anda</p>
+                        <p className="text-xs text-default-400">dari akun GitHub Anda</p>
                       </div>
                     </Button>
 
                     <div className="relative">
                       <Divider />
-                      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-app-teritary-invert">
+                      <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background px-2 text-xs text-default-300">
                         atau
                       </span>
                     </div>
@@ -919,7 +949,7 @@ export default function NewProjectPage() {
                       placeholder="https://github.com/user/repo"
                       value={formData.githubRepoUrl}
                       onChange={(e) => setFormData({ ...formData, githubRepoUrl: e.target.value })}
-                      startContent={<LinkIcon size={12} className="text-app-teritary-invert" />}
+                      startContent={<LinkIcon size={12} className="text-default-400" />}
                     />
                   </div>
                 )}
@@ -940,7 +970,7 @@ export default function NewProjectPage() {
           </div>
 
           {/* Production URL & Testing Credentials - di bawah GitHub & Team */}
-          <Card className="border border-border bg-card">
+          <Card className="border border-default-100 shadow-sm">
             <CardBody className="p-5">
               <div className="space-y-5">
                 {/* Production URL */}
@@ -957,7 +987,7 @@ export default function NewProjectPage() {
                       placeholder="https://your-app.vercel.app"
                       value={formData.productionUrl}
                       onChange={(e) => setFormData({ ...formData, productionUrl: e.target.value })}
-                      startContent={<Globe size={14} className="text-app-teritary-invert" />}
+                      startContent={<Globe size={14} className="text-default-400" />}
                       endContent={
                         urlValidation.status === 'checking' ? (
                           <Spinner size="sm" className="w-4 h-4" />
@@ -970,10 +1000,9 @@ export default function NewProjectPage() {
                       isRequired
                       className="flex-1"
                       classNames={{
-                        inputWrapper: `border-input bg-input/30 ${
-                          urlValidation.status === 'valid' ? 'border-success' : 
+                        inputWrapper: `border-default-200 hover:border-primary data-[focused=true]:border-primary ${urlValidation.status === 'valid' ? 'border-success' :
                           urlValidation.status === 'invalid' ? 'border-danger' : ''
-                        }`,
+                          }`,
                       }}
                     />
                     {formData.productionUrl && urlValidation.status !== 'checking' && (
@@ -993,7 +1022,7 @@ export default function NewProjectPage() {
                     )}
                   </div>
                   {urlValidation.status === 'checking' && (
-                    <p className="text-xs mt-1.5 flex items-center gap-1 text-app-teritary-invert">
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-default-400">
                       <Spinner size="sm" className="w-3 h-3" />
                       Memeriksa URL...
                     </p>
@@ -1011,7 +1040,7 @@ export default function NewProjectPage() {
                     </p>
                   )}
                   {urlValidation.status === 'idle' && (
-                    <p className="text-xs text-app-teritary-invert mt-1.5">URL aplikasi yang sudah di-deploy dan bisa diakses publik</p>
+                    <p className="text-xs text-default-400 mt-1.5">URL aplikasi yang sudah di-deploy dan bisa diakses publik</p>
                   )}
                 </div>
 
@@ -1026,7 +1055,7 @@ export default function NewProjectPage() {
                       Untuk Penguji
                     </Chip>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <Input
                       size="sm"
@@ -1036,10 +1065,10 @@ export default function NewProjectPage() {
                       placeholder="user@example.com"
                       value={testingCredentials.username}
                       onChange={(e) => setTestingCredentials({ ...testingCredentials, username: e.target.value })}
-                      startContent={<User size={14} className="text-app-teritary-invert" />}
+                      startContent={<User size={14} className="text-default-400" />}
                       classNames={{
                         label: 'text-xs font-medium',
-                        inputWrapper: 'border-input bg-input/30',
+                        inputWrapper: 'border-default-200 hover:border-primary',
                       }}
                     />
                     <Input
@@ -1050,14 +1079,14 @@ export default function NewProjectPage() {
                       placeholder="password123"
                       value={testingCredentials.password}
                       onChange={(e) => setTestingCredentials({ ...testingCredentials, password: e.target.value })}
-                      startContent={<KeyRound size={14} className="text-app-teritary-invert" />}
+                      startContent={<KeyRound size={14} className="text-default-400" />}
                       classNames={{
                         label: 'text-xs font-medium',
-                        inputWrapper: 'border-input bg-input/30',
+                        inputWrapper: 'border-default-200 hover:border-primary',
                       }}
                     />
                   </div>
-                  
+
                   <Textarea
                     size="sm"
                     variant="bordered"
@@ -1070,7 +1099,7 @@ export default function NewProjectPage() {
                     className="mt-4"
                     classNames={{
                       label: 'text-xs font-medium',
-                      inputWrapper: 'border-input bg-input/30',
+                      inputWrapper: 'border-default-200 hover:border-primary',
                     }}
                   />
                 </div>
@@ -1086,26 +1115,26 @@ export default function NewProjectPage() {
           />
 
           {/* Card 4: Optional Fields (Collapsible) */}
-          <Card className="border border-border bg-card">
+          <Card className="border border-default-100 shadow-sm">
             <CardBody className="p-0">
               <button
                 onClick={() => setShowOptional(!showOptional)}
-                className="w-full p-5 flex items-center justify-between hover:bg-app-quinary transition-colors rounded-xl"
+                className="w-full p-5 flex items-center justify-between hover:bg-default-50 transition-colors rounded-xl"
               >
                 <div className="flex items-center gap-3">
-                  <div className="bg-app-primary text-foreground flex size-9 items-center justify-center rounded-lg">
-                    <Settings size={16} />
+                  <div className="p-2.5 rounded-xl bg-default-100 text-default-500">
+                    <Settings size={18} />
                   </div>
                   <div className="text-left">
                     <p className="font-semibold text-sm">Pengaturan Tambahan</p>
-                    <p className="text-xs text-app-teritary-invert mt-0.5">Metodologi & Output (Opsional)</p>
+                    <p className="text-xs text-default-400 mt-0.5">Metodologi & Output (Opsional)</p>
                   </div>
                 </div>
                 <motion.div
                   animate={{ rotate: showOptional ? 180 : 0 }}
                   transition={{ duration: 0.2 }}
                 >
-                  <ChevronDown size={18} className="text-app-teritary-invert" />
+                  <ChevronDown size={18} className="text-default-400" />
                 </motion.div>
               </button>
 
@@ -1118,7 +1147,7 @@ export default function NewProjectPage() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden"
                   >
-                    <div className="px-5 pb-6 pt-4 border-t border-border">
+                    <div className="px-5 pb-6 pt-4 border-t border-default-100">
                       <div className="grid gap-6">
                         {/* Methodology */}
                         <Textarea
@@ -1131,8 +1160,8 @@ export default function NewProjectPage() {
                           variant="bordered"
                           classNames={{
                             label: 'text-sm font-medium mb-2',
-                            inputWrapper: 'border-input bg-input/30',
-                            input: 'placeholder:text-app-teritary-invert',
+                            inputWrapper: 'border-default-200 hover:border-primary focus-within:border-primary',
+                            input: 'placeholder:text-default-300',
                           }}
                         />
 
@@ -1147,8 +1176,8 @@ export default function NewProjectPage() {
                           variant="bordered"
                           classNames={{
                             label: 'text-sm font-medium mb-2',
-                            inputWrapper: 'border-input bg-input/30',
-                            input: 'placeholder:text-app-teritary-invert',
+                            inputWrapper: 'border-default-200 hover:border-primary focus-within:border-primary',
+                            input: 'placeholder:text-default-300',
                           }}
                         />
                       </div>
@@ -1169,212 +1198,213 @@ export default function NewProjectPage() {
               exit={{ opacity: 0, x: 20 }}
               className="hidden lg:block w-[340px] flex-shrink-0 space-y-4"
             >
-                {/* Live Preview Card - Clean Design */}
-                <Card className="border border-border bg-card rounded-2xl overflow-hidden">
-                  <CardBody className="p-5 space-y-4">
-                    {/* Header: Category + Title */}
-                    <div className="space-y-3">
-                      {/* Category Badge */}
-                      {formData.category ? (
-                        (() => {
-                          const cat = PROJECT_CATEGORIES.find(c => c.key === formData.category);
-                          if (cat) {
-                            const Icon = cat.icon;
-                            return (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-border bg-app-quaternary text-foreground text-xs font-medium">
-                                <Icon size={12} />
-                                <span>{cat.label}</span>
-                              </div>
-                            );
-                          }
-                          return null;
-                        })()
-                      ) : (
-                        <div className="inline-flex items-center px-2.5 py-1 rounded-full border border-dashed border-border bg-app-quinary text-app-teritary-invert text-xs">
-                          Pilih Kategori
-                        </div>
-                      )}
-
-                      {/* Project Title */}
-                      <h3 className="font-bold text-lg text-foreground leading-snug">
-                        {formData.title || 'Judul Project Anda'}
-                      </h3>
-
-                      {/* Semester Info */}
-                      <div className="flex items-center gap-2 text-sm text-app-secondary-invert">
-                        <Calendar size={14} />
-                        <span>{formData.semester || 'Ganjil 2025/2026'}</span>
-                        <span className="text-app-teritary-invert">•</span>
-                        <span>{formData.tahunAkademik || '2025/2026'}</span>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <p className="text-sm text-app-secondary-invert line-clamp-2">
-                      {formData.description || 'Deskripsi project akan ditampilkan di sini...'}
-                    </p>
-
-                    {/* Tech Stack */}
-                    {selectedTechs.length === 0 ? (
-                      <p className="text-xs text-app-teritary-invert italic">Belum ada teknologi dipilih</p>
+              {/* Live Preview Card - Clean Design */}
+              <Card className="border border-zinc-200 dark:border-zinc-800 shadow-lg bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden">
+                <CardBody className="p-5 space-y-4">
+                  {/* Header: Category + Title */}
+                  <div className="space-y-3">
+                    {/* Category Badge */}
+                    {formData.category ? (
+                      (() => {
+                        const cat = PROJECT_CATEGORIES.find(c => c.key === formData.category);
+                        if (cat) {
+                          const Icon = cat.icon;
+                          return (
+                            <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r ${cat.color} text-white text-xs font-medium`}>
+                              <Icon size={12} />
+                              <span>{cat.label}</span>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })()
                     ) : (
-                      <div className="flex flex-wrap gap-1.5">
-                        {selectedTechs.slice(0, 4).map((tech) => (
-                          <span
-                            key={tech}
-                            className="px-2 py-0.5 rounded-md border border-border bg-app-quinary text-app-secondary-invert text-xs font-medium"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                        {selectedTechs.length > 4 && (
-                          <span className="px-2 py-0.5 rounded-md bg-app-quinary text-app-teritary-invert text-xs tabular-nums">
-                            +{selectedTechs.length - 4}
-                          </span>
-                        )}
+                      <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400 text-xs">
+                        Pilih Kategori
                       </div>
                     )}
 
-                    {/* Divider */}
-                    <div className="border-t border-border" />
+                    {/* Project Title */}
+                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white leading-snug">
+                      {formData.title || 'Judul Project Anda'}
+                    </h3>
 
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-4 gap-2">
-                      <div className="text-center p-2 rounded-xl bg-app-quinary">
-                        <Users size={16} className="mx-auto mb-1 text-app-secondary-invert" />
-                        <p className="text-sm font-semibold text-foreground tabular-nums">{pendingTeamMembers.length + 1}</p>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Tim</p>
-                      </div>
-                      <div className="text-center p-2 rounded-xl bg-app-quinary">
-                        <Github size={16} className={`mx-auto mb-1 ${(selectedRepo || formData.githubRepoUrl) ? 'text-success' : 'text-app-teritary-invert'}`} />
-                        <p className="text-sm font-semibold text-foreground">{(selectedRepo || formData.githubRepoUrl) ? 'Yes' : 'No'}</p>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Repo</p>
-                      </div>
-                      <div className="text-center p-2 rounded-xl bg-app-quinary">
-                        {isPublic ? <Globe size={16} className="mx-auto mb-1 text-app-secondary-invert" /> : <Shield size={16} className="mx-auto mb-1 text-warning" />}
-                        <p className="text-sm font-semibold text-foreground">{isPublic ? 'Public' : 'Private'}</p>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Access</p>
-                      </div>
-                      <div className="text-center p-2 rounded-xl bg-app-quinary">
-                        <Clock size={16} className="mx-auto mb-1 text-warning" />
-                        <p className="text-sm font-semibold text-foreground">Draft</p>
-                        <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Status</p>
-                      </div>
-                    </div>
-
-                    {/* Author Section */}
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary">
-                      <div className="relative">
-                        <Avatar
-                          src={session?.user?.image || ''}
-                          name={session?.user?.name || ''}
-                          size="sm"
-                          className="w-10 h-10"
-                        />
-                        <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-success rounded-full border-2 border-background flex items-center justify-center">
-                          <Check size={8} className="text-white" />
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm text-foreground truncate">{session?.user?.name || 'Your Name'}</p>
-                        <p className="text-xs text-app-teritary-invert flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                          Ketua Tim • Project Owner
-                        </p>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-
-                {/* Checklist Card - Enhanced */}
-                <Card className="border border-border bg-card overflow-hidden">
-                  <div className="p-4 border-b border-border bg-app-quinary">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="p-1.5 rounded-lg bg-success/10">
-                          <CheckCircle2 size={14} className="text-success" />
-                        </div>
-                        <span className="font-semibold text-sm">Progress</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold text-success tabular-nums">{formCompletion.percentage}%</span>
-                      </div>
+                    {/* Semester Info */}
+                    <div className="flex items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+                      <Calendar size={14} />
+                      <span>{formData.semester || 'Ganjil 2025/2026'}</span>
+                      <span className="text-zinc-300 dark:text-zinc-600">•</span>
+                      <span>{formData.tahunAkademik || '2025/2026'}</span>
                     </div>
                   </div>
-                  <CardBody className="p-4 pt-2">
-                    <Progress
-                      value={formCompletion.percentage}
-                      color={formCompletion.percentage === 100 ? 'success' : 'primary'}
-                      size="md"
-                      className="mb-4"
-                      classNames={{
-                        track: 'h-2 bg-app-primary',
-                        indicator: formCompletion.percentage === 100
-                          ? 'bg-success'
-                          : 'bg-primary'
-                      }}
-                    />
-                    <div className="space-y-1">
-                      {formCompletion.fields.map((field, index) => (
-                        <motion.div
-                          key={field.name}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: index * 0.05 }}
-                          className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${field.filled
-                            ? 'bg-success/10 border border-success/30'
-                            : 'bg-app-quinary border border-transparent hover:border-border'
-                            }`}
-                        >
-                          <span className={`font-medium ${field.filled ? 'text-success' : 'text-app-secondary-invert'}`}>
-                            {field.name}
-                          </span>
-                          {field.filled ? (
-                            <motion.div
-                              initial={{ scale: 0 }}
-                              animate={{ scale: 1 }}
-                              transition={{ type: "spring", stiffness: 500 }}
-                            >
-                              <CheckCircle2 size={14} className="text-success" />
-                            </motion.div>
-                          ) : (
-                            <div className="w-4 h-4 rounded-full border-2 border-border border-dashed" />
-                          )}
-                        </motion.div>
-                      ))}
-                    </div>
-                  </CardBody>
-                </Card>
 
-                {/* Tips Card - Enhanced */}
-                <Card className="border border-border bg-card overflow-hidden">
-                  <CardBody className="p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="bg-app-primary text-foreground flex size-7 items-center justify-center rounded-lg">
-                        <Lightbulb size={14} />
-                      </div>
-                      <span className="font-semibold text-sm text-foreground">Pro Tips</span>
-                    </div>
-                    <ul className="space-y-2">
-                      {[
-                        'Judul spesifik memudahkan pencarian',
-                        'Deskripsi lengkap bantu reviewer',
-                        'Hubungkan GitHub untuk code review'
-                      ].map((tip, index) => (
-                        <motion.li
-                          key={index}
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.1 + index * 0.1 }}
-                          className="flex items-start gap-2 text-[11px] text-app-secondary-invert"
+                  {/* Description */}
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
+                    {formData.description || 'Deskripsi project akan ditampilkan di sini...'}
+                  </p>
+
+                  {/* Tech Stack */}
+                  {selectedTechs.length === 0 ? (
+                    <p className="text-xs text-zinc-400 italic">Belum ada teknologi dipilih</p>
+                  ) : (
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedTechs.slice(0, 4).map((tech) => (
+                        <span
+                          key={tech}
+                          className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-medium"
                         >
-                          <ChevronRight size={12} className="mt-0.5 text-app-teritary-invert shrink-0" />
-                          <span>{tip}</span>
-                        </motion.li>
+                          {tech}
+                        </span>
                       ))}
-                    </ul>
-                  </CardBody>
-                </Card>
+                      {selectedTechs.length > 4 && (
+                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 text-zinc-500 text-xs">
+                          +{selectedTechs.length - 4}
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Divider */}
+                  <div className="border-t border-zinc-100 dark:border-zinc-800" />
+
+                  {/* Stats Row */}
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <Users size={16} className="mx-auto mb-1 text-blue-500" />
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">{pendingTeamMembers.length + 1}</p>
+                      <p className="text-[10px] text-zinc-400">Tim</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <Github size={16} className={`mx-auto mb-1 ${(selectedRepo || formData.githubRepoUrl) ? 'text-emerald-500' : 'text-zinc-400'}`} />
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">{(selectedRepo || formData.githubRepoUrl) ? 'Yes' : 'No'}</p>
+                      <p className="text-[10px] text-zinc-400">Repo</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      {isPublic ? <Globe size={16} className="mx-auto mb-1 text-blue-500" /> : <Shield size={16} className="mx-auto mb-1 text-amber-500" />}
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">{isPublic ? 'Public' : 'Private'}</p>
+                      <p className="text-[10px] text-zinc-400">Access</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                      <Clock size={16} className="mx-auto mb-1 text-amber-500" />
+                      <p className="text-sm font-semibold text-zinc-900 dark:text-white">Draft</p>
+                      <p className="text-[10px] text-zinc-400">Status</p>
+                    </div>
+                  </div>
+
+                  {/* Author Section */}
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50">
+                    <div className="relative">
+                      <Avatar
+                        src={session?.user?.image || ''}
+                        name={session?.user?.name || ''}
+                        size="sm"
+                        className="w-10 h-10"
+                      />
+                      <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
+                        <Check size={8} className="text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm text-zinc-900 dark:text-white truncate">{session?.user?.name || 'Your Name'}</p>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                        Ketua Tim • Project Owner
+                      </p>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+
+              {/* Checklist Card - Enhanced */}
+              <Card className="border border-default-100 shadow-sm overflow-hidden">
+                <div className="p-4 bg-gradient-to-r from-success-50/50 to-transparent">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-success/10">
+                        <CheckCircle2 size={14} className="text-success" />
+                      </div>
+                      <span className="font-semibold text-sm">Progress</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-2xl font-bold text-success">{formCompletion.percentage}%</span>
+                    </div>
+                  </div>
+                </div>
+                <CardBody className="p-4 pt-2">
+                  <Progress
+                    value={formCompletion.percentage}
+                    color={formCompletion.percentage === 100 ? 'success' : 'primary'}
+                    size="md"
+                    className="mb-4"
+                    classNames={{
+                      track: 'h-2',
+                      indicator: formCompletion.percentage === 100
+                        ? 'bg-gradient-to-r from-success to-success-400'
+                        : 'bg-gradient-to-r from-primary to-secondary'
+                    }}
+                  />
+                  <div className="space-y-1">
+                    {formCompletion.fields.map((field, index) => (
+                      <motion.div
+                        key={field.name}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className={`flex items-center justify-between text-xs py-1.5 px-2.5 rounded-lg transition-all duration-300 ${field.filled
+                          ? 'bg-success-50 border border-success-100'
+                          : 'bg-default-50 border border-transparent hover:border-default-200'
+                          }`}
+                      >
+                        <span className={`font-medium ${field.filled ? 'text-success-700' : 'text-default-500'}`}>
+                          {field.name}
+                        </span>
+                        {field.filled ? (
+                          <motion.div
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ type: "spring", stiffness: 500 }}
+                          >
+                            <CheckCircle2 size={14} className="text-success" />
+                          </motion.div>
+                        ) : (
+                          <div className="w-4 h-4 rounded-full border-2 border-default-300 border-dashed" />
+                        )}
+                      </motion.div>
+                    ))}
+                  </div>
+                </CardBody>
+              </Card>
+
+              {/* Tips Card - Enhanced */}
+              <Card className="border-0 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-400/20 via-orange-400/20 to-amber-500/20" />
+                <CardBody className="p-4 relative">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="p-1.5 rounded-lg bg-amber-500/20">
+                      <Lightbulb size={14} className="text-amber-600" />
+                    </div>
+                    <span className="font-semibold text-sm text-amber-800 dark:text-amber-200">Pro Tips</span>
+                  </div>
+                  <ul className="space-y-2">
+                    {[
+                      'Judul spesifik memudahkan pencarian',
+                      'Deskripsi lengkap bantu reviewer',
+                      'Hubungkan GitHub untuk code review'
+                    ].map((tip, index) => (
+                      <motion.li
+                        key={index}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 + index * 0.1 }}
+                        className="flex items-start gap-2 text-[11px] text-amber-900/80 dark:text-amber-100/80"
+                      >
+                        <ChevronRight size={12} className="mt-0.5 text-amber-500 shrink-0" />
+                        <span>{tip}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                </CardBody>
+              </Card>
             </motion.div>
           )}
         </AnimatePresence>

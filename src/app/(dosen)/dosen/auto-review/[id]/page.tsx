@@ -24,17 +24,17 @@ interface Aspect {
 // Generate placeholder analysis data based on project status
 // This will be replaced with real AI analysis when implemented
 function generateAnalysisData(projectStatus: string, updatedAt: Date) {
-  const baseScore = projectStatus === 'APPROVED' ? 85 : 
-                    projectStatus === 'REVISION_NEEDED' ? 55 :
-                    projectStatus === 'IN_REVIEW' ? 70 : 60;
-  
+  const baseScore = projectStatus === 'APPROVED' ? 85 :
+    projectStatus === 'REVISION_NEEDED' ? 55 :
+      projectStatus === 'IN_REVIEW' ? 70 : 60;
+
   const variance = Math.floor(Math.random() * 15) - 7;
   const overallScore = Math.min(100, Math.max(0, baseScore + variance));
   const previousScore = Math.max(0, overallScore - Math.floor(Math.random() * 10) - 2);
-  
+
   const generateAspectScore = () => Math.min(100, Math.max(0, overallScore + Math.floor(Math.random() * 20) - 10));
   const getDetailStatus = (condition: boolean): DetailStatus => condition ? 'pass' : 'warning';
-  
+
   const aspects: Aspect[] = [
     {
       key: 'functionality',
@@ -165,9 +165,9 @@ function generateAnalysisData(projectStatus: string, updatedAt: Date) {
     { date: new Date(updatedAt.getTime() - 21 * 24 * 60 * 60 * 1000).toISOString(), score: Math.max(0, previousScore - 10) },
   ];
 
-  const analysisStatus = overallScore >= 80 ? 'excellent' : 
-                         overallScore >= 70 ? 'good' : 
-                         overallScore >= 50 ? 'warning' : 'poor';
+  const analysisStatus = overallScore >= 80 ? 'excellent' :
+    overallScore >= 70 ? 'good' :
+      overallScore >= 50 ? 'warning' : 'poor';
 
   return {
     overallScore,
@@ -191,35 +191,25 @@ export default async function AutoReviewDetailPage({ params }: { params: Promise
 
   const userId = session.user.id;
 
-  // Fetch the project with assignment verification (fallback bila DB down)
-  let project = null;
-  try {
-    project = await prisma.project.findFirst({
-      where: {
-        id,
-        assignments: {
-          some: { dosenId: userId },
+  // Fetch the project (all submitted projects are visible to dosen)
+  const project = await prisma.project.findFirst({
+    where: {
+      id,
+      status: { not: 'DRAFT' },
+    },
+    include: {
+      mahasiswa: {
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          prodi: true,
+          image: true,
+          profilePhoto: true,
         },
       },
-      include: {
-        mahasiswa: {
-          select: {
-            id: true,
-            name: true,
-            username: true,
-            prodi: true,
-            image: true,
-            profilePhoto: true,
-          },
-        },
-      },
-    });
-  } catch (error) {
-    console.warn(
-      '[dosen/auto-review/detail] DB tidak tersedia:',
-      error instanceof Error ? error.message : error,
-    );
-  }
+    },
+  });
 
   if (!project) {
     notFound();

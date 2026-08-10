@@ -2,158 +2,8 @@ import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { MahasiswaDashboardContent } from '@/components/mahasiswa/dashboard-content';
-import { MOCK_MAHASISWA } from '@/lib/mock-dashboard';
-
-const DAY_LABELS = ['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB'];
-
-type ContentProps = Parameters<typeof MahasiswaDashboardContent>[0];
-type DashboardData = Omit<ContentProps, 'userName'>;
-
-/** Bucket timestamps into the last 7 days (oldest → today). */
-function buildDayBuckets(dates: Date[]): { label: string; value: number }[] {
-  const buckets: { label: string; value: number; key: string }[] = [];
-  const now = new Date();
-  for (let i = 6; i >= 0; i--) {
-    const day = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-    buckets.push({
-      label: DAY_LABELS[day.getDay()],
-      value: 0,
-      key: day.toDateString(),
-    });
-  }
-  for (const date of dates) {
-    const key = new Date(date).toDateString();
-    const bucket = buckets.find((b) => b.key === key);
-    if (bucket) bucket.value += 1;
-  }
-  return buckets.map(({ label, value }) => ({ label, value }));
-}
-
-async function getData(userId: string): Promise<DashboardData> {
-  const sevenDaysAgo = new Date();
-  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
-  sevenDaysAgo.setHours(0, 0, 0, 0);
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-
-  const [
-    user,
-    totalProjects,
-    submittedProjects,
-    reviewedProjects,
-    pendingReviews,
-    totalDocuments,
-    projects,
-    notifications,
-    upcomingPresentation,
-    recentReviews,
-  ] = await Promise.all([
-    prisma.user.findUnique({
-      where: { id: userId },
-      select: { githubUsername: true, githubToken: true },
-    }),
-    prisma.project.count({ where: { mahasiswaId: userId } }),
-    prisma.project.count({
-      where: { mahasiswaId: userId, status: { not: 'DRAFT' } },
-    }),
-    prisma.project.count({
-      where: { mahasiswaId: userId, status: { in: ['APPROVED', 'REJECTED'] } },
-    }),
-    prisma.project.count({
-      where: { mahasiswaId: userId, status: { in: ['IN_REVIEW', 'SUBMITTED'] } },
-    }),
-    prisma.document.count({ where: { project: { mahasiswaId: userId } } }),
-    prisma.project.findMany({
-      where: { mahasiswaId: userId },
-      include: {
-        _count: { select: { documents: true, reviews: true } },
-      },
-      orderBy: { updatedAt: 'desc' },
-      take: 5,
-    }),
-    prisma.notification.findMany({
-      where: { userId, createdAt: { gte: sevenDaysAgo } },
-      select: { createdAt: true },
-    }),
-    prisma.presentationSchedule.findFirst({
-      where: {
-        project: { mahasiswaId: userId },
-        presentationStatus: 'scheduled',
-        scheduledDate: { gte: startOfToday },
-      },
-      orderBy: [{ scheduledDate: 'asc' }, { startTime: 'asc' }],
-      include: {
-        project: { select: { id: true, title: true } },
-        scheduledBy: { select: { name: true } },
-      },
-    }),
-    prisma.review.findMany({
-      where: { project: { mahasiswaId: userId } },
-      include: {
-        reviewer: { select: { name: true } },
-        project: { select: { id: true, title: true } },
-        _count: { select: { comments: true } },
-      },
-      orderBy: { updatedAt: 'desc' },
-      take: 4,
-    }),
-  ]);
-
-  return {
-    hasGitHubConnected: !!(user?.githubUsername && user?.githubToken),
-    githubUsername: user?.githubUsername || null,
-    stats: {
-      totalProjects,
-      submittedProjects,
-      reviewedProjects,
-      pendingReviews,
-      totalDocuments,
-    },
-    projects: projects.map((p) => ({
-      id: p.id,
-      title: p.title,
-      status: p.status,
-      semester: p.semester,
-      tahunAkademik: p.tahunAkademik,
-      documents: p._count.documents,
-      reviews: p._count.reviews,
-    })),
-    activity: buildDayBuckets(notifications.map((n) => n.createdAt)),
-    upcomingPresentation: upcomingPresentation
-      ? {
-          projectTitle: upcomingPresentation.project.title,
-          scheduledDate: upcomingPresentation.scheduledDate.toISOString(),
-          startTime: upcomingPresentation.startTime,
-          endTime: upcomingPresentation.endTime,
-          location: upcomingPresentation.location,
-          scheduledBy: upcomingPresentation.scheduledBy.name,
-          notes: upcomingPresentation.notes,
-        }
-      : null,
-    reviews: recentReviews.map((r) => ({
-      id: r.id,
-      status: r.status,
-      overallComment: r.overallComment,
-      updatedAt: r.updatedAt.toISOString(),
-      reviewerName: r.reviewer.name,
-      projectId: r.project.id,
-      projectTitle: r.project.title,
-      commentCount: r._count.comments,
-    })),
-  };
-}
-
-function getMockData(): DashboardData {
-  return {
-    hasGitHubConnected: MOCK_MAHASISWA.hasGitHubConnected,
-    githubUsername: MOCK_MAHASISWA.githubUsername,
-    stats: MOCK_MAHASISWA.stats,
-    projects: MOCK_MAHASISWA.projects,
-    activity: MOCK_MAHASISWA.activity(),
-    upcomingPresentation: MOCK_MAHASISWA.upcomingPresentation,
-    reviews: MOCK_MAHASISWA.reviews,
-  };
-}
+import { buildStudentJourney } from '@/lib/student-journey';
+import { resolveProjectSubmissionDeadline } from '@/lib/semester';
 
 export default async function MahasiswaDashboardPage() {
   const session = await auth();
@@ -162,23 +12,153 @@ export default async function MahasiswaDashboardPage() {
     redirect('/login');
   }
 
-  let props: DashboardData;
-  if (session.user.id.startsWith('dev-')) {
-    // Sesi akun fake (dev) — langsung mock, tanpa menyentuh database
-    props = getMockData();
-  } else {
-    try {
-      props = await getData(session.user.id);
-    } catch (error) {
-      console.error('[mahasiswa/dashboard] DB tidak tersedia, pakai data mock:', error);
-      props = getMockData();
-    }
-  }
+  const [user, projects, activeSemesters] = await Promise.all([
+    // Fetch user data for GitHub status
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        githubUsername: true,
+        githubToken: true,
+      },
+    }),
+    // Include projects owned by the user and projects joined as a team member.
+    prisma.project.findMany({
+      where: {
+        OR: [
+          { mahasiswaId: session.user.id },
+          { members: { some: { userId: session.user.id } } },
+        ],
+      },
+      include: {
+        documents: true,
+        requirements: true,
+        stakeholderDocuments: { select: { id: true } },
+        presentationSchedule: true,
+        reviews: {
+          include: {
+            reviewer: true,
+          },
+        },
+        members: {
+          orderBy: {
+            role: 'asc', // leader first
+          },
+        },
+        _count: {
+          select: {
+            documents: true,
+            reviews: true,
+          },
+        },
+      },
+      orderBy: { updatedAt: 'desc' },
+    }),
+    prisma.semester.findMany({
+      where: { isActive: true },
+      select: {
+        name: true,
+        tahunAkademik: true,
+        isActive: true,
+        submissionDeadline: true,
+      },
+    }),
+  ]);
+
+  const hasGitHubConnected = !!(user?.githubUsername && user?.githubToken);
+  const currentProject =
+    projects.find(
+      (project) =>
+        project.status !== 'APPROVED' && project.status !== 'REJECTED',
+    ) ?? projects[0] ?? null;
+  const submissionDeadline = currentProject
+    ? resolveProjectSubmissionDeadline(currentProject, activeSemesters)
+    : activeSemesters[0]?.submissionDeadline ?? null;
+  const journey = buildStudentJourney({
+    hasGitHubConnected,
+    submissionDeadline,
+    project: currentProject
+      ? {
+        id: currentProject.id,
+        title: currentProject.title,
+        status: currentProject.status,
+        githubRepoUrl: currentProject.githubRepoUrl,
+        requirements: currentProject.requirements,
+        documentTypes: currentProject.documents.map((document) => document.type),
+        stakeholderDocumentCount: currentProject.stakeholderDocuments.length,
+        reviews: currentProject.reviews.map((review) => ({
+          status: review.status,
+        })),
+        presentationSchedule: currentProject.presentationSchedule
+          ? {
+            ...currentProject.presentationSchedule,
+            scheduledDate:
+              currentProject.presentationSchedule.scheduledDate.toISOString(),
+          }
+          : null,
+        memberCount: new Set([
+          currentProject.mahasiswaId,
+          ...currentProject.members
+            .map((member) => member.userId)
+            .filter((userId): userId is string => !!userId),
+        ]).size,
+        isOwner: currentProject.mahasiswaId === session.user.id,
+      }
+      : null,
+  });
+
+  const dashboardProjects = projects.map((project) => ({
+    id: project.id,
+    title: project.title,
+    description: project.description,
+    status: project.status,
+    githubRepoUrl: project.githubRepoUrl,
+    githubRepoName: project.githubRepoName,
+    semester: project.semester,
+    tahunAkademik: project.tahunAkademik,
+    submittedAt: project.submittedAt,
+    mahasiswaId: project.mahasiswaId,
+    createdAt: project.createdAt,
+    updatedAt: project.updatedAt,
+    documents: project.documents.map((document) => ({ id: document.id })),
+    reviews: project.reviews.map((review) => ({
+      id: review.id,
+      reviewer: { name: review.reviewer.name },
+    })),
+    members: project.members,
+    _count: project._count,
+  }));
+
+  // Calculate stats
+  const totalProjects = projects.length;
+  const submittedProjects = projects.filter((p) => p.status !== 'DRAFT').length;
+  const reviewedProjects = projects.filter(
+    (p) => p.status === 'APPROVED' || p.status === 'REJECTED',
+  ).length;
+  const pendingReviews = projects.filter(
+    (p) => p.status === 'IN_REVIEW' || p.status === 'SUBMITTED',
+  ).length;
+
+  // Get total documents
+  const totalDocuments = projects.reduce(
+    (acc, p) => acc + p._count.documents,
+    0,
+  );
 
   return (
     <MahasiswaDashboardContent
-      {...props}
-      userName={session.user.name || 'Mahasiswa'}
+      userName={session.user.name || 'User'}
+      userImage={session.user.image || undefined}
+      projects={dashboardProjects}
+      hasGitHubConnected={hasGitHubConnected}
+      githubUsername={user?.githubUsername || undefined}
+      journey={journey}
+      stats={{
+        totalProjects,
+        submittedProjects,
+        reviewedProjects,
+        pendingReviews,
+        totalDocuments,
+      }}
     />
   );
 }

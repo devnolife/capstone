@@ -39,6 +39,12 @@ COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
 COPY --from=builder /app/src/generated ./src/generated
 
+# Create a writable .next/cache directory owned by the runtime user so Next.js
+# image optimization and ISR can write their cache. Without this, the server
+# (running as `nextjs`) cannot mkdir /app/.next/cache (root-owned from COPY)
+# and logs repeated: EACCES permission denied, mkdir '/app/.next/cache'.
+RUN mkdir -p .next/cache/images && chown -R nextjs:nodejs .next
+
 # Copy Prisma CLI + all its transitive deps so entrypoint can run `prisma migrate deploy`
 # (Prisma 7's CLI pulls in many internal modules — copying the whole node_modules
 #  tree from the builder is the most reliable way to keep them in sync.)

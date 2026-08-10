@@ -1,18 +1,57 @@
 'use client';
 
 import Link from 'next/link';
-import { CalendarCheck, ClipboardList, UserPlus, Users } from 'lucide-react';
-import { formatDate, getRoleLabel, getStatusLabel } from '@/lib/utils';
-import { LabelRow } from '@/components/caret/dashboard/LabelRow';
-import { BentoStats } from '@/components/caret/dashboard/BentoStats';
-import { BentoChart, type ChartPoint } from '@/components/caret/dashboard/BentoChart';
-import { BentoLists, type BentoRow, type BentoUpNext } from '@/components/caret/dashboard/BentoLists';
-import { BentoFeed, type BentoFeedItem } from '@/components/caret/dashboard/BentoFeed';
-import { DashboardEntrance } from '@/components/caret/dashboard/DashboardEntrance';
-import { DashboardGreeting } from '@/components/caret/dashboard/DashboardGreeting';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Chip,
+  Avatar,
+  Divider,
+} from '@heroui/react';
+import {
+  Users,
+  FolderGit2,
+  GraduationCap,
+  ClipboardCheck,
+  UserPlus,
+  ChevronRight,
+  BookOpen,
+  CalendarCheck,
+  UserCog,
+  ArrowUpRight,
+  type LucideIcon,
+} from 'lucide-react';
+import {
+  formatDate,
+  getStatusColor,
+  getStatusLabel,
+  getRoleLabel,
+} from '@/lib/utils';
 
-interface AdminDashboardContentProps {
-  userName: string;
+interface User {
+  id: string;
+  name: string;
+  username: string;
+  role: string;
+  image: string | null;
+  createdAt: Date;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  semester: string;
+  status: string;
+  createdAt: Date;
+  mahasiswa: {
+    name: string;
+    username: string;
+  };
+}
+
+interface AdminDashboardProps {
   stats: {
     totalUsers: number;
     totalMahasiswa: number;
@@ -21,167 +60,311 @@ interface AdminDashboardContentProps {
     submittedProjects: number;
     completedReviews: number;
   };
-  recentUsers: {
-    id: string;
-    name: string;
-    username: string;
-    role: string;
-    createdAt: string;
-  }[];
-  recentProjects: {
-    id: string;
-    title: string;
-    status: string;
-    semester: string;
-    tahunAkademik: string;
-    mahasiswaName: string;
-  }[];
-  activity: ChartPoint[];
-  upcomingPresentation: {
-    projectTitle: string;
-    mahasiswaName: string;
-    scheduledDate: string;
-    startTime: string;
-    endTime: string | null;
-    location: string | null;
-    scheduledBy: string;
-  } | null;
+  recentUsers: User[];
+  recentProjects: Project[];
 }
 
-const QUICK_ACTIONS = [
-  { label: 'Tambah User', href: '/admin/users?action=add', icon: UserPlus },
-  { label: 'Penugasan Dosen', href: '/admin/assignments', icon: Users },
-  { label: 'Jadwal Presentasi', href: '/admin/presentations', icon: CalendarCheck },
-  { label: 'Rubrik Penilaian', href: '/admin/rubrik', icon: ClipboardList },
-];
+interface StatItem {
+  label: string;
+  value: number;
+  hint?: string;
+  icon: LucideIcon;
+  href: string;
+  iconClass: string;
+}
+
+interface QuickAction {
+  label: string;
+  description: string;
+  href: string;
+  icon: LucideIcon;
+  iconClass: string;
+}
 
 export function AdminDashboardContent({
-  userName,
   stats,
   recentUsers,
   recentProjects,
-  activity,
-  upcomingPresentation,
-}: AdminDashboardContentProps) {
-  const upNext: BentoUpNext | null = upcomingPresentation
-    ? {
-        title: upcomingPresentation.projectTitle,
-        time: `${formatDate(upcomingPresentation.scheduledDate)} · ${upcomingPresentation.startTime}${
-          upcomingPresentation.endTime ? ` - ${upcomingPresentation.endTime}` : ''
-        }`,
-        chip: 'Terjadwal',
-        icon: 'presentasi',
-        facts: [
-          ['Mahasiswa', upcomingPresentation.mahasiswaName],
-          ['Lokasi', upcomingPresentation.location || 'Menyusul'],
-          ['Penjadwal', upcomingPresentation.scheduledBy],
-        ] as const,
-      }
-    : null;
+}: AdminDashboardProps) {
+  const iconContainerClass =
+    'border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40';
 
-  const projectRows: BentoRow[] = recentProjects.map((p) => ({
-    title: p.title,
-    subtitle: `${p.mahasiswaName} · ${p.semester} ${p.tahunAkademik}`,
-    chip: getStatusLabel(p.status),
-    chipLive: p.status === 'IN_REVIEW',
-    icon: 'project',
-    href: `/admin/projects?id=${p.id}`,
-  }));
+  const statItems: StatItem[] = [
+    {
+      label: 'Total User',
+      value: stats.totalUsers,
+      hint: `${stats.totalMahasiswa} mahasiswa · ${stats.totalDosen} dosen`,
+      icon: Users,
+      href: '/admin/users',
+      iconClass: `${iconContainerClass} text-[var(--color-ember)]`,
+    },
+    {
+      label: 'Total Project',
+      value: stats.totalProjects,
+      hint: `${stats.submittedProjects} sudah submit`,
+      icon: FolderGit2,
+      href: '/admin/projects',
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
+    },
+    {
+      label: 'Mahasiswa',
+      value: stats.totalMahasiswa,
+      icon: GraduationCap,
+      href: '/admin/users?role=MAHASISWA',
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
+    },
+    {
+      label: 'Review Selesai',
+      value: stats.completedReviews,
+      icon: ClipboardCheck,
+      href: '/admin/projects',
+      iconClass: `${iconContainerClass} text-emerald-600 dark:text-emerald-400`,
+    },
+  ];
 
-  const userFeed: BentoFeedItem[] = recentUsers.map((u) => ({
-    tag: 'USER BARU',
-    title: u.name,
-    subtitle: `@${u.username}`,
-    meta: formatDate(u.createdAt).toUpperCase(),
-    chips: [{ label: getRoleLabel(u.role) }],
-    href: `/admin/users?id=${u.id}`,
-  }));
+  const quickActions: QuickAction[] = [
+    {
+      label: 'Tambah User',
+      description: 'Daftarkan mahasiswa, dosen, atau admin baru',
+      href: '/admin/users?action=add',
+      icon: UserPlus,
+      iconClass: `${iconContainerClass} text-[var(--color-ember)]`,
+    },
+    {
+      label: 'Penugasan Dosen',
+      description: 'Assign dosen penguji ke project',
+      href: '/admin/assignments',
+      icon: UserCog,
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
+    },
+    {
+      label: 'Jadwal Presentasi',
+      description: 'Atur jadwal sidang & presentasi',
+      href: '/admin/presentations',
+      icon: CalendarCheck,
+      iconClass: `${iconContainerClass} text-amber-600 dark:text-amber-400`,
+    },
+    {
+      label: 'Rubrik Penilaian',
+      description: 'Kelola rubrik penilaian',
+      href: '/admin/rubrik',
+      icon: BookOpen,
+      iconClass: `${iconContainerClass} text-[var(--color-steel)]`,
+    },
+  ];
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <DashboardEntrance />
+    <div className="space-y-5">
+      {/* Page Header */}
+      <header className="flex items-end justify-between gap-4">
+        <div>
+          <p className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">
+            Panel Admin
+          </p>
+          <h1 className="font-sans-display text-2xl font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">
+            Dashboard
+          </h1>
+          <p className="text-sm text-[var(--color-steel)] mt-0.5">
+            Ringkasan aktivitas sistem capstone
+          </p>
+        </div>
+      </header>
 
-      <DashboardGreeting
-        userName={userName}
-        subtitle="Ini ringkasan aktivitas sistem capstone hari ini."
-      />
-
-      <LabelRow left="[SEN] RINGKASAN" right="/ SISTEM" />
-      <BentoStats
-        stats={[
-          {
-            label: 'TOTAL USER',
-            value: stats.totalUsers,
-            hint: `${stats.totalMahasiswa} mahasiswa · ${stats.totalDosen} dosen`,
-            href: '/admin/users',
-          },
-          {
-            label: 'TOTAL PROJECT',
-            value: stats.totalProjects,
-            hint: `${stats.submittedProjects} sudah submit`,
-            href: '/admin/projects',
-          },
-          {
-            label: 'MAHASISWA',
-            value: stats.totalMahasiswa,
-            hint: 'terdaftar di platform',
-            href: '/admin/users?role=MAHASISWA',
-          },
-          {
-            label: 'REVIEW SELESAI',
-            value: stats.completedReviews,
-            hint: 'oleh dosen penguji',
-            href: '/admin/projects',
-          },
-        ]}
-      />
-
-      <LabelRow left="[SEL] AKSI CEPAT" right="/ KELOLA" />
-      <div
-        data-reveal-group
-        className="border-border grid grid-cols-2 gap-px border bg-border lg:grid-cols-4"
-      >
-        {QUICK_ACTIONS.map((action) => {
-          const Icon = action.icon;
+      {/* Stats grid */}
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        {statItems.map((s) => {
+          const Icon = s.icon;
           return (
             <Link
-              key={action.href}
-              href={action.href}
-              className="bg-background hover:bg-app-quinary flex items-center gap-3 px-5 py-4 transition-colors md:px-6 md:py-5"
+              key={s.label}
+              href={s.href}
+              className="group block bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl p-4 hover:shadow-xl transition-all"
             >
-              <span className="bg-app-primary text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg">
-                <Icon className="size-4" />
-              </span>
-              <span className="text-sm font-medium">{action.label}</span>
+              <div className="flex items-start justify-between">
+                <div className={`p-2.5 rounded-2xl ${s.iconClass}`}>
+                  <Icon size={18} />
+                </div>
+                <ArrowUpRight
+                  size={14}
+                  className="text-[var(--color-steel)] opacity-50 group-hover:text-[var(--color-ember)] group-hover:opacity-100 transition-colors"
+                />
+              </div>
+              <p className="font-sans-display text-2xl font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white mt-3 tabular-nums group-hover:text-[var(--color-ember)] transition-colors">
+                {s.value}
+              </p>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)] mt-0.5">{s.label}</p>
+              {s.hint && (
+                <p className="text-[11px] text-[var(--color-steel)] mt-1 truncate">{s.hint}</p>
+              )}
             </Link>
           );
         })}
-      </div>
+      </section>
 
-      <LabelRow left="[RAB] AKTIVITAS" right="/ PROJECT" />
-      <div
-        data-reveal
-        className="border-border grid gap-px border bg-border lg:grid-cols-[1.1fr_1fr]"
-      >
-        <BentoChart
-          title="Project baru"
-          caption="7 HARI TERAKHIR"
-          data={activity}
-        />
-        <BentoLists
-          upNextTitle="Berikutnya"
-          upNextTag="JADWAL PRESENTASI"
-          upNext={upNext}
-          upNextEmptyText="Belum ada presentasi terjadwal."
-          rowsTitle="Project terbaru"
-          rowsViewAllHref="/admin/projects"
-          rows={projectRows}
-          rowsEmptyText="Belum ada project."
-        />
-      </div>
+      {/* Quick Actions */}
+      <section>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">
+            Aksi Cepat
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {quickActions.map((a) => {
+            const Icon = a.icon;
+            return (
+              <Link
+                key={a.label}
+                href={a.href}
+                className="group flex items-start gap-3 bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl p-3.5 hover:shadow-xl transition-all"
+              >
+                <div className={`p-2.5 rounded-2xl ${a.iconClass} shrink-0`}>
+                  <Icon size={16} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white leading-tight">
+                    {a.label}
+                  </p>
+                  <p className="text-xs text-[var(--color-steel)] mt-0.5 line-clamp-2">
+                    {a.description}
+                  </p>
+                </div>
+                <ChevronRight
+                  size={14}
+                  className="text-[var(--color-steel)] opacity-50 group-hover:text-[var(--color-ember)] group-hover:opacity-100 transition-colors mt-1 shrink-0"
+                />
+              </Link>
+            );
+          })}
+        </div>
+      </section>
 
-      <LabelRow left="[KAM] USER TERBARU" right="/ FEED" />
-      <BentoFeed items={userFeed} emptyText="Belum ada user baru." />
+      {/* Recent activity - 2 columns */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
+          <CardHeader className="pb-2 flex items-center justify-between">
+            <div>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Registrasi</p>
+              <h3 className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">User Terbaru</h3>
+              <p className="text-xs text-[var(--color-steel)]">5 pendaftar terakhir</p>
+            </div>
+            <Button
+              as={Link}
+              href="/admin/users"
+              size="sm"
+              variant="light"
+              className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] hover:text-[var(--color-ember)]"
+              endContent={<ChevronRight size={14} />}
+            >
+              Semua
+            </Button>
+          </CardHeader>
+          <Divider className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
+          <CardBody className="p-0">
+            {recentUsers.length === 0 ? (
+              <p className="text-sm text-[var(--color-steel)] text-center py-8">
+                Belum ada user terdaftar
+              </p>
+            ) : (
+              <ul className="divide-y divide-[var(--color-pebble)] dark:divide-[var(--color-graphite)]">
+                {recentUsers.map((u) => (
+                  <li key={u.id}>
+                    <Link
+                      href={`/admin/users?id=${u.id}`}
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--color-mist)] dark:hover:bg-zinc-900/50 transition-colors"
+                    >
+                      <Avatar
+                        name={u.name}
+                        src={u.image || undefined}
+                        size="sm"
+                        className="shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-[var(--color-obsidian)] dark:text-white truncate">
+                          {u.name}
+                        </p>
+                        <p className="text-xs text-[var(--color-steel)] truncate">
+                          {u.username}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Chip
+                          size="sm"
+                          variant="bordered"
+                          className="h-5 rounded-full border-current bg-transparent font-mono-display text-[10px] uppercase tracking-wider font-bold text-[var(--color-steel)]"
+                        >
+                          {getRoleLabel(u.role)}
+                        </Chip>
+                        <span className="text-[10px] text-[var(--color-steel)] hidden sm:inline">
+                          {formatDate(u.createdAt)}
+                        </span>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardBody>
+        </Card>
+
+        <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
+          <CardHeader className="pb-2 flex items-center justify-between">
+            <div>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Project</p>
+              <h3 className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">Project Terbaru</h3>
+              <p className="text-xs text-[var(--color-steel)]">5 project terakhir dibuat</p>
+            </div>
+            <Button
+              as={Link}
+              href="/admin/projects"
+              size="sm"
+              variant="light"
+              className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] hover:text-[var(--color-ember)]"
+              endContent={<ChevronRight size={14} />}
+            >
+              Semua
+            </Button>
+          </CardHeader>
+          <Divider className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
+          <CardBody className="p-0">
+            {recentProjects.length === 0 ? (
+              <p className="text-sm text-[var(--color-steel)] text-center py-8">
+                Belum ada project
+              </p>
+            ) : (
+              <ul className="divide-y divide-[var(--color-pebble)] dark:divide-[var(--color-graphite)]">
+                {recentProjects.map((p) => (
+                  <li key={p.id}>
+                    <Link
+                      href={`/admin/projects?id=${p.id}`}
+                      className="flex items-start gap-3 px-4 py-2.5 hover:bg-[var(--color-mist)] dark:hover:bg-zinc-900/50 transition-colors"
+                    >
+                      <div className="p-2 rounded-2xl border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40 shrink-0 mt-0.5">
+                        <FolderGit2 size={14} className="text-[var(--color-ember)]" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-[var(--color-obsidian)] dark:text-white line-clamp-1">
+                          {p.title}
+                        </p>
+                        <p className="text-xs text-[var(--color-steel)] truncate">
+                          {p.mahasiswa.name} · {p.semester}
+                        </p>
+                      </div>
+                      <Chip
+                        size="sm"
+                        variant="flat"
+                        color={getStatusColor(p.status)}
+                        className="h-5 text-[10px] shrink-0"
+                      >
+                        {getStatusLabel(p.status)}
+                      </Chip>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </CardBody>
+        </Card>
+      </section>
     </div>
   );
 }

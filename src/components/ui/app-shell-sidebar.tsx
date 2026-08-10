@@ -59,6 +59,7 @@ const mahasiswaSections: SidebarSection[] = [
     items: [
       { title: 'Undangan Tim', href: '/mahasiswa/invitations', icon: <Mail size={18} /> },
       { title: 'Review & Feedback', href: '/mahasiswa/reviews', icon: <ClipboardCheck size={18} /> },
+      { title: 'Jadwal Presentasi', href: '/mahasiswa/presentations', icon: <CalendarCheck size={18} /> },
     ],
   },
 ];
@@ -135,58 +136,6 @@ function getDashboardUrl(role?: string): string {
   }
 }
 
-/** Widget progres semester berjalan (di atas kartu user). */
-function SemesterWidget() {
-  const [now, setNow] = useState<Date | null>(null);
-
-  useEffect(() => {
-    setNow(new Date());
-  }, []);
-
-  if (!now) return null;
-
-  const month = now.getMonth(); // 0-11
-  const year = now.getFullYear();
-  const isGanjil = month >= 7 || month === 0; // Agu-Jan
-  const semester = isGanjil ? 'Ganjil' : 'Genap';
-  const tahunAkademik = isGanjil
-    ? month === 0
-      ? `${year - 1}/${year}`
-      : `${year}/${year + 1}`
-    : `${year - 1}/${year}`;
-
-  // Perkiraan progres semester (24 pekan sejak awal Sep / awal Mar)
-  const start = isGanjil
-    ? new Date(month === 0 ? year - 1 : year, 8, 1)
-    : new Date(year, 2, 1);
-  const weeks = Math.floor((now.getTime() - start.getTime()) / (7 * 86400000)) + 1;
-  const pct = Math.min(100, Math.max(4, Math.round((weeks / 24) * 100)));
-
-  return (
-    <div className="px-3 pb-2">
-      <div className="rounded-xl border border-border bg-app-quinary px-3 py-2.5">
-        <div className="flex items-center justify-between">
-          <span className="font-mono text-[9px] text-app-teritary-invert uppercase tracking-[0.18em]">
-            Semester {semester}
-          </span>
-          <span className="font-mono text-[9px] text-app-teritary-invert tabular-nums">
-            {tahunAkademik}
-          </span>
-        </div>
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-app-primary">
-          <div
-            className="bg-primary h-full rounded-full transition-[width] duration-700"
-            style={{ width: `${pct}%` }}
-          />
-        </div>
-        <p className="text-app-teritary-invert mt-1.5 text-[10px] tabular-nums">
-          Pekan ke-{Math.max(1, weeks)} · ±{pct}% berjalan
-        </p>
-      </div>
-    </div>
-  );
-}
-
 export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
@@ -227,26 +176,16 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       <Link
         href={item.href}
         className={cn(
-          'group/nav relative flex items-center gap-2.5 px-3.5 h-9 rounded-full text-sm transition-all',
+          'flex items-center gap-2.5 px-3 h-9 rounded-xl text-sm transition-colors',
           isActive
-            ? 'bg-app-primary text-foreground font-medium'
-            : 'text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground hover:translate-x-0.5',
-          isCollapsed && 'justify-center px-0 w-9 mx-auto hover:translate-x-0',
+            ? 'bg-[var(--color-obsidian)] text-white font-semibold dark:bg-white dark:text-zinc-900'
+            : 'text-[var(--color-steel)] hover:bg-[var(--color-fog)] hover:text-[var(--color-obsidian)] dark:hover:bg-zinc-800 dark:hover:text-white',
+          isCollapsed && 'justify-center px-0 w-9 mx-auto',
         )}
         onClick={onMobileClose}
       >
-        <span
-          className={cn(
-            'shrink-0 transition-colors',
-            isActive ? 'text-foreground' : 'text-app-teritary-invert group-hover/nav:text-foreground',
-          )}
-        >
-          {item.icon}
-        </span>
+        <span className="shrink-0">{item.icon}</span>
         {!isCollapsed && <span className="truncate">{item.title}</span>}
-        {!isCollapsed && isActive && (
-          <span className="bg-primary ml-auto size-1.5 shrink-0 rounded-full" />
-        )}
       </Link>
     );
 
@@ -268,29 +207,27 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       {/* Brand */}
       <div
         className={cn(
-          'flex items-center h-14 px-4 shrink-0',
-          isCollapsed ? 'justify-center px-0' : 'justify-start gap-2.5',
+          'flex items-center h-14 px-3 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)]',
+          isCollapsed ? 'justify-center' : 'justify-start gap-2.5',
         )}
       >
         <Link href={dashboardUrl} className="flex items-center gap-2.5 min-w-0">
-          <span className="bg-app-primary flex size-8 shrink-0 items-center justify-center rounded-lg">
-            <Image
-              src="/logo.png"
-              alt="Capstone"
-              width={20}
-              height={20}
-              className="object-contain shrink-0"
-            />
-          </span>
+          <Image
+            src="/logo.png"
+            alt="Capstone"
+            width={32}
+            height={32}
+            className="object-contain shrink-0"
+          />
           {!isCollapsed && (
-            <span className="min-w-0">
-              <span className="font-editorial block text-lg leading-none tracking-tight text-foreground truncate">
-                capstone
-              </span>
-              <span className="font-mono text-[8px] text-app-teritary-invert uppercase tracking-[0.22em] block mt-0.5 truncate">
+            <div className="min-w-0">
+              <p className="font-sans-display font-bold tracking-tight text-sm text-[var(--color-obsidian)] dark:text-white leading-tight truncate">
+                Capstone
+              </p>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)] leading-tight truncate">
                 Prodi Informatika
-              </span>
-            </span>
+              </p>
+            </div>
           )}
         </Link>
       </div>
@@ -301,15 +238,12 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
           {sections.map((section, sectionIdx) => (
             <div key={section.label}>
               {!isCollapsed && (
-                <div className="mb-1.5 flex items-center gap-2 px-3.5">
-                  <p className="font-mono text-[10px] text-app-teritary-invert uppercase tracking-[0.18em] shrink-0">
-                    {section.label}
-                  </p>
-                  <span className="h-px flex-1 bg-border" />
-                </div>
+                <p className="font-mono-display text-[9px] font-bold text-[var(--color-steel)] uppercase tracking-widest px-3 mb-1.5">
+                  {section.label}
+                </p>
               )}
               {isCollapsed && sectionIdx > 0 && (
-                <div className="h-px bg-border mx-2 mb-2" />
+                <div className="h-px bg-divider/50 mx-2 mb-2" />
               )}
               <div className="space-y-0.5">{section.items.map(renderItem)}</div>
             </div>
@@ -317,11 +251,8 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
         </div>
       </nav>
 
-      {/* Semester progress */}
-      {!isCollapsed && <SemesterWidget />}
-
       {/* User Section */}
-      <div className="p-2 pt-0">
+      <div className="p-2 border-t border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
         {isCollapsed ? (
           <Tooltip content={session?.user?.name || 'User'} placement="right">
             <div className="flex justify-center py-1">
@@ -337,10 +268,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
             </div>
           </Tooltip>
         ) : (
-          <Link
-            href={dashboardUrl.replace('/dashboard', '/profile')}
-            className="flex items-center gap-2.5 rounded-xl border border-border bg-app-quinary px-2.5 py-2 transition-colors hover:bg-app-quaternary"
-          >
+          <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg">
             <Avatar
               src={
                 getSimakPhotoUrl((session?.user as { nim?: string })?.nim) ||
@@ -351,38 +279,38 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
               size="sm"
             />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold truncate text-foreground">
+              <p className="text-xs font-semibold truncate text-[var(--color-obsidian)] dark:text-white">
                 {session?.user?.name}
               </p>
-              <p className="font-mono text-[9px] text-app-teritary-invert uppercase tracking-[0.18em] truncate">
-                {roleLabel}
-              </p>
+              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)] truncate">{roleLabel}</p>
             </div>
-            <span className="size-1.5 shrink-0 animate-pulse rounded-full bg-green-500" title="Online" />
-          </Link>
+          </div>
         )}
 
         {/* Collapse Toggle - Desktop Only */}
-        <div className="hidden md:block pt-1 mt-1">
+        <div className="hidden md:block pt-2 mt-2 border-t border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
           {isCollapsed ? (
             <Tooltip content="Perluas" placement="right">
-              <button
-                type="button"
-                onClick={() => setIsCollapsed(false)}
-                className="text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground flex h-8 w-full items-center justify-center rounded-full transition-colors"
+              <Button
+                isIconOnly
+                variant="light"
+                size="sm"
+                className="w-full h-8"
+                onPress={() => setIsCollapsed(false)}
               >
-                <ChevronRight size={15} />
-              </button>
+                <ChevronRight size={16} />
+              </Button>
             </Tooltip>
           ) : (
-            <button
-              type="button"
-              onClick={() => setIsCollapsed(true)}
-              className="text-app-teritary-invert hover:bg-app-quaternary hover:text-foreground flex h-8 w-full items-center justify-between rounded-full px-3 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors"
+            <Button
+              variant="light"
+              size="sm"
+              className="w-full justify-between h-8 text-default-500"
+              onPress={() => setIsCollapsed(true)}
+              endContent={<ChevronLeft size={14} />}
             >
-              <span>Ciutkan</span>
-              <ChevronLeft size={13} />
-            </button>
+              <span className="text-[11px]">Ciutkan</span>
+            </Button>
           )}
         </div>
       </div>
@@ -395,7 +323,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       <div className="hidden md:block h-screen">
         <aside
           className={cn(
-            'flex flex-col h-full bg-transparent transition-[width] duration-200 overflow-hidden',
+            'flex flex-col h-full bg-[var(--color-mist)] dark:bg-zinc-950 border-r border-[var(--color-pebble)] dark:border-[var(--color-graphite)] transition-[width] duration-200 overflow-hidden',
             isCollapsed ? 'w-[60px]' : 'w-60',
           )}
         >
@@ -414,7 +342,7 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
       {/* Mobile Sidebar Drawer */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-72 bg-background border-r border-border transition-transform duration-200 ease-out md:hidden',
+          'fixed inset-y-0 left-0 z-50 w-72 bg-[var(--color-mist)] dark:bg-zinc-950 transition-transform duration-200 ease-out md:hidden',
           isMobileOpen ? 'translate-x-0' : '-translate-x-full',
         )}
       >

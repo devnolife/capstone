@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import {
   Button,
   Modal,
@@ -11,7 +12,30 @@ import {
   ModalFooter,
   useDisclosure,
 } from '@heroui/react';
-import { Send, AlertTriangle, CheckCircle } from 'lucide-react';
+import {
+  Send,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  LoaderCircle,
+  ChevronRight,
+} from 'lucide-react';
+
+interface SubmissionBlocker {
+  code: string;
+  label: string;
+  description: string;
+  href: string;
+}
+
+interface SubmissionReadiness {
+  canSubmit: boolean;
+  blockers: SubmissionBlocker[];
+  completedChecks: number;
+  totalChecks: number;
+  submissionDeadline: string | null;
+  isOwner: boolean;
+}
 
 interface SubmitProjectButtonProps {
   projectId: string;
@@ -25,14 +49,47 @@ export function SubmitProjectButton({
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [readiness, setReadiness] = useState<SubmissionReadiness | null>(null);
 
-  // Hanya tampilkan tombol jika status DRAFT
-  const canSubmit = currentStatus === 'DRAFT';
+  // Draft projects and projects returned for revision can be submitted.
+  const canOpenSubmission =
+    currentStatus === 'DRAFT' || currentStatus === 'REVISION_NEEDED';
+
+  const handleOpen = async () => {
+    setError(null);
+    setSuccess(false);
+    setReadiness(null);
+    onOpen();
+    setIsChecking(true);
+
+    try {
+      const response = await fetch(
+        `/api/projects/${projectId}/submission-readiness`,
+        { cache: 'no-store' },
+      );
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Gagal memeriksa kelengkapan project');
+      }
+
+      setReadiness(data);
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Gagal memeriksa kelengkapan project',
+      );
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    if (!canOpenSubmission || !readiness?.canSubmit) return;
 
     setIsSubmitting(true);
     setError(null);
@@ -44,6 +101,13 @@ export function SubmitProjectButton({
 
       if (!response.ok) {
         const data = await response.json();
+        if (Array.isArray(data.blockers)) {
+          setReadiness((current) =>
+            current
+              ? { ...current, canSubmit: false, blockers: data.blockers }
+              : current,
+          );
+        }
         throw new Error(data.error || 'Gagal mengsubmit project');
       }
 
@@ -61,7 +125,7 @@ export function SubmitProjectButton({
     }
   };
 
-  if (!canSubmit) {
+  if (!canOpenSubmission) {
     return null;
   }
 
@@ -70,9 +134,11 @@ export function SubmitProjectButton({
       <Button
         color="primary"
         startContent={<Send size={18} />}
-        onPress={onOpen}
+        onPress={handleOpen}
       >
-        Submit untuk Review
+        {currentStatus === 'REVISION_NEEDED'
+          ? 'Kirim Ulang Revisi'
+          : 'Submit untuk Review'}
       </Button>
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
@@ -104,39 +170,104 @@ export function SubmitProjectButton({
                       </div>
                     )}
 
-                    <div className="space-y-4">
-                      <div className="flex items-start gap-3 p-4 bg-warning-50 rounded-lg">
-                        <AlertTriangle
-                          className="text-warning mt-0.5"
-                          size={20}
-                        />
-                        <div>
-                          <p className="font-medium text-warning-700">
-                            Perhatian
-                          </p>
-                          <p className="text-sm text-warning-600">
-                            Setelah disubmit, Anda tidak dapat mengubah
-                            project kecuali diminta revisi oleh dosen.
-                          </p>
-                        </div>
+                    {isChecking ? (
+                      <div className="flex flex-col items-center justify-center gap-3 py-10 text-default-500">
+                        <LoaderCircle size={32} className="animate-spin text-primary" />
+                        <p>Memeriksa kelengkapan project...</p>
                       </div>
+                    ) : readiness ? (
+                      <div className="space-y-4">
+                        <div
+                          className={`flex items-start gap-3 rounded-xl border p-4 ${readiness.canSubmit
+                              ? 'border-success-200 bg-success-50 dark:border-success-800 dark:bg-success-900/20'
+                              : 'border-warning-200 bg-warning-50 dark:border-warning-800 dark:bg-warning-900/20'
+                            }`}
+                        >
+                          {readiness.canSubmit ? (
+                            <CheckCircle className="mt-0.5 shrink-0 text-success" size={20} />
+                          ) : (
+                            <AlertTriangle className="mt-0.5 shrink-0 text-warning" size={20} />
+                          )}
+                          <div>
+                            <p className="font-medium">
+                              {readiness.canSubmit
+                                ? 'Project siap disubmit'
+                                : `${readiness.blockers.length} hal perlu diselesaikan`}
+                            </p>
+                            <p className="mt-0.5 text-sm text-default-600">
+                              {readiness.completedChecks}/{readiness.totalChecks} pemeriksaan kelengkapan terpenuhi.
+                            </p>
+                          </div>
+                        </div>
 
-                      <p>Apakah Anda yakin ingin mengsubmit project ini?</p>
+                        {readiness.submissionDeadline && (
+                          <p className="text-sm text-default-500">
+                            Batas submission:{' '}
+                            <span className="font-medium text-default-700">
+                              {new Intl.DateTimeFormat('id-ID', {
+                                dateStyle: 'long',
+                                timeStyle: 'short',
+                                timeZone: 'Asia/Makassar',
+                              }).format(new Date(readiness.submissionDeadline))}
+                              {' WITA'}
+                            </span>
+                          </p>
+                        )}
 
-                      <ul className="text-sm text-default-500 space-y-1">
-                        <li>
-                          - Project akan dikirim ke admin untuk ditugaskan ke
-                          dosen penguji
-                        </li>
-                        <li>
-                          - Anda akan menerima notifikasi ketika ada feedback
-                        </li>
-                        <li>
-                          - Status project akan berubah menjadi
-                          &quot;Disubmit&quot;
-                        </li>
-                      </ul>
-                    </div>
+                        {readiness.blockers.length > 0 && (
+                          <div className="space-y-2">
+                            {readiness.blockers.map((blocker, index) => (
+                              <div
+                                key={`${blocker.code}-${blocker.label}-${index}`}
+                                className="flex items-start gap-3 rounded-xl border border-default-200 p-3"
+                              >
+                                <XCircle size={18} className="mt-0.5 shrink-0 text-danger" />
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm font-medium">{blocker.label}</p>
+                                  <p className="text-xs text-default-500">{blocker.description}</p>
+                                </div>
+                                <Button
+                                  as={Link}
+                                  href={blocker.href}
+                                  size="sm"
+                                  variant="light"
+                                  color="primary"
+                                  isIconOnly
+                                  aria-label={`Perbaiki ${blocker.label}`}
+                                >
+                                  <ChevronRight size={16} />
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        {readiness.canSubmit && (
+                          <div className="space-y-4">
+                            <div className="flex items-start gap-3 p-4 bg-warning-50 dark:bg-warning-900/20 rounded-lg">
+                              <AlertTriangle
+                                className="text-warning mt-0.5"
+                                size={20}
+                              />
+                              <div>
+                                <p className="font-medium text-warning-700 dark:text-warning-300">
+                                  Perhatian
+                                </p>
+                                <p className="text-sm text-warning-600 dark:text-warning-400">
+                                  Setelah disubmit, project hanya dapat diubah jika dosen meminta revisi.
+                                </p>
+                              </div>
+                            </div>
+
+                            <p>Apakah Anda yakin ingin mengsubmit project ini?</p>
+                          </div>
+                        )}
+                      </div>
+                    ) : !error ? (
+                      <div className="py-8 text-center text-default-500">
+                        Data kelengkapan belum tersedia.
+                      </div>
+                    ) : null}
                   </>
                 )}
               </ModalBody>
@@ -154,11 +285,14 @@ export function SubmitProjectButton({
                       color="primary"
                       onPress={handleSubmit}
                       isLoading={isSubmitting}
+                      isDisabled={isChecking || !readiness?.canSubmit}
                       startContent={
                         !isSubmitting ? <Send size={16} /> : undefined
                       }
                     >
-                      Ya, Submit Project
+                      {currentStatus === 'REVISION_NEEDED'
+                        ? 'Ya, Kirim Ulang'
+                        : 'Ya, Submit Project'}
                     </Button>
                   </>
                 )}

@@ -1,20 +1,93 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { Github, ArrowUpRight } from 'lucide-react';
-import { formatDate, getStatusLabel } from '@/lib/utils';
-import { LabelRow } from '@/components/caret/dashboard/LabelRow';
-import { BentoStats } from '@/components/caret/dashboard/BentoStats';
-import { BentoChart, type ChartPoint } from '@/components/caret/dashboard/BentoChart';
-import { BentoLists, type BentoRow, type BentoUpNext } from '@/components/caret/dashboard/BentoLists';
-import { BentoFeed, type BentoFeedItem } from '@/components/caret/dashboard/BentoFeed';
-import { DashboardEntrance } from '@/components/caret/dashboard/DashboardEntrance';
-import { DashboardGreeting } from '@/components/caret/dashboard/DashboardGreeting';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
+import {
+  Button,
+  Card,
+  CardBody,
+  Chip,
+  Progress,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  addToast,
+  Avatar,
+} from '@heroui/react';
+import {
+  FolderGit2,
+  FileText,
+  ClipboardCheck,
+  Clock,
+  Plus,
+  Github,
+  ChevronRight,
+  ExternalLink,
+  Calendar,
+  Trash2,
+  AlertTriangle,
+  Sparkles,
+  TrendingUp,
+  Edit,
+  Rocket,
+  BookOpen,
+  Target,
+  Award,
+  Zap,
+  Users,
+  Crown,
+  Link2,
+  CheckCircle2,
+} from 'lucide-react';
+import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+import { StudentJourneyHub } from '@/components/mahasiswa/student-journey-hub';
+import type { StudentJourney } from '@/lib/student-journey';
 
-interface MahasiswaDashboardContentProps {
-  userName: string;
-  hasGitHubConnected: boolean;
+interface ProjectMember {
+  id: string;
+  projectId: string;
   githubUsername: string | null;
+  githubAvatarUrl: string | null;
+  name: string | null;
+  role: string;
+  userId: string | null;
+  joinedAt: Date;
+}
+
+interface Project {
+  id: string;
+  title: string;
+  description: string | null;
+  status: string;
+  githubRepoUrl: string | null;
+  githubRepoName: string | null;
+  semester: string;
+  tahunAkademik: string;
+  submittedAt: Date | null;
+  mahasiswaId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  documents: { id: string }[];
+  reviews: { id: string; reviewer: { name: string } }[];
+  members: ProjectMember[];
+  _count: {
+    documents: number;
+    reviews: number;
+  };
+}
+
+interface MahasiswaDashboardProps {
+  userName: string;
+  userImage?: string;
+  projects: Project[];
+  hasGitHubConnected?: boolean;
+  githubUsername?: string;
+  journey: StudentJourney;
   stats: {
     totalProjects: number;
     submittedProjects: number;
@@ -22,198 +95,778 @@ interface MahasiswaDashboardContentProps {
     pendingReviews: number;
     totalDocuments: number;
   };
-  projects: {
-    id: string;
-    title: string;
-    status: string;
-    semester: string;
-    tahunAkademik: string;
-    documents: number;
-    reviews: number;
-  }[];
-  activity: ChartPoint[];
-  upcomingPresentation: {
-    projectTitle: string;
-    scheduledDate: string;
-    startTime: string;
-    endTime: string | null;
-    location: string | null;
-    scheduledBy: string;
-    notes: string | null;
-  } | null;
-  reviews: {
-    id: string;
-    status: string;
-    overallComment: string | null;
-    updatedAt: string;
-    reviewerName: string;
-    projectId: string;
-    projectTitle: string;
-    commentCount: number;
-  }[];
 }
 
-function GitHubBanner({
-  connected,
-  username,
-}: {
-  connected: boolean;
-  username: string | null;
-}) {
-  if (connected && username) {
-    return (
-      <div data-reveal className="border-border bg-background mb-2 flex items-center gap-3 border px-5 py-3">
-        <span className="bg-app-primary text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg">
-          <Github className="size-4" />
-        </span>
-        <p className="text-app-secondary-invert grow text-sm">
-          GitHub terhubung sebagai{' '}
-          <span className="text-app-primary-invert font-medium">@{username}</span>
-        </p>
-        <a
-          href={`https://github.com/${username}`}
-          target="_blank"
-          rel="noreferrer"
-          className="text-app-teritary-invert hover:text-app-primary-invert inline-flex shrink-0 items-center gap-1 whitespace-nowrap font-mono text-[10px] tracking-wider transition-colors md:text-xs"
-        >
-          LIHAT PROFIL
-          <ArrowUpRight className="size-3" />
-        </a>
-      </div>
-    );
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: [0.25, 0.46, 0.45, 0.94] as const,
+    },
+  },
+};
+
+// Get greeting based on time
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Selamat Pagi';
+  if (hour < 15) return 'Selamat Siang';
+  if (hour < 18) return 'Selamat Sore';
+  return 'Selamat Malam';
+};
+
+// Stats card configurations
+const STATS_CONFIG = [
+  {
+    key: 'total',
+    label: 'Total Project',
+    icon: FolderGit2,
+    gradient: 'bg-[var(--color-ember)]',
+    bgLight: 'bg-[var(--color-fog)] dark:bg-zinc-900/40',
+    iconColor: 'text-[var(--color-ember)]',
+  },
+  {
+    key: 'documents',
+    label: 'Dokumen',
+    icon: FileText,
+    gradient: 'bg-[var(--color-ember)]',
+    bgLight: 'bg-[var(--color-fog)] dark:bg-zinc-900/40',
+    iconColor: 'text-[var(--color-ember)]',
+  },
+  {
+    key: 'reviewed',
+    label: 'Review Selesai',
+    icon: ClipboardCheck,
+    gradient: 'bg-emerald-500',
+    bgLight: 'bg-[var(--color-fog)] dark:bg-zinc-900/40',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+  },
+  {
+    key: 'pending',
+    label: 'Menunggu Review',
+    icon: Clock,
+    gradient: 'bg-amber-500',
+    bgLight: 'bg-[var(--color-fog)] dark:bg-zinc-900/40',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+  },
+];
+
+// Quick actions configuration
+const QUICK_ACTIONS = [
+  {
+    label: 'Buat Project Baru',
+    href: '/mahasiswa/projects/new',
+    icon: Plus,
+    color: 'default' as const,
+    gradient: 'bg-[var(--color-ember)]',
+    description: 'Mulai project capstone baru',
+  },
+  {
+    label: 'Lihat Persyaratan',
+    href: '/mahasiswa/persyaratan',
+    icon: BookOpen,
+    color: 'default' as const,
+    gradient: 'bg-[var(--color-obsidian)] dark:bg-white dark:text-[var(--color-obsidian)]',
+    description: 'Panduan persyaratan capstone',
+  },
+  {
+    label: 'Semua Project',
+    href: '/mahasiswa/projects',
+    icon: FolderGit2,
+    color: 'default' as const,
+    gradient: 'bg-[var(--color-steel)]',
+    description: 'Kelola semua project Anda',
+  },
+];
+
+// Get progress based on status
+const getProgress = (status: string) => {
+  switch (status) {
+    case 'DRAFT':
+      return 15;
+    case 'SUBMITTED':
+      return 40;
+    case 'IN_REVIEW':
+      return 65;
+    case 'REVISION_NEEDED':
+      return 55;
+    case 'APPROVED':
+      return 100;
+    case 'REJECTED':
+      return 100;
+    default:
+      return 0;
   }
+};
 
-  return (
-    <div data-reveal className="border-border bg-background mb-2 flex flex-wrap items-center gap-3 border px-5 py-3">
-      <span className="bg-app-primary text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg">
-        <Github className="size-4" />
-      </span>
-      <p className="text-app-secondary-invert grow text-sm">
-        Hubungkan akun GitHub untuk sinkronisasi repository project.
-      </p>
-      <Link
-        href="/mahasiswa/settings"
-        className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex h-8 shrink-0 items-center justify-center rounded-full px-4 text-xs font-medium transition-all"
-      >
-        Hubungkan GitHub
-      </Link>
-    </div>
-  );
-}
+// Get status accent
+const getStatusGradient = (status: string) => {
+  switch (status) {
+    case 'APPROVED':
+      return 'bg-emerald-500';
+    case 'REJECTED':
+      return 'bg-rose-500';
+    case 'IN_REVIEW':
+      return 'bg-amber-500';
+    case 'SUBMITTED':
+      return 'bg-[var(--color-ember)]';
+    case 'REVISION_NEEDED':
+      return 'bg-orange-500';
+    default:
+      return 'bg-[var(--color-steel)]';
+  }
+};
 
 export function MahasiswaDashboardContent({
   userName,
+  userImage,
+  projects,
   hasGitHubConnected,
   githubUsername,
+  journey,
   stats,
-  projects,
-  activity,
-  upcomingPresentation,
-  reviews,
-}: MahasiswaDashboardContentProps) {
-  const upNext: BentoUpNext | null = upcomingPresentation
-    ? {
-        title: upcomingPresentation.projectTitle,
-        time: `${formatDate(upcomingPresentation.scheduledDate)} · ${upcomingPresentation.startTime}${
-          upcomingPresentation.endTime ? ` - ${upcomingPresentation.endTime}` : ''
-        }`,
-        chip: 'Terjadwal',
-        icon: 'presentasi',
-        summary: upcomingPresentation.notes || undefined,
-        facts: [
-          ['Lokasi', upcomingPresentation.location || 'Menyusul'],
-          ['Penjadwal', upcomingPresentation.scheduledBy],
-        ] as const,
+}: MahasiswaDashboardProps) {
+  const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (project: Project) => {
+    setSelectedProject(project);
+    onOpen();
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!selectedProject) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch(`/api/projects/${selectedProject.id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        addToast({
+          title: 'Berhasil',
+          description: 'Project berhasil dihapus',
+          color: 'success',
+        });
+        onClose();
+        router.refresh();
+      } else {
+        const data = await response.json();
+        addToast({
+          title: 'Gagal',
+          description: data.error || 'Gagal menghapus project',
+          color: 'danger',
+        });
       }
-    : null;
+    } catch {
+      addToast({
+        title: 'Error',
+        description: 'Terjadi kesalahan saat menghapus project',
+        color: 'danger',
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
-  const projectRows: BentoRow[] = projects.map((p) => ({
-    title: p.title,
-    subtitle: `${p.semester} ${p.tahunAkademik} · ${p.documents} dok · ${p.reviews} review`,
-    chip: getStatusLabel(p.status),
-    chipLive: p.status === 'IN_REVIEW',
-    icon: 'project',
-    href: `/mahasiswa/projects/${p.id}`,
-  }));
+  const getStatsValue = (key: string) => {
+    switch (key) {
+      case 'total':
+        return stats.totalProjects;
+      case 'documents':
+        return stats.totalDocuments;
+      case 'reviewed':
+        return stats.reviewedProjects;
+      case 'pending':
+        return stats.pendingReviews;
+      default:
+        return 0;
+    }
+  };
 
-  const feedItems: BentoFeedItem[] = reviews.map((r) => ({
-    tag: 'REVIEW MASUK',
-    title: r.projectTitle,
-    subtitle: `Reviewer: ${r.reviewerName}`,
-    body: r.overallComment || undefined,
-    meta: formatDate(r.updatedAt).toUpperCase(),
-    chips: [
-      {
-        label: getStatusLabel(r.status),
-        sub: `${r.commentCount} komentar inline`,
-      },
-    ],
-    href: `/mahasiswa/projects/${r.projectId}`,
-  }));
+  const firstName = userName.split(' ')[0];
 
   return (
-    <div className="mx-auto max-w-6xl">
-      <DashboardEntrance />
+    <motion.div
+      className="w-full space-y-6 pb-8"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Hero Welcome Card */}
+      <motion.div variants={itemVariants}>
+        <div className="ae-card ae-noise relative overflow-hidden rounded-2xl bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] p-6 md:p-8 hover:shadow-xl transition-all">
+          <div className="absolute inset-x-0 top-0 h-1 bg-[var(--color-ember)]" />
 
-      <DashboardGreeting userName={userName} />
+          <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* Left side - Welcome */}
+            <div className="flex items-center gap-4">
+              <Avatar
+                name={userName}
+                src={userImage}
+                size="lg"
+                className="ring-4 ring-[var(--color-fog)] dark:ring-[var(--color-graphite)] w-16 h-16 md:w-20 md:h-20"
+              />
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <Sparkles size={16} className="text-[var(--color-ember)]" />
+                  <span className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">{getGreeting()}</span>
+                </div>
+                <h1 className="font-sans-display text-2xl md:text-3xl font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">{firstName}!</h1>
+                <p className="text-[var(--color-steel)] text-sm md:text-base mt-1">
+                  Kelola project capstone Anda di sini
+                </p>
+              </div>
+            </div>
 
-      <GitHubBanner connected={hasGitHubConnected} username={githubUsername} />
+            {/* Right side - Quick Stats */}
+            <div className="flex items-center gap-3 md:gap-4">
+              <div className="text-center px-4 py-2 rounded-xl bg-[var(--color-mist)] dark:bg-zinc-900/40 border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+                <p className="font-sans-display text-2xl md:text-3xl font-bold text-[var(--color-ember)]">{stats.totalProjects}</p>
+                <p className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Project</p>
+              </div>
+              <div className="text-center px-4 py-2 rounded-xl bg-[var(--color-mist)] dark:bg-zinc-900/40 border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+                <p className="font-sans-display text-2xl md:text-3xl font-bold text-[var(--color-ember)]">{stats.submittedProjects}</p>
+                <p className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Disubmit</p>
+              </div>
+              {stats.pendingReviews > 0 && (
+                <div className="text-center px-4 py-2 rounded-xl bg-[var(--color-mist)] dark:bg-zinc-900/40 border border-amber-300/70 dark:border-amber-700/50">
+                  <p className="font-sans-display text-2xl md:text-3xl font-bold text-amber-700 dark:text-amber-300">{stats.pendingReviews}</p>
+                  <p className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-amber-600 dark:text-amber-400">Pending</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
 
-      <LabelRow left="[SEN] RINGKASAN" right="/ SEMESTER INI" />
-      <BentoStats
-        stats={[
-          {
-            label: 'TOTAL PROJECT',
-            value: stats.totalProjects,
-            hint: `${stats.submittedProjects} sudah submit`,
-            href: '/mahasiswa/projects',
-          },
-          {
-            label: 'MENUNGGU REVIEW',
-            value: stats.pendingReviews,
-            hint: 'disubmit / dalam review',
-          },
-          {
-            label: 'REVIEW SELESAI',
-            value: stats.reviewedProjects,
-            hint: 'disetujui / ditolak',
-          },
-          {
-            label: 'DOKUMEN',
-            value: stats.totalDocuments,
-            hint: 'terunggah di semua project',
-            href: '/mahasiswa/documents',
-          },
-        ]}
-      />
+      {/* GitHub Connection Banner */}
+      {!hasGitHubConnected && (
+        <motion.div variants={itemVariants}>
+          <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border-2 border-dashed border-amber-300 dark:border-amber-700 rounded-2xl">
+            <CardBody className="p-4 md:p-5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2.5 rounded-2xl bg-[var(--color-fog)] dark:bg-zinc-900/40 border border-amber-300/70 dark:border-amber-700/50">
+                    <Github size={24} className="text-amber-600 dark:text-amber-400" />
+                  </div>
+                  <div>
+                    <h3 className="font-sans-display font-bold tracking-tight text-amber-700 dark:text-amber-300">
+                      Hubungkan Akun GitHub
+                    </h3>
+                    <p className="text-sm text-[var(--color-steel)] mt-0.5">
+                      Hubungkan akun GitHub Anda untuk memilih repository project capstone
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  as={Link}
+                  href="/mahasiswa/settings"
+                  color="warning"
+                  variant="flat"
+                  startContent={<Link2 size={16} />}
+                  className="shrink-0"
+                >
+                  Hubungkan Sekarang
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
+      )}
 
-      <LabelRow left="[SEL] AKTIVITAS" right="/ PROJECT" />
-      <div
-        data-reveal
-        className="border-border grid gap-px border bg-border lg:grid-cols-[1.1fr_1fr]"
-      >
-        <BentoChart
-          title="Aktivitas notifikasi"
-          caption="7 HARI TERAKHIR"
-          data={activity}
-        />
-        <BentoLists
-          upNextTitle="Berikutnya"
-          upNextTag="JADWAL PRESENTASI"
-          upNext={upNext}
-          upNextEmptyText="Belum ada jadwal presentasi. Lengkapi persyaratan dan submit projectmu."
-          rowsTitle="Project terakhir"
-          rowsViewAllHref="/mahasiswa/projects"
-          rows={projectRows}
-          rowsEmptyText="Belum ada project. Buat project pertamamu."
-        />
+      {/* GitHub Connected Success */}
+      {hasGitHubConnected && githubUsername && (
+        <motion.div variants={itemVariants}>
+          <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-emerald-200 dark:border-emerald-800 rounded-2xl">
+            <CardBody className="p-3 md:p-4">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-2xl bg-[var(--color-fog)] dark:bg-zinc-900/40 border border-emerald-200 dark:border-emerald-800">
+                  <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-sans-display text-sm font-bold tracking-tight text-emerald-700 dark:text-emerald-300">
+                    GitHub Terhubung
+                  </p>
+                  <p className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">
+                    @{githubUsername}
+                  </p>
+                </div>
+                <Button
+                  as="a"
+                  href={`https://github.com/${githubUsername}`}
+                  target="_blank"
+                  size="sm"
+                  variant="light"
+                  color="success"
+                  startContent={<Github size={14} />}
+                >
+                  Lihat Profil
+                </Button>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
+      )}
+
+      {/* Guided Student Journey */}
+      <motion.div variants={itemVariants}>
+        <StudentJourneyHub journey={journey} />
+      </motion.div>
+
+      {/* Stats Grid */}
+      <motion.div variants={itemVariants}>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          {STATS_CONFIG.map((stat) => {
+            const Icon = stat.icon;
+            const value = getStatsValue(stat.key);
+            return (
+              <Card
+                key={stat.key}
+                className="ae-card bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl overflow-hidden group hover:shadow-xl transition-all"
+              >
+                <CardBody className="p-4 md:p-5">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-1">
+                      <p className="font-mono-display text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">{stat.label}</p>
+                      <p className="font-sans-display text-2xl md:text-3xl font-bold tracking-tight text-[var(--color-ember)]">{value}</p>
+                    </div>
+                    <div className={`p-2.5 rounded-2xl border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] ${stat.bgLight} transition-transform group-hover:scale-105`}>
+                      <Icon size={20} className={stat.iconColor} />
+                    </div>
+                  </div>
+                  <div className="h-1 mt-4 rounded-full bg-[var(--color-fog)] dark:bg-zinc-800 overflow-hidden">
+                    <div className={`h-full rounded-full ${stat.gradient} opacity-80 group-hover:opacity-100 transition-opacity`} />
+                  </div>
+                </CardBody>
+              </Card>
+            );
+          })}
+        </div>
+      </motion.div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Projects Section */}
+        <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
+          {/* Projects Card */}
+          <Card className="ae-card bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl overflow-hidden hover:shadow-xl transition-all">
+            {/* Header */}
+            <div className="p-5 bg-[var(--color-mist)] dark:bg-zinc-900/40 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-2xl border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40">
+                    <Rocket size={20} className="text-[var(--color-ember)]" />
+                  </div>
+                  <div>
+                    <h2 className="font-sans-display font-bold tracking-tight text-lg text-[var(--color-obsidian)] dark:text-white">Project Saya</h2>
+                    <p className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">
+                      {projects.length === 0 ? 'Belum ada project' : `${projects.length} project`}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    as={Link}
+                    href="/mahasiswa/projects/new"
+                    color="default"
+                    size="sm"
+                    startContent={<Plus size={16} />}
+                    className="hidden md:flex bg-[var(--color-ember)] text-white font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                  >
+                    Buat Baru
+                  </Button>
+                  <Button
+                    as={Link}
+                    href="/mahasiswa/projects"
+                    variant="flat"
+                    size="sm"
+                    endContent={<ChevronRight size={16} />}
+                    className="font-mono-display text-[10px] uppercase tracking-widest font-bold border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]"
+                  >
+                    Semua
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <CardBody className="p-0">
+              {projects.length === 0 ? (
+                <div className="text-center py-12 px-4">
+                  <div className="w-20 h-20 mx-auto mb-4 rounded-2xl border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40 flex items-center justify-center">
+                    <FolderGit2 size={36} className="text-[var(--color-ember)]" />
+                  </div>
+                  <h3 className="font-sans-display font-bold tracking-tight text-lg mb-2 text-[var(--color-obsidian)] dark:text-white">Belum Ada Project</h3>
+                  <p className="text-[var(--color-steel)] mb-4 text-sm max-w-sm mx-auto">
+                    Mulai perjalanan capstone Anda dengan membuat project pertama!
+                  </p>
+                  <Button
+                    as={Link}
+                    href="/mahasiswa/projects/new"
+                    color="default"
+                    size="lg"
+                    startContent={<Zap size={18} />}
+                    className="bg-[var(--color-ember)] text-white font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                  >
+                    Buat Project Sekarang
+                  </Button>
+                </div>
+              ) : (
+                <div className="divide-y divide-[var(--color-pebble)] dark:divide-[var(--color-graphite)]">
+                  {projects.slice(0, 3).map((project, index) => (
+                    <motion.div
+                      key={project.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="p-4 md:p-5 hover:bg-[var(--color-mist)] dark:hover:bg-zinc-900/40 transition-colors"
+                    >
+                      <div className="flex flex-col md:flex-row md:items-center gap-4">
+                        {/* Project Info */}
+                        <div className="flex items-start gap-3 flex-1 min-w-0">
+                          {/* Status indicator */}
+                          <div className={`p-2.5 rounded-2xl ${getStatusGradient(project.status)} text-white shrink-0`}>
+                            <FolderGit2 size={18} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Link
+                                href={`/mahasiswa/projects/${project.id}`}
+                                className="font-sans-display font-bold tracking-tight text-base text-[var(--color-obsidian)] dark:text-white hover:text-[var(--color-ember)] transition-colors truncate"
+                              >
+                                {project.title}
+                              </Link>
+                              <Chip
+                                size="sm"
+                                color={getStatusColor(project.status)}
+                                variant="flat"
+                                className="shrink-0"
+                              >
+                                {getStatusLabel(project.status)}
+                              </Chip>
+                            </div>
+                            <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-steel)]">
+                              <span className="flex items-center gap-1">
+                                <Calendar size={12} />
+                                {project.semester}
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <FileText size={12} />
+                                {project._count.documents} dok
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <ClipboardCheck size={12} />
+                                {project._count.reviews} review
+                              </span>
+                              {project.githubRepoUrl && (
+                                <a
+                                  href={project.githubRepoUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1 text-[var(--color-ember)] hover:underline"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <Github size={12} />
+                                  <ExternalLink size={10} />
+                                </a>
+                              )}
+                            </div>
+
+                            {/* Progress bar */}
+                            <div className="mt-3 space-y-1">
+                              <div className="flex justify-between text-xs">
+                                <span className="text-[var(--color-steel)]">Progress</span>
+                                <span className="font-medium">{getProgress(project.status)}%</span>
+                              </div>
+                              <Progress
+                                value={getProgress(project.status)}
+                                color={getStatusColor(project.status)}
+                                size="sm"
+                                className="h-1.5"
+                              />
+                            </div>
+
+                            {/* Team Members */}
+                            {project.members && project.members.length > 0 && (
+                              <div className="mt-3 p-3 rounded-xl bg-[var(--color-mist)] dark:bg-zinc-900/40 border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Users size={12} className="text-[var(--color-steel)]" />
+                                  <span className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">
+                                    Anggota Tim ({project.members.length})
+                                  </span>
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                  {project.members.map((member) => (
+                                    <div
+                                      key={member.id}
+                                      className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]"
+                                    >
+                                      <Avatar
+                                        src={member.githubAvatarUrl || undefined}
+                                        name={member.name || member.githubUsername || 'Member'}
+                                        size="sm"
+                                        className="w-5 h-5"
+                                      />
+                                      <span className="text-xs font-medium truncate max-w-[100px]">
+                                        {member.name || member.githubUsername || 'Member'}
+                                      </span>
+                                      {member.role === 'leader' && (
+                                        <Crown size={10} className="text-amber-500 shrink-0" />
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex items-center gap-2 shrink-0 md:ml-4">
+                          <Button
+                            as={Link}
+                            href={`/mahasiswa/projects/${project.id}`}
+                            size="sm"
+                            variant="flat"
+                            className="font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                          >
+                            Detail
+                          </Button>
+                          {project.status === 'DRAFT' && (
+                            <>
+                              <Button
+                                as={Link}
+                                href={`/mahasiswa/projects/${project.id}/edit`}
+                                size="sm"
+                                color="default"
+                                variant="flat"
+                                startContent={<Edit size={14} />}
+                                className="bg-[var(--color-ember)]/10 text-[var(--color-ember)] font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                              >
+                                Edit
+                              </Button>
+                              <Button
+                                size="sm"
+                                color="danger"
+                                variant="flat"
+                                isIconOnly
+                                onPress={() => handleDeleteClick(project)}
+                              >
+                                <Trash2 size={14} />
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Updated timestamp */}
+                      <p className="font-mono-display text-[10px] uppercase tracking-widest text-[var(--color-steel)] mt-3 md:ml-14">
+                        Diperbarui: {formatDate(project.updatedAt)}
+                      </p>
+                    </motion.div>
+                  ))}
+
+                  {projects.length > 3 && (
+                    <div className="p-4 text-center bg-[var(--color-mist)] dark:bg-zinc-900/40">
+                      <Button
+                        as={Link}
+                        href="/mahasiswa/projects"
+                        variant="light"
+                        endContent={<ChevronRight size={16} />}
+                        className="text-[var(--color-ember)] font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                      >
+                        Lihat Semua Project ({projects.length})
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardBody>
+          </Card>
+        </motion.div>
+
+        {/* Right Sidebar */}
+        <motion.div variants={itemVariants} className="space-y-6">
+          {/* Quick Actions Card */}
+          <Card className="ae-card bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl overflow-hidden hover:shadow-xl transition-all">
+            <div className="p-4 bg-[var(--color-mist)] dark:bg-zinc-900/40 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+              <div className="flex items-center gap-2">
+                <Target size={18} className="text-[var(--color-ember)]" />
+                <h3 className="font-sans-display font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">Aksi Cepat</h3>
+              </div>
+            </div>
+            <CardBody className="p-4 space-y-3">
+              {QUICK_ACTIONS.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Link
+                    key={action.href}
+                    href={action.href}
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-[var(--color-mist)] dark:hover:bg-zinc-900/40 transition-colors group"
+                  >
+                    <div className={`p-2.5 rounded-2xl ${action.gradient} text-white shrink-0 transition-transform group-hover:scale-105`}>
+                      <Icon size={18} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-sans-display font-bold text-sm text-[var(--color-obsidian)] dark:text-white group-hover:text-[var(--color-ember)] transition-colors">
+                        {action.label}
+                      </p>
+                      <p className="text-xs text-[var(--color-steel)] truncate">{action.description}</p>
+                    </div>
+                    <ChevronRight size={16} className="text-[var(--color-steel)] group-hover:text-[var(--color-ember)] transition-colors" />
+                  </Link>
+                );
+              })}
+            </CardBody>
+          </Card>
+
+          {/* Progress Overview Card */}
+          <Card className="ae-card bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl overflow-hidden hover:shadow-xl transition-all">
+            <div className="p-4 bg-[var(--color-mist)] dark:bg-zinc-900/40 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+              <div className="flex items-center gap-2">
+                <TrendingUp size={18} className="text-[var(--color-ember)]" />
+                <h3 className="font-sans-display font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">Ringkasan Progress</h3>
+              </div>
+            </div>
+            <CardBody className="p-5">
+              <div className="space-y-5">
+                {/* Overall progress - Larger ring */}
+                <div className="text-center py-6">
+                  <div className="relative w-32 h-32 mx-auto">
+                    <svg className="w-32 h-32 -rotate-90" viewBox="0 0 120 120">
+                      {/* Background circle */}
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="50"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="10"
+                        className="text-[var(--color-fog)] dark:text-zinc-800"
+                      />
+                      {/* Progress circle */}
+                      <circle
+                        cx="60"
+                        cy="60"
+                        r="50"
+                        fill="none"
+                        stroke="url(#progressGradient)"
+                        strokeWidth="10"
+                        strokeLinecap="round"
+                        strokeDasharray={314}
+                        strokeDashoffset={
+                          314 - (314 * (stats.totalProjects > 0 ? (stats.reviewedProjects / stats.totalProjects) * 100 : 0)) / 100
+                        }
+                        className="transition-all duration-1000 ease-out"
+                      />
+                      <defs>
+                        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="var(--color-ember)" />
+                          <stop offset="100%" stopColor="var(--color-orchid-flash)" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    {/* Center text - positioned properly */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                      <span className="font-sans-display text-3xl font-bold text-[var(--color-ember)]">
+                        {stats.totalProjects > 0 ? Math.round((stats.reviewedProjects / stats.totalProjects) * 100) : 0}%
+                      </span>
+                      <span className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] mt-1">Selesai</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Stats breakdown */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-mist)] dark:bg-zinc-900/40 border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-emerald-500/10">
+                        <Award size={14} className="text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <span className="text-sm font-medium">Approved</span>
+                    </div>
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400">
+                      {stats.reviewedProjects}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-mist)] dark:bg-zinc-900/40 border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-amber-500/10">
+                        <Clock size={14} className="text-amber-600 dark:text-amber-400" />
+                      </div>
+                      <span className="text-sm font-medium">Dalam Review</span>
+                    </div>
+                    <span className="font-bold text-amber-600 dark:text-amber-400">
+                      {stats.pendingReviews}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-[var(--color-mist)] dark:bg-zinc-900/40 border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
+                    <div className="flex items-center gap-2">
+                      <div className="p-1.5 rounded-lg bg-[var(--color-fog)] dark:bg-zinc-800">
+                        <FileText size={14} className="text-[var(--color-steel)]" />
+                      </div>
+                      <span className="text-sm font-medium">Draft</span>
+                    </div>
+                    <span className="font-bold text-[var(--color-steel)]">
+                      {stats.totalProjects - stats.submittedProjects}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardBody>
+          </Card>
+        </motion.div>
       </div>
 
-      <LabelRow left="[RAB] REVIEW TERBARU" right="/ FEED" />
-      <BentoFeed
-        items={feedItems}
-        emptyText="Belum ada review dari dosen penguji."
-      />
-    </div>
+      {/* Delete Confirmation Modal */}
+      <Modal isOpen={isOpen} onClose={onClose} size="sm">
+        <ModalContent>
+          <ModalHeader className="flex flex-col gap-1">
+            <div className="flex items-center gap-2 text-danger">
+              <AlertTriangle size={20} />
+              <span>Hapus Project</span>
+            </div>
+          </ModalHeader>
+          <ModalBody>
+            <p className="text-[var(--color-steel)]">
+              Apakah Anda yakin ingin menghapus project{' '}
+              <span className="font-semibold text-[var(--color-obsidian)] dark:text-white">&quot;{selectedProject?.title}&quot;</span>?
+            </p>
+            <p className="text-sm text-[var(--color-steel)]">
+              Tindakan ini tidak dapat dibatalkan. Semua data project termasuk dokumen dan review akan dihapus.
+            </p>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="light" onPress={onClose} isDisabled={isDeleting}>
+              Batal
+            </Button>
+            <Button
+              color="danger"
+              onPress={handleDeleteConfirm}
+              isLoading={isDeleting}
+            >
+              Hapus
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </motion.div>
   );
 }
