@@ -1,7 +1,64 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @import '../styles/caret.css';
+@import '../styles/daytona.css';
 @config "../../tailwind.config.ts";
+
+/* ============================================
+   CAPSTONE — Accent tokens (dipakai dashboard shadcn)
+   Utility: bg-brand/15, text-success, border-warning/40, dst.
+   Nilai selaras palet landing (day-blue #0080ff, day-green #2ecc71).
+   ============================================ */
+@theme {
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-highlight: var(--highlight);
+  --color-highlight-foreground: var(--highlight-foreground);
+  --color-rose: var(--rose);
+  --color-rose-foreground: var(--rose-foreground);
+  --color-orange: var(--orange);
+  --color-orange-foreground: var(--orange-foreground);
+}
+
+:root {
+  --brand: #0072e5;
+  --brand-foreground: #ffffff;
+  --success: #1a9e5c;
+  --success-foreground: #ffffff;
+  --warning: #d97706;
+  --warning-foreground: #ffffff;
+  --info: #0e9394;
+  --info-foreground: #ffffff;
+  --highlight: #7c5cfc;
+  --highlight-foreground: #ffffff;
+  --rose: #db2777;
+  --rose-foreground: #ffffff;
+  --orange: #ea580c;
+  --orange-foreground: #ffffff;
+}
+
+.dark {
+  --brand: #0080ff;
+  --brand-foreground: #ffffff;
+  --success: #2ecc71;
+  --success-foreground: #052e16;
+  --warning: #f3be4e;
+  --warning-foreground: #271500;
+  --info: #33cccc;
+  --info-foreground: #032726;
+  --highlight: #9b7bff;
+  --highlight-foreground: #14043a;
+  --rose: #f973b5;
+  --rose-foreground: #3d0521;
+  --orange: #ff8866;
+  --orange-foreground: #2a0e00;
+}
 
 /* ============================================
    ACCTUAL — Color Tokens (Tailwind v4 @theme)
