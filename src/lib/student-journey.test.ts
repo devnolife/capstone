@@ -25,6 +25,8 @@ const readyDraft = {
   requirements: completeRequirements,
   documentTypes: ['CONSENT_AGREEMENT'],
   stakeholderDocumentCount: 1,
+  workLogCount: 3,
+  userPhotoCount: 1,
   submissionDeadline: '2026-07-20T15:59:59.999Z',
   now: new Date('2026-07-18T00:00:00.000Z'),
 };
@@ -38,6 +40,8 @@ describe('checkSubmissionReadiness', () => {
       requirements: null,
       documentTypes: [],
       stakeholderDocumentCount: 0,
+      workLogCount: 0,
+      userPhotoCount: 0,
       submissionDeadline: null,
       now: new Date('2026-07-18T00:00:00.000Z'),
     });
@@ -49,6 +53,8 @@ describe('checkSubmissionReadiness', () => {
         'github_repository',
         'consent_document',
         'stakeholder_document',
+        'work_log',
+        'user_photo',
       ]),
     );
   });
@@ -111,6 +117,8 @@ describe('buildStudentJourney', () => {
         requirements: { ...completeRequirements, metodologi: null },
         documentTypes: ['CONSENT_AGREEMENT'],
         stakeholderDocumentCount: 1,
+        workLogCount: 3,
+        userPhotoCount: 1,
         reviews: [],
         presentationSchedule: null,
         memberCount: 2,
@@ -136,6 +144,8 @@ describe('buildStudentJourney', () => {
         requirements: completeRequirements,
         documentTypes: ['CONSENT_AGREEMENT'],
         stakeholderDocumentCount: 1,
+        workLogCount: 3,
+        userPhotoCount: 1,
         reviews: [{ status: 'COMPLETED' }, { status: 'IN_PROGRESS' }],
         presentationSchedule: null,
         memberCount: 2,
@@ -161,6 +171,8 @@ describe('buildStudentJourney', () => {
         requirements: completeRequirements,
         documentTypes: ['CONSENT_AGREEMENT'],
         stakeholderDocumentCount: 1,
+        workLogCount: 3,
+        userPhotoCount: 1,
         reviews: [],
         presentationSchedule: null,
         memberCount: 2,
@@ -185,6 +197,8 @@ describe('buildStudentJourney', () => {
         requirements: completeRequirements,
         documentTypes: ['CONSENT_AGREEMENT'],
         stakeholderDocumentCount: 1,
+        workLogCount: 3,
+        userPhotoCount: 1,
         reviews: [{ status: 'COMPLETED' }, { status: 'COMPLETED' }],
         presentationSchedule: {
           scheduledDate: '2026-07-25T00:00:00.000Z',

@@ -21,8 +21,15 @@ export type SubmissionBlockerCode =
   | 'github_repository'
   | 'consent_document'
   | 'stakeholder_document'
+  | 'work_log'
+  | 'user_photo'
   | 'submission_deadline'
   | 'invalid_status';
+
+// Minimal jumlah laporan pengerjaan harian sebelum project bisa disubmit
+export const MIN_WORK_LOGS = 3;
+// Minimal jumlah foto bersama pengguna sebelum project bisa disubmit
+export const MIN_USER_PHOTOS = 1;
 
 export interface SubmissionBlocker {
   code: SubmissionBlockerCode;
@@ -39,6 +46,8 @@ export interface SubmissionReadinessInput {
   requirements: RequirementValues | null;
   documentTypes: string[];
   stakeholderDocumentCount: number;
+  workLogCount: number;
+  userPhotoCount: number;
   submissionDeadline: Date | string | null;
   now?: Date;
 }
@@ -101,6 +110,8 @@ export interface JourneyProjectInput {
   requirements: RequirementValues | null;
   documentTypes: string[];
   stakeholderDocumentCount: number;
+  workLogCount: number;
+  userPhotoCount: number;
   reviews: JourneyReview[];
   presentationSchedule: JourneyPresentation | null;
   memberCount: number;
@@ -181,6 +192,24 @@ export function checkSubmissionReadiness(
     });
   }
 
+  if (input.workLogCount < MIN_WORK_LOGS) {
+    blockers.push({
+      code: 'work_log',
+      label: 'Laporan Pengerjaan',
+      description: `Isi minimal ${MIN_WORK_LOGS} laporan pengerjaan harian (hari ke berapa mengerjakan apa). Saat ini baru ${input.workLogCount}.`,
+      href: `/mahasiswa/projects/${input.projectId}`,
+    });
+  }
+
+  if (input.userPhotoCount < MIN_USER_PHOTOS) {
+    blockers.push({
+      code: 'user_photo',
+      label: 'Foto Bersama Pengguna',
+      description: 'Unggah minimal satu foto bersama pengguna aplikasi sebagai bukti.',
+      href: `/mahasiswa/projects/${input.projectId}`,
+    });
+  }
+
   const now = input.now ?? new Date();
   const deadline = input.submissionDeadline
     ? new Date(input.submissionDeadline)
@@ -204,7 +233,7 @@ export function checkSubmissionReadiness(
     });
   }
 
-  const totalChecks = REQUIRED_REQUIREMENT_FIELDS.length + 3;
+  const totalChecks = REQUIRED_REQUIREMENT_FIELDS.length + 5;
   const failedContentChecks = blockers.filter(
     (item) => item.code !== 'submission_deadline' && item.code !== 'invalid_status',
   ).length;
@@ -300,6 +329,8 @@ export function buildStudentJourney(
     requirements: project.requirements,
     documentTypes: project.documentTypes,
     stakeholderDocumentCount: project.stakeholderDocumentCount,
+    workLogCount: project.workLogCount,
+    userPhotoCount: project.userPhotoCount,
     submissionDeadline: input.submissionDeadline,
     now,
   });

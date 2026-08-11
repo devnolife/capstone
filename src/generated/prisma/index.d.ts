@@ -29,6 +29,16 @@ export type Account = $Result.DefaultSelection<Prisma.$AccountPayload>
  */
 export type Project = $Result.DefaultSelection<Prisma.$ProjectPayload>
 /**
+ * Model ProjectWorkLog
+ * 
+ */
+export type ProjectWorkLog = $Result.DefaultSelection<Prisma.$ProjectWorkLogPayload>
+/**
+ * Model ProjectUserPhoto
+ * 
+ */
+export type ProjectUserPhoto = $Result.DefaultSelection<Prisma.$ProjectUserPhotoPayload>
+/**
  * Model ProjectMember
  * 
  */
@@ -335,6 +345,26 @@ export class PrismaClient<
     * ```
     */
   get project(): Prisma.ProjectDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.projectWorkLog`: Exposes CRUD operations for the **ProjectWorkLog** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProjectWorkLogs
+    * const projectWorkLogs = await prisma.projectWorkLog.findMany()
+    * ```
+    */
+  get projectWorkLog(): Prisma.ProjectWorkLogDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.projectUserPhoto`: Exposes CRUD operations for the **ProjectUserPhoto** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ProjectUserPhotos
+    * const projectUserPhotos = await prisma.projectUserPhoto.findMany()
+    * ```
+    */
+  get projectUserPhoto(): Prisma.ProjectUserPhotoDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.projectMember`: Exposes CRUD operations for the **ProjectMember** model.
@@ -932,6 +962,8 @@ export namespace Prisma {
     User: 'User',
     Account: 'Account',
     Project: 'Project',
+    ProjectWorkLog: 'ProjectWorkLog',
+    ProjectUserPhoto: 'ProjectUserPhoto',
     ProjectMember: 'ProjectMember',
     TeamInvitation: 'TeamInvitation',
     ProjectRequirements: 'ProjectRequirements',
@@ -963,7 +995,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "account" | "project" | "projectMember" | "teamInvitation" | "projectRequirements" | "stakeholderDocument" | "projectScreenshot" | "document" | "review" | "reviewScore" | "reviewComment" | "rubrikPenilaian" | "memberReviewScore" | "projectAssignment" | "notification" | "semester" | "presentationSchedule" | "projectDiscussion"
+      modelProps: "user" | "account" | "project" | "projectWorkLog" | "projectUserPhoto" | "projectMember" | "teamInvitation" | "projectRequirements" | "stakeholderDocument" | "projectScreenshot" | "document" | "review" | "reviewScore" | "reviewComment" | "rubrikPenilaian" | "memberReviewScore" | "projectAssignment" | "notification" | "semester" | "presentationSchedule" | "projectDiscussion"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1186,6 +1218,154 @@ export namespace Prisma {
           count: {
             args: Prisma.ProjectCountArgs<ExtArgs>
             result: $Utils.Optional<ProjectCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProjectWorkLog: {
+        payload: Prisma.$ProjectWorkLogPayload<ExtArgs>
+        fields: Prisma.ProjectWorkLogFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProjectWorkLogFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProjectWorkLogFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>
+          }
+          findFirst: {
+            args: Prisma.ProjectWorkLogFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProjectWorkLogFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>
+          }
+          findMany: {
+            args: Prisma.ProjectWorkLogFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>[]
+          }
+          create: {
+            args: Prisma.ProjectWorkLogCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>
+          }
+          createMany: {
+            args: Prisma.ProjectWorkLogCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProjectWorkLogCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>[]
+          }
+          delete: {
+            args: Prisma.ProjectWorkLogDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>
+          }
+          update: {
+            args: Prisma.ProjectWorkLogUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProjectWorkLogDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProjectWorkLogUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProjectWorkLogUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProjectWorkLogUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectWorkLogPayload>
+          }
+          aggregate: {
+            args: Prisma.ProjectWorkLogAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectWorkLog>
+          }
+          groupBy: {
+            args: Prisma.ProjectWorkLogGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectWorkLogGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProjectWorkLogCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectWorkLogCountAggregateOutputType> | number
+          }
+        }
+      }
+      ProjectUserPhoto: {
+        payload: Prisma.$ProjectUserPhotoPayload<ExtArgs>
+        fields: Prisma.ProjectUserPhotoFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ProjectUserPhotoFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ProjectUserPhotoFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>
+          }
+          findFirst: {
+            args: Prisma.ProjectUserPhotoFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ProjectUserPhotoFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>
+          }
+          findMany: {
+            args: Prisma.ProjectUserPhotoFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>[]
+          }
+          create: {
+            args: Prisma.ProjectUserPhotoCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>
+          }
+          createMany: {
+            args: Prisma.ProjectUserPhotoCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ProjectUserPhotoCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>[]
+          }
+          delete: {
+            args: Prisma.ProjectUserPhotoDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>
+          }
+          update: {
+            args: Prisma.ProjectUserPhotoUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>
+          }
+          deleteMany: {
+            args: Prisma.ProjectUserPhotoDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ProjectUserPhotoUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ProjectUserPhotoUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>[]
+          }
+          upsert: {
+            args: Prisma.ProjectUserPhotoUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ProjectUserPhotoPayload>
+          }
+          aggregate: {
+            args: Prisma.ProjectUserPhotoAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateProjectUserPhoto>
+          }
+          groupBy: {
+            args: Prisma.ProjectUserPhotoGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ProjectUserPhotoGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ProjectUserPhotoCountArgs<ExtArgs>
+            result: $Utils.Optional<ProjectUserPhotoCountAggregateOutputType> | number
           }
         }
       }
@@ -2484,6 +2664,8 @@ export namespace Prisma {
     user?: UserOmit
     account?: AccountOmit
     project?: ProjectOmit
+    projectWorkLog?: ProjectWorkLogOmit
+    projectUserPhoto?: ProjectUserPhotoOmit
     projectMember?: ProjectMemberOmit
     teamInvitation?: TeamInvitationOmit
     projectRequirements?: ProjectRequirementsOmit
@@ -2590,6 +2772,8 @@ export namespace Prisma {
     invitationsReceived: number
     scheduledPresentations: number
     discussions: number
+    workLogs: number
+    userPhotos: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2603,6 +2787,8 @@ export namespace Prisma {
     invitationsReceived?: boolean | UserCountOutputTypeCountInvitationsReceivedArgs
     scheduledPresentations?: boolean | UserCountOutputTypeCountScheduledPresentationsArgs
     discussions?: boolean | UserCountOutputTypeCountDiscussionsArgs
+    workLogs?: boolean | UserCountOutputTypeCountWorkLogsArgs
+    userPhotos?: boolean | UserCountOutputTypeCountUserPhotosArgs
   }
 
   // Custom InputTypes
@@ -2686,6 +2872,20 @@ export namespace Prisma {
     where?: ProjectDiscussionWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountWorkLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectWorkLogWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountUserPhotosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectUserPhotoWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2700,6 +2900,8 @@ export namespace Prisma {
     stakeholderDocuments: number
     screenshots: number
     discussions: number
+    workLogs: number
+    userPhotos: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2711,6 +2913,8 @@ export namespace Prisma {
     stakeholderDocuments?: boolean | ProjectCountOutputTypeCountStakeholderDocumentsArgs
     screenshots?: boolean | ProjectCountOutputTypeCountScreenshotsArgs
     discussions?: boolean | ProjectCountOutputTypeCountDiscussionsArgs
+    workLogs?: boolean | ProjectCountOutputTypeCountWorkLogsArgs
+    userPhotos?: boolean | ProjectCountOutputTypeCountUserPhotosArgs
   }
 
   // Custom InputTypes
@@ -2778,6 +2982,20 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountDiscussionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ProjectDiscussionWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountWorkLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectWorkLogWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountUserPhotosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectUserPhotoWhereInput
   }
 
 
@@ -3258,6 +3476,8 @@ export namespace Prisma {
     invitationsReceived?: boolean | User$invitationsReceivedArgs<ExtArgs>
     scheduledPresentations?: boolean | User$scheduledPresentationsArgs<ExtArgs>
     discussions?: boolean | User$discussionsArgs<ExtArgs>
+    workLogs?: boolean | User$workLogsArgs<ExtArgs>
+    userPhotos?: boolean | User$userPhotosArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3354,6 +3574,8 @@ export namespace Prisma {
     invitationsReceived?: boolean | User$invitationsReceivedArgs<ExtArgs>
     scheduledPresentations?: boolean | User$scheduledPresentationsArgs<ExtArgs>
     discussions?: boolean | User$discussionsArgs<ExtArgs>
+    workLogs?: boolean | User$workLogsArgs<ExtArgs>
+    userPhotos?: boolean | User$userPhotosArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3372,6 +3594,8 @@ export namespace Prisma {
       invitationsReceived: Prisma.$TeamInvitationPayload<ExtArgs>[]
       scheduledPresentations: Prisma.$PresentationSchedulePayload<ExtArgs>[]
       discussions: Prisma.$ProjectDiscussionPayload<ExtArgs>[]
+      workLogs: Prisma.$ProjectWorkLogPayload<ExtArgs>[]
+      userPhotos: Prisma.$ProjectUserPhotoPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3802,6 +4026,8 @@ export namespace Prisma {
     invitationsReceived<T extends User$invitationsReceivedArgs<ExtArgs> = {}>(args?: Subset<T, User$invitationsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TeamInvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     scheduledPresentations<T extends User$scheduledPresentationsArgs<ExtArgs> = {}>(args?: Subset<T, User$scheduledPresentationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     discussions<T extends User$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, User$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    workLogs<T extends User$workLogsArgs<ExtArgs> = {}>(args?: Subset<T, User$workLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userPhotos<T extends User$userPhotosArgs<ExtArgs> = {}>(args?: Subset<T, User$userPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4480,6 +4706,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ProjectDiscussionScalarFieldEnum | ProjectDiscussionScalarFieldEnum[]
+  }
+
+  /**
+   * User.workLogs
+   */
+  export type User$workLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    where?: ProjectWorkLogWhereInput
+    orderBy?: ProjectWorkLogOrderByWithRelationInput | ProjectWorkLogOrderByWithRelationInput[]
+    cursor?: ProjectWorkLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectWorkLogScalarFieldEnum | ProjectWorkLogScalarFieldEnum[]
+  }
+
+  /**
+   * User.userPhotos
+   */
+  export type User$userPhotosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    where?: ProjectUserPhotoWhereInput
+    orderBy?: ProjectUserPhotoOrderByWithRelationInput | ProjectUserPhotoOrderByWithRelationInput[]
+    cursor?: ProjectUserPhotoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectUserPhotoScalarFieldEnum | ProjectUserPhotoScalarFieldEnum[]
   }
 
   /**
@@ -5955,6 +6229,8 @@ export namespace Prisma {
     screenshots?: boolean | Project$screenshotsArgs<ExtArgs>
     presentationSchedule?: boolean | Project$presentationScheduleArgs<ExtArgs>
     discussions?: boolean | Project$discussionsArgs<ExtArgs>
+    workLogs?: boolean | Project$workLogsArgs<ExtArgs>
+    userPhotos?: boolean | Project$userPhotosArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -6033,6 +6309,8 @@ export namespace Prisma {
     screenshots?: boolean | Project$screenshotsArgs<ExtArgs>
     presentationSchedule?: boolean | Project$presentationScheduleArgs<ExtArgs>
     discussions?: boolean | Project$discussionsArgs<ExtArgs>
+    workLogs?: boolean | Project$workLogsArgs<ExtArgs>
+    userPhotos?: boolean | Project$userPhotosArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6056,6 +6334,8 @@ export namespace Prisma {
       screenshots: Prisma.$ProjectScreenshotPayload<ExtArgs>[]
       presentationSchedule: Prisma.$PresentationSchedulePayload<ExtArgs> | null
       discussions: Prisma.$ProjectDiscussionPayload<ExtArgs>[]
+      workLogs: Prisma.$ProjectWorkLogPayload<ExtArgs>[]
+      userPhotos: Prisma.$ProjectUserPhotoPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6480,6 +6760,8 @@ export namespace Prisma {
     screenshots<T extends Project$screenshotsArgs<ExtArgs> = {}>(args?: Subset<T, Project$screenshotsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectScreenshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     presentationSchedule<T extends Project$presentationScheduleArgs<ExtArgs> = {}>(args?: Subset<T, Project$presentationScheduleArgs<ExtArgs>>): Prisma__PresentationScheduleClient<$Result.GetResult<Prisma.$PresentationSchedulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     discussions<T extends Project$discussionsArgs<ExtArgs> = {}>(args?: Subset<T, Project$discussionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectDiscussionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    workLogs<T extends Project$workLogsArgs<ExtArgs> = {}>(args?: Subset<T, Project$workLogsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    userPhotos<T extends Project$userPhotosArgs<ExtArgs> = {}>(args?: Subset<T, Project$userPhotosArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7152,6 +7434,54 @@ export namespace Prisma {
   }
 
   /**
+   * Project.workLogs
+   */
+  export type Project$workLogsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    where?: ProjectWorkLogWhereInput
+    orderBy?: ProjectWorkLogOrderByWithRelationInput | ProjectWorkLogOrderByWithRelationInput[]
+    cursor?: ProjectWorkLogWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectWorkLogScalarFieldEnum | ProjectWorkLogScalarFieldEnum[]
+  }
+
+  /**
+   * Project.userPhotos
+   */
+  export type Project$userPhotosArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    where?: ProjectUserPhotoWhereInput
+    orderBy?: ProjectUserPhotoOrderByWithRelationInput | ProjectUserPhotoOrderByWithRelationInput[]
+    cursor?: ProjectUserPhotoWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ProjectUserPhotoScalarFieldEnum | ProjectUserPhotoScalarFieldEnum[]
+  }
+
+  /**
    * Project without action
    */
   export type ProjectDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7167,6 +7497,2358 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ProjectInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProjectWorkLog
+   */
+
+  export type AggregateProjectWorkLog = {
+    _count: ProjectWorkLogCountAggregateOutputType | null
+    _avg: ProjectWorkLogAvgAggregateOutputType | null
+    _sum: ProjectWorkLogSumAggregateOutputType | null
+    _min: ProjectWorkLogMinAggregateOutputType | null
+    _max: ProjectWorkLogMaxAggregateOutputType | null
+  }
+
+  export type ProjectWorkLogAvgAggregateOutputType = {
+    dayNumber: number | null
+  }
+
+  export type ProjectWorkLogSumAggregateOutputType = {
+    dayNumber: number | null
+  }
+
+  export type ProjectWorkLogMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    authorId: string | null
+    dayNumber: number | null
+    workDate: Date | null
+    activity: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectWorkLogMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    authorId: string | null
+    dayNumber: number | null
+    workDate: Date | null
+    activity: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectWorkLogCountAggregateOutputType = {
+    id: number
+    projectId: number
+    authorId: number
+    dayNumber: number
+    workDate: number
+    activity: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProjectWorkLogAvgAggregateInputType = {
+    dayNumber?: true
+  }
+
+  export type ProjectWorkLogSumAggregateInputType = {
+    dayNumber?: true
+  }
+
+  export type ProjectWorkLogMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    authorId?: true
+    dayNumber?: true
+    workDate?: true
+    activity?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectWorkLogMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    authorId?: true
+    dayNumber?: true
+    workDate?: true
+    activity?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectWorkLogCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    authorId?: true
+    dayNumber?: true
+    workDate?: true
+    activity?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProjectWorkLogAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectWorkLog to aggregate.
+     */
+    where?: ProjectWorkLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectWorkLogs to fetch.
+     */
+    orderBy?: ProjectWorkLogOrderByWithRelationInput | ProjectWorkLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProjectWorkLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectWorkLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectWorkLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProjectWorkLogs
+    **/
+    _count?: true | ProjectWorkLogCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProjectWorkLogAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProjectWorkLogSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProjectWorkLogMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProjectWorkLogMaxAggregateInputType
+  }
+
+  export type GetProjectWorkLogAggregateType<T extends ProjectWorkLogAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectWorkLog]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProjectWorkLog[P]>
+      : GetScalarType<T[P], AggregateProjectWorkLog[P]>
+  }
+
+
+
+
+  export type ProjectWorkLogGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectWorkLogWhereInput
+    orderBy?: ProjectWorkLogOrderByWithAggregationInput | ProjectWorkLogOrderByWithAggregationInput[]
+    by: ProjectWorkLogScalarFieldEnum[] | ProjectWorkLogScalarFieldEnum
+    having?: ProjectWorkLogScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProjectWorkLogCountAggregateInputType | true
+    _avg?: ProjectWorkLogAvgAggregateInputType
+    _sum?: ProjectWorkLogSumAggregateInputType
+    _min?: ProjectWorkLogMinAggregateInputType
+    _max?: ProjectWorkLogMaxAggregateInputType
+  }
+
+  export type ProjectWorkLogGroupByOutputType = {
+    id: string
+    projectId: string
+    authorId: string
+    dayNumber: number
+    workDate: Date
+    activity: string
+    createdAt: Date
+    updatedAt: Date
+    _count: ProjectWorkLogCountAggregateOutputType | null
+    _avg: ProjectWorkLogAvgAggregateOutputType | null
+    _sum: ProjectWorkLogSumAggregateOutputType | null
+    _min: ProjectWorkLogMinAggregateOutputType | null
+    _max: ProjectWorkLogMaxAggregateOutputType | null
+  }
+
+  type GetProjectWorkLogGroupByPayload<T extends ProjectWorkLogGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProjectWorkLogGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProjectWorkLogGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProjectWorkLogGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectWorkLogGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProjectWorkLogSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    dayNumber?: boolean
+    workDate?: boolean
+    activity?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectWorkLog"]>
+
+  export type ProjectWorkLogSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    dayNumber?: boolean
+    workDate?: boolean
+    activity?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectWorkLog"]>
+
+  export type ProjectWorkLogSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    dayNumber?: boolean
+    workDate?: boolean
+    activity?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectWorkLog"]>
+
+  export type ProjectWorkLogSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    authorId?: boolean
+    dayNumber?: boolean
+    workDate?: boolean
+    activity?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProjectWorkLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "authorId" | "dayNumber" | "workDate" | "activity" | "createdAt" | "updatedAt", ExtArgs["result"]["projectWorkLog"]>
+  export type ProjectWorkLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ProjectWorkLogIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ProjectWorkLogIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    author?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $ProjectWorkLogPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectWorkLog"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      author: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      authorId: string
+      dayNumber: number
+      workDate: Date
+      activity: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["projectWorkLog"]>
+    composites: {}
+  }
+
+  type ProjectWorkLogGetPayload<S extends boolean | null | undefined | ProjectWorkLogDefaultArgs> = $Result.GetResult<Prisma.$ProjectWorkLogPayload, S>
+
+  type ProjectWorkLogCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectWorkLogFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectWorkLogCountAggregateInputType | true
+    }
+
+  export interface ProjectWorkLogDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectWorkLog'], meta: { name: 'ProjectWorkLog' } }
+    /**
+     * Find zero or one ProjectWorkLog that matches the filter.
+     * @param {ProjectWorkLogFindUniqueArgs} args - Arguments to find a ProjectWorkLog
+     * @example
+     * // Get one ProjectWorkLog
+     * const projectWorkLog = await prisma.projectWorkLog.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProjectWorkLogFindUniqueArgs>(args: SelectSubset<T, ProjectWorkLogFindUniqueArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProjectWorkLog that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProjectWorkLogFindUniqueOrThrowArgs} args - Arguments to find a ProjectWorkLog
+     * @example
+     * // Get one ProjectWorkLog
+     * const projectWorkLog = await prisma.projectWorkLog.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProjectWorkLogFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectWorkLogFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectWorkLog that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectWorkLogFindFirstArgs} args - Arguments to find a ProjectWorkLog
+     * @example
+     * // Get one ProjectWorkLog
+     * const projectWorkLog = await prisma.projectWorkLog.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProjectWorkLogFindFirstArgs>(args?: SelectSubset<T, ProjectWorkLogFindFirstArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectWorkLog that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectWorkLogFindFirstOrThrowArgs} args - Arguments to find a ProjectWorkLog
+     * @example
+     * // Get one ProjectWorkLog
+     * const projectWorkLog = await prisma.projectWorkLog.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProjectWorkLogFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectWorkLogFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProjectWorkLogs that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectWorkLogFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProjectWorkLogs
+     * const projectWorkLogs = await prisma.projectWorkLog.findMany()
+     * 
+     * // Get first 10 ProjectWorkLogs
+     * const projectWorkLogs = await prisma.projectWorkLog.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const projectWorkLogWithIdOnly = await prisma.projectWorkLog.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProjectWorkLogFindManyArgs>(args?: SelectSubset<T, ProjectWorkLogFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProjectWorkLog.
+     * @param {ProjectWorkLogCreateArgs} args - Arguments to create a ProjectWorkLog.
+     * @example
+     * // Create one ProjectWorkLog
+     * const ProjectWorkLog = await prisma.projectWorkLog.create({
+     *   data: {
+     *     // ... data to create a ProjectWorkLog
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProjectWorkLogCreateArgs>(args: SelectSubset<T, ProjectWorkLogCreateArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProjectWorkLogs.
+     * @param {ProjectWorkLogCreateManyArgs} args - Arguments to create many ProjectWorkLogs.
+     * @example
+     * // Create many ProjectWorkLogs
+     * const projectWorkLog = await prisma.projectWorkLog.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProjectWorkLogCreateManyArgs>(args?: SelectSubset<T, ProjectWorkLogCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProjectWorkLogs and returns the data saved in the database.
+     * @param {ProjectWorkLogCreateManyAndReturnArgs} args - Arguments to create many ProjectWorkLogs.
+     * @example
+     * // Create many ProjectWorkLogs
+     * const projectWorkLog = await prisma.projectWorkLog.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProjectWorkLogs and only return the `id`
+     * const projectWorkLogWithIdOnly = await prisma.projectWorkLog.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProjectWorkLogCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectWorkLogCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProjectWorkLog.
+     * @param {ProjectWorkLogDeleteArgs} args - Arguments to delete one ProjectWorkLog.
+     * @example
+     * // Delete one ProjectWorkLog
+     * const ProjectWorkLog = await prisma.projectWorkLog.delete({
+     *   where: {
+     *     // ... filter to delete one ProjectWorkLog
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProjectWorkLogDeleteArgs>(args: SelectSubset<T, ProjectWorkLogDeleteArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProjectWorkLog.
+     * @param {ProjectWorkLogUpdateArgs} args - Arguments to update one ProjectWorkLog.
+     * @example
+     * // Update one ProjectWorkLog
+     * const projectWorkLog = await prisma.projectWorkLog.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProjectWorkLogUpdateArgs>(args: SelectSubset<T, ProjectWorkLogUpdateArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProjectWorkLogs.
+     * @param {ProjectWorkLogDeleteManyArgs} args - Arguments to filter ProjectWorkLogs to delete.
+     * @example
+     * // Delete a few ProjectWorkLogs
+     * const { count } = await prisma.projectWorkLog.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProjectWorkLogDeleteManyArgs>(args?: SelectSubset<T, ProjectWorkLogDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectWorkLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectWorkLogUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProjectWorkLogs
+     * const projectWorkLog = await prisma.projectWorkLog.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProjectWorkLogUpdateManyArgs>(args: SelectSubset<T, ProjectWorkLogUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectWorkLogs and returns the data updated in the database.
+     * @param {ProjectWorkLogUpdateManyAndReturnArgs} args - Arguments to update many ProjectWorkLogs.
+     * @example
+     * // Update many ProjectWorkLogs
+     * const projectWorkLog = await prisma.projectWorkLog.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProjectWorkLogs and only return the `id`
+     * const projectWorkLogWithIdOnly = await prisma.projectWorkLog.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProjectWorkLogUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectWorkLogUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProjectWorkLog.
+     * @param {ProjectWorkLogUpsertArgs} args - Arguments to update or create a ProjectWorkLog.
+     * @example
+     * // Update or create a ProjectWorkLog
+     * const projectWorkLog = await prisma.projectWorkLog.upsert({
+     *   create: {
+     *     // ... data to create a ProjectWorkLog
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProjectWorkLog we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProjectWorkLogUpsertArgs>(args: SelectSubset<T, ProjectWorkLogUpsertArgs<ExtArgs>>): Prisma__ProjectWorkLogClient<$Result.GetResult<Prisma.$ProjectWorkLogPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProjectWorkLogs.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectWorkLogCountArgs} args - Arguments to filter ProjectWorkLogs to count.
+     * @example
+     * // Count the number of ProjectWorkLogs
+     * const count = await prisma.projectWorkLog.count({
+     *   where: {
+     *     // ... the filter for the ProjectWorkLogs we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProjectWorkLogCountArgs>(
+      args?: Subset<T, ProjectWorkLogCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProjectWorkLogCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProjectWorkLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectWorkLogAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProjectWorkLogAggregateArgs>(args: Subset<T, ProjectWorkLogAggregateArgs>): Prisma.PrismaPromise<GetProjectWorkLogAggregateType<T>>
+
+    /**
+     * Group by ProjectWorkLog.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectWorkLogGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProjectWorkLogGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProjectWorkLogGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectWorkLogGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProjectWorkLogGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectWorkLogGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProjectWorkLog model
+   */
+  readonly fields: ProjectWorkLogFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProjectWorkLog.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProjectWorkLogClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProjectWorkLog model
+   */
+  interface ProjectWorkLogFieldRefs {
+    readonly id: FieldRef<"ProjectWorkLog", 'String'>
+    readonly projectId: FieldRef<"ProjectWorkLog", 'String'>
+    readonly authorId: FieldRef<"ProjectWorkLog", 'String'>
+    readonly dayNumber: FieldRef<"ProjectWorkLog", 'Int'>
+    readonly workDate: FieldRef<"ProjectWorkLog", 'DateTime'>
+    readonly activity: FieldRef<"ProjectWorkLog", 'String'>
+    readonly createdAt: FieldRef<"ProjectWorkLog", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProjectWorkLog", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProjectWorkLog findUnique
+   */
+  export type ProjectWorkLogFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectWorkLog to fetch.
+     */
+    where: ProjectWorkLogWhereUniqueInput
+  }
+
+  /**
+   * ProjectWorkLog findUniqueOrThrow
+   */
+  export type ProjectWorkLogFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectWorkLog to fetch.
+     */
+    where: ProjectWorkLogWhereUniqueInput
+  }
+
+  /**
+   * ProjectWorkLog findFirst
+   */
+  export type ProjectWorkLogFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectWorkLog to fetch.
+     */
+    where?: ProjectWorkLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectWorkLogs to fetch.
+     */
+    orderBy?: ProjectWorkLogOrderByWithRelationInput | ProjectWorkLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectWorkLogs.
+     */
+    cursor?: ProjectWorkLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectWorkLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectWorkLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectWorkLogs.
+     */
+    distinct?: ProjectWorkLogScalarFieldEnum | ProjectWorkLogScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectWorkLog findFirstOrThrow
+   */
+  export type ProjectWorkLogFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectWorkLog to fetch.
+     */
+    where?: ProjectWorkLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectWorkLogs to fetch.
+     */
+    orderBy?: ProjectWorkLogOrderByWithRelationInput | ProjectWorkLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectWorkLogs.
+     */
+    cursor?: ProjectWorkLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectWorkLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectWorkLogs.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectWorkLogs.
+     */
+    distinct?: ProjectWorkLogScalarFieldEnum | ProjectWorkLogScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectWorkLog findMany
+   */
+  export type ProjectWorkLogFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectWorkLogs to fetch.
+     */
+    where?: ProjectWorkLogWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectWorkLogs to fetch.
+     */
+    orderBy?: ProjectWorkLogOrderByWithRelationInput | ProjectWorkLogOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProjectWorkLogs.
+     */
+    cursor?: ProjectWorkLogWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectWorkLogs from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectWorkLogs.
+     */
+    skip?: number
+    distinct?: ProjectWorkLogScalarFieldEnum | ProjectWorkLogScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectWorkLog create
+   */
+  export type ProjectWorkLogCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProjectWorkLog.
+     */
+    data: XOR<ProjectWorkLogCreateInput, ProjectWorkLogUncheckedCreateInput>
+  }
+
+  /**
+   * ProjectWorkLog createMany
+   */
+  export type ProjectWorkLogCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProjectWorkLogs.
+     */
+    data: ProjectWorkLogCreateManyInput | ProjectWorkLogCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProjectWorkLog createManyAndReturn
+   */
+  export type ProjectWorkLogCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProjectWorkLogs.
+     */
+    data: ProjectWorkLogCreateManyInput | ProjectWorkLogCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectWorkLog update
+   */
+  export type ProjectWorkLogUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProjectWorkLog.
+     */
+    data: XOR<ProjectWorkLogUpdateInput, ProjectWorkLogUncheckedUpdateInput>
+    /**
+     * Choose, which ProjectWorkLog to update.
+     */
+    where: ProjectWorkLogWhereUniqueInput
+  }
+
+  /**
+   * ProjectWorkLog updateMany
+   */
+  export type ProjectWorkLogUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProjectWorkLogs.
+     */
+    data: XOR<ProjectWorkLogUpdateManyMutationInput, ProjectWorkLogUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectWorkLogs to update
+     */
+    where?: ProjectWorkLogWhereInput
+    /**
+     * Limit how many ProjectWorkLogs to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectWorkLog updateManyAndReturn
+   */
+  export type ProjectWorkLogUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * The data used to update ProjectWorkLogs.
+     */
+    data: XOR<ProjectWorkLogUpdateManyMutationInput, ProjectWorkLogUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectWorkLogs to update
+     */
+    where?: ProjectWorkLogWhereInput
+    /**
+     * Limit how many ProjectWorkLogs to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectWorkLog upsert
+   */
+  export type ProjectWorkLogUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProjectWorkLog to update in case it exists.
+     */
+    where: ProjectWorkLogWhereUniqueInput
+    /**
+     * In case the ProjectWorkLog found by the `where` argument doesn't exist, create a new ProjectWorkLog with this data.
+     */
+    create: XOR<ProjectWorkLogCreateInput, ProjectWorkLogUncheckedCreateInput>
+    /**
+     * In case the ProjectWorkLog was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProjectWorkLogUpdateInput, ProjectWorkLogUncheckedUpdateInput>
+  }
+
+  /**
+   * ProjectWorkLog delete
+   */
+  export type ProjectWorkLogDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+    /**
+     * Filter which ProjectWorkLog to delete.
+     */
+    where: ProjectWorkLogWhereUniqueInput
+  }
+
+  /**
+   * ProjectWorkLog deleteMany
+   */
+  export type ProjectWorkLogDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectWorkLogs to delete
+     */
+    where?: ProjectWorkLogWhereInput
+    /**
+     * Limit how many ProjectWorkLogs to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectWorkLog without action
+   */
+  export type ProjectWorkLogDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectWorkLog
+     */
+    select?: ProjectWorkLogSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectWorkLog
+     */
+    omit?: ProjectWorkLogOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectWorkLogInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ProjectUserPhoto
+   */
+
+  export type AggregateProjectUserPhoto = {
+    _count: ProjectUserPhotoCountAggregateOutputType | null
+    _avg: ProjectUserPhotoAvgAggregateOutputType | null
+    _sum: ProjectUserPhotoSumAggregateOutputType | null
+    _min: ProjectUserPhotoMinAggregateOutputType | null
+    _max: ProjectUserPhotoMaxAggregateOutputType | null
+  }
+
+  export type ProjectUserPhotoAvgAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type ProjectUserPhotoSumAggregateOutputType = {
+    fileSize: number | null
+  }
+
+  export type ProjectUserPhotoMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    uploadedById: string | null
+    caption: string | null
+    fileName: string | null
+    fileKey: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    mimeType: string | null
+    verificationStatus: string | null
+    verifiedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectUserPhotoMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    uploadedById: string | null
+    caption: string | null
+    fileName: string | null
+    fileKey: string | null
+    fileUrl: string | null
+    fileSize: number | null
+    mimeType: string | null
+    verificationStatus: string | null
+    verifiedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ProjectUserPhotoCountAggregateOutputType = {
+    id: number
+    projectId: number
+    uploadedById: number
+    caption: number
+    fileName: number
+    fileKey: number
+    fileUrl: number
+    fileSize: number
+    mimeType: number
+    verificationStatus: number
+    verificationResult: number
+    verifiedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ProjectUserPhotoAvgAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type ProjectUserPhotoSumAggregateInputType = {
+    fileSize?: true
+  }
+
+  export type ProjectUserPhotoMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    uploadedById?: true
+    caption?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    verificationStatus?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectUserPhotoMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    uploadedById?: true
+    caption?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    verificationStatus?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ProjectUserPhotoCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    uploadedById?: true
+    caption?: true
+    fileName?: true
+    fileKey?: true
+    fileUrl?: true
+    fileSize?: true
+    mimeType?: true
+    verificationStatus?: true
+    verificationResult?: true
+    verifiedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ProjectUserPhotoAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectUserPhoto to aggregate.
+     */
+    where?: ProjectUserPhotoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPhotos to fetch.
+     */
+    orderBy?: ProjectUserPhotoOrderByWithRelationInput | ProjectUserPhotoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ProjectUserPhotoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPhotos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPhotos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ProjectUserPhotos
+    **/
+    _count?: true | ProjectUserPhotoCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ProjectUserPhotoAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ProjectUserPhotoSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ProjectUserPhotoMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ProjectUserPhotoMaxAggregateInputType
+  }
+
+  export type GetProjectUserPhotoAggregateType<T extends ProjectUserPhotoAggregateArgs> = {
+        [P in keyof T & keyof AggregateProjectUserPhoto]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateProjectUserPhoto[P]>
+      : GetScalarType<T[P], AggregateProjectUserPhoto[P]>
+  }
+
+
+
+
+  export type ProjectUserPhotoGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ProjectUserPhotoWhereInput
+    orderBy?: ProjectUserPhotoOrderByWithAggregationInput | ProjectUserPhotoOrderByWithAggregationInput[]
+    by: ProjectUserPhotoScalarFieldEnum[] | ProjectUserPhotoScalarFieldEnum
+    having?: ProjectUserPhotoScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ProjectUserPhotoCountAggregateInputType | true
+    _avg?: ProjectUserPhotoAvgAggregateInputType
+    _sum?: ProjectUserPhotoSumAggregateInputType
+    _min?: ProjectUserPhotoMinAggregateInputType
+    _max?: ProjectUserPhotoMaxAggregateInputType
+  }
+
+  export type ProjectUserPhotoGroupByOutputType = {
+    id: string
+    projectId: string
+    uploadedById: string
+    caption: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus: string
+    verificationResult: JsonValue | null
+    verifiedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ProjectUserPhotoCountAggregateOutputType | null
+    _avg: ProjectUserPhotoAvgAggregateOutputType | null
+    _sum: ProjectUserPhotoSumAggregateOutputType | null
+    _min: ProjectUserPhotoMinAggregateOutputType | null
+    _max: ProjectUserPhotoMaxAggregateOutputType | null
+  }
+
+  type GetProjectUserPhotoGroupByPayload<T extends ProjectUserPhotoGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ProjectUserPhotoGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ProjectUserPhotoGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ProjectUserPhotoGroupByOutputType[P]>
+            : GetScalarType<T[P], ProjectUserPhotoGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ProjectUserPhotoSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    uploadedById?: boolean
+    caption?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    verificationStatus?: boolean
+    verificationResult?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    uploadedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectUserPhoto"]>
+
+  export type ProjectUserPhotoSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    uploadedById?: boolean
+    caption?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    verificationStatus?: boolean
+    verificationResult?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    uploadedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectUserPhoto"]>
+
+  export type ProjectUserPhotoSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    uploadedById?: boolean
+    caption?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    verificationStatus?: boolean
+    verificationResult?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    uploadedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["projectUserPhoto"]>
+
+  export type ProjectUserPhotoSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    uploadedById?: boolean
+    caption?: boolean
+    fileName?: boolean
+    fileKey?: boolean
+    fileUrl?: boolean
+    fileSize?: boolean
+    mimeType?: boolean
+    verificationStatus?: boolean
+    verificationResult?: boolean
+    verifiedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ProjectUserPhotoOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "uploadedById" | "caption" | "fileName" | "fileKey" | "fileUrl" | "fileSize" | "mimeType" | "verificationStatus" | "verificationResult" | "verifiedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["projectUserPhoto"]>
+  export type ProjectUserPhotoInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    uploadedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ProjectUserPhotoIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    uploadedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ProjectUserPhotoIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    uploadedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $ProjectUserPhotoPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ProjectUserPhoto"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      uploadedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      uploadedById: string
+      caption: string | null
+      fileName: string
+      fileKey: string
+      fileUrl: string
+      fileSize: number
+      mimeType: string
+      verificationStatus: string
+      verificationResult: Prisma.JsonValue | null
+      verifiedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["projectUserPhoto"]>
+    composites: {}
+  }
+
+  type ProjectUserPhotoGetPayload<S extends boolean | null | undefined | ProjectUserPhotoDefaultArgs> = $Result.GetResult<Prisma.$ProjectUserPhotoPayload, S>
+
+  type ProjectUserPhotoCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ProjectUserPhotoFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ProjectUserPhotoCountAggregateInputType | true
+    }
+
+  export interface ProjectUserPhotoDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ProjectUserPhoto'], meta: { name: 'ProjectUserPhoto' } }
+    /**
+     * Find zero or one ProjectUserPhoto that matches the filter.
+     * @param {ProjectUserPhotoFindUniqueArgs} args - Arguments to find a ProjectUserPhoto
+     * @example
+     * // Get one ProjectUserPhoto
+     * const projectUserPhoto = await prisma.projectUserPhoto.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ProjectUserPhotoFindUniqueArgs>(args: SelectSubset<T, ProjectUserPhotoFindUniqueArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ProjectUserPhoto that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ProjectUserPhotoFindUniqueOrThrowArgs} args - Arguments to find a ProjectUserPhoto
+     * @example
+     * // Get one ProjectUserPhoto
+     * const projectUserPhoto = await prisma.projectUserPhoto.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ProjectUserPhotoFindUniqueOrThrowArgs>(args: SelectSubset<T, ProjectUserPhotoFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectUserPhoto that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPhotoFindFirstArgs} args - Arguments to find a ProjectUserPhoto
+     * @example
+     * // Get one ProjectUserPhoto
+     * const projectUserPhoto = await prisma.projectUserPhoto.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ProjectUserPhotoFindFirstArgs>(args?: SelectSubset<T, ProjectUserPhotoFindFirstArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ProjectUserPhoto that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPhotoFindFirstOrThrowArgs} args - Arguments to find a ProjectUserPhoto
+     * @example
+     * // Get one ProjectUserPhoto
+     * const projectUserPhoto = await prisma.projectUserPhoto.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ProjectUserPhotoFindFirstOrThrowArgs>(args?: SelectSubset<T, ProjectUserPhotoFindFirstOrThrowArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ProjectUserPhotos that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPhotoFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ProjectUserPhotos
+     * const projectUserPhotos = await prisma.projectUserPhoto.findMany()
+     * 
+     * // Get first 10 ProjectUserPhotos
+     * const projectUserPhotos = await prisma.projectUserPhoto.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const projectUserPhotoWithIdOnly = await prisma.projectUserPhoto.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ProjectUserPhotoFindManyArgs>(args?: SelectSubset<T, ProjectUserPhotoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ProjectUserPhoto.
+     * @param {ProjectUserPhotoCreateArgs} args - Arguments to create a ProjectUserPhoto.
+     * @example
+     * // Create one ProjectUserPhoto
+     * const ProjectUserPhoto = await prisma.projectUserPhoto.create({
+     *   data: {
+     *     // ... data to create a ProjectUserPhoto
+     *   }
+     * })
+     * 
+     */
+    create<T extends ProjectUserPhotoCreateArgs>(args: SelectSubset<T, ProjectUserPhotoCreateArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ProjectUserPhotos.
+     * @param {ProjectUserPhotoCreateManyArgs} args - Arguments to create many ProjectUserPhotos.
+     * @example
+     * // Create many ProjectUserPhotos
+     * const projectUserPhoto = await prisma.projectUserPhoto.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ProjectUserPhotoCreateManyArgs>(args?: SelectSubset<T, ProjectUserPhotoCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ProjectUserPhotos and returns the data saved in the database.
+     * @param {ProjectUserPhotoCreateManyAndReturnArgs} args - Arguments to create many ProjectUserPhotos.
+     * @example
+     * // Create many ProjectUserPhotos
+     * const projectUserPhoto = await prisma.projectUserPhoto.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ProjectUserPhotos and only return the `id`
+     * const projectUserPhotoWithIdOnly = await prisma.projectUserPhoto.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ProjectUserPhotoCreateManyAndReturnArgs>(args?: SelectSubset<T, ProjectUserPhotoCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ProjectUserPhoto.
+     * @param {ProjectUserPhotoDeleteArgs} args - Arguments to delete one ProjectUserPhoto.
+     * @example
+     * // Delete one ProjectUserPhoto
+     * const ProjectUserPhoto = await prisma.projectUserPhoto.delete({
+     *   where: {
+     *     // ... filter to delete one ProjectUserPhoto
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ProjectUserPhotoDeleteArgs>(args: SelectSubset<T, ProjectUserPhotoDeleteArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ProjectUserPhoto.
+     * @param {ProjectUserPhotoUpdateArgs} args - Arguments to update one ProjectUserPhoto.
+     * @example
+     * // Update one ProjectUserPhoto
+     * const projectUserPhoto = await prisma.projectUserPhoto.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ProjectUserPhotoUpdateArgs>(args: SelectSubset<T, ProjectUserPhotoUpdateArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ProjectUserPhotos.
+     * @param {ProjectUserPhotoDeleteManyArgs} args - Arguments to filter ProjectUserPhotos to delete.
+     * @example
+     * // Delete a few ProjectUserPhotos
+     * const { count } = await prisma.projectUserPhoto.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ProjectUserPhotoDeleteManyArgs>(args?: SelectSubset<T, ProjectUserPhotoDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectUserPhotos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPhotoUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ProjectUserPhotos
+     * const projectUserPhoto = await prisma.projectUserPhoto.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ProjectUserPhotoUpdateManyArgs>(args: SelectSubset<T, ProjectUserPhotoUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ProjectUserPhotos and returns the data updated in the database.
+     * @param {ProjectUserPhotoUpdateManyAndReturnArgs} args - Arguments to update many ProjectUserPhotos.
+     * @example
+     * // Update many ProjectUserPhotos
+     * const projectUserPhoto = await prisma.projectUserPhoto.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ProjectUserPhotos and only return the `id`
+     * const projectUserPhotoWithIdOnly = await prisma.projectUserPhoto.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ProjectUserPhotoUpdateManyAndReturnArgs>(args: SelectSubset<T, ProjectUserPhotoUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ProjectUserPhoto.
+     * @param {ProjectUserPhotoUpsertArgs} args - Arguments to update or create a ProjectUserPhoto.
+     * @example
+     * // Update or create a ProjectUserPhoto
+     * const projectUserPhoto = await prisma.projectUserPhoto.upsert({
+     *   create: {
+     *     // ... data to create a ProjectUserPhoto
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ProjectUserPhoto we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ProjectUserPhotoUpsertArgs>(args: SelectSubset<T, ProjectUserPhotoUpsertArgs<ExtArgs>>): Prisma__ProjectUserPhotoClient<$Result.GetResult<Prisma.$ProjectUserPhotoPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ProjectUserPhotos.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPhotoCountArgs} args - Arguments to filter ProjectUserPhotos to count.
+     * @example
+     * // Count the number of ProjectUserPhotos
+     * const count = await prisma.projectUserPhoto.count({
+     *   where: {
+     *     // ... the filter for the ProjectUserPhotos we want to count
+     *   }
+     * })
+    **/
+    count<T extends ProjectUserPhotoCountArgs>(
+      args?: Subset<T, ProjectUserPhotoCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ProjectUserPhotoCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ProjectUserPhoto.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPhotoAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ProjectUserPhotoAggregateArgs>(args: Subset<T, ProjectUserPhotoAggregateArgs>): Prisma.PrismaPromise<GetProjectUserPhotoAggregateType<T>>
+
+    /**
+     * Group by ProjectUserPhoto.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ProjectUserPhotoGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ProjectUserPhotoGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ProjectUserPhotoGroupByArgs['orderBy'] }
+        : { orderBy?: ProjectUserPhotoGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ProjectUserPhotoGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetProjectUserPhotoGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ProjectUserPhoto model
+   */
+  readonly fields: ProjectUserPhotoFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ProjectUserPhoto.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ProjectUserPhotoClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    uploadedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ProjectUserPhoto model
+   */
+  interface ProjectUserPhotoFieldRefs {
+    readonly id: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly projectId: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly uploadedById: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly caption: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly fileName: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly fileKey: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly fileUrl: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly fileSize: FieldRef<"ProjectUserPhoto", 'Int'>
+    readonly mimeType: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly verificationStatus: FieldRef<"ProjectUserPhoto", 'String'>
+    readonly verificationResult: FieldRef<"ProjectUserPhoto", 'Json'>
+    readonly verifiedAt: FieldRef<"ProjectUserPhoto", 'DateTime'>
+    readonly createdAt: FieldRef<"ProjectUserPhoto", 'DateTime'>
+    readonly updatedAt: FieldRef<"ProjectUserPhoto", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ProjectUserPhoto findUnique
+   */
+  export type ProjectUserPhotoFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPhoto to fetch.
+     */
+    where: ProjectUserPhotoWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPhoto findUniqueOrThrow
+   */
+  export type ProjectUserPhotoFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPhoto to fetch.
+     */
+    where: ProjectUserPhotoWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPhoto findFirst
+   */
+  export type ProjectUserPhotoFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPhoto to fetch.
+     */
+    where?: ProjectUserPhotoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPhotos to fetch.
+     */
+    orderBy?: ProjectUserPhotoOrderByWithRelationInput | ProjectUserPhotoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectUserPhotos.
+     */
+    cursor?: ProjectUserPhotoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPhotos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPhotos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectUserPhotos.
+     */
+    distinct?: ProjectUserPhotoScalarFieldEnum | ProjectUserPhotoScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectUserPhoto findFirstOrThrow
+   */
+  export type ProjectUserPhotoFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPhoto to fetch.
+     */
+    where?: ProjectUserPhotoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPhotos to fetch.
+     */
+    orderBy?: ProjectUserPhotoOrderByWithRelationInput | ProjectUserPhotoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ProjectUserPhotos.
+     */
+    cursor?: ProjectUserPhotoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPhotos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPhotos.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ProjectUserPhotos.
+     */
+    distinct?: ProjectUserPhotoScalarFieldEnum | ProjectUserPhotoScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectUserPhoto findMany
+   */
+  export type ProjectUserPhotoFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * Filter, which ProjectUserPhotos to fetch.
+     */
+    where?: ProjectUserPhotoWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ProjectUserPhotos to fetch.
+     */
+    orderBy?: ProjectUserPhotoOrderByWithRelationInput | ProjectUserPhotoOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ProjectUserPhotos.
+     */
+    cursor?: ProjectUserPhotoWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ProjectUserPhotos from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ProjectUserPhotos.
+     */
+    skip?: number
+    distinct?: ProjectUserPhotoScalarFieldEnum | ProjectUserPhotoScalarFieldEnum[]
+  }
+
+  /**
+   * ProjectUserPhoto create
+   */
+  export type ProjectUserPhotoCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ProjectUserPhoto.
+     */
+    data: XOR<ProjectUserPhotoCreateInput, ProjectUserPhotoUncheckedCreateInput>
+  }
+
+  /**
+   * ProjectUserPhoto createMany
+   */
+  export type ProjectUserPhotoCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ProjectUserPhotos.
+     */
+    data: ProjectUserPhotoCreateManyInput | ProjectUserPhotoCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ProjectUserPhoto createManyAndReturn
+   */
+  export type ProjectUserPhotoCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * The data used to create many ProjectUserPhotos.
+     */
+    data: ProjectUserPhotoCreateManyInput | ProjectUserPhotoCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectUserPhoto update
+   */
+  export type ProjectUserPhotoUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ProjectUserPhoto.
+     */
+    data: XOR<ProjectUserPhotoUpdateInput, ProjectUserPhotoUncheckedUpdateInput>
+    /**
+     * Choose, which ProjectUserPhoto to update.
+     */
+    where: ProjectUserPhotoWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPhoto updateMany
+   */
+  export type ProjectUserPhotoUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ProjectUserPhotos.
+     */
+    data: XOR<ProjectUserPhotoUpdateManyMutationInput, ProjectUserPhotoUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectUserPhotos to update
+     */
+    where?: ProjectUserPhotoWhereInput
+    /**
+     * Limit how many ProjectUserPhotos to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectUserPhoto updateManyAndReturn
+   */
+  export type ProjectUserPhotoUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * The data used to update ProjectUserPhotos.
+     */
+    data: XOR<ProjectUserPhotoUpdateManyMutationInput, ProjectUserPhotoUncheckedUpdateManyInput>
+    /**
+     * Filter which ProjectUserPhotos to update
+     */
+    where?: ProjectUserPhotoWhereInput
+    /**
+     * Limit how many ProjectUserPhotos to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ProjectUserPhoto upsert
+   */
+  export type ProjectUserPhotoUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ProjectUserPhoto to update in case it exists.
+     */
+    where: ProjectUserPhotoWhereUniqueInput
+    /**
+     * In case the ProjectUserPhoto found by the `where` argument doesn't exist, create a new ProjectUserPhoto with this data.
+     */
+    create: XOR<ProjectUserPhotoCreateInput, ProjectUserPhotoUncheckedCreateInput>
+    /**
+     * In case the ProjectUserPhoto was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ProjectUserPhotoUpdateInput, ProjectUserPhotoUncheckedUpdateInput>
+  }
+
+  /**
+   * ProjectUserPhoto delete
+   */
+  export type ProjectUserPhotoDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
+    /**
+     * Filter which ProjectUserPhoto to delete.
+     */
+    where: ProjectUserPhotoWhereUniqueInput
+  }
+
+  /**
+   * ProjectUserPhoto deleteMany
+   */
+  export type ProjectUserPhotoDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ProjectUserPhotos to delete
+     */
+    where?: ProjectUserPhotoWhereInput
+    /**
+     * Limit how many ProjectUserPhotos to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ProjectUserPhoto without action
+   */
+  export type ProjectUserPhotoDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ProjectUserPhoto
+     */
+    select?: ProjectUserPhotoSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ProjectUserPhoto
+     */
+    omit?: ProjectUserPhotoOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ProjectUserPhotoInclude<ExtArgs> | null
   }
 
 
@@ -25906,6 +28588,40 @@ export namespace Prisma {
   export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
 
 
+  export const ProjectWorkLogScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    authorId: 'authorId',
+    dayNumber: 'dayNumber',
+    workDate: 'workDate',
+    activity: 'activity',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProjectWorkLogScalarFieldEnum = (typeof ProjectWorkLogScalarFieldEnum)[keyof typeof ProjectWorkLogScalarFieldEnum]
+
+
+  export const ProjectUserPhotoScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    uploadedById: 'uploadedById',
+    caption: 'caption',
+    fileName: 'fileName',
+    fileKey: 'fileKey',
+    fileUrl: 'fileUrl',
+    fileSize: 'fileSize',
+    mimeType: 'mimeType',
+    verificationStatus: 'verificationStatus',
+    verificationResult: 'verificationResult',
+    verifiedAt: 'verifiedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ProjectUserPhotoScalarFieldEnum = (typeof ProjectUserPhotoScalarFieldEnum)[keyof typeof ProjectUserPhotoScalarFieldEnum]
+
+
   export const ProjectMemberScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
@@ -26404,6 +29120,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationListRelationFilter
     scheduledPresentations?: PresentationScheduleListRelationFilter
     discussions?: ProjectDiscussionListRelationFilter
+    workLogs?: ProjectWorkLogListRelationFilter
+    userPhotos?: ProjectUserPhotoListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -26441,6 +29159,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationOrderByRelationAggregateInput
     scheduledPresentations?: PresentationScheduleOrderByRelationAggregateInput
     discussions?: ProjectDiscussionOrderByRelationAggregateInput
+    workLogs?: ProjectWorkLogOrderByRelationAggregateInput
+    userPhotos?: ProjectUserPhotoOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -26481,6 +29201,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationListRelationFilter
     scheduledPresentations?: PresentationScheduleListRelationFilter
     discussions?: ProjectDiscussionListRelationFilter
+    workLogs?: ProjectWorkLogListRelationFilter
+    userPhotos?: ProjectUserPhotoListRelationFilter
   }, "id" | "username" | "email" | "githubId" | "ssoSub" | "nim" | "nip">
 
   export type UserOrderByWithAggregationInput = {
@@ -26668,6 +29390,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotListRelationFilter
     presentationSchedule?: XOR<PresentationScheduleNullableScalarRelationFilter, PresentationScheduleWhereInput> | null
     discussions?: ProjectDiscussionListRelationFilter
+    workLogs?: ProjectWorkLogListRelationFilter
+    userPhotos?: ProjectUserPhotoListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -26699,6 +29423,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotOrderByRelationAggregateInput
     presentationSchedule?: PresentationScheduleOrderByWithRelationInput
     discussions?: ProjectDiscussionOrderByRelationAggregateInput
+    workLogs?: ProjectWorkLogOrderByRelationAggregateInput
+    userPhotos?: ProjectUserPhotoOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -26733,6 +29459,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotListRelationFilter
     presentationSchedule?: XOR<PresentationScheduleNullableScalarRelationFilter, PresentationScheduleWhereInput> | null
     discussions?: ProjectDiscussionListRelationFilter
+    workLogs?: ProjectWorkLogListRelationFilter
+    userPhotos?: ProjectUserPhotoListRelationFilter
   }, "id">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -26779,6 +29507,186 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Project"> | Date | string
     submittedAt?: DateTimeNullableWithAggregatesFilter<"Project"> | Date | string | null
     mahasiswaId?: StringWithAggregatesFilter<"Project"> | string
+  }
+
+  export type ProjectWorkLogWhereInput = {
+    AND?: ProjectWorkLogWhereInput | ProjectWorkLogWhereInput[]
+    OR?: ProjectWorkLogWhereInput[]
+    NOT?: ProjectWorkLogWhereInput | ProjectWorkLogWhereInput[]
+    id?: StringFilter<"ProjectWorkLog"> | string
+    projectId?: StringFilter<"ProjectWorkLog"> | string
+    authorId?: StringFilter<"ProjectWorkLog"> | string
+    dayNumber?: IntFilter<"ProjectWorkLog"> | number
+    workDate?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    activity?: StringFilter<"ProjectWorkLog"> | string
+    createdAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type ProjectWorkLogOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    dayNumber?: SortOrder
+    workDate?: SortOrder
+    activity?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    author?: UserOrderByWithRelationInput
+  }
+
+  export type ProjectWorkLogWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProjectWorkLogWhereInput | ProjectWorkLogWhereInput[]
+    OR?: ProjectWorkLogWhereInput[]
+    NOT?: ProjectWorkLogWhereInput | ProjectWorkLogWhereInput[]
+    projectId?: StringFilter<"ProjectWorkLog"> | string
+    authorId?: StringFilter<"ProjectWorkLog"> | string
+    dayNumber?: IntFilter<"ProjectWorkLog"> | number
+    workDate?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    activity?: StringFilter<"ProjectWorkLog"> | string
+    createdAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    author?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type ProjectWorkLogOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    dayNumber?: SortOrder
+    workDate?: SortOrder
+    activity?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProjectWorkLogCountOrderByAggregateInput
+    _avg?: ProjectWorkLogAvgOrderByAggregateInput
+    _max?: ProjectWorkLogMaxOrderByAggregateInput
+    _min?: ProjectWorkLogMinOrderByAggregateInput
+    _sum?: ProjectWorkLogSumOrderByAggregateInput
+  }
+
+  export type ProjectWorkLogScalarWhereWithAggregatesInput = {
+    AND?: ProjectWorkLogScalarWhereWithAggregatesInput | ProjectWorkLogScalarWhereWithAggregatesInput[]
+    OR?: ProjectWorkLogScalarWhereWithAggregatesInput[]
+    NOT?: ProjectWorkLogScalarWhereWithAggregatesInput | ProjectWorkLogScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectWorkLog"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectWorkLog"> | string
+    authorId?: StringWithAggregatesFilter<"ProjectWorkLog"> | string
+    dayNumber?: IntWithAggregatesFilter<"ProjectWorkLog"> | number
+    workDate?: DateTimeWithAggregatesFilter<"ProjectWorkLog"> | Date | string
+    activity?: StringWithAggregatesFilter<"ProjectWorkLog"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ProjectWorkLog"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProjectWorkLog"> | Date | string
+  }
+
+  export type ProjectUserPhotoWhereInput = {
+    AND?: ProjectUserPhotoWhereInput | ProjectUserPhotoWhereInput[]
+    OR?: ProjectUserPhotoWhereInput[]
+    NOT?: ProjectUserPhotoWhereInput | ProjectUserPhotoWhereInput[]
+    id?: StringFilter<"ProjectUserPhoto"> | string
+    projectId?: StringFilter<"ProjectUserPhoto"> | string
+    uploadedById?: StringFilter<"ProjectUserPhoto"> | string
+    caption?: StringNullableFilter<"ProjectUserPhoto"> | string | null
+    fileName?: StringFilter<"ProjectUserPhoto"> | string
+    fileKey?: StringFilter<"ProjectUserPhoto"> | string
+    fileUrl?: StringFilter<"ProjectUserPhoto"> | string
+    fileSize?: IntFilter<"ProjectUserPhoto"> | number
+    mimeType?: StringFilter<"ProjectUserPhoto"> | string
+    verificationStatus?: StringFilter<"ProjectUserPhoto"> | string
+    verificationResult?: JsonNullableFilter<"ProjectUserPhoto">
+    verifiedAt?: DateTimeNullableFilter<"ProjectUserPhoto"> | Date | string | null
+    createdAt?: DateTimeFilter<"ProjectUserPhoto"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectUserPhoto"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    uploadedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type ProjectUserPhotoOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    uploadedById?: SortOrder
+    caption?: SortOrderInput | SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    verificationStatus?: SortOrder
+    verificationResult?: SortOrderInput | SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    uploadedBy?: UserOrderByWithRelationInput
+  }
+
+  export type ProjectUserPhotoWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ProjectUserPhotoWhereInput | ProjectUserPhotoWhereInput[]
+    OR?: ProjectUserPhotoWhereInput[]
+    NOT?: ProjectUserPhotoWhereInput | ProjectUserPhotoWhereInput[]
+    projectId?: StringFilter<"ProjectUserPhoto"> | string
+    uploadedById?: StringFilter<"ProjectUserPhoto"> | string
+    caption?: StringNullableFilter<"ProjectUserPhoto"> | string | null
+    fileName?: StringFilter<"ProjectUserPhoto"> | string
+    fileKey?: StringFilter<"ProjectUserPhoto"> | string
+    fileUrl?: StringFilter<"ProjectUserPhoto"> | string
+    fileSize?: IntFilter<"ProjectUserPhoto"> | number
+    mimeType?: StringFilter<"ProjectUserPhoto"> | string
+    verificationStatus?: StringFilter<"ProjectUserPhoto"> | string
+    verificationResult?: JsonNullableFilter<"ProjectUserPhoto">
+    verifiedAt?: DateTimeNullableFilter<"ProjectUserPhoto"> | Date | string | null
+    createdAt?: DateTimeFilter<"ProjectUserPhoto"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectUserPhoto"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    uploadedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id">
+
+  export type ProjectUserPhotoOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    uploadedById?: SortOrder
+    caption?: SortOrderInput | SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    verificationStatus?: SortOrder
+    verificationResult?: SortOrderInput | SortOrder
+    verifiedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ProjectUserPhotoCountOrderByAggregateInput
+    _avg?: ProjectUserPhotoAvgOrderByAggregateInput
+    _max?: ProjectUserPhotoMaxOrderByAggregateInput
+    _min?: ProjectUserPhotoMinOrderByAggregateInput
+    _sum?: ProjectUserPhotoSumOrderByAggregateInput
+  }
+
+  export type ProjectUserPhotoScalarWhereWithAggregatesInput = {
+    AND?: ProjectUserPhotoScalarWhereWithAggregatesInput | ProjectUserPhotoScalarWhereWithAggregatesInput[]
+    OR?: ProjectUserPhotoScalarWhereWithAggregatesInput[]
+    NOT?: ProjectUserPhotoScalarWhereWithAggregatesInput | ProjectUserPhotoScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    projectId?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    uploadedById?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    caption?: StringNullableWithAggregatesFilter<"ProjectUserPhoto"> | string | null
+    fileName?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    fileKey?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    fileUrl?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    fileSize?: IntWithAggregatesFilter<"ProjectUserPhoto"> | number
+    mimeType?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    verificationStatus?: StringWithAggregatesFilter<"ProjectUserPhoto"> | string
+    verificationResult?: JsonNullableWithAggregatesFilter<"ProjectUserPhoto">
+    verifiedAt?: DateTimeNullableWithAggregatesFilter<"ProjectUserPhoto"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ProjectUserPhoto"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ProjectUserPhoto"> | Date | string
   }
 
   export type ProjectMemberWhereInput = {
@@ -28209,6 +31117,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -28246,6 +31156,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUpdateInput = {
@@ -28283,6 +31195,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -28320,6 +31234,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -28535,6 +31451,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -28565,6 +31483,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -28595,6 +31515,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -28625,6 +31547,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -28684,6 +31608,198 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mahasiswaId?: StringFieldUpdateOperationsInput | string
+  }
+
+  export type ProjectWorkLogCreateInput = {
+    id?: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutWorkLogsInput
+    author: UserCreateNestedOneWithoutWorkLogsInput
+  }
+
+  export type ProjectWorkLogUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    authorId: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectWorkLogUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutWorkLogsNestedInput
+    author?: UserUpdateOneRequiredWithoutWorkLogsNestedInput
+  }
+
+  export type ProjectWorkLogUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectWorkLogCreateManyInput = {
+    id?: string
+    projectId: string
+    authorId: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectWorkLogUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectWorkLogUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPhotoCreateInput = {
+    id?: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutUserPhotosInput
+    uploadedBy: UserCreateNestedOneWithoutUserPhotosInput
+  }
+
+  export type ProjectUserPhotoUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    uploadedById: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectUserPhotoUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutUserPhotosNestedInput
+    uploadedBy?: UserUpdateOneRequiredWithoutUserPhotosNestedInput
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    uploadedById?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPhotoCreateManyInput = {
+    id?: string
+    projectId: string
+    uploadedById: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectUserPhotoUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    uploadedById?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ProjectMemberCreateInput = {
@@ -30342,6 +33458,18 @@ export namespace Prisma {
     none?: ProjectDiscussionWhereInput
   }
 
+  export type ProjectWorkLogListRelationFilter = {
+    every?: ProjectWorkLogWhereInput
+    some?: ProjectWorkLogWhereInput
+    none?: ProjectWorkLogWhereInput
+  }
+
+  export type ProjectUserPhotoListRelationFilter = {
+    every?: ProjectUserPhotoWhereInput
+    some?: ProjectUserPhotoWhereInput
+    none?: ProjectUserPhotoWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -30380,6 +33508,14 @@ export namespace Prisma {
   }
 
   export type ProjectDiscussionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProjectWorkLogOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ProjectUserPhotoOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -30777,9 +33913,134 @@ export namespace Prisma {
     _max?: NestedEnumProjectStatusFilter<$PrismaModel>
   }
 
+  export type IntFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntFilter<$PrismaModel> | number
+  }
+
   export type ProjectScalarRelationFilter = {
     is?: ProjectWhereInput
     isNot?: ProjectWhereInput
+  }
+
+  export type ProjectWorkLogCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    dayNumber?: SortOrder
+    workDate?: SortOrder
+    activity?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectWorkLogAvgOrderByAggregateInput = {
+    dayNumber?: SortOrder
+  }
+
+  export type ProjectWorkLogMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    dayNumber?: SortOrder
+    workDate?: SortOrder
+    activity?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectWorkLogMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    authorId?: SortOrder
+    dayNumber?: SortOrder
+    workDate?: SortOrder
+    activity?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectWorkLogSumOrderByAggregateInput = {
+    dayNumber?: SortOrder
+  }
+
+  export type IntWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel>
+    in?: number[] | ListIntFieldRefInput<$PrismaModel>
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
+    _count?: NestedIntFilter<$PrismaModel>
+    _avg?: NestedFloatFilter<$PrismaModel>
+    _sum?: NestedIntFilter<$PrismaModel>
+    _min?: NestedIntFilter<$PrismaModel>
+    _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type ProjectUserPhotoCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    uploadedById?: SortOrder
+    caption?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    verificationStatus?: SortOrder
+    verificationResult?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectUserPhotoAvgOrderByAggregateInput = {
+    fileSize?: SortOrder
+  }
+
+  export type ProjectUserPhotoMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    uploadedById?: SortOrder
+    caption?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    verificationStatus?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectUserPhotoMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    uploadedById?: SortOrder
+    caption?: SortOrder
+    fileName?: SortOrder
+    fileKey?: SortOrder
+    fileUrl?: SortOrder
+    fileSize?: SortOrder
+    mimeType?: SortOrder
+    verificationStatus?: SortOrder
+    verifiedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ProjectUserPhotoSumOrderByAggregateInput = {
+    fileSize?: SortOrder
   }
 
   export type UserNullableScalarRelationFilter = {
@@ -30885,17 +34146,6 @@ export namespace Prisma {
     updatedAt?: SortOrder
     expiresAt?: SortOrder
     respondedAt?: SortOrder
-  }
-
-  export type IntFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntFilter<$PrismaModel> | number
   }
 
   export type ProjectRequirementsCountOrderByAggregateInput = {
@@ -31020,22 +34270,6 @@ export namespace Prisma {
   export type ProjectRequirementsSumOrderByAggregateInput = {
     deploymentBonusPoints?: SortOrder
     completionPercent?: SortOrder
-  }
-
-  export type IntWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel>
-    in?: number[] | ListIntFieldRefInput<$PrismaModel>
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel>
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntWithAggregatesFilter<$PrismaModel> | number
-    _count?: NestedIntFilter<$PrismaModel>
-    _avg?: NestedFloatFilter<$PrismaModel>
-    _sum?: NestedIntFilter<$PrismaModel>
-    _min?: NestedIntFilter<$PrismaModel>
-    _max?: NestedIntFilter<$PrismaModel>
   }
 
   export type EnumStakeholderDocumentTypeFilter<$PrismaModel = never> = {
@@ -31807,6 +35041,20 @@ export namespace Prisma {
     connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
   }
 
+  export type ProjectWorkLogCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutAuthorInput, ProjectWorkLogUncheckedCreateWithoutAuthorInput> | ProjectWorkLogCreateWithoutAuthorInput[] | ProjectWorkLogUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutAuthorInput | ProjectWorkLogCreateOrConnectWithoutAuthorInput[]
+    createMany?: ProjectWorkLogCreateManyAuthorInputEnvelope
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+  }
+
+  export type ProjectUserPhotoCreateNestedManyWithoutUploadedByInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutUploadedByInput, ProjectUserPhotoUncheckedCreateWithoutUploadedByInput> | ProjectUserPhotoCreateWithoutUploadedByInput[] | ProjectUserPhotoUncheckedCreateWithoutUploadedByInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutUploadedByInput | ProjectUserPhotoCreateOrConnectWithoutUploadedByInput[]
+    createMany?: ProjectUserPhotoCreateManyUploadedByInputEnvelope
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+  }
+
   export type ProjectUncheckedCreateNestedManyWithoutMahasiswaInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -31875,6 +35123,20 @@ export namespace Prisma {
     connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutAuthorInput | ProjectDiscussionCreateOrConnectWithoutAuthorInput[]
     createMany?: ProjectDiscussionCreateManyAuthorInputEnvelope
     connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+  }
+
+  export type ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutAuthorInput, ProjectWorkLogUncheckedCreateWithoutAuthorInput> | ProjectWorkLogCreateWithoutAuthorInput[] | ProjectWorkLogUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutAuthorInput | ProjectWorkLogCreateOrConnectWithoutAuthorInput[]
+    createMany?: ProjectWorkLogCreateManyAuthorInputEnvelope
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+  }
+
+  export type ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutUploadedByInput, ProjectUserPhotoUncheckedCreateWithoutUploadedByInput> | ProjectUserPhotoCreateWithoutUploadedByInput[] | ProjectUserPhotoUncheckedCreateWithoutUploadedByInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutUploadedByInput | ProjectUserPhotoCreateOrConnectWithoutUploadedByInput[]
+    createMany?: ProjectUserPhotoCreateManyUploadedByInputEnvelope
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -32041,6 +35303,34 @@ export namespace Prisma {
     deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
   }
 
+  export type ProjectWorkLogUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutAuthorInput, ProjectWorkLogUncheckedCreateWithoutAuthorInput> | ProjectWorkLogCreateWithoutAuthorInput[] | ProjectWorkLogUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutAuthorInput | ProjectWorkLogCreateOrConnectWithoutAuthorInput[]
+    upsert?: ProjectWorkLogUpsertWithWhereUniqueWithoutAuthorInput | ProjectWorkLogUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ProjectWorkLogCreateManyAuthorInputEnvelope
+    set?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    disconnect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    delete?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    update?: ProjectWorkLogUpdateWithWhereUniqueWithoutAuthorInput | ProjectWorkLogUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ProjectWorkLogUpdateManyWithWhereWithoutAuthorInput | ProjectWorkLogUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ProjectWorkLogScalarWhereInput | ProjectWorkLogScalarWhereInput[]
+  }
+
+  export type ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutUploadedByInput, ProjectUserPhotoUncheckedCreateWithoutUploadedByInput> | ProjectUserPhotoCreateWithoutUploadedByInput[] | ProjectUserPhotoUncheckedCreateWithoutUploadedByInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutUploadedByInput | ProjectUserPhotoCreateOrConnectWithoutUploadedByInput[]
+    upsert?: ProjectUserPhotoUpsertWithWhereUniqueWithoutUploadedByInput | ProjectUserPhotoUpsertWithWhereUniqueWithoutUploadedByInput[]
+    createMany?: ProjectUserPhotoCreateManyUploadedByInputEnvelope
+    set?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    disconnect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    delete?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    update?: ProjectUserPhotoUpdateWithWhereUniqueWithoutUploadedByInput | ProjectUserPhotoUpdateWithWhereUniqueWithoutUploadedByInput[]
+    updateMany?: ProjectUserPhotoUpdateManyWithWhereWithoutUploadedByInput | ProjectUserPhotoUpdateManyWithWhereWithoutUploadedByInput[]
+    deleteMany?: ProjectUserPhotoScalarWhereInput | ProjectUserPhotoScalarWhereInput[]
+  }
+
   export type ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput = {
     create?: XOR<ProjectCreateWithoutMahasiswaInput, ProjectUncheckedCreateWithoutMahasiswaInput> | ProjectCreateWithoutMahasiswaInput[] | ProjectUncheckedCreateWithoutMahasiswaInput[]
     connectOrCreate?: ProjectCreateOrConnectWithoutMahasiswaInput | ProjectCreateOrConnectWithoutMahasiswaInput[]
@@ -32181,6 +35471,34 @@ export namespace Prisma {
     deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
   }
 
+  export type ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutAuthorInput, ProjectWorkLogUncheckedCreateWithoutAuthorInput> | ProjectWorkLogCreateWithoutAuthorInput[] | ProjectWorkLogUncheckedCreateWithoutAuthorInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutAuthorInput | ProjectWorkLogCreateOrConnectWithoutAuthorInput[]
+    upsert?: ProjectWorkLogUpsertWithWhereUniqueWithoutAuthorInput | ProjectWorkLogUpsertWithWhereUniqueWithoutAuthorInput[]
+    createMany?: ProjectWorkLogCreateManyAuthorInputEnvelope
+    set?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    disconnect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    delete?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    update?: ProjectWorkLogUpdateWithWhereUniqueWithoutAuthorInput | ProjectWorkLogUpdateWithWhereUniqueWithoutAuthorInput[]
+    updateMany?: ProjectWorkLogUpdateManyWithWhereWithoutAuthorInput | ProjectWorkLogUpdateManyWithWhereWithoutAuthorInput[]
+    deleteMany?: ProjectWorkLogScalarWhereInput | ProjectWorkLogScalarWhereInput[]
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutUploadedByInput, ProjectUserPhotoUncheckedCreateWithoutUploadedByInput> | ProjectUserPhotoCreateWithoutUploadedByInput[] | ProjectUserPhotoUncheckedCreateWithoutUploadedByInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutUploadedByInput | ProjectUserPhotoCreateOrConnectWithoutUploadedByInput[]
+    upsert?: ProjectUserPhotoUpsertWithWhereUniqueWithoutUploadedByInput | ProjectUserPhotoUpsertWithWhereUniqueWithoutUploadedByInput[]
+    createMany?: ProjectUserPhotoCreateManyUploadedByInputEnvelope
+    set?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    disconnect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    delete?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    update?: ProjectUserPhotoUpdateWithWhereUniqueWithoutUploadedByInput | ProjectUserPhotoUpdateWithWhereUniqueWithoutUploadedByInput[]
+    updateMany?: ProjectUserPhotoUpdateManyWithWhereWithoutUploadedByInput | ProjectUserPhotoUpdateManyWithWhereWithoutUploadedByInput[]
+    deleteMany?: ProjectUserPhotoScalarWhereInput | ProjectUserPhotoScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutAccountsInput = {
     create?: XOR<UserCreateWithoutAccountsInput, UserUncheckedCreateWithoutAccountsInput>
     connectOrCreate?: UserCreateOrConnectWithoutAccountsInput
@@ -32277,6 +35595,20 @@ export namespace Prisma {
     connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
   }
 
+  export type ProjectWorkLogCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutProjectInput, ProjectWorkLogUncheckedCreateWithoutProjectInput> | ProjectWorkLogCreateWithoutProjectInput[] | ProjectWorkLogUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutProjectInput | ProjectWorkLogCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectWorkLogCreateManyProjectInputEnvelope
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+  }
+
+  export type ProjectUserPhotoCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutProjectInput, ProjectUserPhotoUncheckedCreateWithoutProjectInput> | ProjectUserPhotoCreateWithoutProjectInput[] | ProjectUserPhotoUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutProjectInput | ProjectUserPhotoCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectUserPhotoCreateManyProjectInputEnvelope
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+  }
+
   export type DocumentUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -32343,6 +35675,20 @@ export namespace Prisma {
     connectOrCreate?: ProjectDiscussionCreateOrConnectWithoutProjectInput | ProjectDiscussionCreateOrConnectWithoutProjectInput[]
     createMany?: ProjectDiscussionCreateManyProjectInputEnvelope
     connect?: ProjectDiscussionWhereUniqueInput | ProjectDiscussionWhereUniqueInput[]
+  }
+
+  export type ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutProjectInput, ProjectWorkLogUncheckedCreateWithoutProjectInput> | ProjectWorkLogCreateWithoutProjectInput[] | ProjectWorkLogUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutProjectInput | ProjectWorkLogCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectWorkLogCreateManyProjectInputEnvelope
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+  }
+
+  export type ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutProjectInput, ProjectUserPhotoUncheckedCreateWithoutProjectInput> | ProjectUserPhotoCreateWithoutProjectInput[] | ProjectUserPhotoUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutProjectInput | ProjectUserPhotoCreateOrConnectWithoutProjectInput[]
+    createMany?: ProjectUserPhotoCreateManyProjectInputEnvelope
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
   }
 
   export type EnumProjectStatusFieldUpdateOperationsInput = {
@@ -32489,6 +35835,34 @@ export namespace Prisma {
     deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
   }
 
+  export type ProjectWorkLogUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutProjectInput, ProjectWorkLogUncheckedCreateWithoutProjectInput> | ProjectWorkLogCreateWithoutProjectInput[] | ProjectWorkLogUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutProjectInput | ProjectWorkLogCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectWorkLogUpsertWithWhereUniqueWithoutProjectInput | ProjectWorkLogUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectWorkLogCreateManyProjectInputEnvelope
+    set?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    disconnect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    delete?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    update?: ProjectWorkLogUpdateWithWhereUniqueWithoutProjectInput | ProjectWorkLogUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectWorkLogUpdateManyWithWhereWithoutProjectInput | ProjectWorkLogUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectWorkLogScalarWhereInput | ProjectWorkLogScalarWhereInput[]
+  }
+
+  export type ProjectUserPhotoUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutProjectInput, ProjectUserPhotoUncheckedCreateWithoutProjectInput> | ProjectUserPhotoCreateWithoutProjectInput[] | ProjectUserPhotoUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutProjectInput | ProjectUserPhotoCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectUserPhotoUpsertWithWhereUniqueWithoutProjectInput | ProjectUserPhotoUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectUserPhotoCreateManyProjectInputEnvelope
+    set?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    disconnect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    delete?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    update?: ProjectUserPhotoUpdateWithWhereUniqueWithoutProjectInput | ProjectUserPhotoUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectUserPhotoUpdateManyWithWhereWithoutProjectInput | ProjectUserPhotoUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectUserPhotoScalarWhereInput | ProjectUserPhotoScalarWhereInput[]
+  }
+
   export type DocumentUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<DocumentCreateWithoutProjectInput, DocumentUncheckedCreateWithoutProjectInput> | DocumentCreateWithoutProjectInput[] | DocumentUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: DocumentCreateOrConnectWithoutProjectInput | DocumentCreateOrConnectWithoutProjectInput[]
@@ -32621,6 +35995,98 @@ export namespace Prisma {
     deleteMany?: ProjectDiscussionScalarWhereInput | ProjectDiscussionScalarWhereInput[]
   }
 
+  export type ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectWorkLogCreateWithoutProjectInput, ProjectWorkLogUncheckedCreateWithoutProjectInput> | ProjectWorkLogCreateWithoutProjectInput[] | ProjectWorkLogUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectWorkLogCreateOrConnectWithoutProjectInput | ProjectWorkLogCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectWorkLogUpsertWithWhereUniqueWithoutProjectInput | ProjectWorkLogUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectWorkLogCreateManyProjectInputEnvelope
+    set?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    disconnect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    delete?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    connect?: ProjectWorkLogWhereUniqueInput | ProjectWorkLogWhereUniqueInput[]
+    update?: ProjectWorkLogUpdateWithWhereUniqueWithoutProjectInput | ProjectWorkLogUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectWorkLogUpdateManyWithWhereWithoutProjectInput | ProjectWorkLogUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectWorkLogScalarWhereInput | ProjectWorkLogScalarWhereInput[]
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<ProjectUserPhotoCreateWithoutProjectInput, ProjectUserPhotoUncheckedCreateWithoutProjectInput> | ProjectUserPhotoCreateWithoutProjectInput[] | ProjectUserPhotoUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: ProjectUserPhotoCreateOrConnectWithoutProjectInput | ProjectUserPhotoCreateOrConnectWithoutProjectInput[]
+    upsert?: ProjectUserPhotoUpsertWithWhereUniqueWithoutProjectInput | ProjectUserPhotoUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: ProjectUserPhotoCreateManyProjectInputEnvelope
+    set?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    disconnect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    delete?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    connect?: ProjectUserPhotoWhereUniqueInput | ProjectUserPhotoWhereUniqueInput[]
+    update?: ProjectUserPhotoUpdateWithWhereUniqueWithoutProjectInput | ProjectUserPhotoUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: ProjectUserPhotoUpdateManyWithWhereWithoutProjectInput | ProjectUserPhotoUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: ProjectUserPhotoScalarWhereInput | ProjectUserPhotoScalarWhereInput[]
+  }
+
+  export type ProjectCreateNestedOneWithoutWorkLogsInput = {
+    create?: XOR<ProjectCreateWithoutWorkLogsInput, ProjectUncheckedCreateWithoutWorkLogsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutWorkLogsInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutWorkLogsInput = {
+    create?: XOR<UserCreateWithoutWorkLogsInput, UserUncheckedCreateWithoutWorkLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutWorkLogsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type IntFieldUpdateOperationsInput = {
+    set?: number
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
+  export type ProjectUpdateOneRequiredWithoutWorkLogsNestedInput = {
+    create?: XOR<ProjectCreateWithoutWorkLogsInput, ProjectUncheckedCreateWithoutWorkLogsInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutWorkLogsInput
+    upsert?: ProjectUpsertWithoutWorkLogsInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutWorkLogsInput, ProjectUpdateWithoutWorkLogsInput>, ProjectUncheckedUpdateWithoutWorkLogsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutWorkLogsNestedInput = {
+    create?: XOR<UserCreateWithoutWorkLogsInput, UserUncheckedCreateWithoutWorkLogsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutWorkLogsInput
+    upsert?: UserUpsertWithoutWorkLogsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutWorkLogsInput, UserUpdateWithoutWorkLogsInput>, UserUncheckedUpdateWithoutWorkLogsInput>
+  }
+
+  export type ProjectCreateNestedOneWithoutUserPhotosInput = {
+    create?: XOR<ProjectCreateWithoutUserPhotosInput, ProjectUncheckedCreateWithoutUserPhotosInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutUserPhotosInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutUserPhotosInput = {
+    create?: XOR<UserCreateWithoutUserPhotosInput, UserUncheckedCreateWithoutUserPhotosInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUserPhotosInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutUserPhotosNestedInput = {
+    create?: XOR<ProjectCreateWithoutUserPhotosInput, ProjectUncheckedCreateWithoutUserPhotosInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutUserPhotosInput
+    upsert?: ProjectUpsertWithoutUserPhotosInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutUserPhotosInput, ProjectUpdateWithoutUserPhotosInput>, ProjectUncheckedUpdateWithoutUserPhotosInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutUserPhotosNestedInput = {
+    create?: XOR<UserCreateWithoutUserPhotosInput, UserUncheckedCreateWithoutUserPhotosInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUserPhotosInput
+    upsert?: UserUpsertWithoutUserPhotosInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUserPhotosInput, UserUpdateWithoutUserPhotosInput>, UserUncheckedUpdateWithoutUserPhotosInput>
+  }
+
   export type ProjectCreateNestedOneWithoutMembersInput = {
     create?: XOR<ProjectCreateWithoutMembersInput, ProjectUncheckedCreateWithoutMembersInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutMembersInput
@@ -32739,14 +36205,6 @@ export namespace Prisma {
     create?: XOR<ProjectCreateWithoutRequirementsInput, ProjectUncheckedCreateWithoutRequirementsInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutRequirementsInput
     connect?: ProjectWhereUniqueInput
-  }
-
-  export type IntFieldUpdateOperationsInput = {
-    set?: number
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type ProjectUpdateOneRequiredWithoutRequirementsNestedInput = {
@@ -33673,6 +37131,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMahasiswaInput = {
@@ -33702,6 +37162,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMahasiswaInput = {
@@ -34014,6 +37476,78 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProjectWorkLogCreateWithoutAuthorInput = {
+    id?: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutWorkLogsInput
+  }
+
+  export type ProjectWorkLogUncheckedCreateWithoutAuthorInput = {
+    id?: string
+    projectId: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectWorkLogCreateOrConnectWithoutAuthorInput = {
+    where: ProjectWorkLogWhereUniqueInput
+    create: XOR<ProjectWorkLogCreateWithoutAuthorInput, ProjectWorkLogUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type ProjectWorkLogCreateManyAuthorInputEnvelope = {
+    data: ProjectWorkLogCreateManyAuthorInput | ProjectWorkLogCreateManyAuthorInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectUserPhotoCreateWithoutUploadedByInput = {
+    id?: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutUserPhotosInput
+  }
+
+  export type ProjectUserPhotoUncheckedCreateWithoutUploadedByInput = {
+    id?: string
+    projectId: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectUserPhotoCreateOrConnectWithoutUploadedByInput = {
+    where: ProjectUserPhotoWhereUniqueInput
+    create: XOR<ProjectUserPhotoCreateWithoutUploadedByInput, ProjectUserPhotoUncheckedCreateWithoutUploadedByInput>
+  }
+
+  export type ProjectUserPhotoCreateManyUploadedByInputEnvelope = {
+    data: ProjectUserPhotoCreateManyUploadedByInput | ProjectUserPhotoCreateManyUploadedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type ProjectUpsertWithWhereUniqueWithoutMahasiswaInput = {
     where: ProjectWhereUniqueInput
     update: XOR<ProjectUpdateWithoutMahasiswaInput, ProjectUncheckedUpdateWithoutMahasiswaInput>
@@ -34317,6 +37851,72 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ProjectDiscussion"> | Date | string
   }
 
+  export type ProjectWorkLogUpsertWithWhereUniqueWithoutAuthorInput = {
+    where: ProjectWorkLogWhereUniqueInput
+    update: XOR<ProjectWorkLogUpdateWithoutAuthorInput, ProjectWorkLogUncheckedUpdateWithoutAuthorInput>
+    create: XOR<ProjectWorkLogCreateWithoutAuthorInput, ProjectWorkLogUncheckedCreateWithoutAuthorInput>
+  }
+
+  export type ProjectWorkLogUpdateWithWhereUniqueWithoutAuthorInput = {
+    where: ProjectWorkLogWhereUniqueInput
+    data: XOR<ProjectWorkLogUpdateWithoutAuthorInput, ProjectWorkLogUncheckedUpdateWithoutAuthorInput>
+  }
+
+  export type ProjectWorkLogUpdateManyWithWhereWithoutAuthorInput = {
+    where: ProjectWorkLogScalarWhereInput
+    data: XOR<ProjectWorkLogUpdateManyMutationInput, ProjectWorkLogUncheckedUpdateManyWithoutAuthorInput>
+  }
+
+  export type ProjectWorkLogScalarWhereInput = {
+    AND?: ProjectWorkLogScalarWhereInput | ProjectWorkLogScalarWhereInput[]
+    OR?: ProjectWorkLogScalarWhereInput[]
+    NOT?: ProjectWorkLogScalarWhereInput | ProjectWorkLogScalarWhereInput[]
+    id?: StringFilter<"ProjectWorkLog"> | string
+    projectId?: StringFilter<"ProjectWorkLog"> | string
+    authorId?: StringFilter<"ProjectWorkLog"> | string
+    dayNumber?: IntFilter<"ProjectWorkLog"> | number
+    workDate?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    activity?: StringFilter<"ProjectWorkLog"> | string
+    createdAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
+  }
+
+  export type ProjectUserPhotoUpsertWithWhereUniqueWithoutUploadedByInput = {
+    where: ProjectUserPhotoWhereUniqueInput
+    update: XOR<ProjectUserPhotoUpdateWithoutUploadedByInput, ProjectUserPhotoUncheckedUpdateWithoutUploadedByInput>
+    create: XOR<ProjectUserPhotoCreateWithoutUploadedByInput, ProjectUserPhotoUncheckedCreateWithoutUploadedByInput>
+  }
+
+  export type ProjectUserPhotoUpdateWithWhereUniqueWithoutUploadedByInput = {
+    where: ProjectUserPhotoWhereUniqueInput
+    data: XOR<ProjectUserPhotoUpdateWithoutUploadedByInput, ProjectUserPhotoUncheckedUpdateWithoutUploadedByInput>
+  }
+
+  export type ProjectUserPhotoUpdateManyWithWhereWithoutUploadedByInput = {
+    where: ProjectUserPhotoScalarWhereInput
+    data: XOR<ProjectUserPhotoUpdateManyMutationInput, ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByInput>
+  }
+
+  export type ProjectUserPhotoScalarWhereInput = {
+    AND?: ProjectUserPhotoScalarWhereInput | ProjectUserPhotoScalarWhereInput[]
+    OR?: ProjectUserPhotoScalarWhereInput[]
+    NOT?: ProjectUserPhotoScalarWhereInput | ProjectUserPhotoScalarWhereInput[]
+    id?: StringFilter<"ProjectUserPhoto"> | string
+    projectId?: StringFilter<"ProjectUserPhoto"> | string
+    uploadedById?: StringFilter<"ProjectUserPhoto"> | string
+    caption?: StringNullableFilter<"ProjectUserPhoto"> | string | null
+    fileName?: StringFilter<"ProjectUserPhoto"> | string
+    fileKey?: StringFilter<"ProjectUserPhoto"> | string
+    fileUrl?: StringFilter<"ProjectUserPhoto"> | string
+    fileSize?: IntFilter<"ProjectUserPhoto"> | number
+    mimeType?: StringFilter<"ProjectUserPhoto"> | string
+    verificationStatus?: StringFilter<"ProjectUserPhoto"> | string
+    verificationResult?: JsonNullableFilter<"ProjectUserPhoto">
+    verifiedAt?: DateTimeNullableFilter<"ProjectUserPhoto"> | Date | string | null
+    createdAt?: DateTimeFilter<"ProjectUserPhoto"> | Date | string
+    updatedAt?: DateTimeFilter<"ProjectUserPhoto"> | Date | string
+  }
+
   export type UserCreateWithoutAccountsInput = {
     id?: string
     username: string
@@ -34351,6 +37951,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutAccountsInput = {
@@ -34387,6 +37989,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutAccountsInput = {
@@ -34439,6 +38043,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -34475,6 +38081,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserCreateWithoutProjectsInput = {
@@ -34511,6 +38119,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectsInput = {
@@ -34547,6 +38157,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectsInput = {
@@ -34938,6 +38550,78 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ProjectWorkLogCreateWithoutProjectInput = {
+    id?: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutWorkLogsInput
+  }
+
+  export type ProjectWorkLogUncheckedCreateWithoutProjectInput = {
+    id?: string
+    authorId: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectWorkLogCreateOrConnectWithoutProjectInput = {
+    where: ProjectWorkLogWhereUniqueInput
+    create: XOR<ProjectWorkLogCreateWithoutProjectInput, ProjectWorkLogUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectWorkLogCreateManyProjectInputEnvelope = {
+    data: ProjectWorkLogCreateManyProjectInput | ProjectWorkLogCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ProjectUserPhotoCreateWithoutProjectInput = {
+    id?: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    uploadedBy: UserCreateNestedOneWithoutUserPhotosInput
+  }
+
+  export type ProjectUserPhotoUncheckedCreateWithoutProjectInput = {
+    id?: string
+    uploadedById: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectUserPhotoCreateOrConnectWithoutProjectInput = {
+    where: ProjectUserPhotoWhereUniqueInput
+    create: XOR<ProjectUserPhotoCreateWithoutProjectInput, ProjectUserPhotoUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectUserPhotoCreateManyProjectInputEnvelope = {
+    data: ProjectUserPhotoCreateManyProjectInput | ProjectUserPhotoCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutProjectsInput = {
     update: XOR<UserUpdateWithoutProjectsInput, UserUncheckedUpdateWithoutProjectsInput>
     create: XOR<UserCreateWithoutProjectsInput, UserUncheckedCreateWithoutProjectsInput>
@@ -34983,6 +38667,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectsInput = {
@@ -35019,6 +38705,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type DocumentUpsertWithWhereUniqueWithoutProjectInput = {
@@ -35326,6 +39014,654 @@ export namespace Prisma {
     data: XOR<ProjectDiscussionUpdateManyMutationInput, ProjectDiscussionUncheckedUpdateManyWithoutProjectInput>
   }
 
+  export type ProjectWorkLogUpsertWithWhereUniqueWithoutProjectInput = {
+    where: ProjectWorkLogWhereUniqueInput
+    update: XOR<ProjectWorkLogUpdateWithoutProjectInput, ProjectWorkLogUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectWorkLogCreateWithoutProjectInput, ProjectWorkLogUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectWorkLogUpdateWithWhereUniqueWithoutProjectInput = {
+    where: ProjectWorkLogWhereUniqueInput
+    data: XOR<ProjectWorkLogUpdateWithoutProjectInput, ProjectWorkLogUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectWorkLogUpdateManyWithWhereWithoutProjectInput = {
+    where: ProjectWorkLogScalarWhereInput
+    data: XOR<ProjectWorkLogUpdateManyMutationInput, ProjectWorkLogUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type ProjectUserPhotoUpsertWithWhereUniqueWithoutProjectInput = {
+    where: ProjectUserPhotoWhereUniqueInput
+    update: XOR<ProjectUserPhotoUpdateWithoutProjectInput, ProjectUserPhotoUncheckedUpdateWithoutProjectInput>
+    create: XOR<ProjectUserPhotoCreateWithoutProjectInput, ProjectUserPhotoUncheckedCreateWithoutProjectInput>
+  }
+
+  export type ProjectUserPhotoUpdateWithWhereUniqueWithoutProjectInput = {
+    where: ProjectUserPhotoWhereUniqueInput
+    data: XOR<ProjectUserPhotoUpdateWithoutProjectInput, ProjectUserPhotoUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type ProjectUserPhotoUpdateManyWithWhereWithoutProjectInput = {
+    where: ProjectUserPhotoScalarWhereInput
+    data: XOR<ProjectUserPhotoUpdateManyMutationInput, ProjectUserPhotoUncheckedUpdateManyWithoutProjectInput>
+  }
+
+  export type ProjectCreateWithoutWorkLogsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutWorkLogsInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutWorkLogsInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutWorkLogsInput, ProjectUncheckedCreateWithoutWorkLogsInput>
+  }
+
+  export type UserCreateWithoutWorkLogsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    ssoSub?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
+  }
+
+  export type UserUncheckedCreateWithoutWorkLogsInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    ssoSub?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
+  }
+
+  export type UserCreateOrConnectWithoutWorkLogsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutWorkLogsInput, UserUncheckedCreateWithoutWorkLogsInput>
+  }
+
+  export type ProjectUpsertWithoutWorkLogsInput = {
+    update: XOR<ProjectUpdateWithoutWorkLogsInput, ProjectUncheckedUpdateWithoutWorkLogsInput>
+    create: XOR<ProjectCreateWithoutWorkLogsInput, ProjectUncheckedCreateWithoutWorkLogsInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutWorkLogsInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutWorkLogsInput, ProjectUncheckedUpdateWithoutWorkLogsInput>
+  }
+
+  export type ProjectUpdateWithoutWorkLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutWorkLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutWorkLogsInput = {
+    update: XOR<UserUpdateWithoutWorkLogsInput, UserUncheckedUpdateWithoutWorkLogsInput>
+    create: XOR<UserCreateWithoutWorkLogsInput, UserUncheckedCreateWithoutWorkLogsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutWorkLogsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutWorkLogsInput, UserUncheckedUpdateWithoutWorkLogsInput>
+  }
+
+  export type UserUpdateWithoutWorkLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutWorkLogsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
+  }
+
+  export type ProjectCreateWithoutUserPhotosInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswa: UserCreateNestedOneWithoutProjectsInput
+    documents?: DocumentCreateNestedManyWithoutProjectInput
+    reviews?: ReviewCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutUserPhotosInput = {
+    id?: string
+    title: string
+    description?: string | null
+    status?: $Enums.ProjectStatus
+    githubRepoUrl?: string | null
+    githubRepoName?: string | null
+    productionUrl?: string | null
+    orgRepoUrl?: string | null
+    orgRepoName?: string | null
+    forkedAt?: Date | string | null
+    approvedAt?: Date | string | null
+    semester?: string
+    tahunAkademik?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    submittedAt?: Date | string | null
+    mahasiswaId: string
+    documents?: DocumentUncheckedCreateNestedManyWithoutProjectInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutProjectInput
+    assignments?: ProjectAssignmentUncheckedCreateNestedManyWithoutProjectInput
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    invitations?: TeamInvitationUncheckedCreateNestedManyWithoutProjectInput
+    requirements?: ProjectRequirementsUncheckedCreateNestedOneWithoutProjectInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
+    screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
+    presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutUserPhotosInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutUserPhotosInput, ProjectUncheckedCreateWithoutUserPhotosInput>
+  }
+
+  export type UserCreateWithoutUserPhotosInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    ssoSub?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentCreateNestedManyWithoutDosenInput
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserUncheckedCreateWithoutUserPhotosInput = {
+    id?: string
+    username: string
+    email?: string | null
+    emailVerified?: Date | string | null
+    name: string
+    password?: string | null
+    role?: $Enums.Role
+    image?: string | null
+    profilePhoto?: string | null
+    githubId?: string | null
+    githubUsername?: string | null
+    githubToken?: string | null
+    ssoSub?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    nim?: string | null
+    nip?: string | null
+    phone?: string | null
+    prodi?: string | null
+    simakPhoto?: string | null
+    simakValidated?: boolean
+    simakLastSync?: Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectUncheckedCreateNestedManyWithoutMahasiswaInput
+    reviews?: ReviewUncheckedCreateNestedManyWithoutReviewerInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+    assignedProjects?: ProjectAssignmentUncheckedCreateNestedManyWithoutDosenInput
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    teamMemberships?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
+    invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
+    scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+  }
+
+  export type UserCreateOrConnectWithoutUserPhotosInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutUserPhotosInput, UserUncheckedCreateWithoutUserPhotosInput>
+  }
+
+  export type ProjectUpsertWithoutUserPhotosInput = {
+    update: XOR<ProjectUpdateWithoutUserPhotosInput, ProjectUncheckedUpdateWithoutUserPhotosInput>
+    create: XOR<ProjectCreateWithoutUserPhotosInput, ProjectUncheckedCreateWithoutUserPhotosInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutUserPhotosInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutUserPhotosInput, ProjectUncheckedUpdateWithoutUserPhotosInput>
+  }
+
+  export type ProjectUpdateWithoutUserPhotosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswa?: UserUpdateOneRequiredWithoutProjectsNestedInput
+    documents?: DocumentUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutUserPhotosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+    githubRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    githubRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    productionUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    orgRepoName?: NullableStringFieldUpdateOperationsInput | string | null
+    forkedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    approvedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    semester?: StringFieldUpdateOperationsInput | string
+    tahunAkademik?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    mahasiswaId?: StringFieldUpdateOperationsInput | string
+    documents?: DocumentUncheckedUpdateManyWithoutProjectNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutProjectNestedInput
+    assignments?: ProjectAssignmentUncheckedUpdateManyWithoutProjectNestedInput
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    invitations?: TeamInvitationUncheckedUpdateManyWithoutProjectNestedInput
+    requirements?: ProjectRequirementsUncheckedUpdateOneWithoutProjectNestedInput
+    stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
+    screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
+    presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutUserPhotosInput = {
+    update: XOR<UserUpdateWithoutUserPhotosInput, UserUncheckedUpdateWithoutUserPhotosInput>
+    create: XOR<UserCreateWithoutUserPhotosInput, UserUncheckedCreateWithoutUserPhotosInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutUserPhotosInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutUserPhotosInput, UserUncheckedUpdateWithoutUserPhotosInput>
+  }
+
+  export type UserUpdateWithoutUserPhotosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutUserPhotosInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    name?: StringFieldUpdateOperationsInput | string
+    password?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    profilePhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    githubId?: NullableStringFieldUpdateOperationsInput | string | null
+    githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
+    githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    nim?: NullableStringFieldUpdateOperationsInput | string | null
+    nip?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    prodi?: NullableStringFieldUpdateOperationsInput | string | null
+    simakPhoto?: NullableStringFieldUpdateOperationsInput | string | null
+    simakValidated?: BoolFieldUpdateOperationsInput | boolean
+    simakLastSync?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    preferences?: NullableJsonNullValueInput | InputJsonValue
+    projects?: ProjectUncheckedUpdateManyWithoutMahasiswaNestedInput
+    reviews?: ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+    assignedProjects?: ProjectAssignmentUncheckedUpdateManyWithoutDosenNestedInput
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    teamMemberships?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
+    invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
+    scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+  }
+
   export type ProjectCreateWithoutMembersInput = {
     id?: string
     title: string
@@ -35353,6 +39689,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -35382,6 +39720,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -35423,6 +39763,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutTeamMembershipsInput = {
@@ -35459,6 +39801,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutTeamMembershipsInput = {
@@ -35532,6 +39876,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -35561,6 +39907,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutTeamMembershipsInput = {
@@ -35608,6 +39956,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTeamMembershipsInput = {
@@ -35644,6 +39994,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type MemberReviewScoreUpsertWithWhereUniqueWithoutMemberInput = {
@@ -35702,6 +40054,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutInvitationsInput = {
@@ -35731,6 +40085,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutInvitationsInput = {
@@ -35772,6 +40128,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutInvitationsSentInput = {
@@ -35808,6 +40166,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutInvitationsSentInput = {
@@ -35849,6 +40209,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutInvitationsReceivedInput = {
@@ -35885,6 +40247,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutInvitationsReceivedInput = {
@@ -35930,6 +40294,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutInvitationsInput = {
@@ -35959,6 +40325,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutInvitationsSentInput = {
@@ -36006,6 +40374,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInvitationsSentInput = {
@@ -36042,6 +40412,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUpsertWithoutInvitationsReceivedInput = {
@@ -36089,6 +40461,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInvitationsReceivedInput = {
@@ -36125,6 +40499,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type ProjectCreateWithoutRequirementsInput = {
@@ -36154,6 +40530,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutRequirementsInput = {
@@ -36183,6 +40561,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutRequirementsInput = {
@@ -36228,6 +40608,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutRequirementsInput = {
@@ -36257,6 +40639,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutStakeholderDocumentsInput = {
@@ -36286,6 +40670,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutStakeholderDocumentsInput = {
@@ -36315,6 +40701,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutStakeholderDocumentsInput = {
@@ -36360,6 +40748,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutStakeholderDocumentsInput = {
@@ -36389,6 +40779,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutScreenshotsInput = {
@@ -36418,6 +40810,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutScreenshotsInput = {
@@ -36447,6 +40841,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutScreenshotsInput = {
@@ -36492,6 +40888,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutScreenshotsInput = {
@@ -36521,6 +40919,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutDocumentsInput = {
@@ -36550,6 +40950,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDocumentsInput = {
@@ -36579,6 +40981,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDocumentsInput = {
@@ -36624,6 +41028,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDocumentsInput = {
@@ -36653,6 +41059,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutReviewsInput = {
@@ -36682,6 +41090,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutReviewsInput = {
@@ -36711,6 +41121,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutReviewsInput = {
@@ -36752,6 +41164,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutReviewsInput = {
@@ -36788,6 +41202,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutReviewsInput = {
@@ -36917,6 +41333,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutReviewsInput = {
@@ -36946,6 +41364,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutReviewsInput = {
@@ -36993,6 +41413,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -37029,6 +41451,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type ReviewScoreUpsertWithWhereUniqueWithoutReviewInput = {
@@ -37626,6 +42050,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutAssignmentsInput = {
@@ -37655,6 +42081,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutAssignmentsInput = {
@@ -37696,6 +42124,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedProjectsInput = {
@@ -37732,6 +42162,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedProjectsInput = {
@@ -37777,6 +42209,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutAssignmentsInput = {
@@ -37806,6 +42240,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutAssignedProjectsInput = {
@@ -37853,6 +42289,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedProjectsInput = {
@@ -37889,6 +42327,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserCreateWithoutNotificationsInput = {
@@ -37925,6 +42365,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -37961,6 +42403,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -38013,6 +42457,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -38049,6 +42495,8 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserCreateWithoutScheduledPresentationsInput = {
@@ -38085,6 +42533,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutScheduledPresentationsInput = {
@@ -38121,6 +42571,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutAuthorInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutScheduledPresentationsInput = {
@@ -38155,6 +42607,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     discussions?: ProjectDiscussionCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutPresentationScheduleInput = {
@@ -38184,6 +42638,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     discussions?: ProjectDiscussionUncheckedCreateNestedManyWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutPresentationScheduleInput = {
@@ -38236,6 +42692,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutScheduledPresentationsInput = {
@@ -38272,6 +42730,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutAuthorNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type ProjectUpsertWithoutPresentationScheduleInput = {
@@ -38312,6 +42772,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutPresentationScheduleInput = {
@@ -38341,6 +42803,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateWithoutDiscussionsInput = {
@@ -38370,6 +42834,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleCreateNestedOneWithoutProjectInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDiscussionsInput = {
@@ -38399,6 +42865,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUncheckedCreateNestedManyWithoutProjectInput
     screenshots?: ProjectScreenshotUncheckedCreateNestedManyWithoutProjectInput
     presentationSchedule?: PresentationScheduleUncheckedCreateNestedOneWithoutProjectInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutProjectInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDiscussionsInput = {
@@ -38440,6 +42908,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleCreateNestedManyWithoutScheduledByInput
+    workLogs?: ProjectWorkLogCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserUncheckedCreateWithoutDiscussionsInput = {
@@ -38476,6 +42946,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUncheckedCreateNestedManyWithoutInviterInput
     invitationsReceived?: TeamInvitationUncheckedCreateNestedManyWithoutInviteeInput
     scheduledPresentations?: PresentationScheduleUncheckedCreateNestedManyWithoutScheduledByInput
+    workLogs?: ProjectWorkLogUncheckedCreateNestedManyWithoutAuthorInput
+    userPhotos?: ProjectUserPhotoUncheckedCreateNestedManyWithoutUploadedByInput
   }
 
   export type UserCreateOrConnectWithoutDiscussionsInput = {
@@ -38580,6 +43052,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDiscussionsInput = {
@@ -38609,6 +43083,8 @@ export namespace Prisma {
     stakeholderDocuments?: StakeholderDocumentUncheckedUpdateManyWithoutProjectNestedInput
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutDiscussionsInput = {
@@ -38656,6 +43132,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUpdateManyWithoutScheduledByNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutUploadedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDiscussionsInput = {
@@ -38692,6 +43170,8 @@ export namespace Prisma {
     invitationsSent?: TeamInvitationUncheckedUpdateManyWithoutInviterNestedInput
     invitationsReceived?: TeamInvitationUncheckedUpdateManyWithoutInviteeNestedInput
     scheduledPresentations?: PresentationScheduleUncheckedUpdateManyWithoutScheduledByNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutAuthorNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByNestedInput
   }
 
   export type ProjectDiscussionUpsertWithoutRepliesInput = {
@@ -38862,6 +43342,32 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ProjectWorkLogCreateManyAuthorInput = {
+    id?: string
+    projectId: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectUserPhotoCreateManyUploadedByInput = {
+    id?: string
+    projectId: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type ProjectUpdateWithoutMahasiswaInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
@@ -38889,6 +43395,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMahasiswaInput = {
@@ -38918,6 +43426,8 @@ export namespace Prisma {
     screenshots?: ProjectScreenshotUncheckedUpdateManyWithoutProjectNestedInput
     presentationSchedule?: PresentationScheduleUncheckedUpdateOneWithoutProjectNestedInput
     discussions?: ProjectDiscussionUncheckedUpdateManyWithoutProjectNestedInput
+    workLogs?: ProjectWorkLogUncheckedUpdateManyWithoutProjectNestedInput
+    userPhotos?: ProjectUserPhotoUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutMahasiswaInput = {
@@ -39249,6 +43759,84 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ProjectWorkLogUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutWorkLogsNestedInput
+  }
+
+  export type ProjectWorkLogUncheckedUpdateWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectWorkLogUncheckedUpdateManyWithoutAuthorInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPhotoUpdateWithoutUploadedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutUserPhotosNestedInput
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateWithoutUploadedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateManyWithoutUploadedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type DocumentCreateManyProjectInput = {
     id?: string
     type: $Enums.DocumentType
@@ -39336,6 +43924,32 @@ export namespace Prisma {
     parentId?: string | null
     content: string
     isEdited?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectWorkLogCreateManyProjectInput = {
+    id?: string
+    authorId: string
+    dayNumber: number
+    workDate: Date | string
+    activity: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ProjectUserPhotoCreateManyProjectInput = {
+    id?: string
+    uploadedById: string
+    caption?: string | null
+    fileName: string
+    fileKey: string
+    fileUrl: string
+    fileSize: number
+    mimeType: string
+    verificationStatus?: string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -39619,6 +44233,84 @@ export namespace Prisma {
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
     isEdited?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectWorkLogUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutWorkLogsNestedInput
+  }
+
+  export type ProjectWorkLogUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectWorkLogUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    authorId?: StringFieldUpdateOperationsInput | string
+    dayNumber?: IntFieldUpdateOperationsInput | number
+    workDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    activity?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPhotoUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    uploadedBy?: UserUpdateOneRequiredWithoutUserPhotosNestedInput
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uploadedById?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ProjectUserPhotoUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    uploadedById?: StringFieldUpdateOperationsInput | string
+    caption?: NullableStringFieldUpdateOperationsInput | string | null
+    fileName?: StringFieldUpdateOperationsInput | string
+    fileKey?: StringFieldUpdateOperationsInput | string
+    fileUrl?: StringFieldUpdateOperationsInput | string
+    fileSize?: IntFieldUpdateOperationsInput | number
+    mimeType?: StringFieldUpdateOperationsInput | string
+    verificationStatus?: StringFieldUpdateOperationsInput | string
+    verificationResult?: NullableJsonNullValueInput | InputJsonValue
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

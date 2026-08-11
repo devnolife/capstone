@@ -182,6 +182,34 @@ exports.Prisma.ProjectScalarFieldEnum = {
   mahasiswaId: 'mahasiswaId'
 };
 
+exports.Prisma.ProjectWorkLogScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  authorId: 'authorId',
+  dayNumber: 'dayNumber',
+  workDate: 'workDate',
+  activity: 'activity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ProjectUserPhotoScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  uploadedById: 'uploadedById',
+  caption: 'caption',
+  fileName: 'fileName',
+  fileKey: 'fileKey',
+  fileUrl: 'fileUrl',
+  fileSize: 'fileSize',
+  mimeType: 'mimeType',
+  verificationStatus: 'verificationStatus',
+  verificationResult: 'verificationResult',
+  verifiedAt: 'verifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ProjectMemberScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -467,6 +495,8 @@ exports.Prisma.ModelName = {
   User: 'User',
   Account: 'Account',
   Project: 'Project',
+  ProjectWorkLog: 'ProjectWorkLog',
+  ProjectUserPhoto: 'ProjectUserPhoto',
   ProjectMember: 'ProjectMember',
   TeamInvitation: 'TeamInvitation',
   ProjectRequirements: 'ProjectRequirements',

@@ -48,6 +48,8 @@ export default async function MahasiswaDashboardPage() {
           select: {
             documents: true,
             reviews: true,
+            workLogs: true,
+            userPhotos: true,
           },
         },
       },
@@ -85,6 +87,8 @@ export default async function MahasiswaDashboardPage() {
         requirements: currentProject.requirements,
         documentTypes: currentProject.documents.map((document) => document.type),
         stakeholderDocumentCount: currentProject.stakeholderDocuments.length,
+        workLogCount: currentProject._count.workLogs,
+        userPhotoCount: currentProject._count.userPhotos,
         reviews: currentProject.reviews.map((review) => ({
           status: review.status,
         })),

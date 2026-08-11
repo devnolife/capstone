@@ -95,6 +95,8 @@ model User {
   invitationsReceived TeamInvitation[]    @relation("InvitationsReceived")
   scheduledPresentations PresentationSchedule[] @relation("PresentationScheduler")
   discussions         ProjectDiscussion[] @relation("DiscussionAuthor")
+  workLogs            ProjectWorkLog[]    @relation("WorkLogAuthor")
+  userPhotos          ProjectUserPhoto[]  @relation("UserPhotoUploader")
 
   @@map("users")
 }
@@ -156,8 +158,52 @@ model Project {
   screenshots           ProjectScreenshot[]
   presentationSchedule  PresentationSchedule?
   discussions           ProjectDiscussion[]
+  workLogs              ProjectWorkLog[]
+  userPhotos            ProjectUserPhoto[]
 
   @@map("projects")
+}
+
+// Laporan pengerjaan harian project (hari ke-N kerja apa)
+model ProjectWorkLog {
+  id        String   @id @default(cuid())
+  projectId String
+  authorId  String
+  dayNumber Int      // Hari ke berapa pengerjaan
+  workDate  DateTime // Tanggal pengerjaan
+  activity  String   @db.Text // Apa yang dikerjakan pada hari itu
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  author  User    @relation("WorkLogAuthor", fields: [authorId], references: [id])
+
+  @@index([projectId, dayNumber])
+  @@map("project_work_logs")
+}
+
+// Foto bersama pengguna/stakeholder (untuk verifikasi wajah via LLM/HuggingFace)
+model ProjectUserPhoto {
+  id                 String    @id @default(cuid())
+  projectId          String
+  uploadedById       String
+  caption            String?   @db.Text // Keterangan foto (siapa penggunanya, konteks)
+  fileName           String
+  fileKey            String    // Key untuk storage (MinIO/S3)
+  fileUrl            String
+  fileSize           Int
+  mimeType           String
+  verificationStatus String    @default("PENDING") // "PENDING", "VERIFIED", "REJECTED" — hasil face recognition
+  verificationResult Json?     // Output model face recognition (LLM/HuggingFace)
+  verifiedAt         DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  uploadedBy User    @relation("UserPhotoUploader", fields: [uploadedById], references: [id])
+
+  @@index([projectId])
+  @@map("project_user_photos")
 }
 
 // Tim Project / Anggota Kelompok

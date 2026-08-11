@@ -34,7 +34,13 @@ export async function getProjectSubmissionReadiness(projectId: string) {
           },
         },
         documents: { select: { type: true } },
-        _count: { select: { stakeholderDocuments: true } },
+        _count: {
+          select: {
+            stakeholderDocuments: true,
+            workLogs: true,
+            userPhotos: true,
+          },
+        },
       },
     }),
     prisma.semester.findMany({
@@ -65,6 +71,8 @@ export async function getProjectSubmissionReadiness(projectId: string) {
     requirements: project.requirements,
     documentTypes: project.documents.map((document) => document.type),
     stakeholderDocumentCount: project._count.stakeholderDocuments,
+    workLogCount: project._count.workLogs,
+    userPhotoCount: project._count.userPhotos,
     submissionDeadline,
   });
 

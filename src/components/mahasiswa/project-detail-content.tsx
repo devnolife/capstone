@@ -61,6 +61,8 @@ import {
 } from '@/lib/utils';
 import StakeholderUpload from './stakeholder-upload';
 import ProjectScreenshotUpload from './screenshot-upload';
+import { WorkLogSection } from './work-log-section';
+import { UserPhotoUpload } from './user-photo-upload';
 
 
 interface ReviewComment {
@@ -885,6 +887,32 @@ export function ProjectDetailContent({
               </motion.div>
             );
           })()}
+
+          {/* Work Log Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.21 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <CardBody className="p-5">
+                <WorkLogSection projectId={project.id} readOnly={!canEdit} />
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Foto Bersama Pengguna Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.215 }}
+          >
+            <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
+              <CardBody className="p-5">
+                <UserPhotoUpload projectId={project.id} readOnly={!canEdit} />
+              </CardBody>
+            </Card>
+          </motion.div>
 
           {/* Stakeholder Documents Card */}
           <motion.div
