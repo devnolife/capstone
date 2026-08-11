@@ -1,0 +1,6 @@
+services:
+  app:
+    ports: !override
+      - "3012:3012"
+    environment:
+      - PORT=3012
