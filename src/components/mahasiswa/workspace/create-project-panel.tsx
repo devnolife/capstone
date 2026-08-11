@@ -10,9 +10,9 @@ interface CreateProjectPanelProps {
 
 export function CreateProjectPanel({ hasGitHubConnected }: CreateProjectPanelProps) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-5">
+        <CardBody className="p-6">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-primary-100 dark:bg-primary-900/30">
               <Rocket size={18} className="text-primary" />

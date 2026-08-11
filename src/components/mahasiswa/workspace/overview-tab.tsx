@@ -44,14 +44,14 @@ export function OverviewTab({
   const presentation = project.presentationSchedule;
 
   return (
-    <div className="space-y-5 pt-2">
+    <div className="space-y-6 pt-6">
       {/* Journey progress */}
       <StudentJourneyHub journey={journey} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Checklist readiness */}
         <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <CardBody className="p-5">
+          <CardBody className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-lg">Checklist Submission</h2>
               {readiness && (
@@ -136,10 +136,10 @@ export function OverviewTab({
         </Card>
 
         {/* Info ringkas */}
-        <div className="space-y-5">
+        <div className="space-y-6">
           {/* Presentasi */}
           <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <CardBody className="p-5">
+            <CardBody className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <GraduationCap size={18} className="text-secondary" />
                 <h2 className="font-semibold">Jadwal Presentasi</h2>
@@ -186,7 +186,7 @@ export function OverviewTab({
 
           {/* Dosen penguji */}
           <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <CardBody className="p-5">
+            <CardBody className="p-6">
               <h2 className="font-semibold mb-3">Dosen Penguji</h2>
               {project.assignments.length > 0 ? (
                 <ul className="space-y-1 text-sm">

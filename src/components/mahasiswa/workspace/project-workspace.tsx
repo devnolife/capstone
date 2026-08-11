@@ -97,7 +97,7 @@ export function ProjectWorkspace({
 
   if (!project) {
     return (
-      <div className="w-full max-w-5xl mx-auto px-4 py-6">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 py-6 md:py-8">
         <CreateProjectPanel hasGitHubConnected={hasGitHubConnected} />
       </div>
     );
@@ -109,9 +109,9 @@ export function ProjectWorkspace({
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 py-6">
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl font-bold truncate">{project.title}</h1>
@@ -152,8 +152,8 @@ export function ProjectWorkspace({
         variant="underlined"
         color="primary"
         classNames={{
-          tabList: 'w-full overflow-x-auto gap-1',
-          tab: 'h-10',
+          tabList: 'w-full overflow-x-auto gap-2 mb-2',
+          tab: 'h-11 px-1',
         }}
       >
         <Tab

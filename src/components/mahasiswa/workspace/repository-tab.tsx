@@ -15,7 +15,7 @@ export function RepositoryTab({ projectId }: RepositoryTabProps) {
   const [subTab, setSubTab] = useState('setup');
 
   return (
-    <div className="pt-2">
+    <div className="pt-6">
       <Tabs
         aria-label="Repository"
         selectedKey={subTab}

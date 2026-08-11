@@ -35,10 +35,10 @@ export function TeamTab({ project, canEdit, isOwner }: TeamTabProps) {
   }));
 
   return (
-    <div className="space-y-5 pt-2">
+    <div className="space-y-6 pt-6">
       {/* Anggota tim */}
       <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-5">
+        <CardBody className="p-6">
           <TeamMembersNim
             projectId={project.id}
             members={members}

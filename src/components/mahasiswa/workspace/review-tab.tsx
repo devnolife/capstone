@@ -38,11 +38,11 @@ export function ReviewTab({
     : null;
 
   return (
-    <div className="space-y-5 pt-2">
+    <div className="space-y-6 pt-6">
       {/* Jadwal presentasi detail */}
       {presentationSchedule && (
         <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <CardBody className="p-5">
+          <CardBody className="p-6">
             <div className="flex items-center gap-2 mb-3">
               <GraduationCap size={18} className="text-secondary" />
               <h2 className="font-semibold text-lg">Jadwal Presentasi</h2>

@@ -11,7 +11,7 @@ export function RequirementsTab({ projectId }: RequirementsTabProps) {
   // RequirementsForm sudah menangani mode baca-saja sendiri
   // (non-owner otomatis read-only).
   return (
-    <div className="pt-2">
+    <div className="pt-6">
       <RequirementsForm projectId={projectId} />
     </div>
   );

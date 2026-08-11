@@ -25,24 +25,24 @@ export function EvidenceTab({ project, canEdit }: EvidenceTabProps) {
   );
 
   return (
-    <div className="space-y-5 pt-2">
+    <div className="space-y-6 pt-6">
       {/* Laporan pengerjaan per-commit */}
       <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-5">
+        <CardBody className="p-6">
           <WorkLogSection projectId={project.id} readOnly={!canEdit} />
         </CardBody>
       </Card>
 
       {/* Foto bersama pengguna */}
       <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-5">
+        <CardBody className="p-6">
           <UserPhotoUpload projectId={project.id} readOnly={!canEdit} />
         </CardBody>
       </Card>
 
       {/* Dokumen stakeholder */}
       <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-5">
+        <CardBody className="p-6">
           <StakeholderUpload
             projectId={project.id}
             documents={
@@ -58,7 +58,7 @@ export function EvidenceTab({ project, canEdit }: EvidenceTabProps) {
 
       {/* Screenshot aplikasi */}
       <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-5">
+        <CardBody className="p-6">
           <ProjectScreenshotUpload projectId={project.id} readOnly={!canEdit} />
         </CardBody>
       </Card>
