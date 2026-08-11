@@ -112,7 +112,7 @@ export const NotificationTemplates = {
       title: 'Dosen Penguji Ditugaskan',
       message: `${dosenName} telah ditugaskan sebagai penguji untuk project "${projectTitle}"`,
       type: 'assignment',
-      link: `/mahasiswa/projects/${projectId}`,
+      link: `/mahasiswa/project?project=${projectId}`,
     }),
 
   /**
@@ -135,7 +135,7 @@ export const NotificationTemplates = {
       title: 'Review Selesai',
       message: `${dosenName} telah memberikan review untuk project "${projectTitle}"`,
       type: 'review',
-      link: `/mahasiswa/projects/${projectId}`,
+      link: `/mahasiswa/project?project=${projectId}&tab=hasil`,
     }),
 
   /**
@@ -147,7 +147,7 @@ export const NotificationTemplates = {
       title: 'Revisi Diperlukan',
       message: `Project "${projectTitle}" memerlukan revisi. Silakan periksa feedback dari dosen.`,
       type: 'review',
-      link: `/mahasiswa/projects/${projectId}`,
+      link: `/mahasiswa/project?project=${projectId}&tab=hasil`,
     }),
 
   /**
@@ -159,7 +159,7 @@ export const NotificationTemplates = {
       title: 'Project Disetujui',
       message: `Selamat! Project "${projectTitle}" telah disetujui.`,
       type: 'review',
-      link: `/mahasiswa/projects/${projectId}`,
+      link: `/mahasiswa/project?project=${projectId}&tab=hasil`,
     }),
 
   /**
@@ -171,7 +171,7 @@ export const NotificationTemplates = {
       title: 'Undangan Tim',
       message: `${inviterName} mengundang Anda untuk bergabung dengan project "${projectTitle}"`,
       type: 'invitation',
-      link: `/mahasiswa/notifications`,
+      link: '/mahasiswa/project?tab=tim',
     }),
 
   /**
@@ -183,7 +183,7 @@ export const NotificationTemplates = {
       title: 'Undangan Diterima',
       message: `${inviteeName} telah bergabung dengan project "${projectTitle}"`,
       type: 'invitation',
-      link: `/mahasiswa/projects/${projectId}`,
+      link: `/mahasiswa/project?project=${projectId}&tab=tim`,
     }),
 
   /**

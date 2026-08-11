@@ -11,6 +11,7 @@ import {
   Award,
   ArrowRight,
   CheckCircle2,
+  MessagesSquare,
 } from 'lucide-react';
 import type { StudentJourney, SubmissionBlocker } from '@/lib/student-journey';
 import { OverviewTab } from './overview-tab';
@@ -18,6 +19,7 @@ import { CompletenessTab } from './completeness-tab';
 import { TeamTab } from './team-tab';
 import { EvidenceTab } from './evidence-tab';
 import { ResultTab } from './result-tab';
+import DiscussionSection from '@/components/shared/discussion-section';
 import { CreateProjectPanel } from './create-project-panel';
 import type { WorkspaceProject, WorkspaceReview, ReviewStats } from './types';
 
@@ -26,6 +28,7 @@ export const WORKSPACE_TABS = [
   'kelengkapan',
   'tim',
   'bukti',
+  'diskusi',
   'hasil',
 ] as const;
 
@@ -92,6 +95,7 @@ interface ProjectWorkspaceProps {
   canEdit: boolean;
   isOwner: boolean;
   hasGitHubConnected: boolean;
+  currentUserId: string;
 }
 
 export function ProjectWorkspace({
@@ -103,6 +107,7 @@ export function ProjectWorkspace({
   canEdit,
   isOwner,
   hasGitHubConnected,
+  currentUserId,
 }: ProjectWorkspaceProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -295,6 +300,17 @@ export function ProjectWorkspace({
           title={tabTitle('Bukti', 'bukti', <FolderCheck size={15} />)}
         >
           <EvidenceTab project={project} canEdit={canEdit} />
+        </Tab>
+        <Tab
+          key="diskusi"
+          title={tabTitle('Diskusi', 'diskusi', <MessagesSquare size={15} />)}
+        >
+          <div className="pt-6">
+            <DiscussionSection
+              projectId={project.id}
+              currentUserId={currentUserId}
+            />
+          </div>
         </Tab>
         <Tab key="hasil" title={tabTitle('Hasil', 'hasil', <Award size={15} />)}>
           <ResultTab

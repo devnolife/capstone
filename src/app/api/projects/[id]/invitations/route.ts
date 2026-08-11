@@ -212,7 +212,7 @@ export async function POST(
           title: 'Undangan Tim Capstone',
           message: `${session.user.name} mengundang Anda bergabung ke project "${project.title}"`,
           type: 'invitation',
-          link: '/mahasiswa/invitations',
+          link: '/mahasiswa/project?tab=tim',
         },
       }),
     ]);

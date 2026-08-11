@@ -313,7 +313,7 @@ export async function POST(request: Request) {
             title: 'Undangan Tim Project',
             message: `${session.user.name} mengundang Anda untuk bergabung dalam project "${title}"`,
             type: 'invitation',
-            link: `/mahasiswa/invitations`,
+            link: '/mahasiswa/project?tab=tim',
           }));
 
           await tx.notification.createMany({

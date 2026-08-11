@@ -211,7 +211,7 @@ export async function PUT(
             ? `Jadwal presentasi untuk project "${existing.project.title}" telah dibatalkan.`
             : `Jadwal presentasi untuk project "${existing.project.title}" telah diubah. Silakan cek detail terbaru.`,
           type: "presentation",
-          link: `/mahasiswa/projects/${existing.project.id}`,
+          link: `/mahasiswa/project?project=${existing.project.id}&tab=hasil`,
         })),
       });
     }
@@ -296,7 +296,7 @@ export async function DELETE(
           title: "Jadwal Presentasi Dihapus",
           message: `Jadwal presentasi untuk project "${existing.project.title}" telah dihapus. Admin akan menjadwalkan ulang.`,
           type: "presentation",
-          link: `/mahasiswa/projects/${existing.project.id}`,
+          link: `/mahasiswa/project?project=${existing.project.id}&tab=hasil`,
         })),
       }),
     ]);

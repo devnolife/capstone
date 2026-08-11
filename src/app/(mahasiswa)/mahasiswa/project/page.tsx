@@ -84,6 +84,7 @@ export default async function ProjectWorkspacePage({
         canEdit={false}
         isOwner={false}
         hasGitHubConnected={hasGitHubConnected}
+        currentUserId={session.user.id}
       />
     );
   }
@@ -272,6 +273,7 @@ export default async function ProjectWorkspacePage({
       canEdit={canEdit}
       isOwner={isOwner}
       hasGitHubConnected={hasGitHubConnected}
+      currentUserId={session.user.id}
     />
   );
 }

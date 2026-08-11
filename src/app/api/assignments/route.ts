@@ -169,7 +169,7 @@ export async function POST(request: Request) {
         title: 'Dosen Penguji Ditugaskan',
         message: `${dosen.name} ditugaskan sebagai penguji untuk project Anda`,
         type: 'assignment',
-        link: `/mahasiswa/projects/${projectId}`,
+        link: `/mahasiswa/project?project=${projectId}`,
       },
     });
 

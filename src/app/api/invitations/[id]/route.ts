@@ -215,7 +215,7 @@ export async function PUT(
             title: 'Undangan Diterima',
             message: `${invitation.invitee.name} menerima undangan bergabung ke project "${invitation.project.title}"`,
             type: 'invitation',
-            link: `/mahasiswa/projects/${invitation.projectId}`,
+            link: `/mahasiswa/project?project=${invitation.projectId}&tab=tim`,
           },
         }),
       ]);
@@ -240,7 +240,7 @@ export async function PUT(
             title: 'Undangan Ditolak',
             message: `${invitation.invitee.name} menolak undangan bergabung ke project "${invitation.project.title}"`,
             type: 'invitation',
-            link: `/mahasiswa/projects/${invitation.projectId}`,
+            link: `/mahasiswa/project?project=${invitation.projectId}&tab=tim`,
           },
         }),
       ]);

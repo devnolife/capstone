@@ -344,7 +344,7 @@ export async function PUT(
             title: notificationTitle,
             message: notificationMessage,
             type: 'status_change',
-            link: `/mahasiswa/projects/${id}`,
+            link: `/mahasiswa/project?project=${id}`,
           },
         });
       }
@@ -575,7 +575,7 @@ export async function PUT(
                 title: 'Undangan Tim Project',
                 message: `${session.user.name} mengundang Anda untuk bergabung dalam project "${title}"`,
                 type: 'invitation',
-                link: `/mahasiswa/invitations`,
+                link: '/mahasiswa/project?tab=tim',
               })),
             });
           }

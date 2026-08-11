@@ -180,7 +180,7 @@ export async function POST(request: NextRequest) {
       title: isReschedule ? "Jadwal Presentasi Diubah" : "Jadwal Presentasi",
       message: `Presentasi project "${project.title}" ${isReschedule ? "dijadwalkan ulang" : "telah dijadwalkan"} pada ${new Date(scheduledDate).toLocaleDateString("id-ID")} pukul ${startTime}${location ? ` di ${location}` : ""}.`,
       type: "presentation",
-      link: `/mahasiswa/projects/${projectId}`,
+      link: `/mahasiswa/project?project=${projectId}&tab=hasil`,
     }));
 
     // Create or update (reschedule) presentation schedule and update project status

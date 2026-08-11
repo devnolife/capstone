@@ -2,6 +2,7 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import {
   Card,
@@ -15,6 +16,9 @@ import {
   AccordionItem,
 } from '@heroui/react';
 import { motion, AnimatePresence } from 'framer-motion';
+import DiscussionSection from '@/components/shared/discussion-section';
+import { WorkLogSection } from '@/components/mahasiswa/work-log-section';
+import { UserPhotoUpload } from '@/components/mahasiswa/user-photo-upload';
 import {
   ArrowLeft,
   FileText,
@@ -278,6 +282,7 @@ export default function DosenProjectDetailPage({
 }) {
   const { id: projectId } = use(params);
   const router = useRouter();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(true);
   const [project, setProject] = useState<Project | null>(null);
   const [error, setError] = useState('');
@@ -717,6 +722,34 @@ export default function DosenProjectDetailPage({
                   </AnimatePresence>
                 </CardBody>
               </Card>
+            </motion.div>
+          )}
+
+          {/* Bukti: Laporan Pengerjaan per-commit (read-only) */}
+          <motion.div variants={itemVariants}>
+            <Card className="border border-border bg-card shadow-none overflow-hidden">
+              <CardBody className="p-5">
+                <WorkLogSection projectId={projectId} readOnly />
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Bukti: Foto Bersama Pengguna + status verifikasi wajah (read-only) */}
+          <motion.div variants={itemVariants}>
+            <Card className="border border-border bg-card shadow-none overflow-hidden">
+              <CardBody className="p-5">
+                <UserPhotoUpload projectId={projectId} readOnly />
+              </CardBody>
+            </Card>
+          </motion.div>
+
+          {/* Diskusi dengan mahasiswa */}
+          {session?.user?.id && (
+            <motion.div variants={itemVariants}>
+              <DiscussionSection
+                projectId={projectId}
+                currentUserId={session.user.id}
+              />
             </motion.div>
           )}
 
