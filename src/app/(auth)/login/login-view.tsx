@@ -176,6 +176,29 @@ function LoginForm() {
             </button>
           </form>
 
+          {/* SSO Unismuh */}
+          <div className="mt-6">
+            <div className="mb-3 flex items-center gap-3">
+              <span className="h-px flex-1 bg-[#252525]" />
+              <span className="font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#585858]">
+                atau
+              </span>
+              <span className="h-px flex-1 bg-[#252525]" />
+            </div>
+            <button
+              type="button"
+              disabled={isLoading}
+              onClick={() => {
+                setIsLoading(true);
+                void signIn('sso-unismuh', { callbackUrl: '/dashboard' });
+              }}
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-[4px] border border-[#252525] px-6 font-day-mono text-[16px] leading-none tracking-[-0.16px] text-white transition-colors hover:border-[#585858] hover:bg-[#161616] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <span aria-hidden="true" className="size-[8px] rounded-full bg-[#2ecc71]" />
+              Masuk via SSO Unismuh
+            </button>
+          </div>
+
           {isDev ? (
             <div className="mt-7">
               <div className="mb-3 flex items-center gap-3">

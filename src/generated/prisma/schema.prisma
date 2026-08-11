@@ -67,6 +67,7 @@ model User {
   githubId       String?   @unique
   githubUsername String?
   githubToken    String? // Encrypted GitHub access token
+  ssoSub         String?   @unique // Klaim `sub` dari SSO Unismuh (Keycloak) — kunci identitas stabil
   isActive       Boolean   @default(true)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt

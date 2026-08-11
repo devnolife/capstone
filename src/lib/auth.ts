@@ -1,6 +1,7 @@
 import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
+import Keycloak from 'next-auth/providers/keycloak';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { validateSimakCredentials, upsertUserFromSimak } from '@/lib/simak';
@@ -129,6 +130,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: '/login',
   },
   providers: [
+    Keycloak({
+      // SSO Unismuh (Keycloak OIDC) — lihat https://sso.if.unismuh.ac.id/docs/
+      id: 'sso-unismuh',
+      name: 'SSO Unismuh',
+      issuer: process.env.SSO_ISSUER,
+      clientId: process.env.SSO_CLIENT_ID,
+      clientSecret: process.env.SSO_CLIENT_SECRET,
+      authorization: { params: { scope: 'openid profile email' } },
+    }),
     GitHub({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
@@ -296,6 +306,82 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   debug: process.env.NODE_ENV === 'development', // Enable debug in development
   callbacks: {
     async signIn({ user, account, profile }) {
+      // ---------- SSO Unismuh (Keycloak OIDC) ----------
+      if (account?.provider === 'sso-unismuh' && profile) {
+        const sso = profile as unknown as {
+          sub: string;
+          preferred_username?: string;
+          name?: string;
+          email?: string;
+          picture?: string;
+          nim?: string;
+          nidn?: string;
+          nama_prodi?: string;
+          realm_access?: { roles?: string[] };
+        };
+
+        try {
+          const username = sso.preferred_username || sso.nim || sso.nidn || sso.sub;
+          const roles = sso.realm_access?.roles ?? [];
+          // Petakan realm role SSO → Role aplikasi
+          const role: Role = roles.includes('dosen')
+            ? ('DOSEN_PENGUJI' as Role)
+            : roles.includes('admin-akademik') || roles.includes('pimpinan')
+              ? ('ADMIN' as Role)
+              : ('MAHASISWA' as Role);
+
+          // Cari user: kunci utama `ssoSub`, fallback username (NIM/NIDN) lalu email
+          let existingUser = await prisma.user.findUnique({ where: { ssoSub: sso.sub } });
+          if (!existingUser) {
+            existingUser = await prisma.user.findUnique({ where: { username } });
+          }
+          if (!existingUser && sso.email) {
+            existingUser = await prisma.user.findUnique({ where: { email: sso.email } });
+          }
+
+          if (existingUser) {
+            if (!existingUser.isActive) return false;
+            existingUser = await prisma.user.update({
+              where: { id: existingUser.id },
+              data: {
+                ssoSub: sso.sub,
+                name: sso.name || existingUser.name,
+                email: sso.email || existingUser.email,
+                image: existingUser.image || sso.picture || undefined,
+                nim: sso.nim || existingUser.nim,
+                prodi: sso.nama_prodi || existingUser.prodi,
+                simakValidated: true,
+                simakLastSync: new Date(),
+              },
+            });
+          } else {
+            // Provision user baru — identitas sudah diverifikasi Keycloak (akun kampus)
+            existingUser = await prisma.user.create({
+              data: {
+                username,
+                ssoSub: sso.sub,
+                name: sso.name || username,
+                email: sso.email || null,
+                image: sso.picture || null,
+                role,
+                nim: sso.nim || null,
+                nip: sso.nidn || null,
+                prodi: sso.nama_prodi || null,
+                simakValidated: true,
+                simakLastSync: new Date(),
+              },
+            });
+            console.info(`[auth] User baru diprovisi dari SSO: ${username} (${role})`);
+          }
+
+          user.id = existingUser.id;
+          return true;
+        } catch (error) {
+          console.error('[auth] SSO sign in error:', error);
+          return false;
+        }
+      }
+
       // Handle GitHub OAuth sign in
       if (account?.provider === 'github' && profile) {
         const githubProfile = profile as unknown as {
@@ -407,8 +493,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user, account }) {
       if (user) {
-        // For GitHub OAuth, fetch user from database
-        if (account?.provider === 'github') {
+        // For OAuth (GitHub / SSO Unismuh), fetch user from database
+        if (account?.provider === 'github' || account?.provider === 'sso-unismuh') {
           const dbUser = await prisma.user.findUnique({
             where: { id: user.id },
           });

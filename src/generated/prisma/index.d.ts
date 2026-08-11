@@ -2959,6 +2959,7 @@ export namespace Prisma {
     githubId: string | null
     githubUsername: string | null
     githubToken: string | null
+    ssoSub: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -2984,6 +2985,7 @@ export namespace Prisma {
     githubId: string | null
     githubUsername: string | null
     githubToken: string | null
+    ssoSub: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -3009,6 +3011,7 @@ export namespace Prisma {
     githubId: number
     githubUsername: number
     githubToken: number
+    ssoSub: number
     isActive: number
     createdAt: number
     updatedAt: number
@@ -3037,6 +3040,7 @@ export namespace Prisma {
     githubId?: true
     githubUsername?: true
     githubToken?: true
+    ssoSub?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -3062,6 +3066,7 @@ export namespace Prisma {
     githubId?: true
     githubUsername?: true
     githubToken?: true
+    ssoSub?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -3087,6 +3092,7 @@ export namespace Prisma {
     githubId?: true
     githubUsername?: true
     githubToken?: true
+    ssoSub?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -3186,6 +3192,7 @@ export namespace Prisma {
     githubId: string | null
     githubUsername: string | null
     githubToken: string | null
+    ssoSub: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -3229,6 +3236,7 @@ export namespace Prisma {
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
+    ssoSub?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3266,6 +3274,7 @@ export namespace Prisma {
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
+    ssoSub?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3292,6 +3301,7 @@ export namespace Prisma {
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
+    ssoSub?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3318,6 +3328,7 @@ export namespace Prisma {
     githubId?: boolean
     githubUsername?: boolean
     githubToken?: boolean
+    ssoSub?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -3331,7 +3342,7 @@ export namespace Prisma {
     preferences?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "emailVerified" | "name" | "password" | "role" | "image" | "profilePhoto" | "githubId" | "githubUsername" | "githubToken" | "isActive" | "createdAt" | "updatedAt" | "nim" | "nip" | "phone" | "prodi" | "simakPhoto" | "simakValidated" | "simakLastSync" | "preferences", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "username" | "email" | "emailVerified" | "name" | "password" | "role" | "image" | "profilePhoto" | "githubId" | "githubUsername" | "githubToken" | "ssoSub" | "isActive" | "createdAt" | "updatedAt" | "nim" | "nip" | "phone" | "prodi" | "simakPhoto" | "simakValidated" | "simakLastSync" | "preferences", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     projects?: boolean | User$projectsArgs<ExtArgs>
     reviews?: boolean | User$reviewsArgs<ExtArgs>
@@ -3375,6 +3386,7 @@ export namespace Prisma {
       githubId: string | null
       githubUsername: string | null
       githubToken: string | null
+      ssoSub: string | null
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -3831,6 +3843,7 @@ export namespace Prisma {
     readonly githubId: FieldRef<"User", 'String'>
     readonly githubUsername: FieldRef<"User", 'String'>
     readonly githubToken: FieldRef<"User", 'String'>
+    readonly ssoSub: FieldRef<"User", 'String'>
     readonly isActive: FieldRef<"User", 'Boolean'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
@@ -25835,6 +25848,7 @@ export namespace Prisma {
     githubId: 'githubId',
     githubUsername: 'githubUsername',
     githubToken: 'githubToken',
+    ssoSub: 'ssoSub',
     isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
@@ -26368,6 +26382,7 @@ export namespace Prisma {
     githubId?: StringNullableFilter<"User"> | string | null
     githubUsername?: StringNullableFilter<"User"> | string | null
     githubToken?: StringNullableFilter<"User"> | string | null
+    ssoSub?: StringNullableFilter<"User"> | string | null
     isActive?: BoolFilter<"User"> | boolean
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
@@ -26404,6 +26419,7 @@ export namespace Prisma {
     githubId?: SortOrderInput | SortOrder
     githubUsername?: SortOrderInput | SortOrder
     githubToken?: SortOrderInput | SortOrder
+    ssoSub?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26432,6 +26448,7 @@ export namespace Prisma {
     username?: string
     email?: string
     githubId?: string
+    ssoSub?: string
     nim?: string
     nip?: string
     AND?: UserWhereInput | UserWhereInput[]
@@ -26464,7 +26481,7 @@ export namespace Prisma {
     invitationsReceived?: TeamInvitationListRelationFilter
     scheduledPresentations?: PresentationScheduleListRelationFilter
     discussions?: ProjectDiscussionListRelationFilter
-  }, "id" | "username" | "email" | "githubId" | "nim" | "nip">
+  }, "id" | "username" | "email" | "githubId" | "ssoSub" | "nim" | "nip">
 
   export type UserOrderByWithAggregationInput = {
     id?: SortOrder
@@ -26479,6 +26496,7 @@ export namespace Prisma {
     githubId?: SortOrderInput | SortOrder
     githubUsername?: SortOrderInput | SortOrder
     githubToken?: SortOrderInput | SortOrder
+    ssoSub?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -26511,6 +26529,7 @@ export namespace Prisma {
     githubId?: StringNullableWithAggregatesFilter<"User"> | string | null
     githubUsername?: StringNullableWithAggregatesFilter<"User"> | string | null
     githubToken?: StringNullableWithAggregatesFilter<"User"> | string | null
+    ssoSub?: StringNullableWithAggregatesFilter<"User"> | string | null
     isActive?: BoolWithAggregatesFilter<"User"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -28168,6 +28187,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28204,6 +28224,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28240,6 +28261,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28276,6 +28298,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28312,6 +28335,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -28338,6 +28362,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -28364,6 +28389,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30370,6 +30396,7 @@ export namespace Prisma {
     githubId?: SortOrder
     githubUsername?: SortOrder
     githubToken?: SortOrder
+    ssoSub?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -30396,6 +30423,7 @@ export namespace Prisma {
     githubId?: SortOrder
     githubUsername?: SortOrder
     githubToken?: SortOrder
+    ssoSub?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -30421,6 +30449,7 @@ export namespace Prisma {
     githubId?: SortOrder
     githubUsername?: SortOrder
     githubToken?: SortOrder
+    ssoSub?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -34301,6 +34330,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34336,6 +34366,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34387,6 +34418,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34422,6 +34454,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34457,6 +34490,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34492,6 +34526,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34927,6 +34962,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34962,6 +34998,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35365,6 +35402,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35400,6 +35438,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35548,6 +35587,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35583,6 +35623,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35710,6 +35751,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35745,6 +35787,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35785,6 +35828,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35820,6 +35864,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35940,6 +35985,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35975,6 +36021,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36021,6 +36068,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36056,6 +36104,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36682,6 +36731,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36717,6 +36767,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -36921,6 +36972,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -36956,6 +37008,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37622,6 +37675,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -37657,6 +37711,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -37777,6 +37832,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37812,6 +37868,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37847,6 +37904,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -37882,6 +37940,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -37933,6 +37992,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37968,6 +38028,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -38003,6 +38064,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -38038,6 +38100,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -38152,6 +38215,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -38187,6 +38251,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -38354,6 +38419,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -38389,6 +38455,7 @@ export namespace Prisma {
     githubId?: string | null
     githubUsername?: string | null
     githubToken?: string | null
+    ssoSub?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -38568,6 +38635,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -38603,6 +38671,7 @@ export namespace Prisma {
     githubId?: NullableStringFieldUpdateOperationsInput | string | null
     githubUsername?: NullableStringFieldUpdateOperationsInput | string | null
     githubToken?: NullableStringFieldUpdateOperationsInput | string | null
+    ssoSub?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
