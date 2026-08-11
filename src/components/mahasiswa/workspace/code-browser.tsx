@@ -1,0 +1,200 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  Card,
+  CardBody,
+  Button,
+  Chip,
+  Spinner,
+  Select,
+  SelectItem,
+} from '@heroui/react';
+import {
+  Github,
+  ExternalLink,
+  RefreshCw,
+  AlertCircle,
+  GitBranch,
+} from 'lucide-react';
+import { GitHubCodeViewer } from '@/components/github';
+import { parseGitHubUrl } from '@/lib/github';
+
+interface Project {
+  id: string;
+  title: string;
+  githubRepoUrl: string | null;
+  githubRepoName: string | null;
+}
+
+interface Branch {
+  name: string;
+  protected: boolean;
+}
+
+export function CodeBrowser({ projectId }: { projectId: string }) {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+  const [project, setProject] = useState<Project | null>(null);
+  const [error, setError] = useState('');
+  const [branches, setBranches] = useState<Branch[]>([]);
+  const [selectedBranch, setSelectedBranch] = useState('main');
+  const [isLoadingBranches, setIsLoadingBranches] = useState(false);
+
+  useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const response = await fetch(`/api/projects/${projectId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch project');
+        }
+        const data = await response.json();
+        setProject(data);
+
+        // Fetch branches if GitHub URL exists
+        if (data.githubRepoUrl) {
+          const githubInfo = parseGitHubUrl(data.githubRepoUrl);
+          if (githubInfo) {
+            fetchBranches(githubInfo.owner, githubInfo.repo);
+          }
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error loading project');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProject();
+  }, [projectId]);
+
+  const fetchBranches = async (owner: string, repo: string) => {
+    setIsLoadingBranches(true);
+    try {
+      const response = await fetch(
+        `/api/github/files?owner=${owner}&repo=${repo}&action=branches`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setBranches(data.branches || []);
+        // Set default branch if available
+        const defaultBranch = data.branches?.find(
+          (b: Branch) => b.name === 'main' || b.name === 'master'
+        );
+        if (defaultBranch) {
+          setSelectedBranch(defaultBranch.name);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch branches:', err);
+    } finally {
+      setIsLoadingBranches(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+
+  if (error || !project) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+          <AlertCircle size={32} className="text-destructive" />
+        </div>
+        <p className="text-danger text-lg font-medium">
+          {error || 'Project tidak ditemukan'}
+        </p>
+      </div>
+    );
+  }
+
+  if (!project.githubRepoUrl) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-warning/10 flex items-center justify-center">
+          <Github size={32} className="text-warning" />
+        </div>
+        <p className="text-warning text-lg font-medium">
+          Project ini tidak memiliki repository GitHub
+        </p>
+      </div>
+    );
+  }
+
+  const githubInfo = parseGitHubUrl(project.githubRepoUrl);
+
+  if (!githubInfo) {
+    return (
+      <div className="text-center py-12">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+          <AlertCircle size={32} className="text-destructive" />
+        </div>
+        <p className="text-danger text-lg font-medium">
+          URL GitHub tidak valid
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full space-y-4 pb-8">
+      {/* Header */}
+      <Card className="border border-border bg-card shadow-none">
+        <CardBody className="p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
+                <div className="bg-app-primary text-foreground flex size-9 items-center justify-center rounded-lg">
+                  <Github size={18} />
+                </div>
+                <div>
+                  <h1 className="font-semibold text-lg">{project.title}</h1>
+                  <p className="text-sm text-app-secondary-invert">
+                    {project.githubRepoName || 'Repository'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button
+                as="a"
+                href={project.githubRepoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="sm"
+                variant="bordered"
+                startContent={<ExternalLink size={14} />}
+              >
+                Buka di GitHub
+              </Button>
+            </div>
+          </div>
+        </CardBody>
+      </Card>
+
+      {/* Full Height Code Viewer */}
+      <Card className="border border-border bg-card shadow-none overflow-hidden">
+        <CardBody className="p-0">
+          <div className="min-h-[calc(100vh-220px)]">
+            <GitHubCodeViewer
+              owner={githubInfo.owner}
+              repo={githubInfo.repo}
+              defaultBranch={selectedBranch}
+              projectId={projectId}
+              showBranchSelector={branches.length > 0}
+              availableBranches={branches.map(b => b.name)}
+              onBranchChange={(branch) => setSelectedBranch(branch)}
+            />
+          </div>
+        </CardBody>
+      </Card>
+    </div>
+  );
+}

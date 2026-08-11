@@ -160,7 +160,7 @@ export function checkSubmissionReadiness(
         field: requirement.key,
         label: requirement.label,
         description: `${requirement.label} belum dilengkapi.`,
-        href: `/mahasiswa/documents/${input.projectId}`,
+        href: `/mahasiswa/project?project=${input.projectId}&tab=persyaratan`,
       });
     }
   }
@@ -170,7 +170,7 @@ export function checkSubmissionReadiness(
       code: 'github_repository',
       label: 'Repository GitHub',
       description: 'Hubungkan repository GitHub project.',
-      href: `/mahasiswa/projects/${input.projectId}/edit`,
+      href: `/mahasiswa/project?project=${input.projectId}&tab=repository`,
     });
   }
 
@@ -179,7 +179,7 @@ export function checkSubmissionReadiness(
       code: 'consent_document',
       label: 'Surat Persetujuan',
       description: 'Unggah surat persetujuan penggunaan project.',
-      href: `/mahasiswa/projects/${input.projectId}/edit`,
+      href: `/mahasiswa/project?project=${input.projectId}&tab=repository`,
     });
   }
 
@@ -188,7 +188,7 @@ export function checkSubmissionReadiness(
       code: 'stakeholder_document',
       label: 'Bukti Stakeholder',
       description: 'Unggah minimal satu bukti atau dokumen stakeholder.',
-      href: `/mahasiswa/projects/${input.projectId}`,
+      href: `/mahasiswa/project?project=${input.projectId}&tab=bukti`,
     });
   }
 
@@ -197,7 +197,7 @@ export function checkSubmissionReadiness(
       code: 'work_log',
       label: 'Laporan Pengerjaan',
       description: `Isi minimal ${MIN_WORK_LOGS} laporan pengerjaan yang terikat commit GitHub (hari ke berapa mengerjakan apa). Saat ini baru ${input.workLogCount}.`,
-      href: `/mahasiswa/projects/${input.projectId}`,
+      href: `/mahasiswa/project?project=${input.projectId}&tab=bukti`,
     });
   }
 
@@ -206,7 +206,7 @@ export function checkSubmissionReadiness(
       code: 'user_photo',
       label: 'Foto Bersama Pengguna',
       description: 'Unggah minimal satu foto bersama pengguna aplikasi sebagai bukti.',
-      href: `/mahasiswa/projects/${input.projectId}`,
+      href: `/mahasiswa/project?project=${input.projectId}&tab=bukti`,
     });
   }
 
@@ -220,7 +220,7 @@ export function checkSubmissionReadiness(
       code: 'submission_deadline',
       label: 'Batas Waktu Submission',
       description: 'Batas waktu pengiriman project sudah berakhir. Hubungi admin untuk perpanjangan.',
-      href: `/mahasiswa/projects/${input.projectId}`,
+      href: `/mahasiswa/project?project=${input.projectId}`,
     });
   }
 
@@ -229,7 +229,7 @@ export function checkSubmissionReadiness(
       code: 'invalid_status',
       label: 'Status Project',
       description: 'Project pada status ini tidak dapat dikirim untuk review.',
-      href: `/mahasiswa/projects/${input.projectId}`,
+      href: `/mahasiswa/project?project=${input.projectId}`,
     });
   }
 
@@ -311,7 +311,7 @@ export function buildStudentJourney(
       nextAction: {
         label: 'Buat project pertama',
         description: 'Mulai perjalanan capstone dengan membuat project dan tim.',
-        href: '/mahasiswa/projects/new',
+        href: '/mahasiswa/project',
         tone: 'primary',
       },
       readiness: null,
@@ -447,7 +447,7 @@ export function buildStudentJourney(
       nextAction = {
         label: 'Menunggu ketua tim mengirim project',
         description: 'Semua persyaratan sudah lengkap. Hanya ketua project yang dapat mengirim.',
-        href: `/mahasiswa/projects/${project.id}`,
+        href: `/mahasiswa/project?project=${project.id}`,
         tone: 'neutral',
       };
     } else {
@@ -457,7 +457,7 @@ export function buildStudentJourney(
             ? 'Kirim ulang setelah revisi'
             : 'Kirim project untuk review',
         description: 'Semua persyaratan wajib sudah lengkap.',
-        href: `/mahasiswa/projects/${project.id}`,
+        href: `/mahasiswa/project?project=${project.id}`,
         tone: 'primary',
       };
     }
@@ -465,14 +465,14 @@ export function buildStudentJourney(
     nextAction = {
       label: 'Menunggu penugasan dosen',
       description: 'Project sudah diterima dan menunggu proses administrasi.',
-      href: `/mahasiswa/projects/${project.id}`,
+      href: `/mahasiswa/project?project=${project.id}`,
       tone: 'neutral',
     };
   } else if (project.status === 'IN_REVIEW') {
     nextAction = {
       label: 'Pantau proses review',
       description: `${reviewProgress.completed} dari ${reviewProgress.total} review selesai.`,
-      href: `/mahasiswa/projects/${project.id}`,
+      href: `/mahasiswa/project?project=${project.id}`,
       tone: 'primary',
     };
   } else if (project.status === 'READY_FOR_PRESENTATION') {

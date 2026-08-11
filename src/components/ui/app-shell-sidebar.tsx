@@ -60,17 +60,7 @@ const mahasiswaGroups: NavGroupDef[] = [
   {
     items: [
       { title: 'Dashboard', href: '/mahasiswa/dashboard', icon: LayoutDashboard, accent: 'brand' },
-      { title: 'Project Saya', href: '/mahasiswa/projects', icon: FolderGit2, accent: 'info' },
-      { title: 'Review & Feedback', href: '/mahasiswa/reviews', icon: MessagesSquare, accent: 'highlight' },
-      { title: 'Dokumen', href: '/mahasiswa/documents', icon: FileText, accent: 'success' },
-    ],
-  },
-  {
-    label: 'Akademik',
-    items: [
-      { title: 'Persyaratan', href: '/mahasiswa/persyaratan', icon: BookOpen, accent: 'warning' },
-      { title: 'Jadwal Presentasi', href: '/mahasiswa/presentations', icon: CalendarCheck, accent: 'rose' },
-      { title: 'Undangan Tim', href: '/mahasiswa/invitations', icon: Mail, accent: 'orange' },
+      { title: 'Project Saya', href: '/mahasiswa/project', icon: FolderGit2, accent: 'info' },
     ],
   },
   {

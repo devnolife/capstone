@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation';
 
-export default function ProjectRequirementsPage({
+export default async function ProjectRequirementsRedirect({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  // Redirect to new documents/requirements page
-  redirect(`/mahasiswa/documents/${params.id}`);
+  const { id } = await params;
+  redirect(`/mahasiswa/project?project=${id}&tab=persyaratan`);
 }

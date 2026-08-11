@@ -100,7 +100,7 @@ describe('buildStudentJourney', () => {
     expect(result.nextAction).toEqual(
       expect.objectContaining({
         label: 'Buat project pertama',
-        href: '/mahasiswa/projects/new',
+        href: '/mahasiswa/project',
       }),
     );
     expect(result.stages.find((stage) => stage.id === 'project')?.status).toBe('current');
@@ -129,7 +129,7 @@ describe('buildStudentJourney', () => {
     });
 
     expect(result.nextAction.label).toBe('Lengkapi Metodologi');
-    expect(result.nextAction.href).toBe('/mahasiswa/documents/project-1');
+    expect(result.nextAction.href).toBe('/mahasiswa/project?project=project-1&tab=persyaratan');
     expect(result.stages.find((stage) => stage.id === 'requirements')?.status).toBe('blocked');
   });
 
@@ -183,7 +183,7 @@ describe('buildStudentJourney', () => {
     });
 
     expect(result.nextAction.label).toBe('Menunggu ketua tim mengirim project');
-    expect(result.nextAction.href).toBe('/mahasiswa/projects/project-1');
+    expect(result.nextAction.href).toBe('/mahasiswa/project?project=project-1');
   });
 
   it('surfaces the latest presentation schedule', () => {

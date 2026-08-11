@@ -310,7 +310,7 @@ export function StudentJourneyHub({ journey }: StudentJourneyHubProps) {
             </div>
             <Button
               as={Link}
-              href="/mahasiswa/presentations"
+              href="/mahasiswa/project?tab=review"
               color="success"
               variant="flat"
               endContent={<ArrowRight size={16} />}

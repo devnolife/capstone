@@ -169,7 +169,7 @@ const STATS_CONFIG = [
 const QUICK_ACTIONS = [
   {
     label: 'Buat Project Baru',
-    href: '/mahasiswa/projects/new',
+    href: '/mahasiswa/project',
     icon: Plus,
     color: 'default' as const,
     gradient: 'bg-[var(--color-ember)]',
@@ -177,7 +177,7 @@ const QUICK_ACTIONS = [
   },
   {
     label: 'Lihat Persyaratan',
-    href: '/mahasiswa/persyaratan',
+    href: '/mahasiswa/project?tab=persyaratan',
     icon: BookOpen,
     color: 'default' as const,
     gradient: 'bg-[var(--color-obsidian)] dark:bg-white dark:text-[var(--color-obsidian)]',
@@ -185,7 +185,7 @@ const QUICK_ACTIONS = [
   },
   {
     label: 'Semua Project',
-    href: '/mahasiswa/projects',
+    href: '/mahasiswa/project',
     icon: FolderGit2,
     color: 'default' as const,
     gradient: 'bg-[var(--color-steel)]',
@@ -485,7 +485,7 @@ export function MahasiswaDashboardContent({
                 <div className="flex items-center gap-2">
                   <Button
                     as={Link}
-                    href="/mahasiswa/projects/new"
+                    href="/mahasiswa/project"
                     color="default"
                     size="sm"
                     startContent={<Plus size={16} />}
@@ -495,7 +495,7 @@ export function MahasiswaDashboardContent({
                   </Button>
                   <Button
                     as={Link}
-                    href="/mahasiswa/projects"
+                    href="/mahasiswa/project"
                     variant="flat"
                     size="sm"
                     endContent={<ChevronRight size={16} />}
@@ -519,7 +519,7 @@ export function MahasiswaDashboardContent({
                   </p>
                   <Button
                     as={Link}
-                    href="/mahasiswa/projects/new"
+                    href="/mahasiswa/project"
                     color="default"
                     size="lg"
                     startContent={<Zap size={18} />}
@@ -548,7 +548,7 @@ export function MahasiswaDashboardContent({
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <Link
-                                href={`/mahasiswa/projects/${project.id}`}
+                                href={`/mahasiswa/project?project=${project.id}`}
                                 className="font-sans-display font-bold tracking-tight text-base text-[var(--color-obsidian)] dark:text-white hover:text-[var(--color-ember)] transition-colors truncate"
                               >
                                 {project.title}
@@ -642,7 +642,7 @@ export function MahasiswaDashboardContent({
                         <div className="flex items-center gap-2 shrink-0 md:ml-4">
                           <Button
                             as={Link}
-                            href={`/mahasiswa/projects/${project.id}`}
+                            href={`/mahasiswa/project?project=${project.id}`}
                             size="sm"
                             variant="flat"
                             className="font-mono-display text-[10px] uppercase tracking-widest font-bold"
@@ -653,7 +653,7 @@ export function MahasiswaDashboardContent({
                             <>
                               <Button
                                 as={Link}
-                                href={`/mahasiswa/projects/${project.id}/edit`}
+                                href={`/mahasiswa/project?project=${project.id}&tab=repository`}
                                 size="sm"
                                 color="default"
                                 variant="flat"
@@ -687,7 +687,7 @@ export function MahasiswaDashboardContent({
                     <div className="p-4 text-center bg-[var(--color-mist)] dark:bg-zinc-900/40">
                       <Button
                         as={Link}
-                        href="/mahasiswa/projects"
+                        href="/mahasiswa/project"
                         variant="light"
                         endContent={<ChevronRight size={16} />}
                         className="text-[var(--color-ember)] font-mono-display text-[10px] uppercase tracking-widest font-bold"

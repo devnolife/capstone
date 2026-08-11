@@ -1,6 +1,5 @@
 import { redirect } from 'next/navigation';
 
-export default function RequirementsPage() {
-  // Redirect to new documents page
-  redirect('/mahasiswa/documents');
+export default function RequirementsRedirect() {
+  redirect('/mahasiswa/project?tab=persyaratan');
 }

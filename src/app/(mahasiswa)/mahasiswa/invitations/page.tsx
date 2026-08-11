@@ -1,14 +1,5 @@
-import InvitationsContent from '@/components/mahasiswa/invitations-content';
+import { redirect } from 'next/navigation';
 
-export const metadata = {
-  title: 'Undangan Tim | Capstone',
-  description: 'Kelola undangan bergabung ke tim project',
-};
-
-export default function InvitationsPage() {
-  return (
-    <div className="w-full">
-      <InvitationsContent />
-    </div>
-  );
+export default function InvitationsRedirect() {
+  redirect('/mahasiswa/project?tab=tim');
 }
