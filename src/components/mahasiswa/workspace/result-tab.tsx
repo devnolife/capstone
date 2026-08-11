@@ -9,7 +9,7 @@ import type {
   ReviewStats,
 } from './types';
 
-interface ReviewTabProps {
+interface ResultTabProps {
   reviews: WorkspaceReview[];
   reviewStats: ReviewStats;
   presentationSchedule: WorkspacePresentation | null;
@@ -25,11 +25,11 @@ const PRESENTATION_STATUS: Record<
   rescheduled: { label: 'Dijadwalkan Ulang', color: 'warning' },
 };
 
-export function ReviewTab({
+export function ResultTab({
   reviews,
   reviewStats,
   presentationSchedule,
-}: ReviewTabProps) {
+}: ResultTabProps) {
   const status = presentationSchedule
     ? (PRESENTATION_STATUS[presentationSchedule.presentationStatus] ?? {
         label: presentationSchedule.presentationStatus,

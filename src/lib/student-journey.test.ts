@@ -129,7 +129,7 @@ describe('buildStudentJourney', () => {
     });
 
     expect(result.nextAction.label).toBe('Lengkapi Metodologi');
-    expect(result.nextAction.href).toBe('/mahasiswa/project?project=project-1&tab=persyaratan');
+    expect(result.nextAction.href).toBe('/mahasiswa/project?project=project-1&tab=kelengkapan');
     expect(result.stages.find((stage) => stage.id === 'requirements')?.status).toBe('blocked');
   });
 

@@ -59,7 +59,7 @@ type NavGroupDef = {
 const mahasiswaGroups: NavGroupDef[] = [
   {
     items: [
-      { title: 'Dashboard', href: '/mahasiswa/dashboard', icon: LayoutDashboard, accent: 'brand' },
+      { title: 'Beranda', href: '/mahasiswa/dashboard', icon: LayoutDashboard, accent: 'brand' },
       { title: 'Project Saya', href: '/mahasiswa/project', icon: FolderGit2, accent: 'info' },
     ],
   },

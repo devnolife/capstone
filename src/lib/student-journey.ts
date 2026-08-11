@@ -160,7 +160,7 @@ export function checkSubmissionReadiness(
         field: requirement.key,
         label: requirement.label,
         description: `${requirement.label} belum dilengkapi.`,
-        href: `/mahasiswa/project?project=${input.projectId}&tab=persyaratan`,
+        href: `/mahasiswa/project?project=${input.projectId}&tab=kelengkapan`,
       });
     }
   }
@@ -170,7 +170,7 @@ export function checkSubmissionReadiness(
       code: 'github_repository',
       label: 'Repository GitHub',
       description: 'Hubungkan repository GitHub project.',
-      href: `/mahasiswa/project?project=${input.projectId}&tab=repository`,
+      href: `/mahasiswa/project?project=${input.projectId}&tab=kelengkapan`,
     });
   }
 
@@ -179,7 +179,7 @@ export function checkSubmissionReadiness(
       code: 'consent_document',
       label: 'Surat Persetujuan',
       description: 'Unggah surat persetujuan penggunaan project.',
-      href: `/mahasiswa/project?project=${input.projectId}&tab=repository`,
+      href: `/mahasiswa/project?project=${input.projectId}&tab=kelengkapan`,
     });
   }
 
@@ -479,28 +479,28 @@ export function buildStudentJourney(
     nextAction = {
       label: 'Menunggu jadwal presentasi',
       description: 'Project sudah di-ACC dan menunggu penjadwalan.',
-      href: '/mahasiswa/presentations',
+      href: '/mahasiswa/project?tab=hasil',
       tone: 'neutral',
     };
   } else if (project.status === 'PRESENTATION_SCHEDULED') {
     nextAction = {
       label: 'Lihat jadwal presentasi',
       description: 'Periksa tanggal, waktu, lokasi, dan catatan ujian.',
-      href: '/mahasiswa/presentations',
+      href: '/mahasiswa/project?tab=hasil',
       tone: 'primary',
     };
   } else if (project.status === 'APPROVED') {
     nextAction = {
       label: 'Lihat hasil akhir',
       description: 'Project telah disetujui. Lihat nilai dan feedback dosen.',
-      href: '/mahasiswa/reviews',
+      href: '/mahasiswa/project?tab=hasil',
       tone: 'success',
     };
   } else {
     nextAction = {
       label: 'Lihat feedback penilaian',
       description: 'Periksa hasil penilaian dan arahan dosen.',
-      href: '/mahasiswa/reviews',
+      href: '/mahasiswa/project?tab=hasil',
       tone: 'warning',
     };
   }

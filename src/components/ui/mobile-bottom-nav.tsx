@@ -23,8 +23,8 @@ interface NavItem {
 
 const mahasiswaNavItems: NavItem[] = [
   { title: 'Home', href: '/mahasiswa/dashboard', icon: LayoutDashboard },
-  { title: 'Project', href: '/mahasiswa/projects', icon: FolderGit2 },
-  { title: 'Undangan', href: '/mahasiswa/invitations', icon: Mail },
+  { title: 'Project', href: '/mahasiswa/project', icon: FolderGit2 },
+  { title: 'Notifikasi', href: '/mahasiswa/notifications', icon: Mail },
   { title: 'Profil', href: '/mahasiswa/profile', icon: User },
 ];
 

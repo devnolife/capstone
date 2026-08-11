@@ -1,38 +1,65 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Tabs, Tab, Chip, Select, SelectItem } from '@heroui/react';
+import { Tabs, Tab, Chip, Select, SelectItem, Button } from '@heroui/react';
 import {
   LayoutDashboard,
-  FileText,
+  ClipboardList,
   Users,
-  GitBranch,
   FolderCheck,
-  MessageSquare,
+  Award,
+  ArrowRight,
+  CheckCircle2,
 } from 'lucide-react';
-import type { StudentJourney } from '@/lib/student-journey';
+import type { StudentJourney, SubmissionBlocker } from '@/lib/student-journey';
 import { OverviewTab } from './overview-tab';
-import { RequirementsTab } from './requirements-tab';
+import { CompletenessTab } from './completeness-tab';
 import { TeamTab } from './team-tab';
-import { RepositoryTab } from './repository-tab';
 import { EvidenceTab } from './evidence-tab';
-import { ReviewTab } from './review-tab';
+import { ResultTab } from './result-tab';
 import { CreateProjectPanel } from './create-project-panel';
 import type { WorkspaceProject, WorkspaceReview, ReviewStats } from './types';
 
 export const WORKSPACE_TABS = [
   'ringkasan',
-  'persyaratan',
+  'kelengkapan',
   'tim',
-  'repository',
   'bukti',
-  'review',
+  'hasil',
 ] as const;
 
 export type WorkspaceTab = (typeof WORKSPACE_TABS)[number];
 
-const STATUS_LABELS: Record<string, { label: string; color: 'default' | 'primary' | 'warning' | 'success' | 'danger' | 'secondary' }> = {
+// Alias ?tab= lama (dipakai redirect & notifikasi lama) → tab baru
+const TAB_ALIASES: Record<string, WorkspaceTab> = {
+  persyaratan: 'kelengkapan',
+  repository: 'kelengkapan',
+  review: 'hasil',
+};
+
+// Peta kode blocker → tab & anchor seksi tempat memperbaikinya
+export const BLOCKER_TARGET: Record<
+  string,
+  { tab: WorkspaceTab; anchor?: string }
+> = {
+  missing_requirement: { tab: 'kelengkapan', anchor: 'section-persyaratan' },
+  github_repository: { tab: 'kelengkapan', anchor: 'section-setup' },
+  consent_document: { tab: 'kelengkapan', anchor: 'section-setup' },
+  stakeholder_document: { tab: 'bukti', anchor: 'section-stakeholder' },
+  work_log: { tab: 'bukti', anchor: 'section-worklog' },
+  user_photo: { tab: 'bukti', anchor: 'section-userphoto' },
+  submission_deadline: { tab: 'ringkasan' },
+  invalid_status: { tab: 'ringkasan' },
+};
+
+const STATUS_LABELS: Record<
+  string,
+  {
+    label: string;
+    color: 'default' | 'primary' | 'warning' | 'success' | 'danger' | 'secondary';
+  }
+> = {
   DRAFT: { label: 'Draft', color: 'default' },
   SUBMITTED: { label: 'Disubmit', color: 'primary' },
   IN_REVIEW: { label: 'Sedang Direview', color: 'secondary' },
@@ -41,6 +68,20 @@ const STATUS_LABELS: Record<string, { label: string; color: 'default' | 'primary
   APPROVED: { label: 'Disetujui', color: 'success' },
   REJECTED: { label: 'Ditolak', color: 'danger' },
 };
+
+/** Scroll ke anchor & minta seksi terkait membuka diri (custom event). */
+export function scrollToWorkspaceAnchor(anchor: string) {
+  // Beri waktu tab content ter-render dulu
+  setTimeout(() => {
+    const el = document.getElementById(anchor);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.dispatchEvent(
+        new CustomEvent('workspace:expand-section', { detail: { anchor } }),
+      );
+    }
+  }, 250);
+}
 
 interface ProjectWorkspaceProps {
   projects: { id: string; title: string; status: string }[];
@@ -66,11 +107,12 @@ export function ProjectWorkspace({
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [pendingAnchor, setPendingAnchor] = useState<string | null>(null);
 
-  const rawTab = searchParams.get('tab');
+  const rawTab = searchParams.get('tab') ?? '';
   const activeTab: WorkspaceTab = WORKSPACE_TABS.includes(rawTab as WorkspaceTab)
     ? (rawTab as WorkspaceTab)
-    : 'ringkasan';
+    : (TAB_ALIASES[rawTab] ?? 'ringkasan');
 
   const setTab = useCallback(
     (tab: string) => {
@@ -86,13 +128,35 @@ export function ProjectWorkspace({
     [router, pathname, searchParams],
   );
 
-  const switchProject = useCallback(
-    (projectId: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('project', projectId);
-      router.push(`${pathname}?${params.toString()}`);
+  // Aksi cepat / klik blocker: pindah tab lalu scroll ke seksi
+  const goToBlocker = useCallback(
+    (blocker: SubmissionBlocker) => {
+      const target = BLOCKER_TARGET[blocker.code] ?? { tab: 'ringkasan' as const };
+      setTab(target.tab);
+      if (target.anchor) setPendingAnchor(target.anchor);
     },
-    [router, pathname, searchParams],
+    [setTab],
+  );
+
+  useEffect(() => {
+    if (pendingAnchor) {
+      scrollToWorkspaceAnchor(pendingAnchor);
+      setPendingAnchor(null);
+    }
+  }, [pendingAnchor, activeTab]);
+
+  // Jumlah blocker per tab → badge
+  const blockerCounts = useMemo(() => {
+    const counts: Partial<Record<WorkspaceTab, number>> = {};
+    for (const blocker of journey.readiness?.blockers ?? []) {
+      const tab = (BLOCKER_TARGET[blocker.code] ?? { tab: 'ringkasan' }).tab;
+      counts[tab] = (counts[tab] ?? 0) + 1;
+    }
+    return counts;
+  }, [journey.readiness]);
+
+  const firstBlocker = journey.readiness?.blockers.find(
+    (b) => b.code !== 'submission_deadline' && b.code !== 'invalid_status',
   );
 
   if (!project) {
@@ -108,10 +172,26 @@ export function ProjectWorkspace({
     color: 'default' as const,
   };
 
+  const tabTitle = (label: string, tab: WorkspaceTab, icon: React.ReactNode) => {
+    const count = blockerCounts[tab] ?? 0;
+    return (
+      <span className="flex items-center gap-1.5">
+        {icon} {label}
+        {count > 0 ? (
+          <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-warning-500 px-1 text-[10px] font-bold text-white">
+            {count}
+          </span>
+        ) : tab !== 'ringkasan' && tab !== 'tim' && tab !== 'hasil' ? (
+          <CheckCircle2 size={13} className="text-success-500" />
+        ) : null}
+      </span>
+    );
+  };
+
   return (
     <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 py-6 md:py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-5">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl font-bold truncate">{project.title}</h1>
@@ -120,8 +200,8 @@ export function ProjectWorkspace({
             </Chip>
           </div>
           <p className="text-xs text-default-500 mt-0.5">
-            {project.semester} {project.tahunAkademik} · Semua kebutuhan project dalam
-            satu halaman
+            {project.semester} {project.tahunAkademik} · Semua kebutuhan project
+            dalam satu halaman
           </p>
         </div>
         {projects.length > 1 && (
@@ -131,7 +211,11 @@ export function ProjectWorkspace({
             selectedKeys={[project.id]}
             onSelectionChange={(keys) => {
               const id = Array.from(keys)[0];
-              if (typeof id === 'string' && id !== project.id) switchProject(id);
+              if (typeof id === 'string' && id !== project.id) {
+                const params = new URLSearchParams(searchParams.toString());
+                params.set('project', id);
+                router.push(`${pathname}?${params.toString()}`);
+              }
             }}
             className="w-full sm:w-64"
           >
@@ -143,6 +227,35 @@ export function ProjectWorkspace({
           </Select>
         )}
       </div>
+
+      {/* Aksi cepat: kerjakan blocker berikutnya dgn 1 klik */}
+      {canEdit && firstBlocker && (
+        <div className="sticky top-0 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 mb-4 bg-background/80 backdrop-blur-md border-b border-zinc-200/60 dark:border-zinc-800/60">
+          <div className="flex items-center gap-3 rounded-xl border border-blue-200 dark:border-blue-800/50 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/20 px-4 py-2.5">
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                Langkah berikutnya
+              </p>
+              <p className="text-sm font-medium truncate">
+                {firstBlocker.label}
+                <span className="hidden sm:inline text-default-500 font-normal">
+                  {' '}
+                  — {firstBlocker.description}
+                </span>
+              </p>
+            </div>
+            <Button
+              size="sm"
+              color="primary"
+              endContent={<ArrowRight size={14} />}
+              onPress={() => goToBlocker(firstBlocker)}
+              className="shrink-0"
+            >
+              Kerjakan
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Tabs */}
       <Tabs
@@ -158,68 +271,33 @@ export function ProjectWorkspace({
       >
         <Tab
           key="ringkasan"
-          title={
-            <span className="flex items-center gap-1.5">
-              <LayoutDashboard size={15} /> Ringkasan
-            </span>
-          }
+          title={tabTitle('Ringkasan', 'ringkasan', <LayoutDashboard size={15} />)}
         >
           <OverviewTab
             project={project}
             journey={journey}
             isOwner={isOwner}
+            onGoToBlocker={goToBlocker}
             onNavigateTab={setTab}
           />
         </Tab>
         <Tab
-          key="persyaratan"
-          title={
-            <span className="flex items-center gap-1.5">
-              <FileText size={15} /> Persyaratan
-            </span>
-          }
+          key="kelengkapan"
+          title={tabTitle('Kelengkapan', 'kelengkapan', <ClipboardList size={15} />)}
         >
-          <RequirementsTab projectId={project.id} readOnly={!canEdit} />
+          <CompletenessTab projectId={project.id} canEdit={canEdit} />
         </Tab>
-        <Tab
-          key="tim"
-          title={
-            <span className="flex items-center gap-1.5">
-              <Users size={15} /> Tim
-            </span>
-          }
-        >
+        <Tab key="tim" title={tabTitle('Tim', 'tim', <Users size={15} />)}>
           <TeamTab project={project} canEdit={canEdit} isOwner={isOwner} />
         </Tab>
         <Tab
-          key="repository"
-          title={
-            <span className="flex items-center gap-1.5">
-              <GitBranch size={15} /> Repository
-            </span>
-          }
-        >
-          <RepositoryTab projectId={project.id} canEdit={canEdit} />
-        </Tab>
-        <Tab
           key="bukti"
-          title={
-            <span className="flex items-center gap-1.5">
-              <FolderCheck size={15} /> Bukti & Laporan
-            </span>
-          }
+          title={tabTitle('Bukti', 'bukti', <FolderCheck size={15} />)}
         >
           <EvidenceTab project={project} canEdit={canEdit} />
         </Tab>
-        <Tab
-          key="review"
-          title={
-            <span className="flex items-center gap-1.5">
-              <MessageSquare size={15} /> Review & Hasil
-            </span>
-          }
-        >
-          <ReviewTab
+        <Tab key="hasil" title={tabTitle('Hasil', 'hasil', <Award size={15} />)}>
+          <ResultTab
             reviews={reviews}
             reviewStats={reviewStats}
             presentationSchedule={project.presentationSchedule}

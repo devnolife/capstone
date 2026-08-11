@@ -10,27 +10,16 @@ import {
   MapPin,
 } from 'lucide-react';
 import type { StudentJourney, SubmissionBlocker } from '@/lib/student-journey';
-import { StudentJourneyHub } from '@/components/mahasiswa/student-journey-hub';
+import { JourneyStepper } from './journey-stepper';
 import { SubmitProjectButton } from '@/components/projects/submit-button';
 import type { WorkspaceProject } from './types';
-import type { WorkspaceTab } from './project-workspace';
-
-// Peta kode blocker → tab workspace tempat memperbaikinya
-const BLOCKER_TAB: Record<string, WorkspaceTab> = {
-  missing_requirement: 'persyaratan',
-  github_repository: 'repository',
-  consent_document: 'repository',
-  stakeholder_document: 'bukti',
-  work_log: 'bukti',
-  user_photo: 'bukti',
-  submission_deadline: 'ringkasan',
-  invalid_status: 'ringkasan',
-};
+import { BLOCKER_TARGET, type WorkspaceTab } from './project-workspace';
 
 interface OverviewTabProps {
   project: WorkspaceProject;
   journey: StudentJourney;
   isOwner: boolean;
+  onGoToBlocker: (blocker: SubmissionBlocker) => void;
   onNavigateTab: (tab: WorkspaceTab) => void;
 }
 
@@ -38,6 +27,7 @@ export function OverviewTab({
   project,
   journey,
   isOwner,
+  onGoToBlocker,
   onNavigateTab,
 }: OverviewTabProps) {
   const readiness = journey.readiness;
@@ -45,8 +35,8 @@ export function OverviewTab({
 
   return (
     <div className="space-y-6 pt-6">
-      {/* Journey progress */}
-      <StudentJourneyHub journey={journey} />
+      {/* Journey progress ringkas */}
+      <JourneyStepper journey={journey} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Checklist readiness */}
@@ -78,13 +68,13 @@ export function OverviewTab({
             {readiness && readiness.blockers.length > 0 ? (
               <div className="space-y-2">
                 {readiness.blockers.map((blocker: SubmissionBlocker, index) => {
-                  const targetTab = BLOCKER_TAB[blocker.code] ?? 'ringkasan';
-                  const navigable = targetTab !== 'ringkasan';
+                  const target = BLOCKER_TARGET[blocker.code];
+                  const navigable = !!target && target.tab !== 'ringkasan';
                   return (
                     <button
                       key={`${blocker.code}-${blocker.field ?? index}`}
                       type="button"
-                      onClick={() => navigable && onNavigateTab(targetTab)}
+                      onClick={() => navigable && onGoToBlocker(blocker)}
                       className={`w-full flex items-start gap-3 p-3 rounded-xl border border-warning-200 dark:border-warning-800/40 bg-warning-50 dark:bg-warning-900/10 text-left ${
                         navigable
                           ? 'hover:bg-warning-100 dark:hover:bg-warning-900/20 transition-colors cursor-pointer'
@@ -171,7 +161,7 @@ export function OverviewTab({
                     variant="flat"
                     color="secondary"
                     className="mt-2"
-                    onPress={() => onNavigateTab('review')}
+                    onPress={() => onNavigateTab('hasil')}
                   >
                     Lihat detail
                   </Button>

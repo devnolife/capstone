@@ -45,7 +45,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
-import { StudentJourneyHub } from '@/components/mahasiswa/student-journey-hub';
+import { ContinueCard } from '@/components/mahasiswa/continue-card';
 import type { StudentJourney } from '@/lib/student-journey';
 
 interface ProjectMember {
@@ -426,9 +426,9 @@ export function MahasiswaDashboardContent({
         </motion.div>
       )}
 
-      {/* Guided Student Journey */}
+      {/* Lanjutkan pekerjaan — 1 aksi jelas, detail lengkap di workspace */}
       <motion.div variants={itemVariants}>
-        <StudentJourneyHub journey={journey} />
+        <ContinueCard journey={journey} />
       </motion.div>
 
       {/* Stats Grid */}

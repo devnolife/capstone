@@ -469,6 +469,20 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
     }));
   };
 
+  // Buka semua seksi saat aksi cepat/blocker menargetkan form ini
+  useEffect(() => {
+    const handler = (event: Event) => {
+      const anchor = (event as CustomEvent<{ anchor?: string }>).detail?.anchor;
+      if (anchor === 'section-persyaratan') {
+        setExpandedSections((prev) =>
+          Object.fromEntries(Object.keys(prev).map((key) => [key, true])),
+        );
+      }
+    };
+    window.addEventListener('workspace:expand-section', handler);
+    return () => window.removeEventListener('workspace:expand-section', handler);
+  }, []);
+
   // Fetch project and requirements (single API call for efficiency)
   useEffect(() => {
     const fetchData = async () => {
