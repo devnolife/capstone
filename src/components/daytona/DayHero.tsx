@@ -161,7 +161,7 @@ export function DayHero() {
               />
               <div
                 key={active.id}
-                className="day-anim-code-in day-no-scrollbar min-h-[220px] overflow-x-auto py-4"
+                className="day-anim-code-in day-no-scrollbar h-[390px] overflow-x-auto overflow-y-auto py-4"
               >
                 <DayCodeLines lines={active.code} showCursor />
               </div>
