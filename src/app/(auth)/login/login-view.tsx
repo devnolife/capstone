@@ -54,7 +54,7 @@ function LoginForm() {
     setError('');
     try {
       const result = await signIn('credentials', { username, password, redirect: false });
-      if (result?.error) setError(`Dev login gagal: ${result.error}`);
+      if (result?.error) setError(`Dev login gagal: ${result.code || result.error}`);
       else window.location.href = '/dashboard';
     } catch {
       setError('Terjadi kesalahan saat dev login.');
@@ -74,8 +74,9 @@ function LoginForm() {
         redirect: false,
       });
       if (result?.error) {
-        if (result.error.includes('SIMAK')) setError(result.error);
-        else setError('Username atau password salah.');
+        // `code` membawa pesan asli dari server (LoginError), mis.
+        // "Password SIMAK tidak valid" / "NIM tidak ditemukan di SIMAK".
+        setError(result.code || 'Username atau password salah.');
       } else {
         window.location.href = '/dashboard';
       }

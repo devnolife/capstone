@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import bcrypt from 'bcryptjs';
@@ -47,6 +47,18 @@ const cookiePrefix = ''; // No prefix needed
  */
 const FAKE_LOGIN_ENABLED =
   process.env.NODE_ENV === 'development' || process.env.ALLOW_FAKE_LOGIN === 'true';
+
+/**
+ * Error login dengan pesan yang diteruskan ke client via `code`.
+ * NextAuth v5 menyembunyikan Error biasa sebagai "Configuration",
+ * jadi kita pakai subclass CredentialsSignin agar pesan asli sampai ke UI.
+ */
+class LoginError extends CredentialsSignin {
+  constructor(message: string) {
+    super(message);
+    this.code = message;
+  }
+}
 
 const FAKE_ACCOUNTS: Array<{
   id: string;
@@ -134,7 +146,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) {
-          throw new Error('NIM/Username dan password diperlukan');
+          throw new LoginError('NIM/Username dan password diperlukan');
         }
 
         const username = credentials.username as string;
@@ -171,7 +183,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (isStudentNim) {
           if (existingUser && !existingUser.isActive) {
-            throw new Error('Akun tidak aktif');
+            throw new LoginError('Akun tidak aktif');
           }
 
           // ---------- FAST PATH: local bcrypt ----------
@@ -252,22 +264,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           // Both SIMAK and local validation failed
-          throw new Error(simakResult.message || 'NIM atau password salah');
+          throw new LoginError(simakResult.message || 'NIM atau password salah');
         }
 
         // For non-student users (dosen, admin), use local validation only
         if (!existingUser || !existingUser.password) {
-          throw new Error('NIM/Username atau password salah');
+          throw new LoginError('NIM/Username atau password salah');
         }
 
         const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
         if (!isPasswordValid) {
-          throw new Error('NIM/Username atau password salah');
+          throw new LoginError('NIM/Username atau password salah');
         }
 
         if (!existingUser.isActive) {
-          throw new Error('Akun tidak aktif');
+          throw new LoginError('Akun tidak aktif');
         }
 
         return {
