@@ -196,7 +196,7 @@ export function checkSubmissionReadiness(
     blockers.push({
       code: 'work_log',
       label: 'Laporan Pengerjaan',
-      description: `Isi minimal ${MIN_WORK_LOGS} laporan pengerjaan harian (hari ke berapa mengerjakan apa). Saat ini baru ${input.workLogCount}.`,
+      description: `Isi minimal ${MIN_WORK_LOGS} laporan pengerjaan yang terikat commit GitHub (hari ke berapa mengerjakan apa). Saat ini baru ${input.workLogCount}.`,
       href: `/mahasiswa/projects/${input.projectId}`,
     });
   }

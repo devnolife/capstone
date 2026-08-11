@@ -8,6 +8,7 @@ import {
   ALLOWED_IMAGE_TYPES,
   MAX_IMAGE_SIZE,
 } from '@/lib/minio';
+import { verifyUserPhoto } from '@/lib/face-verification';
 
 async function getProjectAccess(projectId: string, userId: string) {
   const [project, user] = await Promise.all([
@@ -136,6 +137,11 @@ export async function POST(
       );
     }
 
+    // Verifikasi wajah langsung via model HuggingFace: foto harus memuat
+    // minimal 2 orang (mahasiswa + pengguna). Jika API tidak tersedia,
+    // status tetap PENDING dan bisa diverifikasi ulang.
+    const verification = await verifyUserPhoto(buffer, file.type);
+
     const photo = await prisma.projectUserPhoto.create({
       data: {
         projectId: id,
@@ -146,9 +152,10 @@ export async function POST(
         fileUrl: result.url,
         fileSize: file.size,
         mimeType: file.type,
-        // verificationStatus default PENDING — nanti diverifikasi model
-        // face recognition (LLM/HuggingFace) untuk mencocokkan wajah
-        // mahasiswa dengan pengguna di foto.
+        verificationStatus: verification.status,
+        verificationResult: verification.result,
+        verifiedAt:
+          verification.status === 'PENDING' ? null : new Date(),
       },
       include: {
         uploadedBy: { select: { id: true, name: true, image: true } },

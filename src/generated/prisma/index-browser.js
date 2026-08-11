@@ -189,6 +189,10 @@ exports.Prisma.ProjectWorkLogScalarFieldEnum = {
   dayNumber: 'dayNumber',
   workDate: 'workDate',
   activity: 'activity',
+  commitSha: 'commitSha',
+  commitMessage: 'commitMessage',
+  commitUrl: 'commitUrl',
+  commitDate: 'commitDate',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

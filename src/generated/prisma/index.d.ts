@@ -7527,6 +7527,10 @@ export namespace Prisma {
     dayNumber: number | null
     workDate: Date | null
     activity: string | null
+    commitSha: string | null
+    commitMessage: string | null
+    commitUrl: string | null
+    commitDate: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7538,6 +7542,10 @@ export namespace Prisma {
     dayNumber: number | null
     workDate: Date | null
     activity: string | null
+    commitSha: string | null
+    commitMessage: string | null
+    commitUrl: string | null
+    commitDate: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7549,6 +7557,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: number
     activity: number
+    commitSha: number
+    commitMessage: number
+    commitUrl: number
+    commitDate: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -7570,6 +7582,10 @@ export namespace Prisma {
     dayNumber?: true
     workDate?: true
     activity?: true
+    commitSha?: true
+    commitMessage?: true
+    commitUrl?: true
+    commitDate?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7581,6 +7597,10 @@ export namespace Prisma {
     dayNumber?: true
     workDate?: true
     activity?: true
+    commitSha?: true
+    commitMessage?: true
+    commitUrl?: true
+    commitDate?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -7592,6 +7612,10 @@ export namespace Prisma {
     dayNumber?: true
     workDate?: true
     activity?: true
+    commitSha?: true
+    commitMessage?: true
+    commitUrl?: true
+    commitDate?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -7690,6 +7714,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date
     activity: string
+    commitSha: string
+    commitMessage: string | null
+    commitUrl: string | null
+    commitDate: Date | null
     createdAt: Date
     updatedAt: Date
     _count: ProjectWorkLogCountAggregateOutputType | null
@@ -7720,6 +7748,10 @@ export namespace Prisma {
     dayNumber?: boolean
     workDate?: boolean
     activity?: boolean
+    commitSha?: boolean
+    commitMessage?: boolean
+    commitUrl?: boolean
+    commitDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -7733,6 +7765,10 @@ export namespace Prisma {
     dayNumber?: boolean
     workDate?: boolean
     activity?: boolean
+    commitSha?: boolean
+    commitMessage?: boolean
+    commitUrl?: boolean
+    commitDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -7746,6 +7782,10 @@ export namespace Prisma {
     dayNumber?: boolean
     workDate?: boolean
     activity?: boolean
+    commitSha?: boolean
+    commitMessage?: boolean
+    commitUrl?: boolean
+    commitDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     project?: boolean | ProjectDefaultArgs<ExtArgs>
@@ -7759,11 +7799,15 @@ export namespace Prisma {
     dayNumber?: boolean
     workDate?: boolean
     activity?: boolean
+    commitSha?: boolean
+    commitMessage?: boolean
+    commitUrl?: boolean
+    commitDate?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ProjectWorkLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "authorId" | "dayNumber" | "workDate" | "activity" | "createdAt" | "updatedAt", ExtArgs["result"]["projectWorkLog"]>
+  export type ProjectWorkLogOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "authorId" | "dayNumber" | "workDate" | "activity" | "commitSha" | "commitMessage" | "commitUrl" | "commitDate" | "createdAt" | "updatedAt", ExtArgs["result"]["projectWorkLog"]>
   export type ProjectWorkLogInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -7790,6 +7834,10 @@ export namespace Prisma {
       dayNumber: number
       workDate: Date
       activity: string
+      commitSha: string
+      commitMessage: string | null
+      commitUrl: string | null
+      commitDate: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["projectWorkLog"]>
@@ -8223,6 +8271,10 @@ export namespace Prisma {
     readonly dayNumber: FieldRef<"ProjectWorkLog", 'Int'>
     readonly workDate: FieldRef<"ProjectWorkLog", 'DateTime'>
     readonly activity: FieldRef<"ProjectWorkLog", 'String'>
+    readonly commitSha: FieldRef<"ProjectWorkLog", 'String'>
+    readonly commitMessage: FieldRef<"ProjectWorkLog", 'String'>
+    readonly commitUrl: FieldRef<"ProjectWorkLog", 'String'>
+    readonly commitDate: FieldRef<"ProjectWorkLog", 'DateTime'>
     readonly createdAt: FieldRef<"ProjectWorkLog", 'DateTime'>
     readonly updatedAt: FieldRef<"ProjectWorkLog", 'DateTime'>
   }
@@ -28595,6 +28647,10 @@ export namespace Prisma {
     dayNumber: 'dayNumber',
     workDate: 'workDate',
     activity: 'activity',
+    commitSha: 'commitSha',
+    commitMessage: 'commitMessage',
+    commitUrl: 'commitUrl',
+    commitDate: 'commitDate',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -29519,6 +29575,10 @@ export namespace Prisma {
     dayNumber?: IntFilter<"ProjectWorkLog"> | number
     workDate?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     activity?: StringFilter<"ProjectWorkLog"> | string
+    commitSha?: StringFilter<"ProjectWorkLog"> | string
+    commitMessage?: StringNullableFilter<"ProjectWorkLog"> | string | null
+    commitUrl?: StringNullableFilter<"ProjectWorkLog"> | string | null
+    commitDate?: DateTimeNullableFilter<"ProjectWorkLog"> | Date | string | null
     createdAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
@@ -29532,6 +29592,10 @@ export namespace Prisma {
     dayNumber?: SortOrder
     workDate?: SortOrder
     activity?: SortOrder
+    commitSha?: SortOrder
+    commitMessage?: SortOrderInput | SortOrder
+    commitUrl?: SortOrderInput | SortOrder
+    commitDate?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     project?: ProjectOrderByWithRelationInput
@@ -29540,6 +29604,7 @@ export namespace Prisma {
 
   export type ProjectWorkLogWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    projectId_commitSha?: ProjectWorkLogProjectIdCommitShaCompoundUniqueInput
     AND?: ProjectWorkLogWhereInput | ProjectWorkLogWhereInput[]
     OR?: ProjectWorkLogWhereInput[]
     NOT?: ProjectWorkLogWhereInput | ProjectWorkLogWhereInput[]
@@ -29548,11 +29613,15 @@ export namespace Prisma {
     dayNumber?: IntFilter<"ProjectWorkLog"> | number
     workDate?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     activity?: StringFilter<"ProjectWorkLog"> | string
+    commitSha?: StringFilter<"ProjectWorkLog"> | string
+    commitMessage?: StringNullableFilter<"ProjectWorkLog"> | string | null
+    commitUrl?: StringNullableFilter<"ProjectWorkLog"> | string | null
+    commitDate?: DateTimeNullableFilter<"ProjectWorkLog"> | Date | string | null
     createdAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
-  }, "id">
+  }, "id" | "projectId_commitSha">
 
   export type ProjectWorkLogOrderByWithAggregationInput = {
     id?: SortOrder
@@ -29561,6 +29630,10 @@ export namespace Prisma {
     dayNumber?: SortOrder
     workDate?: SortOrder
     activity?: SortOrder
+    commitSha?: SortOrder
+    commitMessage?: SortOrderInput | SortOrder
+    commitUrl?: SortOrderInput | SortOrder
+    commitDate?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ProjectWorkLogCountOrderByAggregateInput
@@ -29580,6 +29653,10 @@ export namespace Prisma {
     dayNumber?: IntWithAggregatesFilter<"ProjectWorkLog"> | number
     workDate?: DateTimeWithAggregatesFilter<"ProjectWorkLog"> | Date | string
     activity?: StringWithAggregatesFilter<"ProjectWorkLog"> | string
+    commitSha?: StringWithAggregatesFilter<"ProjectWorkLog"> | string
+    commitMessage?: StringNullableWithAggregatesFilter<"ProjectWorkLog"> | string | null
+    commitUrl?: StringNullableWithAggregatesFilter<"ProjectWorkLog"> | string | null
+    commitDate?: DateTimeNullableWithAggregatesFilter<"ProjectWorkLog"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ProjectWorkLog"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ProjectWorkLog"> | Date | string
   }
@@ -31615,6 +31692,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutWorkLogsInput
@@ -31628,6 +31709,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -31637,6 +31722,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutWorkLogsNestedInput
@@ -31650,6 +31739,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31661,6 +31754,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -31670,6 +31767,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -31681,6 +31782,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33929,6 +34034,11 @@ export namespace Prisma {
     isNot?: ProjectWhereInput
   }
 
+  export type ProjectWorkLogProjectIdCommitShaCompoundUniqueInput = {
+    projectId: string
+    commitSha: string
+  }
+
   export type ProjectWorkLogCountOrderByAggregateInput = {
     id?: SortOrder
     projectId?: SortOrder
@@ -33936,6 +34046,10 @@ export namespace Prisma {
     dayNumber?: SortOrder
     workDate?: SortOrder
     activity?: SortOrder
+    commitSha?: SortOrder
+    commitMessage?: SortOrder
+    commitUrl?: SortOrder
+    commitDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -33951,6 +34065,10 @@ export namespace Prisma {
     dayNumber?: SortOrder
     workDate?: SortOrder
     activity?: SortOrder
+    commitSha?: SortOrder
+    commitMessage?: SortOrder
+    commitUrl?: SortOrder
+    commitDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -33962,6 +34080,10 @@ export namespace Prisma {
     dayNumber?: SortOrder
     workDate?: SortOrder
     activity?: SortOrder
+    commitSha?: SortOrder
+    commitMessage?: SortOrder
+    commitUrl?: SortOrder
+    commitDate?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -37481,6 +37603,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     project: ProjectCreateNestedOneWithoutWorkLogsInput
@@ -37492,6 +37618,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37877,6 +38007,10 @@ export namespace Prisma {
     dayNumber?: IntFilter<"ProjectWorkLog"> | number
     workDate?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     activity?: StringFilter<"ProjectWorkLog"> | string
+    commitSha?: StringFilter<"ProjectWorkLog"> | string
+    commitMessage?: StringNullableFilter<"ProjectWorkLog"> | string | null
+    commitUrl?: StringNullableFilter<"ProjectWorkLog"> | string | null
+    commitDate?: DateTimeNullableFilter<"ProjectWorkLog"> | Date | string | null
     createdAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
     updatedAt?: DateTimeFilter<"ProjectWorkLog"> | Date | string
   }
@@ -38555,6 +38689,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutWorkLogsInput
@@ -38566,6 +38704,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -43348,6 +43490,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -43764,6 +43910,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     project?: ProjectUpdateOneRequiredWithoutWorkLogsNestedInput
@@ -43775,6 +43925,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -43785,6 +43939,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -43934,6 +44092,10 @@ export namespace Prisma {
     dayNumber: number
     workDate: Date | string
     activity: string
+    commitSha: string
+    commitMessage?: string | null
+    commitUrl?: string | null
+    commitDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -44242,6 +44404,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutWorkLogsNestedInput
@@ -44253,6 +44419,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -44263,6 +44433,10 @@ export namespace Prisma {
     dayNumber?: IntFieldUpdateOperationsInput | number
     workDate?: DateTimeFieldUpdateOperationsInput | Date | string
     activity?: StringFieldUpdateOperationsInput | string
+    commitSha?: StringFieldUpdateOperationsInput | string
+    commitMessage?: NullableStringFieldUpdateOperationsInput | string | null
+    commitUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    commitDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

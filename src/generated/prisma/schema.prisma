@@ -164,20 +164,25 @@ model Project {
   @@map("projects")
 }
 
-// Laporan pengerjaan harian project (hari ke-N kerja apa)
+// Laporan pengerjaan harian project (hari ke-N kerja apa) — wajib terikat commit GitHub
 model ProjectWorkLog {
-  id        String   @id @default(cuid())
-  projectId String
-  authorId  String
-  dayNumber Int // Hari ke berapa pengerjaan
-  workDate  DateTime // Tanggal pengerjaan
-  activity  String   @db.Text // Apa yang dikerjakan pada hari itu
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  projectId     String
+  authorId      String
+  dayNumber     Int // Hari ke berapa pengerjaan
+  workDate      DateTime // Tanggal pengerjaan
+  activity      String    @db.Text // Apa yang dikerjakan pada hari itu
+  commitSha     String // SHA commit GitHub yang membuktikan pekerjaan ini
+  commitMessage String?   @db.Text // Pesan commit (diambil otomatis dari GitHub)
+  commitUrl     String? // Link ke commit di GitHub
+  commitDate    DateTime? // Tanggal commit di GitHub
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   author  User    @relation("WorkLogAuthor", fields: [authorId], references: [id])
 
+  @@unique([projectId, commitSha]) // Satu commit hanya bisa dilaporkan sekali
   @@index([projectId, dayNumber])
   @@map("project_work_logs")
 }

@@ -9,7 +9,7 @@ import {
   Avatar,
   addToast,
 } from '@heroui/react';
-import { Camera, Trash2, Upload, ScanFace } from 'lucide-react';
+import { Camera, Trash2, Upload, ScanFace, RefreshCw } from 'lucide-react';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface UserPhoto {
@@ -18,6 +18,7 @@ interface UserPhoto {
   fileName: string;
   fileUrl: string;
   verificationStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  verificationResult?: { note?: string; personCount?: number } | null;
   createdAt: string;
   uploadedBy: { id: string; name: string; image?: string | null };
 }
@@ -40,6 +41,7 @@ export function UserPhotoUpload({ projectId, readOnly = false }: UserPhotoUpload
   const [photos, setPhotos] = useState<UserPhoto[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [caption, setCaption] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { confirm, ConfirmDialog } = useConfirmDialog();
@@ -94,6 +96,44 @@ export function UserPhotoUpload({ projectId, readOnly = false }: UserPhotoUpload
       });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleReverify = async (photo: UserPhoto) => {
+    setVerifyingId(photo.id);
+    try {
+      const res = await fetch(
+        `/api/projects/${projectId}/user-photos/${photo.id}/verify`,
+        { method: 'POST' },
+      );
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Verifikasi gagal');
+      setPhotos((prev) =>
+        prev.map((p) => (p.id === photo.id ? json.data : p)),
+      );
+      addToast({
+        title:
+          json.data.verificationStatus === 'VERIFIED'
+            ? 'Wajah terverifikasi'
+            : json.data.verificationStatus === 'REJECTED'
+              ? 'Verifikasi ditolak'
+              : 'Verifikasi masih tertunda',
+        description: json.data.verificationResult?.note,
+        color:
+          json.data.verificationStatus === 'VERIFIED'
+            ? 'success'
+            : json.data.verificationStatus === 'REJECTED'
+              ? 'danger'
+              : 'warning',
+      });
+    } catch (error) {
+      addToast({
+        title: 'Gagal memverifikasi',
+        description: error instanceof Error ? error.message : undefined,
+        color: 'danger',
+      });
+    } finally {
+      setVerifyingId(null);
     }
   };
 
@@ -203,9 +243,28 @@ export function UserPhotoUpload({ projectId, readOnly = false }: UserPhotoUpload
                   radius="none"
                 />
                 <div className="p-3 space-y-2">
-                  <Chip size="sm" color={meta.color} variant="flat" startContent={<ScanFace size={12} />}>
-                    {meta.label}
-                  </Chip>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <Chip size="sm" color={meta.color} variant="flat" startContent={<ScanFace size={12} />}>
+                      {meta.label}
+                    </Chip>
+                    {!readOnly && photo.verificationStatus !== 'VERIFIED' && (
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        variant="light"
+                        isLoading={verifyingId === photo.id}
+                        onPress={() => handleReverify(photo)}
+                        title="Verifikasi ulang wajah"
+                      >
+                        <RefreshCw size={12} />
+                      </Button>
+                    )}
+                  </div>
+                  {photo.verificationResult?.note && (
+                    <p className="text-[11px] text-default-400 line-clamp-2">
+                      {photo.verificationResult.note}
+                    </p>
+                  )}
                   {photo.caption && (
                     <p className="text-xs text-default-600 line-clamp-2">
                       {photo.caption}

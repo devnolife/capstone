@@ -90,6 +90,22 @@ export async function uploadFile(
   }
 }
 
+// Download file from MinIO as Buffer
+export async function downloadFile(objectName: string): Promise<Buffer | null> {
+  try {
+    const client = getMinioClient();
+    const stream = await client.getObject(MINIO_BUCKET_NAME, objectName);
+    const chunks: Buffer[] = [];
+    for await (const chunk of stream) {
+      chunks.push(chunk as Buffer);
+    }
+    return Buffer.concat(chunks);
+  } catch (error) {
+    console.error('MinIO download error:', error);
+    return null;
+  }
+}
+
 // Delete file from MinIO
 export async function deleteFile(objectName: string): Promise<boolean> {
   try {

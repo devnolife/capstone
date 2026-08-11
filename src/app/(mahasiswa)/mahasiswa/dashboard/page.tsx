@@ -49,7 +49,7 @@ export default async function MahasiswaDashboardPage() {
             documents: true,
             reviews: true,
             workLogs: true,
-            userPhotos: true,
+            userPhotos: { where: { verificationStatus: { not: 'REJECTED' } } },
           },
         },
       },

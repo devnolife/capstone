@@ -38,7 +38,8 @@ export async function getProjectSubmissionReadiness(projectId: string) {
           select: {
             stakeholderDocuments: true,
             workLogs: true,
-            userPhotos: true,
+            // Foto yang ditolak verifikasi wajah tidak dihitung
+            userPhotos: { where: { verificationStatus: { not: 'REJECTED' } } },
           },
         },
       },

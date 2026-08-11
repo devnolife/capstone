@@ -223,6 +223,37 @@ export class GitHubClient {
   }
 
   /**
+   * Get a single commit by SHA (untuk verifikasi work log)
+   */
+  async getCommit(
+    owner: string,
+    repo: string,
+    ref: string,
+  ): Promise<GitHubCommit> {
+    const { data: commit } = await this.octokit.rest.repos.getCommit({
+      owner,
+      repo,
+      ref,
+    });
+
+    return {
+      sha: commit.sha,
+      message: commit.commit.message,
+      author: {
+        name: commit.commit.author?.name || '',
+        email: commit.commit.author?.email || '',
+        date: commit.commit.author?.date || '',
+      },
+      committer: {
+        name: commit.commit.committer?.name || '',
+        email: commit.commit.committer?.email || '',
+        date: commit.commit.committer?.date || '',
+      },
+      html_url: commit.html_url,
+    };
+  }
+
+  /**
    * Get repository tree (recursive file listing)
    */
   async getTree(
