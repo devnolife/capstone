@@ -1,379 +1,361 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import * as React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
+
+import { NavUser } from '@/components/capstone-dashboard/nav-user';
 import {
-  Button,
-  Avatar,
-  Tooltip,
-} from '@heroui/react';
+  ACCENT_TEXT,
+  type AccentName,
+} from '@/components/capstone-dashboard/accent';
+import { cn, getSimakPhotoUrl } from '@/lib/utils';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  useSidebar,
+} from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
   FolderGit2,
-  Users,
+  MessagesSquare,
+  FileText,
+  CalendarCheck,
   ClipboardCheck,
-  ChevronLeft,
-  ChevronRight,
-  GraduationCap,
-  UserCog,
+  Users,
+  Bell,
+  Settings,
   BookOpen,
-  X,
-  Menu,
   Mail,
   Bot,
   BarChart3,
-  CalendarCheck,
+  UserCog,
+  GraduationCap,
 } from 'lucide-react';
-import { cn, getSimakPhotoUrl } from '@/lib/utils';
 
-interface SidebarItem {
+type NavItem = {
   title: string;
   href: string;
-  icon: React.ReactNode;
-}
+  icon: React.ComponentType<{ className?: string }>;
+  accent: AccentName;
+};
 
-interface SidebarSection {
-  label: string;
-  items: SidebarItem[];
-}
+type NavGroupDef = {
+  label?: string;
+  items: NavItem[];
+};
 
-const mahasiswaSections: SidebarSection[] = [
+const mahasiswaGroups: NavGroupDef[] = [
   {
-    label: 'Ringkasan',
     items: [
-      { title: 'Dashboard', href: '/mahasiswa/dashboard', icon: <LayoutDashboard size={18} /> },
-    ],
-  },
-  {
-    label: 'Proyek',
-    items: [
-      { title: 'Project Saya', href: '/mahasiswa/projects', icon: <FolderGit2 size={18} /> },
-      { title: 'Persyaratan', href: '/mahasiswa/persyaratan', icon: <BookOpen size={18} /> },
-    ],
-  },
-  {
-    label: 'Tim & Review',
-    items: [
-      { title: 'Undangan Tim', href: '/mahasiswa/invitations', icon: <Mail size={18} /> },
-      { title: 'Review & Feedback', href: '/mahasiswa/reviews', icon: <ClipboardCheck size={18} /> },
-      { title: 'Jadwal Presentasi', href: '/mahasiswa/presentations', icon: <CalendarCheck size={18} /> },
-    ],
-  },
-];
-
-const dosenSections: SidebarSection[] = [
-  {
-    label: 'Ringkasan',
-    items: [
-      { title: 'Dashboard', href: '/dosen/dashboard', icon: <LayoutDashboard size={18} /> },
-    ],
-  },
-  {
-    label: 'Penilaian',
-    items: [
-      { title: 'Project Mahasiswa', href: '/dosen/projects', icon: <FolderGit2 size={18} /> },
-      { title: 'Review', href: '/dosen/reviews', icon: <ClipboardCheck size={18} /> },
-      { title: 'Auto Review', href: '/dosen/auto-review', icon: <Bot size={18} /> },
-    ],
-  },
-  {
-    label: 'Analitik',
-    items: [
-      { title: 'Statistik', href: '/dosen/statistics', icon: <BarChart3 size={18} /> },
-    ],
-  },
-];
-
-const adminSections: SidebarSection[] = [
-  {
-    label: 'Ringkasan',
-    items: [
-      { title: 'Dashboard', href: '/admin/dashboard', icon: <LayoutDashboard size={18} /> },
+      { title: 'Dashboard', href: '/mahasiswa/dashboard', icon: LayoutDashboard, accent: 'brand' },
+      { title: 'Project Saya', href: '/mahasiswa/projects', icon: FolderGit2, accent: 'info' },
+      { title: 'Review & Feedback', href: '/mahasiswa/reviews', icon: MessagesSquare, accent: 'highlight' },
+      { title: 'Dokumen', href: '/mahasiswa/documents', icon: FileText, accent: 'success' },
     ],
   },
   {
     label: 'Akademik',
     items: [
-      { title: 'Semua Project', href: '/admin/projects', icon: <FolderGit2 size={18} /> },
-      { title: 'Jadwal Presentasi', href: '/admin/presentations', icon: <CalendarCheck size={18} /> },
-      { title: 'Penugasan Dosen', href: '/admin/assignments', icon: <UserCog size={18} /> },
+      { title: 'Persyaratan', href: '/mahasiswa/persyaratan', icon: BookOpen, accent: 'warning' },
+      { title: 'Jadwal Presentasi', href: '/mahasiswa/presentations', icon: CalendarCheck, accent: 'rose' },
+      { title: 'Undangan Tim', href: '/mahasiswa/invitations', icon: Mail, accent: 'orange' },
     ],
   },
   {
-    label: 'Konfigurasi',
+    label: 'Lainnya',
     items: [
-      { title: 'Manajemen User', href: '/admin/users', icon: <Users size={18} /> },
-      { title: 'Rubrik Penilaian', href: '/admin/rubrik', icon: <BookOpen size={18} /> },
-      { title: 'Semester', href: '/admin/semesters', icon: <GraduationCap size={18} /> },
+      { title: 'Notifikasi', href: '/mahasiswa/notifications', icon: Bell, accent: 'rose' },
+      { title: 'Pengaturan', href: '/mahasiswa/settings', icon: Settings, accent: 'info' },
     ],
   },
 ];
 
-interface SidebarProps {
-  isMobileOpen?: boolean;
-  onMobileClose?: () => void;
-}
+const dosenGroups: NavGroupDef[] = [
+  {
+    items: [
+      { title: 'Dashboard', href: '/dosen/dashboard', icon: LayoutDashboard, accent: 'brand' },
+      { title: 'Project Mahasiswa', href: '/dosen/projects', icon: FolderGit2, accent: 'info' },
+      { title: 'Review', href: '/dosen/reviews', icon: MessagesSquare, accent: 'highlight' },
+      { title: 'Auto Review', href: '/dosen/auto-review', icon: Bot, accent: 'success' },
+    ],
+  },
+  {
+    label: 'Akademik',
+    items: [
+      { title: 'Statistik', href: '/dosen/statistics', icon: BarChart3, accent: 'warning' },
+    ],
+  },
+  {
+    label: 'Lainnya',
+    items: [
+      { title: 'Notifikasi', href: '/dosen/notifications', icon: Bell, accent: 'rose' },
+      { title: 'Pengaturan', href: '/dosen/settings', icon: Settings, accent: 'info' },
+    ],
+  },
+];
 
-const DASHBOARD_PATHS = new Set([
+const adminGroups: NavGroupDef[] = [
+  {
+    items: [
+      { title: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard, accent: 'brand' },
+      { title: 'Semua Project', href: '/admin/projects', icon: FolderGit2, accent: 'info' },
+      { title: 'Manajemen User', href: '/admin/users', icon: Users, accent: 'highlight' },
+    ],
+  },
+  {
+    label: 'Akademik',
+    items: [
+      { title: 'Jadwal Presentasi', href: '/admin/presentations', icon: CalendarCheck, accent: 'rose' },
+      { title: 'Penugasan Dosen', href: '/admin/assignments', icon: UserCog, accent: 'orange' },
+      { title: 'Rubrik Penilaian', href: '/admin/rubrik', icon: ClipboardCheck, accent: 'warning' },
+      { title: 'Semester', href: '/admin/semesters', icon: GraduationCap, accent: 'success' },
+    ],
+  },
+  {
+    label: 'Lainnya',
+    items: [
+      { title: 'Notifikasi', href: '/admin/notifications', icon: Bell, accent: 'rose' },
+      { title: 'Pengaturan', href: '/admin/settings', icon: Settings, accent: 'info' },
+    ],
+  },
+];
+
+/* Rute yang harus cocok persis agar tidak ikut aktif saat berada di sub-halaman. */
+const EXACT_MATCH_PATHS = new Set([
   '/admin/dashboard',
   '/dosen/dashboard',
   '/mahasiswa/dashboard',
+  '/admin/notifications',
+  '/dosen/notifications',
+  '/mahasiswa/notifications',
+  '/admin/settings',
+  '/dosen/settings',
+  '/mahasiswa/settings',
 ]);
 
-function getDashboardUrl(role?: string): string {
+/* Menu 40px, teks 15px. Ikon memakai warna aksen per item (menggantikan abu),
+   item aktif = pill tint brand + garis kiri. Collapsed icon-mode pakai metrik bawaan. */
+const menuButtonBase =
+  'h-10 gap-3 rounded-lg px-3 text-[15px] font-medium text-sidebar-foreground/85 [&_svg]:size-[18px] data-active:relative data-active:bg-brand/12 data-active:text-brand data-active:before:absolute data-active:before:left-0 data-active:before:top-1/2 data-active:before:h-5 data-active:before:w-[3px] data-active:before:-translate-y-1/2 data-active:before:rounded-full data-active:before:bg-brand group-data-[collapsible=icon]:[&_svg]:size-4 group-data-[collapsible=icon]:before:hidden group-data-[collapsible=icon]:rounded-md';
+
+function getBasePath(role?: string): string {
   switch (role) {
     case 'ADMIN':
-      return '/admin/dashboard';
+      return '/admin';
     case 'DOSEN_PENGUJI':
-      return '/dosen/dashboard';
-    case 'MAHASISWA':
-      return '/mahasiswa/dashboard';
+      return '/dosen';
     default:
-      return '/';
+      return '/mahasiswa';
   }
 }
 
-export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-  const pathname = usePathname();
-  const { data: session } = useSession();
+function getRoleLabel(role?: string): string {
+  switch (role) {
+    case 'ADMIN':
+      return 'Administrator';
+    case 'DOSEN_PENGUJI':
+      return 'Dosen Penguji';
+    default:
+      return 'Mahasiswa';
+  }
+}
 
-  const userRole = session?.user?.role;
+function getGroups(role?: string): NavGroupDef[] {
+  switch (role) {
+    case 'ADMIN':
+      return adminGroups;
+    case 'DOSEN_PENGUJI':
+      return dosenGroups;
+    default:
+      return mahasiswaGroups;
+  }
+}
 
-  const sections =
-    userRole === 'ADMIN'
-      ? adminSections
-      : userRole === 'DOSEN_PENGUJI'
-        ? dosenSections
-        : mahasiswaSections;
+export type ShellUser = {
+  name: string;
+  identifier: string;
+  role?: string;
+  image?: string;
+};
 
-  const roleLabel =
-    userRole === 'ADMIN'
-      ? 'Administrator'
-      : userRole === 'DOSEN_PENGUJI'
-        ? 'Dosen Penguji'
-        : 'Mahasiswa';
-
-  const dashboardUrl = getDashboardUrl(userRole);
-
-  useEffect(() => {
-    if (onMobileClose) {
-      onMobileClose();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
-
-  const isItemActive = (href: string) =>
-    pathname === href || (!DASHBOARD_PATHS.has(href) && pathname.startsWith(href));
-
-  const renderItem = (item: SidebarItem) => {
-    const isActive = isItemActive(item.href);
-
-    const link = (
-      <Link
-        href={item.href}
-        className={cn(
-          'flex items-center gap-2.5 px-3 h-9 rounded-xl text-sm transition-colors',
-          isActive
-            ? 'bg-[var(--color-obsidian)] text-white font-semibold dark:bg-white dark:text-zinc-900'
-            : 'text-[var(--color-steel)] hover:bg-[var(--color-fog)] hover:text-[var(--color-obsidian)] dark:hover:bg-zinc-800 dark:hover:text-white',
-          isCollapsed && 'justify-center px-0 w-9 mx-auto',
-        )}
-        onClick={onMobileClose}
-      >
-        <span className="shrink-0">{item.icon}</span>
-        {!isCollapsed && <span className="truncate">{item.title}</span>}
-      </Link>
-    );
-
-    return (
-      <div key={item.href}>
-        {isCollapsed ? (
-          <Tooltip content={item.title} placement="right" delay={300}>
-            {link}
-          </Tooltip>
-        ) : (
-          link
-        )}
-      </div>
-    );
-  };
-
-  const sidebarContent = (
-    <div className="flex flex-col h-full">
-      {/* Brand */}
-      <div
-        className={cn(
-          'flex items-center h-14 px-3 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)]',
-          isCollapsed ? 'justify-center' : 'justify-start gap-2.5',
-        )}
-      >
-        <Link href={dashboardUrl} className="flex items-center gap-2.5 min-w-0">
-          <Image
-            src="/logo.png"
-            alt="Capstone"
-            width={32}
-            height={32}
-            className="object-contain shrink-0"
-          />
-          {!isCollapsed && (
-            <div className="min-w-0">
-              <p className="font-sans-display font-bold tracking-tight text-sm text-[var(--color-obsidian)] dark:text-white leading-tight truncate">
-                Capstone
-              </p>
-              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)] leading-tight truncate">
-                Prodi Informatika
-              </p>
-            </div>
-          )}
-        </Link>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-2 py-3">
-        <div className="space-y-4">
-          {sections.map((section, sectionIdx) => (
-            <div key={section.label}>
-              {!isCollapsed && (
-                <p className="font-mono-display text-[9px] font-bold text-[var(--color-steel)] uppercase tracking-widest px-3 mb-1.5">
-                  {section.label}
-                </p>
-              )}
-              {isCollapsed && sectionIdx > 0 && (
-                <div className="h-px bg-divider/50 mx-2 mb-2" />
-              )}
-              <div className="space-y-0.5">{section.items.map(renderItem)}</div>
-            </div>
-          ))}
-        </div>
-      </nav>
-
-      {/* User Section */}
-      <div className="p-2 border-t border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
-        {isCollapsed ? (
-          <Tooltip content={session?.user?.name || 'User'} placement="right">
-            <div className="flex justify-center py-1">
-              <Avatar
-                src={
-                  getSimakPhotoUrl((session?.user as { nim?: string })?.nim) ||
-                  session?.user?.image ||
-                  undefined
-                }
-                name={session?.user?.name || 'User'}
-                size="sm"
-              />
-            </div>
-          </Tooltip>
-        ) : (
-          <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg">
-            <Avatar
-              src={
-                getSimakPhotoUrl((session?.user as { nim?: string })?.nim) ||
-                session?.user?.image ||
-                undefined
-              }
-              name={session?.user?.name || 'User'}
-              size="sm"
-            />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold truncate text-[var(--color-obsidian)] dark:text-white">
-                {session?.user?.name}
-              </p>
-              <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)] truncate">{roleLabel}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Collapse Toggle - Desktop Only */}
-        <div className="hidden md:block pt-2 mt-2 border-t border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
-          {isCollapsed ? (
-            <Tooltip content="Perluas" placement="right">
-              <Button
-                isIconOnly
-                variant="light"
-                size="sm"
-                className="w-full h-8"
-                onPress={() => setIsCollapsed(false)}
-              >
-                <ChevronRight size={16} />
-              </Button>
-            </Tooltip>
-          ) : (
-            <Button
-              variant="light"
-              size="sm"
-              className="w-full justify-between h-8 text-default-500"
-              onPress={() => setIsCollapsed(true)}
-              endContent={<ChevronLeft size={14} />}
-            >
-              <span className="text-[11px]">Ciutkan</span>
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
+function NavGroup({
+  label,
+  items,
+  isActive,
+  onNavigate,
+}: {
+  label?: string;
+  items: NavItem[];
+  isActive: (href: string) => boolean;
+  onNavigate: () => void;
+}) {
   return (
-    <>
-      {/* Desktop Sidebar */}
-      <div className="hidden md:block h-screen">
-        <aside
-          className={cn(
-            'flex flex-col h-full bg-[var(--color-mist)] dark:bg-zinc-950 border-r border-[var(--color-pebble)] dark:border-[var(--color-graphite)] transition-[width] duration-200 overflow-hidden',
-            isCollapsed ? 'w-[60px]' : 'w-60',
-          )}
-        >
-          {sidebarContent}
-        </aside>
-      </div>
-
-      {/* Mobile Sidebar Overlay */}
-      {isMobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
-          onClick={onMobileClose}
-        />
-      )}
-
-      {/* Mobile Sidebar Drawer */}
-      <aside
-        className={cn(
-          'fixed inset-y-0 left-0 z-50 w-72 bg-[var(--color-mist)] dark:bg-zinc-950 transition-transform duration-200 ease-out md:hidden',
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full',
-        )}
-      >
-        <div className="absolute top-3 right-3">
-          <Button
-            isIconOnly
-            variant="flat"
-            size="sm"
-            onPress={onMobileClose}
-            className="rounded-full"
-          >
-            <X size={16} />
-          </Button>
-        </div>
-        {sidebarContent}
-      </aside>
-    </>
+    <SidebarGroup>
+      {label ? (
+        <SidebarGroupLabel className="px-3 font-mono text-[11px] tracking-[0.08em] uppercase">
+          {label}
+        </SidebarGroupLabel>
+      ) : null}
+      <SidebarGroupContent>
+        <SidebarMenu className="gap-1">
+          {items.map((item) => {
+            const Icon = item.icon;
+            return (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton
+                  isActive={isActive(item.href)}
+                  tooltip={item.title}
+                  className={menuButtonBase}
+                  render={<Link href={item.href} onClick={onNavigate} />}
+                >
+                  <span
+                    className={cn(
+                      'flex shrink-0 items-center justify-center',
+                      ACCENT_TEXT[item.accent],
+                    )}
+                  >
+                    <Icon />
+                  </span>
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
 }
 
-// Mobile menu button component to be used in header
-export function MobileMenuButton({ onPress }: { onPress: () => void }) {
+export function AppShellSidebar({
+  user: initialUser,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & { user?: ShellUser }) {
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const { isMobile, setOpenMobile } = useSidebar();
+  const [isLoggingOut, setIsLoggingOut] = React.useState(false);
+
+  const sessionUser = session?.user as
+    | { name?: string | null; image?: string | null; nim?: string; username?: string; role?: string }
+    | undefined;
+
+  /* Data dari server dipakai lebih dulu supaya menu sesuai peran sejak render
+     pertama; sesi klien menjadi sumber kebenaran setelah hydration. */
+  const name = sessionUser?.name || initialUser?.name || 'Pengguna';
+  const identifier =
+    sessionUser?.nim || sessionUser?.username || initialUser?.identifier || '-';
+  const image =
+    getSimakPhotoUrl(sessionUser?.nim ?? initialUser?.identifier) ||
+    sessionUser?.image ||
+    initialUser?.image ||
+    undefined;
+  const role = sessionUser?.role ?? initialUser?.role;
+
+  const groups = getGroups(role);
+  const basePath = getBasePath(role);
+  const roleLabel = getRoleLabel(role);
+
+  const isActive = React.useCallback(
+    (href: string) =>
+      pathname === href ||
+      (!EXACT_MATCH_PATHS.has(href) && pathname.startsWith(`${href}/`)),
+    [pathname],
+  );
+
+  /* Tutup drawer setelah pindah halaman di mobile. */
+  const handleNavigate = React.useCallback(() => {
+    if (isMobile) setOpenMobile(false);
+  }, [isMobile, setOpenMobile]);
+
+  const handleLogout = React.useCallback(async () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    try {
+      if (typeof window !== 'undefined') sessionStorage.clear();
+      await signOut({ callbackUrl: '/', redirect: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      window.location.href = '/';
+    }
+  }, [isLoggingOut]);
+
   return (
-    <Button
-      isIconOnly
-      variant="light"
-      size="sm"
-      onPress={onPress}
-      className="md:hidden"
-    >
-      <Menu size={24} />
-    </Button>
+    <Sidebar collapsible="icon" variant="inset" {...props}>
+      <SidebarHeader className="pb-1">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              size="lg"
+              className="h-12 gap-3 rounded-lg px-2 data-[slot=sidebar-menu-button]:p-1.5!"
+              render={
+                <Link href={`${basePath}/dashboard`} onClick={handleNavigate} />
+              }
+            >
+              <span className="relative flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-0.5 ring-1 ring-border group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-md">
+                <Image
+                  src="/logo.png"
+                  alt="Logo Prodi Informatika"
+                  width={32}
+                  height={32}
+                  className="size-full object-contain"
+                />
+              </span>
+              <span className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
+                <span className="flex items-baseline font-mono text-[17px] tracking-tight">
+                  <span className="font-semibold">capstone</span>
+                  <span className="text-brand">.if</span>
+                </span>
+                <span className="mt-1 text-[11px] text-muted-foreground">
+                  Prodi Informatika
+                </span>
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+
+      <SidebarContent>
+        {groups.map((group, index) => (
+          <NavGroup
+            key={group.label ?? `utama-${index}`}
+            label={group.label}
+            items={group.items}
+            isActive={isActive}
+            onNavigate={handleNavigate}
+          />
+        ))}
+      </SidebarContent>
+
+      <SidebarFooter>
+        <NavUser
+          user={{
+            name,
+            id: identifier,
+            role: roleLabel,
+          }}
+          avatarSrc={image}
+          profileHref={`${basePath}/profile`}
+          githubHref="/link-github/callback"
+          notificationsHref={`${basePath}/notifications`}
+          onLogout={handleLogout}
+          isLoggingOut={isLoggingOut}
+        />
+      </SidebarFooter>
+
+      <SidebarRail />
+    </Sidebar>
   );
 }

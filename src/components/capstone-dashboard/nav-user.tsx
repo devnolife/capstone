@@ -1,8 +1,10 @@
 'use client';
 
+import Link from 'next/link';
 import {
   Avatar,
   AvatarFallback,
+  AvatarImage,
 } from '@/components/ui/avatar';
 import {
   accentFor,
@@ -35,20 +37,34 @@ import {
 
 export function NavUser({
   user,
+  avatarSrc,
+  profileHref,
+  githubHref,
+  notificationsHref,
+  onLogout,
+  isLoggingOut = false,
 }: {
   user: {
     name: string;
     id: string;
     role: string;
   };
+  avatarSrc?: string;
+  profileHref?: string;
+  githubHref?: string;
+  notificationsHref?: string;
+  onLogout?: () => void;
+  isLoggingOut?: boolean;
 }) {
   const { isMobile } = useSidebar();
-  const initials = user.name
-    .split(' ')
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+  const initials =
+    user.name
+      .split(' ')
+      .filter(Boolean)
+      .map((part) => part[0])
+      .slice(0, 2)
+      .join('')
+      .toUpperCase() || 'U';
   const accent = accentFor(user.name);
 
   return (
@@ -61,6 +77,9 @@ export function NavUser({
             }
           >
             <Avatar className="size-8 rounded-lg">
+              {avatarSrc ? (
+                <AvatarImage src={avatarSrc} alt={user.name} />
+              ) : null}
               <AvatarFallback
                 className={cn('rounded-lg border', ACCENT_TINT[accent])}
               >
@@ -85,6 +104,9 @@ export function NavUser({
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="size-8">
+                    {avatarSrc ? (
+                      <AvatarImage src={avatarSrc} alt={user.name} />
+                    ) : null}
                     <AvatarFallback
                       className={cn('rounded-lg border', ACCENT_TINT[accent])}
                     >
@@ -102,23 +124,35 @@ export function NavUser({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                {...(profileHref ? { render: <Link href={profileHref} /> } : {})}
+              >
                 <CircleUserRoundIcon className={ACCENT_TEXT.brand} />
                 Profil
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                {...(githubHref ? { render: <Link href={githubHref} /> } : {})}
+              >
                 <GithubIcon className={ACCENT_TEXT.highlight} />
                 Akun GitHub
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+                {...(notificationsHref
+                  ? { render: <Link href={notificationsHref} /> }
+                  : {})}
+              >
                 <BellIcon className={ACCENT_TEXT.rose} />
                 Notifikasi
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={isLoggingOut}
+              onClick={onLogout}
+            >
               <LogOutIcon />
-              Keluar
+              {isLoggingOut ? 'Keluar...' : 'Keluar'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

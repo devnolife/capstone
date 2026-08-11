@@ -130,24 +130,35 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     error: '/login',
   },
   providers: [
-    Keycloak({
-      // SSO Unismuh (Keycloak OIDC) — lihat https://sso.if.unismuh.ac.id/docs/
-      id: 'sso-unismuh',
-      name: 'SSO Unismuh',
-      issuer: process.env.SSO_ISSUER,
-      clientId: process.env.SSO_CLIENT_ID,
-      clientSecret: process.env.SSO_CLIENT_SECRET,
-      authorization: { params: { scope: 'openid profile email' } },
-    }),
-    GitHub({
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-      authorization: {
-        params: {
-          scope: 'read:user user:email repo',
-        },
-      },
-    }),
+    /* Provider SSO hanya didaftarkan bila env-nya lengkap. Tanpa penjagaan ini
+       Auth.js melempar InvalidEndpoints yang mematikan SELURUH endpoint auth
+       (termasuk login credentials), bukan hanya tombol SSO. */
+    ...(process.env.SSO_ISSUER && process.env.SSO_CLIENT_ID
+      ? [
+          Keycloak({
+            // SSO Unismuh (Keycloak OIDC) — lihat https://sso.if.unismuh.ac.id/docs/
+            id: 'sso-unismuh',
+            name: 'SSO Unismuh',
+            issuer: process.env.SSO_ISSUER,
+            clientId: process.env.SSO_CLIENT_ID,
+            clientSecret: process.env.SSO_CLIENT_SECRET,
+            authorization: { params: { scope: 'openid profile email' } },
+          }),
+        ]
+      : []),
+    ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+      ? [
+          GitHub({
+            clientId: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            authorization: {
+              params: {
+                scope: 'read:user user:email repo',
+              },
+            },
+          }),
+        ]
+      : []),
     Credentials({
       name: 'credentials',
       credentials: {

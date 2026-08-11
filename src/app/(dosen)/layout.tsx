@@ -1,33 +1,13 @@
-'use client';
+import { AppShell } from '@/components/ui/app-shell';
+import { getShellUser } from '@/lib/shell-user';
 
-import { useState } from 'react';
-import { Sidebar } from '@/components/ui/app-shell-sidebar';
-import { Header } from '@/components/ui/header';
-import { MobileBottomNav } from '@/components/ui/mobile-bottom-nav';
-
-export default function DosenLayout({
+export default async function DosenLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const user = await getShellUser();
 
-  return (
-    <div className="flex h-screen overflow-hidden bg-[var(--color-mist)] dark:bg-zinc-950">
-      <Sidebar
-        isMobileOpen={isMobileSidebarOpen}
-        onMobileClose={() => setIsMobileSidebarOpen(false)}
-      />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="flex-1 flex flex-col overflow-hidden bg-[var(--color-mist)] dark:bg-zinc-950">
-          <Header onMenuClick={() => setIsMobileSidebarOpen(true)} />
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-24 md:pb-6">
-            {children}
-          </main>
-        </div>
-      </div>
-      <MobileBottomNav />
-    </div>
-  );
+  return <AppShell user={user}>{children}</AppShell>;
 }
 
