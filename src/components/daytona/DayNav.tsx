@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { MenuIcon } from '@/components/daytona/icons';
 
 const NAV_LINKS = [
@@ -37,6 +38,8 @@ function CapstoneLogo() {
 
 export function DayNav() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { status } = useSession();
+  const isAuthenticated = status === 'authenticated';
 
   return (
     <header className="relative w-full">
@@ -57,12 +60,15 @@ export function DayNav() {
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/login" className={signInClass}>
-            Masuk
-          </Link>
-          <Link href="/dashboard" className={contactClass}>
-            Dashboard
-          </Link>
+          {isAuthenticated ? (
+            <Link href="/dashboard" className={contactClass}>
+              Dashboard
+            </Link>
+          ) : (
+            <Link href="/login" className={signInClass}>
+              Masuk
+            </Link>
+          )}
         </div>
 
         <button
@@ -89,18 +95,21 @@ export function DayNav() {
                 {link.label}
               </a>
             ))}
-            <Link
-              href="/login"
-              className="block py-3 font-day-mono text-[14px] leading-[19.32px] tracking-[-0.56px] text-day-blue transition-colors duration-200 hover:text-day-blue-light"
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/dashboard"
-              className="block py-3 font-day-mono text-[14px] leading-[19.32px] tracking-[-0.56px] text-white transition-colors duration-200 hover:text-day-muted"
-            >
-              Dashboard
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                className="block py-3 font-day-mono text-[14px] leading-[19.32px] tracking-[-0.56px] text-white transition-colors duration-200 hover:text-day-muted"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="block py-3 font-day-mono text-[14px] leading-[19.32px] tracking-[-0.56px] text-day-blue transition-colors duration-200 hover:text-day-blue-light"
+              >
+                Masuk
+              </Link>
+            )}
           </nav>
         </div>
       ) : null}
