@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   buildStudentJourney,
+  calculateRequirementsCompletion,
   checkSubmissionReadiness,
 } from './student-journey';
 
@@ -217,5 +218,34 @@ describe('buildStudentJourney', () => {
     expect(result.nextAction.label).toBe('Lihat jadwal presentasi');
     expect(result.presentation?.location).toBe('Lab Informatika');
     expect(result.stages.find((stage) => stage.id === 'presentation')?.status).toBe('current');
+  });
+});
+
+describe('calculateRequirementsCompletion', () => {
+  it('returns 100 when all required fields are filled', () => {
+    expect(calculateRequirementsCompletion(completeRequirements)).toBe(100);
+  });
+
+  it('counts fields saved by other forms (merged record)', () => {
+    // Simulasi merge: form persyaratan tidak mengirim tujuanProyek/teknologi,
+    // tetapi nilai lama dari form setup tetap dihitung.
+    const existing = { tujuanProyek: 'Tujuan', teknologi: 'Next.js' };
+    const incoming = { ...completeRequirements, tujuanProyek: undefined, teknologi: undefined };
+    const merged = { ...incoming, ...existing };
+    expect(calculateRequirementsCompletion(merged)).toBe(100);
+  });
+
+  it('ignores empty and whitespace-only values', () => {
+    expect(
+      calculateRequirementsCompletion({
+        ...completeRequirements,
+        tujuanProyek: '   ',
+        teknologi: null,
+      }),
+    ).toBe(Math.round((9 / 11) * 100));
+  });
+
+  it('returns 0 for empty record', () => {
+    expect(calculateRequirementsCompletion({})).toBe(0);
   });
 });

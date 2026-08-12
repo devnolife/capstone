@@ -3,21 +3,49 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getDeploymentBonusPoints } from "@/lib/utils";
 import { encryptNullable, decryptNullable } from "@/lib/crypto";
-import { REQUIRED_REQUIREMENT_FIELDS } from "@/lib/student-journey";
+import { calculateRequirementsCompletion } from "@/lib/student-journey";
 
-// Fields that count towards completion percentage (grouped by section)
-const REQUIREMENT_FIELDS = REQUIRED_REQUIREMENT_FIELDS.map(
-  (requirement) => requirement.key,
-);
+// Calculate completion percentage based on filled required fields
+const calculateCompletion = calculateRequirementsCompletion;
 
-// Calculate completion percentage based on filled fields
-function calculateCompletion(data: Record<string, unknown>): number {
-  const filledFields = REQUIREMENT_FIELDS.filter((field) => {
-    const value = data[field];
-    return value !== null && value !== undefined && String(value).trim() !== "";
-  });
-  return Math.round((filledFields.length / REQUIREMENT_FIELDS.length) * 100);
-}
+// Text fields that can be updated through this endpoint. Only fields that are
+// actually present in the request body will be written, so partial saves from
+// different forms don't erase each other's data.
+const UPDATABLE_TEXT_FIELDS = [
+  // Informasi Dasar
+  "judulProyek",
+  "targetPengguna",
+  "latarBelakangMasalah",
+  "tujuanProyek",
+  "manfaatProyek",
+  // Aspek Akademik
+  "integrasiMatakuliah",
+  "metodologi",
+  "penulisanLaporan",
+  // Teknis & Implementasi
+  "ruangLingkup",
+  "sumberDayaBatasan",
+  "teknologi",
+  "fiturUtama",
+  // Analisis & Evaluasi
+  "analisisTemuan",
+  "presentasiUjian",
+  "stakeholder",
+  "kepatuhanEtika",
+  // Timeline
+  "timeline",
+  "kerangkaWaktu",
+  // Production & Demo
+  "productionUrl",
+  "productionUrlStatus",
+  "testingUsername",
+  "testingNotes",
+  // Deployment Setup
+  "deploymentPlatform",
+  "deploymentDescription",
+  "deploymentEvidence",
+  "deploymentTools",
+] as const;
 
 // GET - Fetch project requirements
 export async function GET(request: NextRequest) {
@@ -167,104 +195,56 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // Calculate completion percentage
-    const completionPercent = calculateCompletion(data);
+    // Build a partial update containing ONLY the fields present in the request.
+    // This prevents one form (e.g. form persyaratan) from wiping fields managed
+    // by another form (e.g. setup project: tujuanProyek, teknologi, dll).
+    const updateData: Record<string, unknown> = {};
+    for (const field of UPDATABLE_TEXT_FIELDS) {
+      if (data[field] !== undefined) {
+        updateData[field] = data[field] || null;
+      }
+    }
+    if (data.deadlineDate !== undefined) {
+      updateData.deadlineDate = data.deadlineDate
+        ? new Date(data.deadlineDate)
+        : null;
+    }
+    if (data.productionUrlCheckedAt !== undefined) {
+      updateData.productionUrlCheckedAt = data.productionUrlCheckedAt
+        ? new Date(data.productionUrlCheckedAt)
+        : null;
+    }
+    if (data.testingPassword !== undefined) {
+      // Encrypt sensitive testing credentials at-rest
+      updateData.testingPassword = encryptNullable(data.testingPassword);
+    }
+    if (data.deploymentPlatform !== undefined) {
+      // Calculate deployment bonus points based on platform
+      updateData.deploymentBonusPoints = getDeploymentBonusPoints(
+        data.deploymentPlatform,
+      );
+    }
 
-    // Parse deadlineDate if provided
-    const deadlineDate = data.deadlineDate
-      ? new Date(data.deadlineDate)
-      : null;
-
-    // Calculate deployment bonus points based on platform
-    const deploymentBonusPoints = getDeploymentBonusPoints(data.deploymentPlatform);
-
-    // Encrypt sensitive testing credentials at-rest
-    const encryptedTestingPassword = encryptNullable(data.testingPassword);
+    // Calculate completion percentage from the merged record (existing values
+    // + incoming changes) so fields saved via form lain tetap dihitung.
+    const existingRequirements = await prisma.projectRequirements.findUnique({
+      where: { projectId },
+    });
+    const mergedData: Record<string, unknown> = {
+      ...(existingRequirements ?? {}),
+      ...updateData,
+    };
+    const completionPercent = calculateCompletion(mergedData);
+    updateData.completionPercent = completionPercent;
 
     // Upsert requirements
     const requirements = await prisma.projectRequirements.upsert({
       where: { projectId },
       create: {
         projectId,
-        // Informasi Dasar
-        judulProyek: data.judulProyek || null,
-        targetPengguna: data.targetPengguna || null,
-        latarBelakangMasalah: data.latarBelakangMasalah || null,
-        tujuanProyek: data.tujuanProyek || null,
-        manfaatProyek: data.manfaatProyek || null,
-        // Aspek Akademik
-        integrasiMatakuliah: data.integrasiMatakuliah || null,
-        metodologi: data.metodologi || null,
-        penulisanLaporan: data.penulisanLaporan || null,
-        // Teknis & Implementasi
-        ruangLingkup: data.ruangLingkup || null,
-        sumberDayaBatasan: data.sumberDayaBatasan || null,
-        teknologi: data.teknologi || null,
-        fiturUtama: data.fiturUtama || null,
-        // Analisis & Evaluasi
-        analisisTemuan: data.analisisTemuan || null,
-        presentasiUjian: data.presentasiUjian || null,
-        stakeholder: data.stakeholder || null,
-        kepatuhanEtika: data.kepatuhanEtika || null,
-        // Timeline
-        timeline: data.timeline || null,
-        kerangkaWaktu: data.kerangkaWaktu || null,
-        deadlineDate,
-        // Production & Demo
-        productionUrl: data.productionUrl || null,
-        productionUrlStatus: data.productionUrlStatus || null,
-        productionUrlCheckedAt: data.productionUrlCheckedAt ? new Date(data.productionUrlCheckedAt) : null,
-        testingUsername: data.testingUsername || null,
-        testingPassword: encryptedTestingPassword,
-        testingNotes: data.testingNotes || null,
-        // Deployment Setup
-        deploymentPlatform: data.deploymentPlatform || null,
-        deploymentDescription: data.deploymentDescription || null,
-        deploymentEvidence: data.deploymentEvidence || null,
-        deploymentTools: data.deploymentTools || null,
-        deploymentBonusPoints,
-        completionPercent,
+        ...updateData,
       },
-      update: {
-        // Informasi Dasar
-        judulProyek: data.judulProyek || null,
-        targetPengguna: data.targetPengguna || null,
-        latarBelakangMasalah: data.latarBelakangMasalah || null,
-        tujuanProyek: data.tujuanProyek || null,
-        manfaatProyek: data.manfaatProyek || null,
-        // Aspek Akademik
-        integrasiMatakuliah: data.integrasiMatakuliah || null,
-        metodologi: data.metodologi || null,
-        penulisanLaporan: data.penulisanLaporan || null,
-        // Teknis & Implementasi
-        ruangLingkup: data.ruangLingkup || null,
-        sumberDayaBatasan: data.sumberDayaBatasan || null,
-        teknologi: data.teknologi || null,
-        fiturUtama: data.fiturUtama || null,
-        // Analisis & Evaluasi
-        analisisTemuan: data.analisisTemuan || null,
-        presentasiUjian: data.presentasiUjian || null,
-        stakeholder: data.stakeholder || null,
-        kepatuhanEtika: data.kepatuhanEtika || null,
-        // Timeline
-        timeline: data.timeline || null,
-        kerangkaWaktu: data.kerangkaWaktu || null,
-        deadlineDate,
-        // Production & Demo
-        productionUrl: data.productionUrl || null,
-        productionUrlStatus: data.productionUrlStatus || null,
-        productionUrlCheckedAt: data.productionUrlCheckedAt ? new Date(data.productionUrlCheckedAt) : null,
-        testingUsername: data.testingUsername || null,
-        testingPassword: encryptedTestingPassword,
-        testingNotes: data.testingNotes || null,
-        // Deployment Setup
-        deploymentPlatform: data.deploymentPlatform || null,
-        deploymentDescription: data.deploymentDescription || null,
-        deploymentEvidence: data.deploymentEvidence || null,
-        deploymentTools: data.deploymentTools || null,
-        deploymentBonusPoints,
-        completionPercent,
-      },
+      update: updateData,
     });
 
     return NextResponse.json({

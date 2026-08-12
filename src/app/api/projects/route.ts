@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { projectSchema } from '@/lib/validations';
+import { encryptNullable } from '@/lib/crypto';
+import { calculateRequirementsCompletion } from '@/lib/student-journey';
 
 // GET /api/projects - Get projects based on user role
 export async function GET(request: Request) {
@@ -324,18 +326,24 @@ export async function POST(request: Request) {
 
       // 5. Create project requirements if additional fields are provided
       if (objectives || methodology || expectedOutcome || technologies || category || productionUrl || testingUsername || testingPassword) {
+        const requirementsData = {
+          judulProyek: title,
+          tujuanProyek: objectives || null,
+          manfaatProyek: expectedOutcome || null,
+          metodologi: methodology || null,
+          teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
+          ruangLingkup: category || null,
+          productionUrl: productionUrl || null,
+          testingUsername: testingUsername || null,
+          testingNotes: testingNotes || null,
+        };
         await tx.projectRequirements.create({
           data: {
             projectId: newProject.id,
-            judulProyek: title,
-            tujuanProyek: objectives || null,
-            metodologi: methodology || null,
-            teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
-            ruangLingkup: category || null,
-            productionUrl: productionUrl || null,
-            testingUsername: testingUsername || null,
-            testingPassword: testingPassword || null,
-            testingNotes: testingNotes || null,
+            ...requirementsData,
+            // Encrypt sensitive testing credentials at-rest
+            testingPassword: encryptNullable(testingPassword),
+            completionPercent: calculateRequirementsCompletion(requirementsData),
           },
         });
       }

@@ -14,6 +14,17 @@ export const REQUIRED_REQUIREMENT_FIELDS = [
 
 export type RequirementField = (typeof REQUIRED_REQUIREMENT_FIELDS)[number]['key'];
 
+// Persentase kelengkapan berdasarkan field wajib yang sudah terisi
+export function calculateRequirementsCompletion(
+  data: Record<string, unknown>,
+): number {
+  const filled = REQUIRED_REQUIREMENT_FIELDS.filter(({ key }) => {
+    const value = data[key];
+    return value !== null && value !== undefined && String(value).trim() !== '';
+  });
+  return Math.round((filled.length / REQUIRED_REQUIREMENT_FIELDS.length) * 100);
+}
+
 type RequirementValues = Partial<Record<RequirementField, string | null>>;
 
 export type SubmissionBlockerCode =

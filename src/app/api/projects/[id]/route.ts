@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import { projectSchema } from '@/lib/validations';
 import { encryptNullable, decryptNullable } from '@/lib/crypto';
+import { calculateRequirementsCompletion } from '@/lib/student-journey';
 
 // GET /api/projects/[id] - Get single project
 export async function GET(
@@ -449,32 +450,39 @@ export async function PUT(
 
       // 2. Update or create project requirements
       const encryptedTestingPassword = encryptNullable(testingPassword);
+      const requirementsUpdate = {
+        judulProyek: title,
+        tujuanProyek: objectives || null,
+        manfaatProyek: expectedOutcome || null,
+        metodologi: methodology || null,
+        teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
+        ruangLingkup: category || null,
+        productionUrl: productionUrl || null,
+        testingUsername: testingUsername || null,
+        testingPassword: encryptedTestingPassword,
+        testingNotes: testingNotes || null,
+      };
+
+      // Recompute completion percentage from merged record so progress stays
+      // konsisten dengan data yang diisi lewat form persyaratan
+      const existingRequirements = await tx.projectRequirements.findUnique({
+        where: { projectId: id },
+      });
+      const completionPercent = calculateRequirementsCompletion({
+        ...(existingRequirements ?? {}),
+        ...requirementsUpdate,
+      });
+
       await tx.projectRequirements.upsert({
         where: { projectId: id },
         create: {
           projectId: id,
-          judulProyek: title,
-          tujuanProyek: objectives || null,
-          manfaatProyek: expectedOutcome || null,
-          metodologi: methodology || null,
-          teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
-          ruangLingkup: category || null,
-          productionUrl: productionUrl || null,
-          testingUsername: testingUsername || null,
-          testingPassword: encryptedTestingPassword,
-          testingNotes: testingNotes || null,
+          ...requirementsUpdate,
+          completionPercent,
         },
         update: {
-          judulProyek: title,
-          tujuanProyek: objectives || null,
-          manfaatProyek: expectedOutcome || null,
-          metodologi: methodology || null,
-          teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
-          ruangLingkup: category || null,
-          productionUrl: productionUrl || null,
-          testingUsername: testingUsername || null,
-          testingPassword: encryptedTestingPassword,
-          testingNotes: testingNotes || null,
+          ...requirementsUpdate,
+          completionPercent,
         },
       });
 
