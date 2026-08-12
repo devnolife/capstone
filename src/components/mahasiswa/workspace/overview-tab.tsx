@@ -13,7 +13,7 @@ import type { StudentJourney, SubmissionBlocker } from '@/lib/student-journey';
 import { JourneyStepper } from './journey-stepper';
 import { SubmitProjectButton } from '@/components/projects/submit-button';
 import type { WorkspaceProject } from './types';
-import { BLOCKER_TARGET, type WorkspaceTab } from './project-workspace';
+import { resolveBlockerTarget, type WorkspaceTab } from './project-workspace';
 
 interface OverviewTabProps {
   project: WorkspaceProject;
@@ -68,8 +68,8 @@ export function OverviewTab({
             {readiness && readiness.blockers.length > 0 ? (
               <div className="space-y-2">
                 {readiness.blockers.map((blocker: SubmissionBlocker, index) => {
-                  const target = BLOCKER_TARGET[blocker.code];
-                  const navigable = !!target && target.tab !== 'ringkasan';
+                  const target = resolveBlockerTarget(blocker);
+                  const navigable = target.tab !== 'ringkasan';
                   return (
                     <button
                       key={`${blocker.code}-${blocker.field ?? index}`}

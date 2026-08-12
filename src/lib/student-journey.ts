@@ -1,16 +1,26 @@
+// `form` menunjukkan form tempat field diisi, supaya UI bisa mengarahkan
+// mahasiswa ke tempat yang benar (tujuanProyek & teknologi hanya ada di
+// form Setup Project, bukan form Persyaratan).
 export const REQUIRED_REQUIREMENT_FIELDS = [
-  { key: 'tujuanProyek', label: 'Tujuan Project' },
-  { key: 'teknologi', label: 'Teknologi' },
-  { key: 'integrasiMatakuliah', label: 'Integrasi Mata Kuliah' },
-  { key: 'metodologi', label: 'Metodologi' },
-  { key: 'ruangLingkup', label: 'Ruang Lingkup' },
-  { key: 'sumberDayaBatasan', label: 'Sumber Daya & Batasan' },
-  { key: 'fiturUtama', label: 'Fitur Utama' },
-  { key: 'analisisTemuan', label: 'Analisis Temuan' },
-  { key: 'presentasiUjian', label: 'Rencana Presentasi' },
-  { key: 'stakeholder', label: 'Informasi Stakeholder' },
-  { key: 'kepatuhanEtika', label: 'Kepatuhan Etika' },
+  { key: 'tujuanProyek', label: 'Tujuan Project', form: 'setup' },
+  { key: 'teknologi', label: 'Teknologi', form: 'setup' },
+  { key: 'integrasiMatakuliah', label: 'Integrasi Mata Kuliah', form: 'persyaratan' },
+  { key: 'metodologi', label: 'Metodologi', form: 'persyaratan' },
+  { key: 'ruangLingkup', label: 'Ruang Lingkup', form: 'persyaratan' },
+  { key: 'sumberDayaBatasan', label: 'Sumber Daya & Batasan', form: 'persyaratan' },
+  { key: 'fiturUtama', label: 'Fitur Utama', form: 'persyaratan' },
+  { key: 'analisisTemuan', label: 'Analisis Temuan', form: 'persyaratan' },
+  { key: 'presentasiUjian', label: 'Rencana Presentasi', form: 'persyaratan' },
+  { key: 'stakeholder', label: 'Informasi Stakeholder', form: 'persyaratan' },
+  { key: 'kepatuhanEtika', label: 'Kepatuhan Etika', form: 'persyaratan' },
 ] as const;
+
+export type RequirementForm = (typeof REQUIRED_REQUIREMENT_FIELDS)[number]['form'];
+
+const REQUIREMENT_FORM_LABELS: Record<RequirementForm, string> = {
+  setup: 'form Setup Project',
+  persyaratan: 'form Persyaratan',
+};
 
 export type RequirementField = (typeof REQUIRED_REQUIREMENT_FIELDS)[number]['key'];
 
@@ -48,6 +58,8 @@ export interface SubmissionBlocker {
   description: string;
   href: string;
   field?: RequirementField;
+  /** Form tempat field diperbaiki (khusus missing_requirement) */
+  form?: RequirementForm;
 }
 
 export interface SubmissionReadinessInput {
@@ -169,8 +181,9 @@ export function checkSubmissionReadiness(
       blockers.push({
         code: 'missing_requirement',
         field: requirement.key,
+        form: requirement.form,
         label: requirement.label,
-        description: `${requirement.label} belum dilengkapi.`,
+        description: `${requirement.label} belum dilengkapi — isi di ${REQUIREMENT_FORM_LABELS[requirement.form]}.`,
         href: `/mahasiswa/project?project=${input.projectId}&tab=kelengkapan`,
       });
     }

@@ -11,6 +11,7 @@ import {
   Award,
   ArrowRight,
   CheckCircle2,
+  Info,
   MessagesSquare,
 } from 'lucide-react';
 import type { StudentJourney, SubmissionBlocker } from '@/lib/student-journey';
@@ -56,20 +57,70 @@ export const BLOCKER_TARGET: Record<
   invalid_status: { tab: 'ringkasan' },
 };
 
+/**
+ * Target navigasi per blocker. Field persyaratan bisa berasal dari form
+ * berbeda (Setup Project vs Persyaratan), jadi anchor ditentukan per-field
+ * agar mahasiswa diarahkan ke form yang benar.
+ */
+export function resolveBlockerTarget(blocker: SubmissionBlocker): {
+  tab: WorkspaceTab;
+  anchor?: string;
+} {
+  if (blocker.code === 'missing_requirement' && blocker.form === 'setup') {
+    return { tab: 'kelengkapan', anchor: 'section-setup' };
+  }
+  return BLOCKER_TARGET[blocker.code] ?? { tab: 'ringkasan' };
+}
+
 const STATUS_LABELS: Record<
   string,
   {
     label: string;
     color: 'default' | 'primary' | 'warning' | 'success' | 'danger' | 'secondary';
+    /** Penjelasan singkat untuk mahasiswa: apa arti status ini & langkah berikutnya */
+    hint: string;
   }
 > = {
-  DRAFT: { label: 'Draft', color: 'default' },
-  SUBMITTED: { label: 'Disubmit', color: 'primary' },
-  IN_REVIEW: { label: 'Sedang Direview', color: 'secondary' },
-  REVISION_NEEDED: { label: 'Perlu Revisi', color: 'warning' },
-  PRESENTATION_SCHEDULED: { label: 'Presentasi Dijadwalkan', color: 'secondary' },
-  APPROVED: { label: 'Disetujui', color: 'success' },
-  REJECTED: { label: 'Ditolak', color: 'danger' },
+  DRAFT: {
+    label: 'Draft',
+    color: 'default',
+    hint: 'Project belum terkirim ke admin. Lengkapi checklist lalu tekan "Submit untuk Review".',
+  },
+  SUBMITTED: {
+    label: 'Disubmit',
+    color: 'primary',
+    hint: 'Project sudah terkirim dan sedang menunggu admin memulai review.',
+  },
+  IN_REVIEW: {
+    label: 'Sedang Direview',
+    color: 'secondary',
+    hint: 'Dosen/admin sedang memeriksa project kamu. Pantau tab Diskusi untuk pertanyaan reviewer.',
+  },
+  REVISION_NEEDED: {
+    label: 'Perlu Revisi',
+    color: 'warning',
+    hint: 'Ada catatan dari reviewer. Perbaiki sesuai komentar, lalu submit ulang.',
+  },
+  READY_FOR_PRESENTATION: {
+    label: 'Siap Presentasi',
+    color: 'secondary',
+    hint: 'Project lolos review dan menunggu jadwal presentasi dari admin.',
+  },
+  PRESENTATION_SCHEDULED: {
+    label: 'Presentasi Dijadwalkan',
+    color: 'secondary',
+    hint: 'Jadwal presentasi sudah ditentukan — cek detailnya di tab Ringkasan.',
+  },
+  APPROVED: {
+    label: 'Disetujui',
+    color: 'success',
+    hint: 'Selamat! Project sudah disetujui dan dinilai selesai.',
+  },
+  REJECTED: {
+    label: 'Ditolak',
+    color: 'danger',
+    hint: 'Project ditolak. Hubungi admin/dosen untuk langkah selanjutnya.',
+  },
 };
 
 /** Scroll ke anchor & minta seksi terkait membuka diri (custom event). */
@@ -136,7 +187,7 @@ export function ProjectWorkspace({
   // Aksi cepat / klik blocker: pindah tab lalu scroll ke seksi
   const goToBlocker = useCallback(
     (blocker: SubmissionBlocker) => {
-      const target = BLOCKER_TARGET[blocker.code] ?? { tab: 'ringkasan' as const };
+      const target = resolveBlockerTarget(blocker);
       setTab(target.tab);
       if (target.anchor) setPendingAnchor(target.anchor);
     },
@@ -154,7 +205,7 @@ export function ProjectWorkspace({
   const blockerCounts = useMemo(() => {
     const counts: Partial<Record<WorkspaceTab, number>> = {};
     for (const blocker of journey.readiness?.blockers ?? []) {
-      const tab = (BLOCKER_TARGET[blocker.code] ?? { tab: 'ringkasan' }).tab;
+      const tab = resolveBlockerTarget(blocker).tab;
       counts[tab] = (counts[tab] ?? 0) + 1;
     }
     return counts;
@@ -175,7 +226,24 @@ export function ProjectWorkspace({
   const status = STATUS_LABELS[project.status] ?? {
     label: project.status,
     color: 'default' as const,
+    hint: '',
   };
+
+  const remainingBlockers =
+    journey.readiness?.blockers.filter(
+      (b) => b.code !== 'submission_deadline' && b.code !== 'invalid_status',
+    ).length ?? 0;
+
+  // Penjelasan status yang kontekstual: saat Draft & semua lengkap,
+  // dorong mahasiswa untuk submit; saat masih kurang, sebutkan jumlahnya.
+  const statusHint =
+    project.status === 'DRAFT' || project.status === 'REVISION_NEEDED'
+      ? remainingBlockers > 0
+        ? `${status.hint} Masih ada ${remainingBlockers} item checklist yang perlu dilengkapi.`
+        : project.status === 'DRAFT'
+          ? 'Semua checklist lengkap — tinggal tekan "Submit untuk Review" di tab Ringkasan.'
+          : status.hint
+      : status.hint;
 
   const tabTitle = (label: string, tab: WorkspaceTab, icon: React.ReactNode) => {
     const count = blockerCounts[tab] ?? 0;
@@ -208,6 +276,14 @@ export function ProjectWorkspace({
             {project.semester} {project.tahunAkademik} · Semua kebutuhan project
             dalam satu halaman
           </p>
+          {statusHint && (
+            <p className="flex items-start gap-1.5 text-xs text-default-600 dark:text-default-400 mt-1.5">
+              <Info size={13} className="mt-0.5 shrink-0 text-default-400" />
+              <span>
+                <span className="font-medium">{status.label}:</span> {statusHint}
+              </span>
+            </p>
+          )}
         </div>
         {projects.length > 1 && (
           <Select
