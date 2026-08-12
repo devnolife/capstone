@@ -448,20 +448,26 @@ export async function PUT(
         },
       });
 
-      // 2. Update or create project requirements
-      const encryptedTestingPassword = encryptNullable(testingPassword);
-      const requirementsUpdate = {
+      // 2. Update or create project requirements.
+      // Hanya field yang ADA di request body yang ditulis, supaya PUT parsial
+      // (mis. hanya ganti judul) tidak menghapus data yang diisi lewat form
+      // persyaratan atau form setup sebelumnya.
+      const requirementsUpdate: Record<string, unknown> = {
         judulProyek: title,
-        tujuanProyek: objectives || null,
-        manfaatProyek: expectedOutcome || null,
-        metodologi: methodology || null,
-        teknologi: technologies ? (Array.isArray(technologies) ? technologies.join(', ') : technologies) : null,
-        ruangLingkup: category || null,
-        productionUrl: productionUrl || null,
-        testingUsername: testingUsername || null,
-        testingPassword: encryptedTestingPassword,
-        testingNotes: testingNotes || null,
       };
+      if (objectives !== undefined) requirementsUpdate.tujuanProyek = objectives || null;
+      if (expectedOutcome !== undefined) requirementsUpdate.manfaatProyek = expectedOutcome || null;
+      if (methodology !== undefined) requirementsUpdate.metodologi = methodology || null;
+      if (technologies !== undefined) {
+        requirementsUpdate.teknologi = technologies
+          ? (Array.isArray(technologies) ? technologies.join(', ') : technologies)
+          : null;
+      }
+      if (category !== undefined) requirementsUpdate.ruangLingkup = category || null;
+      if (productionUrl !== undefined) requirementsUpdate.productionUrl = productionUrl || null;
+      if (testingUsername !== undefined) requirementsUpdate.testingUsername = testingUsername || null;
+      if (testingPassword !== undefined) requirementsUpdate.testingPassword = encryptNullable(testingPassword);
+      if (testingNotes !== undefined) requirementsUpdate.testingNotes = testingNotes || null;
 
       // Recompute completion percentage from merged record so progress stays
       // konsisten dengan data yang diisi lewat form persyaratan
