@@ -70,6 +70,16 @@ export async function POST(request: NextRequest) {
 
     // Check if already forked
     if (project.orgRepoUrl) {
+      // Repo already forked (e.g. project was approved before, then reverted
+      // and resubmitted). Still make sure the status becomes APPROVED so the
+      // approval does not silently fail.
+      if (project.status !== 'APPROVED') {
+        await prisma.project.update({
+          where: { id: projectId },
+          data: { status: 'APPROVED', approvedAt: new Date() },
+        });
+      }
+
       return NextResponse.json({
         success: true,
         message: 'Repository sudah di-fork sebelumnya',

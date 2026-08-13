@@ -14,7 +14,7 @@ interface CompletenessTabProps {
  * Tab Kelengkapan — satu tempat untuk mengisi SEMUA data project:
  * setup repository/consent/URL produksi + form persyaratan lengkap.
  */
-export function CompletenessTab({ projectId }: CompletenessTabProps) {
+export function CompletenessTab({ projectId, canEdit }: CompletenessTabProps) {
   return (
     <div className="space-y-6 pt-6">
       {/* Setup: GitHub repo, consent, production URL */}
@@ -25,7 +25,7 @@ export function CompletenessTab({ projectId }: CompletenessTabProps) {
         </div>
         <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
           <CardBody className="p-4 md:p-6">
-            <ProjectSetupForm projectId={projectId} />
+            <ProjectSetupForm projectId={projectId} canEdit={canEdit} />
           </CardBody>
         </Card>
       </section>

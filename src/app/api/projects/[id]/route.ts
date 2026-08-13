@@ -260,7 +260,7 @@ export async function PUT(
         'SUBMITTED': ['IN_REVIEW', 'DRAFT', 'APPROVED', 'REJECTED'],
         'IN_REVIEW': ['READY_FOR_PRESENTATION', 'REVISION_NEEDED', 'APPROVED', 'REJECTED', 'DRAFT'],
         'REVISION_NEEDED': ['SUBMITTED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'DRAFT'],
-        'READY_FOR_PRESENTATION': ['PRESENTATION_SCHEDULED', 'IN_REVIEW', 'APPROVED', 'REJECTED', 'DRAFT'],
+        'READY_FOR_PRESENTATION': ['PRESENTATION_SCHEDULED', 'IN_REVIEW', 'REVISION_NEEDED', 'APPROVED', 'REJECTED', 'DRAFT'],
         'PRESENTATION_SCHEDULED': ['APPROVED', 'REJECTED', 'READY_FOR_PRESENTATION', 'DRAFT'],
         'APPROVED': ['REJECTED', 'DRAFT'],
         'REJECTED': ['DRAFT', 'SUBMITTED', 'READY_FOR_PRESENTATION'],
@@ -301,8 +301,13 @@ export async function PUT(
       }
 
       // Clear approvedAt if rejected or reverted
-      if (newStatus === 'REJECTED' || newStatus === 'REVISION_NEEDED') {
+      if (newStatus === 'REJECTED' || newStatus === 'REVISION_NEEDED' || newStatus === 'DRAFT') {
         updateData.approvedAt = null;
+      }
+
+      // Reverting to DRAFT means the project is no longer submitted
+      if (newStatus === 'DRAFT') {
+        updateData.submittedAt = null;
       }
 
       const project = await prisma.project.update({
@@ -335,6 +340,10 @@ export async function PUT(
         case 'REJECTED':
           notificationTitle = 'Project Ditolak';
           notificationMessage = `Project "${project.title}" tidak disetujui. Silakan hubungi dosen penguji.`;
+          break;
+        case 'DRAFT':
+          notificationTitle = 'Project Dikembalikan ke Draft';
+          notificationMessage = `Project "${project.title}" dikembalikan ke status Draft. Anda dapat mengedit dan submit ulang project.`;
           break;
       }
 

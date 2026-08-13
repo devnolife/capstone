@@ -210,6 +210,25 @@ export async function POST(request: Request) {
 
     const body = await request.json();
 
+    // Satu mahasiswa hanya boleh punya satu project aktif (kecuali yang ditolak).
+    const activeProject = await prisma.project.findFirst({
+      where: {
+        mahasiswaId: session.user.id,
+        status: { not: 'REJECTED' },
+      },
+      select: { id: true, title: true, status: true },
+    });
+
+    if (activeProject) {
+      return NextResponse.json(
+        {
+          error: `Anda sudah memiliki project aktif: "${activeProject.title}" (${activeProject.status}). Satu mahasiswa hanya dapat memiliki satu project.`,
+          projectId: activeProject.id,
+        },
+        { status: 409 },
+      );
+    }
+
     // Validate input
     const validatedData = projectSchema.safeParse(body);
 

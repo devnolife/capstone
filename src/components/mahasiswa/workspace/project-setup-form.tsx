@@ -209,12 +209,14 @@ const SectionHeader = ({ icon: Icon, title, subtitle, action }: {
   </div>
 );
 
-export function ProjectSetupForm({ projectId: id }: { projectId: string }) {
+export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId: string; canEdit?: boolean }) {
   const router = useRouter();
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState('');
+  const [isEditable, setIsEditable] = useState(canEdit);
+  const [projectStatus, setProjectStatus] = useState<string>('');
   const [semesters, setSemesters] = useState<Semester[]>([]);
   const [isRepoSelectorOpen, setIsRepoSelectorOpen] = useState(false);
   const [selectedRepo, setSelectedRepo] = useState<SelectedRepo | null>(null);
@@ -308,16 +310,12 @@ export function ProjectSetupForm({ projectId: id }: { projectId: string }) {
         }
         const project: ProjectData = await response.json();
 
-        // Check if project can be edited (DRAFT or REVISION_NEEDED)
-        if (project.status !== 'DRAFT' && project.status !== 'REVISION_NEEDED') {
-          addToast({
-            title: 'Tidak dapat mengedit',
-            description: 'Hanya project dengan status DRAFT atau REVISION_NEEDED yang dapat diedit',
-            color: 'warning',
-          });
-          router.refresh();
-          return;
-        }
+        // Project hanya bisa diedit saat DRAFT / REVISION_NEEDED.
+        // Selain itu form tetap ditampilkan (read-only), bukan error.
+        setProjectStatus(project.status);
+        const editableStatus =
+          project.status === 'DRAFT' || project.status === 'REVISION_NEEDED';
+        setIsEditable(canEdit && editableStatus);
 
         setOriginalProject(project);
         const req = project.requirements;
@@ -401,7 +399,7 @@ export function ProjectSetupForm({ projectId: id }: { projectId: string }) {
     };
 
     fetchProject();
-  }, [id, router]);
+  }, [id, router, canEdit]);
 
   // Calculate form completion
   const formCompletion = useMemo(() => {
@@ -530,6 +528,15 @@ export function ProjectSetupForm({ projectId: id }: { projectId: string }) {
   }, [formData.productionUrl, validateProductionUrl]);
 
   const handleSubmit = async () => {
+    if (!isEditable) {
+      addToast({
+        title: 'Tidak dapat mengedit',
+        description: `Project dengan status ${projectStatus || 'ini'} tidak dapat diubah.`,
+        color: 'warning',
+      });
+      return;
+    }
+
     setIsLoading(true);
     setError('');
 
@@ -642,7 +649,11 @@ export function ProjectSetupForm({ projectId: id }: { projectId: string }) {
           label="REPOSITORY & SETUP"
           labelRight=""
           title="Pengaturan Project"
-          description="Perbarui informasi project capstone Anda."
+          description={
+            isEditable
+              ? 'Perbarui informasi project capstone Anda.'
+              : 'Menampilkan data project capstone Anda (tidak dapat diubah).'
+          }
           actions={
             <div className="flex items-center gap-2">
               {/* Progress Indicator */}
@@ -703,21 +714,75 @@ export function ProjectSetupForm({ projectId: id }: { projectId: string }) {
               </Tooltip>
 
               {/* Save Button */}
-              <Button
-                color="primary"
-                size="sm"
-                startContent={!isLoading && <Save size={16} />}
-                isLoading={isLoading}
-                isDisabled={!isFormValid}
-                onPress={handleSubmit}
-                className="font-semibold px-5 h-10 rounded-full"
-              >
-                Simpan Perubahan
-              </Button>
+              {isEditable ? (
+                <Button
+                  color="primary"
+                  size="sm"
+                  startContent={!isLoading && <Save size={16} />}
+                  isLoading={isLoading}
+                  isDisabled={!isFormValid}
+                  onPress={handleSubmit}
+                  className="font-semibold px-5 h-10 rounded-full"
+                >
+                  Simpan Perubahan
+                </Button>
+              ) : (
+                <Chip
+                  size="lg"
+                  variant="flat"
+                  color="warning"
+                  startContent={<Eye size={14} className="ml-1" />}
+                  className="h-10 font-medium"
+                >
+                  Mode baca saja
+                </Chip>
+              )}
             </div>
           }
         />
       </div>
+
+      {!isEditable && (
+        <div className="mb-6 overflow-hidden rounded-2xl border border-warning/30 bg-gradient-to-r from-warning/10 to-transparent">
+          <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-4">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-warning/15 text-warning">
+                <Shield size={20} />
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-semibold text-foreground">Data setup terkunci</h3>
+                  {projectStatus && (
+                    <Chip size="sm" variant="flat" color="warning" className="font-medium">
+                      {projectStatus.replace(/_/g, ' ')}
+                    </Chip>
+                  )}
+                </div>
+                <p className="max-w-xl text-sm text-app-secondary-invert">
+                  {projectStatus && projectStatus !== 'DRAFT' && projectStatus !== 'REVISION_NEEDED'
+                    ? 'Project sudah diajukan dan sedang dalam proses penilaian, jadi data setup dikunci agar konsisten dengan yang dinilai dosen. Anda tetap bisa melihat seluruh isinya di bawah.'
+                    : 'Anda tidak memiliki akses untuk mengubah data setup project ini. Hubungi ketua kelompok bila ada data yang perlu diperbaiki.'}
+                </p>
+                <p className="text-xs text-app-teritary-invert">
+                  Perlu perbaikan? Minta dosen pembimbing mengembalikan status project ke{' '}
+                  <span className="font-medium text-foreground">Revisi</span> agar form terbuka kembali.
+                </p>
+              </div>
+            </div>
+            <Button
+              as={Link}
+              href="/mahasiswa/project?tab=diskusi"
+              variant="flat"
+              size="sm"
+              radius="full"
+              className="shrink-0 bg-app-quinary font-medium"
+              startContent={<FileText size={14} />}
+            >
+              Ajukan revisi lewat diskusi
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Error Alert */}
       <AnimatePresence>

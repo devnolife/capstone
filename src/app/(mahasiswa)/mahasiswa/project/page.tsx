@@ -206,7 +206,8 @@ export default async function ProjectWorkspacePage({
   }
 
   const canEdit =
-    (project.status === 'DRAFT' || project.status === 'REVISION_NEEDED') && isOwner;
+    (project.status === 'DRAFT' || project.status === 'REVISION_NEEDED') &&
+    (isOwner || isTeamMember || session.user.role === 'ADMIN');
 
   const submissionDeadline = resolveProjectSubmissionDeadline(
     { semester: project.semester, tahunAkademik: project.tahunAkademik },
@@ -229,12 +230,12 @@ export default async function ProjectWorkspacePage({
       reviews: reviews.map((r) => ({ status: r.status })),
       presentationSchedule: project.presentationSchedule
         ? {
-            scheduledDate: project.presentationSchedule.scheduledDate.toISOString(),
-            startTime: project.presentationSchedule.startTime,
-            endTime: project.presentationSchedule.endTime,
-            location: project.presentationSchedule.location,
-            presentationStatus: project.presentationSchedule.presentationStatus,
-          }
+          scheduledDate: project.presentationSchedule.scheduledDate.toISOString(),
+          startTime: project.presentationSchedule.startTime,
+          endTime: project.presentationSchedule.endTime,
+          location: project.presentationSchedule.location,
+          presentationStatus: project.presentationSchedule.presentationStatus,
+        }
         : null,
       memberCount: new Set([
         project.mahasiswaId,
@@ -255,11 +256,11 @@ export default async function ProjectWorkspacePage({
     averageScore:
       reviews.filter((r) => r.overallScore !== null).length > 0
         ? Math.round(
-            reviews
-              .filter((r) => r.overallScore !== null)
-              .reduce((acc, r) => acc + (r.overallScore || 0), 0) /
-              reviews.filter((r) => r.overallScore !== null).length,
-          )
+          reviews
+            .filter((r) => r.overallScore !== null)
+            .reduce((acc, r) => acc + (r.overallScore || 0), 0) /
+          reviews.filter((r) => r.overallScore !== null).length,
+        )
         : null,
   };
 

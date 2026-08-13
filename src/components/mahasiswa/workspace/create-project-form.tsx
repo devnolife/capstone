@@ -394,7 +394,20 @@ export function CreateProjectForm() {
       });
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Gagal membuat project');
+      if (!response.ok) {
+        // Sudah punya project aktif — arahkan langsung ke project tersebut
+        if (response.status === 409 && data.projectId) {
+          addToast({
+            title: 'Anda sudah punya project',
+            description: data.error,
+            color: 'warning',
+          });
+          router.push(`/mahasiswa/project?project=${data.projectId}`);
+          router.refresh();
+          return;
+        }
+        throw new Error(data.error || 'Gagal membuat project');
+      }
 
       router.push(`/mahasiswa/project?project=${data.project.id}`);
       router.refresh();
