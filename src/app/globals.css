@@ -1142,7 +1142,9 @@ html {
   --color-fog: var(--color-stone-border);
   --color-mist: var(--color-canvas-fog);
   --color-snow: var(--color-cloud-white);
-  --color-ember: var(--color-chartwell-blue);
+  /* Aksen utama. #3ba6f1 hanya punya kontras 2.65:1 di atas putih (gagal WCAG AA),
+     jadi light mode memakai biru yang lebih pekat; dark mode tetap biru terang. */
+  --color-ember: #1276c9;
   --color-orchid-flash: var(--color-sky-tint);
 
   --ae-cream: var(--color-mist);
@@ -1153,6 +1155,14 @@ html {
   --ae-cobalt: var(--color-graphite);
   --ae-coral: var(--color-ember);
   --ae-peach: var(--color-fog);
+}
+
+/* Dark mode: permukaan gelap butuh aksen & teks sekunder yang lebih terang
+   agar tetap terbaca (WCAG AA). */
+.dark {
+  --color-ember: var(--color-chartwell-blue);
+  --color-ash-gray: #a1a1aa;
+  --color-steel-gray: #d4d4d8;
 }
 
 .font-serif-display {

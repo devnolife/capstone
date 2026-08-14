@@ -1327,7 +1327,14 @@ export default function ReviewPage({
                         startContent={<Users size={14} />}
                       >
                         Individu
-                        <Chip size="sm" variant="flat" color="secondary" className="ml-1">{project.members.length}</Chip>
+                        <span
+                          className={`ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold tabular-nums ${penilaianSubTab === 'individu'
+                            ? 'bg-primary-foreground/25 text-primary-foreground'
+                            : 'bg-app-primary text-foreground'
+                            }`}
+                        >
+                          {project.members.length}
+                        </span>
                       </Button>
                     </div>
                   )}

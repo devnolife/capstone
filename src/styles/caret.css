@@ -94,7 +94,8 @@
 
   --app-primary-invert: #09090be6;
   --app-secondary-invert: #09090b99;
-  --app-teritary-invert: #09090b73;
+  /* dinaikkan dari #09090b73 (3.19:1 — gagal WCAG AA) ke 4.6:1 */
+  --app-teritary-invert: #09090b8f;
   --app-quaternary-invert: #09090b1f;
   --app-quinary-invert: #09090b80;
   --app-primary: #09090b14;
@@ -144,7 +145,8 @@
 
   --app-primary-invert: #fafafad9;
   --app-secondary-invert: #fafafa8c;
-  --app-teritary-invert: #fafafa40;
+  /* dinaikkan dari #fafafa40 (2.09:1 — nyaris tak terbaca) ke 5.18:1 */
+  --app-teritary-invert: #fafafa80;
   --app-quaternary-invert: #fafafa1a;
   --app-quinary-invert: #fafafa80;
   --app-primary: #fafafa1a;

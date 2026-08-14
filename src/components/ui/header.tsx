@@ -256,7 +256,7 @@ export function Header({ title, onMenuClick }: HeaderProps) {
           onClear={() => setSearchQuery('')}
           startContent={<Search size={18} className="text-default-400" />}
           endContent={
-            <div className="hidden lg:flex items-center gap-1 text-default-400">
+            <div className="hidden lg:flex items-center gap-1 text-default-600">
               <kbd className="px-1.5 py-0.5 text-[10px] font-medium bg-default-200 rounded">
                 <Command size={10} className="inline" />
               </kbd>
