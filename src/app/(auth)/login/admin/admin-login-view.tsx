@@ -13,49 +13,30 @@ const labelClass =
   'mb-2 block font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#a2a2a2]';
 
 export function AdminLoginView() {
-  const [step, setStep] = useState<'gate' | 'login'>('gate');
   const [accessCode, setAccessCode] = useState('');
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleGate = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
     try {
-      const res = await fetch('/api/auth/admin-gate', {
+      const gate = await fetch('/api/auth/admin-gate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: accessCode }),
       });
-      if (res.ok) {
-        setStep('login');
-      } else {
-        const data = await res.json().catch(() => null);
-        setError(data?.message || 'Kode akses tidak valid.');
-      }
-    } catch {
-      setError('Terjadi kesalahan. Silakan coba lagi.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    try {
-      const result = await signIn('credentials', {
-        username: credentials.username,
-        password: credentials.password,
-        accessCode,
-        redirect: false,
-      });
+      if (!gate.ok) {
+        const data = await gate.json().catch(() => null);
+        setError(data?.message || 'Kode akses tidak valid.');
+        return;
+      }
+
+      const result = await signIn('credentials', { accessCode, redirect: false });
       if (result?.error) {
-        setError(result.code || 'Username atau password salah.');
+        setError(result.code || 'Kode akses tidak valid.');
       } else {
         window.location.href = '/admin/dashboard';
       }
@@ -89,18 +70,15 @@ export function AdminLoginView() {
         <div className="w-full max-w-[420px]">
           <div className="day-glow-code relative overflow-hidden rounded-[12px] border border-[#252525] bg-[#0d0d0d]">
             <div aria-hidden="true" className="day-accent-top absolute inset-x-8 top-0 h-px" />
-            <DayWindowChrome filename={step === 'gate' ? 'gate.sh' : 'admin.sh'} />
+            <DayWindowChrome filename="admin.sh" />
 
             <div className="px-6 py-7 sm:px-8">
               <span className="day-mono-label">[RESTRICTED] · AREA ADMIN</span>
               <h1 className="mt-3 font-day-sans text-[26px] font-semibold leading-[32px] tracking-[-1px] text-white">
-                {step === 'gate' ? 'Kode Akses' : 'Login Admin'}
-                <span className="text-[#0080ff]">.</span>
+                Kode Akses<span className="text-[#0080ff]">.</span>
               </h1>
               <p className="mt-2 font-day-sans text-[14px] leading-[21px] text-[#a2a2a2]">
-                {step === 'gate'
-                  ? 'Masukkan kode akses admin untuk membuka halaman login.'
-                  : 'Kode diterima. Silakan masuk dengan kredensial admin.'}
+                Masukkan kode akses admin untuk masuk. Tidak ada username atau password.
               </p>
 
               {error ? (
@@ -112,106 +90,33 @@ export function AdminLoginView() {
                 </div>
               ) : null}
 
-              {step === 'gate' ? (
-                <form onSubmit={handleGate} className="mt-6 flex flex-col gap-4">
-                  <div>
-                    <label htmlFor="admin-code" className={labelClass}>
-                      Kode Akses
-                    </label>
-                    <input
-                      id="admin-code"
-                      type="password"
-                      inputMode="text"
-                      autoComplete="off"
-                      placeholder="••••••••"
-                      value={accessCode}
-                      onChange={(e) => setAccessCode(e.target.value)}
-                      required
-                      autoFocus
-                      className={inputClass}
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-[#0080ff] px-6 font-day-mono text-[16px] leading-none tracking-[-0.16px] text-white transition-colors duration-250 hover:bg-[#0066dd] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {isLoading ? 'Memeriksa...' : 'Buka Halaman Login'}
-                    {!isLoading ? <ArrowRightIcon className="h-4 w-4" /> : null}
-                  </button>
-                </form>
-              ) : (
-                <form onSubmit={handleLogin} className="mt-6 flex flex-col gap-4">
-                  <div>
-                    <label htmlFor="admin-username" className={labelClass}>
-                      Username
-                    </label>
-                    <input
-                      id="admin-username"
-                      type="text"
-                      value={credentials.username}
-                      onChange={(e) =>
-                        setCredentials({ ...credentials, username: e.target.value })
-                      }
-                      required
-                      autoFocus
-                      autoComplete="username"
-                      className={inputClass}
-                    />
-                  </div>
+              <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
+                <div>
+                  <label htmlFor="admin-code" className={labelClass}>
+                    Kode Akses
+                  </label>
+                  <input
+                    id="admin-code"
+                    type="password"
+                    autoComplete="off"
+                    placeholder="••••••••"
+                    value={accessCode}
+                    onChange={(e) => setAccessCode(e.target.value)}
+                    required
+                    autoFocus
+                    className={inputClass}
+                  />
+                </div>
 
-                  <div>
-                    <div className="mb-2 flex items-center justify-between">
-                      <label
-                        htmlFor="admin-password"
-                        className="block font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#a2a2a2]"
-                      >
-                        Password
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#585858] transition-colors hover:text-white"
-                      >
-                        {showPassword ? '[ sembunyikan ]' : '[ tampilkan ]'}
-                      </button>
-                    </div>
-                    <input
-                      id="admin-password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder="••••••••"
-                      value={credentials.password}
-                      onChange={(e) =>
-                        setCredentials({ ...credentials, password: e.target.value })
-                      }
-                      required
-                      autoComplete="current-password"
-                      className={inputClass}
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-[#0080ff] px-6 font-day-mono text-[16px] leading-none tracking-[-0.16px] text-white transition-colors duration-250 hover:bg-[#0066dd] disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {isLoading ? 'Memproses...' : 'Masuk'}
-                    {!isLoading ? <ArrowRightIcon className="h-4 w-4" /> : null}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep('gate');
-                      setAccessCode('');
-                      setError('');
-                    }}
-                    className="font-day-mono text-[12px] tracking-[-0.24px] text-[#585858] transition-colors hover:text-white"
-                  >
-                    ← ganti kode akses
-                  </button>
-                </form>
-              )}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-[#0080ff] px-6 font-day-mono text-[16px] leading-none tracking-[-0.16px] text-white transition-colors duration-250 hover:bg-[#0066dd] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isLoading ? 'Memproses...' : 'Masuk sebagai Admin'}
+                  {!isLoading ? <ArrowRightIcon className="h-4 w-4" /> : null}
+                </button>
+              </form>
             </div>
 
             <div className="flex h-[30px] items-center justify-between border-t border-[#1c1c1c] px-4">

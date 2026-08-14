@@ -2,7 +2,6 @@ import NextAuth, { CredentialsSignin } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GitHub from 'next-auth/providers/github';
 import Keycloak from 'next-auth/providers/keycloak';
-import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
 import { encryptNullable } from '@/lib/crypto';
 import { isAdminAccessCodeValid } from '@/lib/admin-access-code';
@@ -125,53 +124,38 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Credentials({
       name: 'credentials',
       credentials: {
-        username: { label: 'Username', type: 'text' },
-        password: { label: 'Password', type: 'password' },
         accessCode: { label: 'Kode Akses', type: 'password' },
       },
       async authorize(credentials) {
-        // Login credentials sekarang HANYA untuk ADMIN dan wajib melewati
-        // gerbang kode akses (ADMIN_ACCESS_CODE). Mahasiswa & dosen memakai SSO.
+        // Login credentials sekarang HANYA untuk ADMIN dan satu-satunya faktor
+        // adalah kode akses (ADMIN_ACCESS_CODE). Mahasiswa & dosen memakai SSO.
         if (!isAdminAccessCodeValid(credentials?.accessCode)) {
           throw new LoginError('Kode akses tidak valid');
         }
 
-        if (!credentials?.username || !credentials?.password) {
-          throw new LoginError('Username dan password diperlukan');
+        const adminUsername = process.env.ADMIN_USERNAME;
+        const adminUser = adminUsername
+          ? await prisma.user.findUnique({ where: { username: adminUsername } })
+          : await prisma.user.findFirst({
+            where: { role: 'ADMIN' as Role, isActive: true },
+            orderBy: { createdAt: 'asc' },
+          });
+
+        if (!adminUser || adminUser.role !== ('ADMIN' as Role)) {
+          throw new LoginError('Akun admin tidak ditemukan');
         }
 
-        const username = credentials.username as string;
-        const password = credentials.password as string;
-
-        const existingUser = await prisma.user.findUnique({
-          where: { username },
-        });
-
-        if (!existingUser || !existingUser.password) {
-          throw new LoginError('Username atau password salah');
-        }
-
-        if (existingUser.role !== ('ADMIN' as Role)) {
-          throw new LoginError('Akun ini bukan akun admin');
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-
-        if (!isPasswordValid) {
-          throw new LoginError('Username atau password salah');
-        }
-
-        if (!existingUser.isActive) {
+        if (!adminUser.isActive) {
           throw new LoginError('Akun tidak aktif');
         }
 
         return {
-          id: existingUser.id,
-          username: existingUser.username,
-          name: existingUser.name,
-          role: existingUser.role,
-          image: existingUser.image,
-          githubUsername: existingUser.githubUsername,
+          id: adminUser.id,
+          username: adminUser.username,
+          name: adminUser.name,
+          role: adminUser.role,
+          image: adminUser.image,
+          githubUsername: adminUser.githubUsername,
         };
       },
     }),
