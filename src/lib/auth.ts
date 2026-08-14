@@ -4,8 +4,8 @@ import GitHub from 'next-auth/providers/github';
 import Keycloak from 'next-auth/providers/keycloak';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
-import { validateSimakCredentials, upsertUserFromSimak } from '@/lib/simak';
 import { encryptNullable } from '@/lib/crypto';
+import { isAdminAccessCodeValid } from '@/lib/admin-access-code';
 import type { Role } from '@/generated/prisma';
 
 declare module 'next-auth' {
@@ -42,14 +42,6 @@ const useSecureCookies = false; // Disable for reverse proxy setup
 const cookiePrefix = ''; // No prefix needed
 
 /**
- * Akun fake untuk development (login tanpa database).
- * Aktif ketika NODE_ENV=development, atau ALLOW_FAKE_LOGIN=true di .env.
- * Kredensial ini sinkron dengan tombol "Dev mode" di halaman login.
- */
-const FAKE_LOGIN_ENABLED =
-  process.env.NODE_ENV === 'development' || process.env.ALLOW_FAKE_LOGIN === 'true';
-
-/**
  * Error login dengan pesan yang diteruskan ke client via `code`.
  * NextAuth v5 menyembunyikan Error biasa sebagai "Configuration",
  * jadi kita pakai subclass CredentialsSignin agar pesan asli sampai ke UI.
@@ -61,35 +53,6 @@ class LoginError extends CredentialsSignin {
   }
 }
 
-const FAKE_ACCOUNTS: Array<{
-  id: string;
-  username: string;
-  password: string;
-  name: string;
-  role: Role;
-}> = [
-  {
-    id: 'dev-admin',
-    username: 'devnolife',
-    password: 'hanyaAdmin@25',
-    name: 'Admin Prodi',
-    role: 'ADMIN' as Role,
-  },
-  {
-    id: 'dev-dosen',
-    username: 'dosen',
-    password: 'password123',
-    name: 'Dr. Andi Rahman',
-    role: 'DOSEN_PENGUJI' as Role,
-  },
-  {
-    id: 'dev-mahasiswa',
-    username: 'mahasiswa',
-    password: 'password123',
-    name: 'Aldi Pratama',
-    role: 'MAHASISWA' as Role,
-  },
-];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
@@ -135,168 +98,67 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
        (termasuk login credentials), bukan hanya tombol SSO. */
     ...(process.env.SSO_ISSUER && process.env.SSO_CLIENT_ID
       ? [
-          Keycloak({
-            // SSO Unismuh (Keycloak OIDC) — lihat https://sso.if.unismuh.ac.id/docs/
-            id: 'sso-unismuh',
-            name: 'SSO Unismuh',
-            issuer: process.env.SSO_ISSUER,
-            clientId: process.env.SSO_CLIENT_ID,
-            clientSecret: process.env.SSO_CLIENT_SECRET,
-            authorization: { params: { scope: 'openid profile email' } },
-          }),
-        ]
+        Keycloak({
+          // SSO Unismuh (Keycloak OIDC) — lihat https://sso.if.unismuh.ac.id/docs/
+          id: 'sso-unismuh',
+          name: 'SSO Unismuh',
+          issuer: process.env.SSO_ISSUER,
+          clientId: process.env.SSO_CLIENT_ID,
+          clientSecret: process.env.SSO_CLIENT_SECRET,
+          authorization: { params: { scope: 'openid profile email' } },
+        }),
+      ]
       : []),
     ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
       ? [
-          GitHub({
-            clientId: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET,
-            authorization: {
-              params: {
-                scope: 'read:user user:email repo',
-              },
+        GitHub({
+          clientId: process.env.GITHUB_CLIENT_ID,
+          clientSecret: process.env.GITHUB_CLIENT_SECRET,
+          authorization: {
+            params: {
+              scope: 'read:user user:email repo',
             },
-          }),
-        ]
+          },
+        }),
+      ]
       : []),
     Credentials({
       name: 'credentials',
       credentials: {
-        username: { label: 'NIM/Username', type: 'text' },
+        username: { label: 'Username', type: 'text' },
         password: { label: 'Password', type: 'password' },
+        accessCode: { label: 'Kode Akses', type: 'password' },
       },
       async authorize(credentials) {
+        // Login credentials sekarang HANYA untuk ADMIN dan wajib melewati
+        // gerbang kode akses (ADMIN_ACCESS_CODE). Mahasiswa & dosen memakai SSO.
+        if (!isAdminAccessCodeValid(credentials?.accessCode)) {
+          throw new LoginError('Kode akses tidak valid');
+        }
+
         if (!credentials?.username || !credentials?.password) {
-          throw new LoginError('NIM/Username dan password diperlukan');
+          throw new LoginError('Username dan password diperlukan');
         }
 
         const username = credentials.username as string;
         const password = credentials.password as string;
 
-        // ---------- DEV: fake accounts (tanpa database) ----------
-        // Hanya cocok jika username + password sama persis dengan akun fake;
-        // selain itu jatuh ke alur normal (DB/SIMAK) supaya akun asli tetap jalan.
-        if (FAKE_LOGIN_ENABLED) {
-          const fake = FAKE_ACCOUNTS.find(
-            (acc) => acc.username === username && acc.password === password,
-          );
-          if (fake) {
-            console.warn(`[auth] Fake login (dev): ${fake.username} sebagai ${fake.role}`);
-            return {
-              id: fake.id,
-              username: fake.username,
-              name: fake.name,
-              role: fake.role,
-              image: null,
-              githubUsername: null,
-            };
-          }
-        }
-
-        // Check if user exists locally first
         const existingUser = await prisma.user.findUnique({
           where: { username },
         });
 
-        // For MAHASISWA role, try SIMAK validation first
-        // Determine if this could be a student NIM (numeric pattern)
-        const isStudentNim = /^\d+$/.test(username);
-
-        if (isStudentNim) {
-          if (existingUser && !existingUser.isActive) {
-            throw new LoginError('Akun tidak aktif');
-          }
-
-          // ---------- FAST PATH: local bcrypt ----------
-          // If user already exists and was previously SIMAK-validated, try
-          // the local bcrypt hash first to avoid a network call to SIMAK on
-          // every login.
-          let localPasswordMatches = false;
-          if (existingUser?.password && existingUser.simakValidated) {
-            localPasswordMatches = await bcrypt.compare(password, existingUser.password);
-            if (localPasswordMatches) {
-              return {
-                id: existingUser.id,
-                username: existingUser.username,
-                name: existingUser.name,
-                role: existingUser.role,
-                image: existingUser.image,
-                githubUsername: existingUser.githubUsername,
-              };
-            }
-          }
-
-          // ---------- FALLBACK: re-check against SIMAK ----------
-          // Local hash didn't match (or user is new / never validated).
-          // SIMAK passwords can rotate, so we re-validate against the
-          // authoritative source. If SIMAK accepts the password, we update
-          // (rotate) the local bcrypt hash so the fast path works next time.
-          const simakResult = await validateSimakCredentials(username, password);
-
-          if (simakResult.success && simakResult.data) {
-            const bcryptHash = await bcrypt.hash(password, 12);
-            const user = await upsertUserFromSimak(
-              prisma,
-              simakResult.data,
-              bcryptHash,
-            );
-
-            if (existingUser) {
-              console.info(
-                `[auth] Password rotated for NIM ${username} via SIMAK (local hash was stale).`,
-              );
-            } else {
-              console.info(`[auth] New mahasiswa provisioned from SIMAK: ${username}.`);
-            }
-
-            return {
-              id: user.id,
-              username: user.username,
-              name: user.name,
-              role: user.role as Role,
-              image: null,
-              githubUsername: null,
-            };
-          }
-
-          // ---------- LAST RESORT: local fallback when SIMAK is unreachable ----------
-          // SIMAK rejected OR was unreachable. If we have an existing user
-          // with a usable local hash, accept the local match so students can
-          // still log in during a SIMAK outage. (We already know
-          // `localPasswordMatches` is false above for simakValidated users,
-          // but a user might not be `simakValidated` yet — check anyway.)
-          if (existingUser?.password) {
-            const isPasswordValid =
-              localPasswordMatches ||
-              (await bcrypt.compare(password, existingUser.password));
-            if (isPasswordValid) {
-              console.warn(
-                `[auth] SIMAK rejected/unreachable for NIM ${username}; accepted local hash fallback.`,
-              );
-              return {
-                id: existingUser.id,
-                username: existingUser.username,
-                name: existingUser.name,
-                role: existingUser.role,
-                image: existingUser.image,
-                githubUsername: existingUser.githubUsername,
-              };
-            }
-          }
-
-          // Both SIMAK and local validation failed
-          throw new LoginError(simakResult.message || 'NIM atau password salah');
+        if (!existingUser || !existingUser.password) {
+          throw new LoginError('Username atau password salah');
         }
 
-        // For non-student users (dosen, admin), use local validation only
-        if (!existingUser || !existingUser.password) {
-          throw new LoginError('NIM/Username atau password salah');
+        if (existingUser.role !== ('ADMIN' as Role)) {
+          throw new LoginError('Akun ini bukan akun admin');
         }
 
         const isPasswordValid = await bcrypt.compare(password, existingUser.password);
 
         if (!isPasswordValid) {
-          throw new LoginError('NIM/Username atau password salah');
+          throw new LoginError('Username atau password salah');
         }
 
         if (!existingUser.isActive) {

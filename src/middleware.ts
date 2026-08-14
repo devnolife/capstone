@@ -16,11 +16,11 @@ export async function middleware(request: NextRequest) {
   const userRole = token?.role as string | undefined;
 
   // Public routes (registration disabled)
-  const publicRoutes = ['/', '/login'];
+  const publicRoutes = ['/', '/login', '/login/admin'];
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
 
   // Auth routes (only login, registration disabled)
-  const authRoutes = ['/login'];
+  const authRoutes = ['/login', '/login/admin'];
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   // NextAuth API routes - always allow (for logout to work properly)

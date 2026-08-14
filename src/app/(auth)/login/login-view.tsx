@@ -7,12 +7,6 @@ import Link from 'next/link';
 import { DayWindowChrome } from '@/components/daytona/DayCodeWindow';
 import { ArrowRightIcon } from '@/components/daytona/icons';
 
-const inputClass =
-  'h-11 w-full rounded-[4px] border border-[#252525] bg-[#111111] px-3.5 font-day-code text-[14px] text-white placeholder:text-[#585858] outline-none transition-colors focus:border-[#0080ff]';
-
-const labelClass =
-  'mb-2 block font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#a2a2a2]';
-
 function CapstoneLogo() {
   return (
     <span className="flex items-baseline font-day-mono text-[18px] leading-none tracking-[-0.36px]">
@@ -36,60 +30,11 @@ const AUTH_LOG = [
 function LoginForm() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [formData, setFormData] = useState({ username: '', password: '' });
 
   const callbackError = searchParams.get('error');
-  const isDev = process.env.NODE_ENV === 'development';
-
-  const devAccounts = [
-    { label: 'admin', username: 'devnolife', password: 'hanyaAdmin@25' },
-    { label: 'dosen', username: 'dosen', password: 'password123' },
-    { label: 'mahasiswa', username: 'mahasiswa', password: 'password123' },
-  ];
-
-  const handleDevLogin = async (username: string, password: string) => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const result = await signIn('credentials', { username, password, redirect: false });
-      if (result?.error) setError(`Dev login gagal: ${result.code || result.error}`);
-      else window.location.href = '/dashboard';
-    } catch {
-      setError('Terjadi kesalahan saat dev login.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
-    try {
-      const result = await signIn('credentials', {
-        username: formData.username,
-        password: formData.password,
-        redirect: false,
-      });
-      if (result?.error) {
-        // `code` membawa pesan asli dari server (LoginError), mis.
-        // "Password SIMAK tidak valid" / "NIM tidak ditemukan di SIMAK".
-        setError(result.code || 'Username atau password salah.');
-      } else {
-        window.location.href = '/dashboard';
-      }
-    } catch {
-      setError('Terjadi kesalahan. Silakan coba lagi.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="w-full max-w-[440px]">
-      {/* window card */}
       <div className="day-glow-code relative overflow-hidden rounded-[12px] border border-[#252525] bg-[#0d0d0d]">
         <div aria-hidden="true" className="day-accent-top absolute inset-x-8 top-0 h-px" />
         <DayWindowChrome filename="masuk.sh" />
@@ -99,136 +44,48 @@ function LoginForm() {
             Masuk<span className="text-[#0080ff]">.</span>
           </h1>
           <p className="mt-2 font-day-sans text-[14px] leading-[21px] text-[#a2a2a2]">
-            Pakai akun kampus kamu — otomatis tersinkron dengan SIMAK.
+            Login hanya melalui SSO Unismuh — tidak ada lagi username &amp; password.
           </p>
 
-          {(error || callbackError) ? (
+          {callbackError ? (
             <div
               role="alert"
               className="mt-5 rounded-[4px] border border-[#4d1f1f] bg-[#1a0d0d] px-3.5 py-2.5 font-day-code text-[12px] leading-[18px] text-[#ff6b6b]"
             >
-              <span className="text-[#585858]">error:</span>{' '}
-              {error || 'Terjadi kesalahan saat login.'}
+              <span className="text-[#585858]">error:</span> Terjadi kesalahan saat login.
             </div>
           ) : null}
 
-          <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-4">
-            <div>
-              <label htmlFor="login-username" className={labelClass}>
-                Username / NIM
-              </label>
-              <input
-                id="login-username"
-                type="text"
-                placeholder="cth: 105841100000"
-                value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                required
-                autoComplete="username"
-                className={inputClass}
-              />
-            </div>
+          <button
+            type="button"
+            disabled={isLoading}
+            onClick={() => {
+              setIsLoading(true);
+              void signIn('sso-unismuh', { callbackUrl: '/dashboard' });
+            }}
+            className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-[#0080ff] px-6 font-day-mono text-[16px] leading-none tracking-[-0.16px] text-white transition-colors duration-250 hover:bg-[#0066dd] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isLoading ? (
+              <>
+                <span className="day-anim-cursor inline-block h-[14px] w-[7px] bg-white" />
+                Mengalihkan...
+              </>
+            ) : (
+              <>
+                Masuk via SSO Unismuh
+                <ArrowRightIcon className="h-4 w-4" />
+              </>
+            )}
+          </button>
 
-            <div>
-              <div className="mb-2 flex items-center justify-between">
-                <label
-                  htmlFor="login-password"
-                  className="block font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#a2a2a2]"
-                >
-                  Password
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#585858] transition-colors hover:text-white"
-                >
-                  {showPassword ? '[ sembunyikan ]' : '[ tampilkan ]'}
-                </button>
-              </div>
-              <input
-                id="login-password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                required
-                autoComplete="current-password"
-                className={inputClass}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="mt-1 flex h-12 w-full items-center justify-center gap-2 rounded-[4px] bg-[#0080ff] px-6 font-day-mono text-[16px] leading-none tracking-[-0.16px] text-white transition-colors duration-250 hover:bg-[#0066dd] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {isLoading ? (
-                <>
-                  <span className="day-anim-cursor inline-block h-[14px] w-[7px] bg-white" />
-                  Memproses...
-                </>
-              ) : (
-                <>
-                  Masuk
-                  <ArrowRightIcon className="h-4 w-4" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* SSO Unismuh */}
-          <div className="mt-6">
-            <div className="mb-3 flex items-center gap-3">
-              <span className="h-px flex-1 bg-[#252525]" />
-              <span className="font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#585858]">
-                atau
-              </span>
-              <span className="h-px flex-1 bg-[#252525]" />
-            </div>
-            <button
-              type="button"
-              disabled={isLoading}
-              onClick={() => {
-                setIsLoading(true);
-                void signIn('sso-unismuh', { callbackUrl: '/dashboard' });
-              }}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-[4px] border border-[#252525] px-6 font-day-mono text-[16px] leading-none tracking-[-0.16px] text-white transition-colors hover:border-[#585858] hover:bg-[#161616] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              <span aria-hidden="true" className="size-[8px] rounded-full bg-[#2ecc71]" />
-              Masuk via SSO Unismuh
-            </button>
-          </div>
-
-          {isDev ? (
-            <div className="mt-7">
-              <div className="mb-3 flex items-center gap-3">
-                <span className="h-px flex-1 bg-[#252525]" />
-                <span className="font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#585858]">
-                  dev mode
-                </span>
-                <span className="h-px flex-1 bg-[#252525]" />
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {devAccounts.map((acc) => (
-                  <button
-                    key={acc.label}
-                    type="button"
-                    disabled={isLoading}
-                    onClick={() => handleDevLogin(acc.username, acc.password)}
-                    className="rounded-[4px] border border-[#252525] bg-[#111111] py-2.5 font-day-mono text-[12px] tracking-[-0.24px] text-[#a2a2a2] transition-colors hover:border-[#585858] hover:text-white disabled:pointer-events-none disabled:opacity-50"
-                  >
-                    {acc.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
+          <p className="mt-4 font-day-sans text-[13px] leading-5 text-[#585858]">
+            Akun mahasiswa &amp; dosen tersinkron otomatis dari SIMAK saat pertama kali masuk.
+          </p>
         </div>
 
-        {/* status bar */}
         <div className="flex h-[30px] items-center justify-between border-t border-[#1c1c1c] px-4">
           <span className="font-day-mono text-[11px] uppercase tracking-[0.22px] text-[#585858]">
-            auth · credentials
+            auth · sso
           </span>
           <span className="flex items-center gap-1.5 font-day-mono text-[11px] text-[#585858]">
             <span className="size-[6px] rounded-full bg-[#2ecc71]" />
