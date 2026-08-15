@@ -5,6 +5,7 @@ import Keycloak from 'next-auth/providers/keycloak';
 import prisma from '@/lib/prisma';
 import { encryptNullable } from '@/lib/crypto';
 import { isAdminAccessCodeValid } from '@/lib/admin-access-code';
+import { extractSsoRoles, mapSsoRolesToAppRole } from '@/lib/sso';
 import type { Role } from '@/generated/prisma';
 
 declare module 'next-auth' {
@@ -174,38 +175,55 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           nim?: string;
           nidn?: string;
           nama_prodi?: string;
-          realm_access?: { roles?: string[] };
         };
 
         try {
           const username = sso.preferred_username || sso.nim || sso.nidn || sso.sub;
-          const roles = sso.realm_access?.roles ?? [];
-          // Petakan realm role SSO → Role aplikasi
-          const role: Role = roles.includes('dosen')
-            ? ('DOSEN_PENGUJI' as Role)
-            : roles.includes('admin-akademik') || roles.includes('pimpinan')
-              ? ('ADMIN' as Role)
-              : ('MAHASISWA' as Role);
+          // Peran HANYA ada di access token (bukan ID token/profile) —
+          // lihat https://sso.if.unismuh.ac.id/docs/
+          const roles = extractSsoRoles(
+            account.access_token,
+            process.env.SSO_CLIENT_ID,
+          );
+          const role = mapSsoRolesToAppRole(roles);
 
-          // Cari user: kunci utama `ssoSub`, fallback username (NIM/NIDN) lalu email
+          // Cari user berurutan dari identitas paling stabil ke paling longgar.
+          // NIDN/NIM ikut dicocokkan agar dosen/mahasiswa yang sudah punya akun
+          // lokal tidak terduplikasi saat pertama kali login lewat SSO.
           let existingUser = await prisma.user.findUnique({ where: { ssoSub: sso.sub } });
           if (!existingUser) {
             existingUser = await prisma.user.findUnique({ where: { username } });
           }
+          if (!existingUser && sso.nidn) {
+            existingUser = await prisma.user.findUnique({ where: { nip: sso.nidn } });
+          }
+          if (!existingUser && sso.nim) {
+            existingUser = await prisma.user.findUnique({ where: { nim: sso.nim } });
+          }
           if (!existingUser && sso.email) {
-            existingUser = await prisma.user.findUnique({ where: { email: sso.email } });
+            existingUser = await prisma.user.findFirst({
+              where: { email: { equals: sso.email, mode: 'insensitive' } },
+            });
           }
 
           if (existingUser) {
             if (!existingUser.isActive) return false;
+            if (existingUser.role !== role) {
+              console.info(
+                `[auth] Role ${username} disinkronkan dari SSO: ${existingUser.role} → ${role}`,
+              );
+            }
             existingUser = await prisma.user.update({
               where: { id: existingUser.id },
               data: {
                 ssoSub: sso.sub,
+                // Peran selalu mengikuti SSO — SSO adalah sumber kebenaran otorisasi
+                role,
                 name: sso.name || existingUser.name,
                 email: sso.email || existingUser.email,
                 image: existingUser.image || sso.picture || undefined,
                 nim: sso.nim || existingUser.nim,
+                nip: sso.nidn || existingUser.nip,
                 prodi: sso.nama_prodi || existingUser.prodi,
                 simakValidated: true,
                 simakLastSync: new Date(),
