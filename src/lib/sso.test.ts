@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   extractSsoRoles,
+  hasReadableSsoRoles,
   mapSsoRolesToAppRole,
   resolveRoleFromAccessToken,
 } from './sso';
@@ -80,8 +81,27 @@ describe('extractSsoRoles', () => {
   });
 });
 
-describe('resolveRoleFromAccessToken', () => {
-  it('resolves a dosen access token to DOSEN_PENGUJI', () => {
+describe('hasReadableSsoRoles', () => {
+  it('treats an empty list as unreadable so existing roles are kept', () => {
+    expect(hasReadableSsoRoles([])).toBe(false);
+  });
+
+  it('treats any role, even a default one, as readable', () => {
+    expect(hasReadableSsoRoles(['default-roles-unismuh'])).toBe(true);
+    expect(hasReadableSsoRoles(['mahasiswa'])).toBe(true);
+  });
+
+  it('reports a malformed token as unreadable', () => {
+    expect(hasReadableSsoRoles(extractSsoRoles('not-a-jwt'))).toBe(false);
+  });
+
+  it('reports a real dosen token as readable', () => {
+    const token = makeAccessToken({ realm_access: { roles: ['dosen'] } });
+    expect(hasReadableSsoRoles(extractSsoRoles(token))).toBe(true);
+  });
+});
+
+describe('resolveRoleFromAccessToken', () => {  it('resolves a dosen access token to DOSEN_PENGUJI', () => {
     const token = makeAccessToken({
       realm_access: { roles: ['default-roles-unismuh', 'dosen'] },
     });

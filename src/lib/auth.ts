@@ -5,7 +5,7 @@ import Keycloak from 'next-auth/providers/keycloak';
 import prisma from '@/lib/prisma';
 import { encryptNullable } from '@/lib/crypto';
 import { isAdminAccessCodeValid } from '@/lib/admin-access-code';
-import { extractSsoRoles, mapSsoRolesToAppRole } from '@/lib/sso';
+import { extractSsoRoles, hasReadableSsoRoles, mapSsoRolesToAppRole } from '@/lib/sso';
 import type { Role } from '@/generated/prisma';
 
 declare module 'next-auth' {
@@ -187,6 +187,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           );
           const role = mapSsoRolesToAppRole(roles);
 
+          /* Keycloak selalu menyertakan minimal satu realm role (mis.
+             `default-roles-unismuh`). Daftar yang benar-benar kosong berarti
+             klaim peran GAGAL dibaca, bukan "user ini mahasiswa". Membedakan
+             keduanya penting: tanpa penjagaan ini satu gangguan pada SSO akan
+             menurunkan seluruh dosen menjadi mahasiswa secara diam-diam. */
+          const rolesReadable = hasReadableSsoRoles(roles);
+          if (!rolesReadable) {
+            console.warn(
+              `[auth] Klaim peran SSO tidak terbaca untuk ${username} — role yang ada dipertahankan.`,
+            );
+          }
+
           // Cari user berurutan dari identitas paling stabil ke paling longgar.
           // NIDN/NIM ikut dicocokkan agar dosen/mahasiswa yang sudah punya akun
           // lokal tidak terduplikasi saat pertama kali login lewat SSO.
@@ -208,7 +220,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
           if (existingUser) {
             if (!existingUser.isActive) return false;
-            if (existingUser.role !== role) {
+            if (rolesReadable && existingUser.role !== role) {
               console.info(
                 `[auth] Role ${username} disinkronkan dari SSO: ${existingUser.role} → ${role}`,
               );
@@ -217,8 +229,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               where: { id: existingUser.id },
               data: {
                 ssoSub: sso.sub,
-                // Peran selalu mengikuti SSO — SSO adalah sumber kebenaran otorisasi
-                role,
+                // SSO adalah sumber kebenaran otorisasi: peran selalu mengikuti
+                // SSO selama klaimnya terbaca (termasuk bila hak turun)
+                role: rolesReadable ? role : existingUser.role,
                 name: sso.name || existingUser.name,
                 email: sso.email || existingUser.email,
                 image: existingUser.image || sso.picture || undefined,

@@ -87,6 +87,19 @@ export function mapSsoRolesToAppRole(roles: string[]): Role {
   return 'MAHASISWA' as Role;
 }
 
+/**
+ * Apakah klaim peran benar-benar terbaca dari access token?
+ *
+ * Keycloak selalu menyertakan minimal satu realm role (mis.
+ * `default-roles-unismuh`), sehingga daftar kosong berarti klaim GAGAL dibaca —
+ * bukan "user tanpa peran". Pemanggil memakai ini untuk membedakan
+ * "SSO bilang user ini mahasiswa" dari "peran tidak dapat ditentukan",
+ * agar gangguan pada SSO tidak menurunkan hak akses dosen secara diam-diam.
+ */
+export function hasReadableSsoRoles(roles: string[]): boolean {
+  return roles.length > 0;
+}
+
 /** Jalan pintas: access token SSO → Role aplikasi. */
 export function resolveRoleFromAccessToken(
   accessToken: string | null | undefined,
