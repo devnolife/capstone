@@ -4,21 +4,19 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Progress,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  addToast,
-  Avatar,
-} from '@heroui/react';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { addToast } from '@/lib/toast';
 import {
   FolderGit2,
   FileText,
@@ -43,8 +41,9 @@ import {
   Crown,
   Link2,
   CheckCircle2,
+  Loader2,
 } from 'lucide-react';
-import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+import { cn, formatDate, getInitials, getStatusColor, getStatusLabel } from '@/lib/utils';
 import { ContinueCard } from '@/components/mahasiswa/continue-card';
 import type { StudentJourney } from '@/lib/student-journey';
 
@@ -214,6 +213,24 @@ const getProgress = (status: string) => {
 };
 
 // Get status accent
+const STATUS_BADGE_CLASS: Record<string, string> = {
+  default: 'bg-muted text-muted-foreground',
+  primary: 'bg-primary/10 text-primary',
+  secondary: 'bg-secondary text-secondary-foreground',
+  success: 'bg-success/15 text-success',
+  warning: 'bg-warning/15 text-warning',
+  danger: 'bg-destructive/10 text-destructive',
+};
+
+const STATUS_PROGRESS_CLASS: Record<string, string> = {
+  default: '[&_[data-slot=progress-indicator]]:bg-muted-foreground',
+  primary: '',
+  secondary: '[&_[data-slot=progress-indicator]]:bg-secondary-foreground',
+  success: '[&_[data-slot=progress-indicator]]:bg-success',
+  warning: '[&_[data-slot=progress-indicator]]:bg-warning',
+  danger: '[&_[data-slot=progress-indicator]]:bg-destructive',
+};
+
 const getStatusGradient = (status: string) => {
   switch (status) {
     case 'APPROVED':
@@ -241,7 +258,9 @@ export function MahasiswaDashboardContent({
   stats,
 }: MahasiswaDashboardProps) {
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -318,12 +337,10 @@ export function MahasiswaDashboardContent({
           <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
             {/* Left side - Welcome */}
             <div className="flex items-center gap-4">
-              <Avatar
-                name={userName}
-                src={userImage}
-                size="lg"
-                className="ring-4 ring-[var(--color-fog)] dark:ring-[var(--color-graphite)] w-16 h-16 md:w-20 md:h-20"
-              />
+              <Avatar className="size-16 md:size-20 ring-4 ring-[var(--color-fog)] dark:ring-[var(--color-graphite)]">
+                <AvatarImage src={userImage} alt={userName} />
+                <AvatarFallback className="text-lg">{getInitials(userName)}</AvatarFallback>
+              </Avatar>
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Sparkles size={16} className="text-[var(--color-ember)]" />
@@ -361,7 +378,7 @@ export function MahasiswaDashboardContent({
       {!hasGitHubConnected && (
         <motion.div variants={itemVariants}>
           <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border-2 border-dashed border-amber-300 dark:border-amber-700 rounded-2xl">
-            <CardBody className="p-4 md:p-5">
+            <CardContent className="p-4 md:p-5">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
                   <div className="p-2.5 rounded-2xl bg-[var(--color-fog)] dark:bg-zinc-900/40 border border-amber-300/70 dark:border-amber-700/50">
@@ -376,18 +393,18 @@ export function MahasiswaDashboardContent({
                     </p>
                   </div>
                 </div>
-                <Button
-                  as={Link}
+                <Link
                   href="/mahasiswa/settings"
-                  color="warning"
-                  variant="flat"
-                  startContent={<Link2 size={16} />}
-                  className="shrink-0"
+                  className={cn(
+                    buttonVariants({ variant: 'outline' }),
+                    'shrink-0 border-amber-300 text-amber-700 dark:border-amber-700 dark:text-amber-300'
+                  )}
                 >
+                  <Link2 size={16} />
                   Hubungkan Sekarang
-                </Button>
+                </Link>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         </motion.div>
       )}
@@ -396,7 +413,7 @@ export function MahasiswaDashboardContent({
       {hasGitHubConnected && githubUsername && (
         <motion.div variants={itemVariants}>
           <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-emerald-200 dark:border-emerald-800 rounded-2xl">
-            <CardBody className="p-3 md:p-4">
+            <CardContent className="p-3 md:p-4">
               <div className="flex items-center gap-3">
                 <div className="p-2 rounded-2xl bg-[var(--color-fog)] dark:bg-zinc-900/40 border border-emerald-200 dark:border-emerald-800">
                   <CheckCircle2 size={18} className="text-emerald-600 dark:text-emerald-400" />
@@ -409,19 +426,20 @@ export function MahasiswaDashboardContent({
                     @{githubUsername}
                   </p>
                 </div>
-                <Button
-                  as="a"
+                <a
                   href={`https://github.com/${githubUsername}`}
                   target="_blank"
-                  size="sm"
-                  variant="light"
-                  color="success"
-                  startContent={<Github size={14} />}
+                  rel="noopener noreferrer"
+                  className={cn(
+                    buttonVariants({ variant: 'ghost', size: 'sm' }),
+                    'text-emerald-700 dark:text-emerald-300'
+                  )}
                 >
+                  <Github size={14} />
                   Lihat Profil
-                </Button>
+                </a>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         </motion.div>
       )}
@@ -442,7 +460,7 @@ export function MahasiswaDashboardContent({
                 key={stat.key}
                 className="ae-card bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl overflow-hidden group hover:shadow-xl transition-all"
               >
-                <CardBody className="p-4 md:p-5">
+                <CardContent className="p-4 md:p-5">
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
                       <p className="font-mono-display text-[9px] md:text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)]">{stat.label}</p>
@@ -455,7 +473,7 @@ export function MahasiswaDashboardContent({
                   <div className="h-1 mt-4 rounded-full bg-[var(--color-fog)] dark:bg-zinc-800 overflow-hidden">
                     <div className={`h-full rounded-full ${stat.gradient} opacity-80 group-hover:opacity-100 transition-opacity`} />
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             );
           })}
@@ -483,31 +501,31 @@ export function MahasiswaDashboardContent({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button
-                    as={Link}
+                  <Link
                     href="/mahasiswa/project"
-                    color="default"
-                    size="sm"
-                    startContent={<Plus size={16} />}
-                    className="hidden md:flex bg-[var(--color-ember)] text-white font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                    className={cn(
+                      buttonVariants({ size: 'sm' }),
+                      'hidden md:flex bg-[var(--color-ember)] text-white font-mono-display text-[10px] uppercase tracking-widest font-bold'
+                    )}
                   >
+                    <Plus size={16} />
                     Buat Baru
-                  </Button>
-                  <Button
-                    as={Link}
+                  </Link>
+                  <Link
                     href="/mahasiswa/project"
-                    variant="flat"
-                    size="sm"
-                    endContent={<ChevronRight size={16} />}
-                    className="font-mono-display text-[10px] uppercase tracking-widest font-bold border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]"
+                    className={cn(
+                      buttonVariants({ variant: 'outline', size: 'sm' }),
+                      'font-mono-display text-[10px] uppercase tracking-widest font-bold border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]'
+                    )}
                   >
                     Semua
-                  </Button>
+                    <ChevronRight size={16} />
+                  </Link>
                 </div>
               </div>
             </div>
 
-            <CardBody className="p-0">
+            <CardContent className="p-0">
               {projects.length === 0 ? (
                 <div className="text-center py-12 px-4">
                   <div className="w-20 h-20 mx-auto mb-4 rounded-2xl border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40 flex items-center justify-center">
@@ -517,16 +535,16 @@ export function MahasiswaDashboardContent({
                   <p className="text-[var(--color-steel)] mb-4 text-sm max-w-sm mx-auto">
                     Mulai perjalanan capstone Anda dengan membuat project pertama!
                   </p>
-                  <Button
-                    as={Link}
+                  <Link
                     href="/mahasiswa/project"
-                    color="default"
-                    size="lg"
-                    startContent={<Zap size={18} />}
-                    className="bg-[var(--color-ember)] text-white font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                    className={cn(
+                      buttonVariants({ size: 'lg' }),
+                      'bg-[var(--color-ember)] text-white font-mono-display text-[10px] uppercase tracking-widest font-bold'
+                    )}
                   >
+                    <Zap size={18} />
                     Buat Project Sekarang
-                  </Button>
+                  </Link>
                 </div>
               ) : (
                 <div className="divide-y divide-[var(--color-pebble)] dark:divide-[var(--color-graphite)]">
@@ -553,14 +571,14 @@ export function MahasiswaDashboardContent({
                               >
                                 {project.title}
                               </Link>
-                              <Chip
-                                size="sm"
-                                color={getStatusColor(project.status)}
-                                variant="flat"
-                                className="shrink-0"
+                              <Badge
+                                className={cn(
+                                  'shrink-0',
+                                  STATUS_BADGE_CLASS[getStatusColor(project.status)]
+                                )}
                               >
                                 {getStatusLabel(project.status)}
-                              </Chip>
+                              </Badge>
                             </div>
                             <div className="flex flex-wrap items-center gap-3 text-xs text-[var(--color-steel)]">
                               <span className="flex items-center gap-1">
@@ -597,9 +615,10 @@ export function MahasiswaDashboardContent({
                               </div>
                               <Progress
                                 value={getProgress(project.status)}
-                                color={getStatusColor(project.status)}
-                                size="sm"
-                                className="h-1.5"
+                                className={cn(
+                                  '[&_[data-slot=progress-track]]:h-1.5',
+                                  STATUS_PROGRESS_CLASS[getStatusColor(project.status)]
+                                )}
                               />
                             </div>
 
@@ -618,12 +637,15 @@ export function MahasiswaDashboardContent({
                                       key={member.id}
                                       className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]"
                                     >
-                                      <Avatar
-                                        src={member.githubAvatarUrl || undefined}
-                                        name={member.name || member.githubUsername || 'Member'}
-                                        size="sm"
-                                        className="w-5 h-5"
-                                      />
+                                      <Avatar size="sm" className="size-5">
+                                        <AvatarImage
+                                          src={member.githubAvatarUrl || undefined}
+                                          alt={member.name || member.githubUsername || 'Member'}
+                                        />
+                                        <AvatarFallback className="text-[8px]">
+                                          {getInitials(member.name || member.githubUsername || 'Member')}
+                                        </AvatarFallback>
+                                      </Avatar>
                                       <span className="text-xs font-medium truncate max-w-[100px]">
                                         {member.name || member.githubUsername || 'Member'}
                                       </span>
@@ -640,34 +662,31 @@ export function MahasiswaDashboardContent({
 
                         {/* Actions */}
                         <div className="flex items-center gap-2 shrink-0 md:ml-4">
-                          <Button
-                            as={Link}
+                          <Link
                             href={`/mahasiswa/project?project=${project.id}`}
-                            size="sm"
-                            variant="flat"
-                            className="font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                            className={cn(
+                              buttonVariants({ variant: 'outline', size: 'sm' }),
+                              'font-mono-display text-[10px] uppercase tracking-widest font-bold'
+                            )}
                           >
                             Detail
-                          </Button>
+                          </Link>
                           {project.status === 'DRAFT' && (
                             <>
-                              <Button
-                                as={Link}
+                              <Link
                                 href={`/mahasiswa/project?project=${project.id}&tab=repository`}
-                                size="sm"
-                                color="default"
-                                variant="flat"
-                                startContent={<Edit size={14} />}
-                                className="bg-[var(--color-ember)]/10 text-[var(--color-ember)] font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                                className={cn(
+                                  buttonVariants({ variant: 'ghost', size: 'sm' }),
+                                  'bg-[var(--color-ember)]/10 text-[var(--color-ember)] font-mono-display text-[10px] uppercase tracking-widest font-bold'
+                                )}
                               >
+                                <Edit size={14} />
                                 Edit
-                              </Button>
+                              </Link>
                               <Button
-                                size="sm"
-                                color="danger"
-                                variant="flat"
-                                isIconOnly
-                                onPress={() => handleDeleteClick(project)}
+                                size="icon-sm"
+                                variant="destructive"
+                                onClick={() => handleDeleteClick(project)}
                               >
                                 <Trash2 size={14} />
                               </Button>
@@ -685,20 +704,21 @@ export function MahasiswaDashboardContent({
 
                   {projects.length > 3 && (
                     <div className="p-4 text-center bg-[var(--color-mist)] dark:bg-zinc-900/40">
-                      <Button
-                        as={Link}
+                      <Link
                         href="/mahasiswa/project"
-                        variant="light"
-                        endContent={<ChevronRight size={16} />}
-                        className="text-[var(--color-ember)] font-mono-display text-[10px] uppercase tracking-widest font-bold"
+                        className={cn(
+                          buttonVariants({ variant: 'ghost' }),
+                          'text-[var(--color-ember)] font-mono-display text-[10px] uppercase tracking-widest font-bold'
+                        )}
                       >
                         Lihat Semua Project ({projects.length})
-                      </Button>
+                        <ChevronRight size={16} />
+                      </Link>
                     </div>
                   )}
                 </div>
               )}
-            </CardBody>
+            </CardContent>
           </Card>
         </motion.div>
 
@@ -712,7 +732,7 @@ export function MahasiswaDashboardContent({
                 <h3 className="font-sans-display font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">Aksi Cepat</h3>
               </div>
             </div>
-            <CardBody className="p-4 space-y-3">
+            <CardContent className="p-4 space-y-3">
               {QUICK_ACTIONS.map((action) => {
                 const Icon = action.icon;
                 return (
@@ -734,7 +754,7 @@ export function MahasiswaDashboardContent({
                   </Link>
                 );
               })}
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Progress Overview Card */}
@@ -745,7 +765,7 @@ export function MahasiswaDashboardContent({
                 <h3 className="font-sans-display font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">Ringkasan Progress</h3>
               </div>
             </div>
-            <CardBody className="p-5">
+            <CardContent className="p-5">
               <div className="space-y-5">
                 {/* Overall progress - Larger ring */}
                 <div className="text-center py-6">
@@ -830,21 +850,21 @@ export function MahasiswaDashboardContent({
                   </div>
                 </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         </motion.div>
       </div>
 
       {/* Delete Confirmation Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="sm">
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            <div className="flex items-center gap-2 text-danger">
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive">
               <AlertTriangle size={20} />
-              <span>Hapus Project</span>
-            </div>
-          </ModalHeader>
-          <ModalBody>
+              Hapus Project
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2">
             <p className="text-[var(--color-steel)]">
               Apakah Anda yakin ingin menghapus project{' '}
               <span className="font-semibold text-[var(--color-obsidian)] dark:text-white">&quot;{selectedProject?.title}&quot;</span>?
@@ -852,21 +872,22 @@ export function MahasiswaDashboardContent({
             <p className="text-sm text-[var(--color-steel)]">
               Tindakan ini tidak dapat dibatalkan. Semua data project termasuk dokumen dan review akan dihapus.
             </p>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={onClose} isDisabled={isDeleting}>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={onClose} disabled={isDeleting}>
               Batal
             </Button>
             <Button
-              color="danger"
-              onPress={handleDeleteConfirm}
-              isLoading={isDeleting}
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
             >
+              {isDeleting && <Loader2 className="animate-spin" />}
               Hapus
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

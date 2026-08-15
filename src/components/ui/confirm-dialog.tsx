@@ -1,14 +1,17 @@
 'use client';
 
+import { useCallback, useState } from 'react';
+import { AlertTriangle, Info, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
 import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-} from '@heroui/react';
-import { AlertTriangle, Info, AlertCircle, CheckCircle } from 'lucide-react';
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export type ConfirmDialogType = 'warning' | 'danger' | 'info' | 'success';
 
@@ -31,26 +34,19 @@ const iconMap = {
   success: CheckCircle,
 };
 
-const colorMap = {
-  warning: 'warning',
-  danger: 'danger',
-  info: 'primary',
-  success: 'success',
+const iconWrapperMap = {
+  warning: 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400',
+  danger: 'bg-destructive/10 text-destructive',
+  info: 'bg-primary/10 text-primary',
+  success: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400',
+};
+
+const confirmVariantMap = {
+  warning: 'default',
+  danger: 'destructive',
+  info: 'default',
+  success: 'default',
 } as const;
-
-const bgColorMap = {
-  warning: 'bg-warning-100 dark:bg-warning-900/30',
-  danger: 'bg-danger-100 dark:bg-danger-900/30',
-  info: 'bg-primary-100 dark:bg-primary-900/30',
-  success: 'bg-success-100 dark:bg-success-900/30',
-};
-
-const iconColorMap = {
-  warning: 'text-warning-600 dark:text-warning-400',
-  danger: 'text-danger-600 dark:text-danger-400',
-  info: 'text-primary-600 dark:text-primary-400',
-  success: 'text-success-600 dark:text-success-400',
-};
 
 export function ConfirmDialog({
   isOpen,
@@ -64,9 +60,6 @@ export function ConfirmDialog({
   isLoading = false,
 }: ConfirmDialogProps) {
   const Icon = iconMap[type];
-  const color = colorMap[type];
-  const bgColor = bgColorMap[type];
-  const iconColor = iconColorMap[type];
 
   const handleConfirm = () => {
     onConfirm();
@@ -76,49 +69,41 @@ export function ConfirmDialog({
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      size="sm"
-      classNames={{
-        backdrop: 'bg-black/50 backdrop-blur-sm',
+    <AlertDialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose();
       }}
     >
-      <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">
+      <AlertDialogContent>
+        <AlertDialogHeader>
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-full ${bgColor}`}>
-              <Icon className={iconColor} size={20} />
-            </div>
-            <span>{title}</span>
+            <span
+              className={`flex size-9 shrink-0 items-center justify-center rounded-full ${iconWrapperMap[type]}`}
+            >
+              <Icon size={18} />
+            </span>
+            <AlertDialogTitle>{title}</AlertDialogTitle>
           </div>
-        </ModalHeader>
-        <ModalBody>
-          <p className="text-default-600">{message}</p>
-        </ModalBody>
-        <ModalFooter>
-          <Button
-            variant="flat"
-            onPress={onClose}
-            isDisabled={isLoading}
-          >
+          <AlertDialogDescription>{message}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={isLoading}>
             {cancelText}
           </Button>
           <Button
-            color={color}
-            onPress={handleConfirm}
-            isLoading={isLoading}
+            variant={confirmVariantMap[type]}
+            onClick={handleConfirm}
+            disabled={isLoading}
           >
+            {isLoading && <Loader2 className="animate-spin" />}
             {confirmText}
           </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
-
-// Hook untuk kemudahan penggunaan
-import { useState, useCallback } from 'react';
 
 interface UseConfirmDialogOptions {
   title: string;

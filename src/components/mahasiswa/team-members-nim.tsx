@@ -1,19 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Input,
-  Button,
-  Avatar,
-  Chip,
-  Spinner,
-  Tooltip,
-  Divider,
-  Textarea,
-} from '@heroui/react';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -28,9 +24,10 @@ import {
   Clock,
   Send,
   CreditCard,
+  Loader2,
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
-import { getSimakPhotoUrl } from '@/lib/utils';
+import { getInitials, getSimakPhotoUrl } from '@/lib/utils';
 
 interface SearchedUser {
   id: string;
@@ -276,32 +273,37 @@ export default function TeamMembersNim({
       <div className="space-y-3">
         {/* Owner */}
         <div className="flex items-center gap-2">
-          <Avatar
-            src={getSimakPhotoUrl(ownerNim) || ownerImage}
-            name={ownerName || 'Owner'}
-            size="sm"
-            isBordered
-            color="primary"
-          />
+          <Avatar size="sm" className="ring-2 ring-primary/40">
+            <AvatarImage
+              src={getSimakPhotoUrl(ownerNim) || ownerImage}
+              alt={ownerName || 'Owner'}
+            />
+            <AvatarFallback>{getInitials(ownerName || 'Owner')}</AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{ownerName}</p>
             {ownerNim && (
               <p className="text-xs text-app-secondary-invert">{ownerNim}</p>
             )}
           </div>
-          <Chip size="sm" color="primary" variant="flat" startContent={<Crown size={10} />}>
+          <Badge className="bg-primary/10 text-primary">
+            <Crown size={10} />
             Ketua
-          </Chip>
+          </Badge>
         </div>
 
         {/* Confirmed Members */}
         {members.map((member) => (
           <div key={member.id} className="flex items-center gap-2 group">
-            <Avatar
-              src={getSimakPhotoUrl(member.user?.nim) || member.user?.image || member.githubAvatarUrl}
-              name={member.user?.name || member.name || member.githubUsername}
-              size="sm"
-            />
+            <Avatar size="sm">
+              <AvatarImage
+                src={getSimakPhotoUrl(member.user?.nim) || member.user?.image || member.githubAvatarUrl || undefined}
+                alt={member.user?.name || member.name || member.githubUsername}
+              />
+              <AvatarFallback>
+                {getInitials(member.user?.name || member.name || member.githubUsername)}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">
                 {member.user?.name || member.name || member.githubUsername}
@@ -310,18 +312,16 @@ export default function TeamMembersNim({
                 {member.user?.nim || member.githubUsername}
               </p>
             </div>
-            <Chip size="sm" color="success" variant="flat">
-              <CheckCircle2 size={10} className="mr-1" />
+            <Badge className="bg-success/15 text-success">
+              <CheckCircle2 size={10} />
               Tergabung
-            </Chip>
+            </Badge>
             {isEditable && (
               <Button
-                size="sm"
-                variant="light"
-                color="danger"
-                isIconOnly
-                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                onPress={() => handleRemoveMember(member)}
+                size="icon-sm"
+                variant="ghost"
+                className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => handleRemoveMember(member)}
               >
                 <X size={14} />
               </Button>
@@ -332,11 +332,15 @@ export default function TeamMembersNim({
         {/* Pending Invitations */}
         {pendingInvitations.map((invitation) => (
           <div key={invitation.id} className="flex items-center gap-2 group opacity-70">
-            <Avatar
-              src={getSimakPhotoUrl(invitation.invitee.nim) || invitation.invitee.image || undefined}
-              name={invitation.invitee.name || invitation.invitee.username}
-              size="sm"
-            />
+            <Avatar size="sm">
+              <AvatarImage
+                src={getSimakPhotoUrl(invitation.invitee.nim) || invitation.invitee.image || undefined}
+                alt={invitation.invitee.name || invitation.invitee.username}
+              />
+              <AvatarFallback>
+                {getInitials(invitation.invitee.name || invitation.invitee.username)}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">
                 {invitation.invitee.name || invitation.invitee.username}
@@ -345,10 +349,10 @@ export default function TeamMembersNim({
                 {invitation.invitee.nim}
               </p>
             </div>
-            <Chip size="sm" color="warning" variant="flat">
-              <Clock size={10} className="mr-1" />
+            <Badge className="bg-warning/15 text-warning">
+              <Clock size={10} />
               Pending
-            </Chip>
+            </Badge>
           </div>
         ))}
 
@@ -356,11 +360,11 @@ export default function TeamMembersNim({
         {isEditable && canAddMore && projectId && (
           <Button
             size="sm"
-            variant="flat"
-            startContent={<UserPlus size={14} />}
-            onPress={() => setShowSearch(true)}
+            variant="outline"
+            onClick={() => setShowSearch(true)}
             className="w-full"
           >
+            <UserPlus size={14} />
             Undang Anggota ({members.length + pendingInvitations.length}/{maxMembers})
           </Button>
         )}
@@ -382,26 +386,24 @@ export default function TeamMembersNim({
                 <p className="text-xs text-app-teritary-invert">Anggota kolaborator project</p>
               </div>
             </div>
-            <Chip size="sm" variant="flat">
+            <Badge variant="secondary">
               {members.length + 1}/{maxMembers + 1} tergabung
-            </Chip>
+            </Badge>
           </div>
         </CardHeader>
       )}
 
-      <CardBody className="space-y-4 pt-2">
+      <CardContent className="space-y-4 pt-2">
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-danger/10 text-danger rounded-lg text-sm">
+          <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
             <AlertCircle size={16} />
             {error}
             <Button
-              size="sm"
-              variant="light"
-              color="danger"
-              isIconOnly
-              className="ml-auto"
-              onPress={() => setError('')}
+              size="icon-sm"
+              variant="ghost"
+              className="ml-auto text-destructive"
+              onClick={() => setError('')}
             >
               <X size={14} />
             </Button>
@@ -410,13 +412,13 @@ export default function TeamMembersNim({
 
         {/* Owner - Team Lead */}
         <div className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl">
-          <Avatar
-            src={getSimakPhotoUrl(ownerNim) || ownerImage}
-            name={ownerName || 'Owner'}
-            size="sm"
-            isBordered
-            color="primary"
-          />
+          <Avatar size="sm" className="ring-2 ring-primary/40">
+            <AvatarImage
+              src={getSimakPhotoUrl(ownerNim) || ownerImage}
+              alt={ownerName || 'Owner'}
+            />
+            <AvatarFallback>{getInitials(ownerName || 'Owner')}</AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm truncate">{ownerName}</p>
             <p className="text-xs text-app-secondary-invert flex items-center gap-1">
@@ -424,9 +426,10 @@ export default function TeamMembersNim({
               {ownerNim || ownerGithubUsername}
             </p>
           </div>
-          <Chip size="sm" color="primary" variant="flat" startContent={<Crown size={10} />}>
+          <Badge className="bg-primary/10 text-primary">
+            <Crown size={10} />
             Ketua
-          </Chip>
+          </Badge>
         </div>
 
         {/* Confirmed Team Members */}
@@ -439,11 +442,15 @@ export default function TeamMembersNim({
               exit={{ opacity: 0, x: 10 }}
               className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl group"
             >
-              <Avatar
-                src={getSimakPhotoUrl(member.user?.nim) || member.user?.image || member.githubAvatarUrl}
-                name={member.user?.name || member.name || member.githubUsername}
-                size="sm"
-              />
+              <Avatar size="sm">
+                <AvatarImage
+                  src={getSimakPhotoUrl(member.user?.nim) || member.user?.image || member.githubAvatarUrl || undefined}
+                  alt={member.user?.name || member.name || member.githubUsername}
+                />
+                <AvatarFallback>
+                  {getInitials(member.user?.name || member.name || member.githubUsername)}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">
                   {member.user?.name || member.name || member.githubUsername}
@@ -453,18 +460,16 @@ export default function TeamMembersNim({
                   {member.user?.nim || member.githubUsername}
                 </p>
               </div>
-              <Chip size="sm" color="success" variant="flat">
-                <CheckCircle2 size={10} className="mr-1" />
+              <Badge className="bg-success/15 text-success">
+                <CheckCircle2 size={10} />
                 Anggota
-              </Chip>
+              </Badge>
               {isEditable && (
                 <Button
-                  size="sm"
-                  variant="light"
-                  color="danger"
-                  isIconOnly
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onPress={() => handleRemoveMember(member)}
+                  size="icon-sm"
+                  variant="ghost"
+                  className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => handleRemoveMember(member)}
                 >
                   <X size={14} />
                 </Button>
@@ -476,7 +481,7 @@ export default function TeamMembersNim({
         {/* Pending Invitations */}
         {pendingInvitations.length > 0 && (
           <>
-            <Divider />
+            <Separator />
             <p className="text-app-secondary-invert flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em]">
               <Mail size={14} />
               Undangan Terkirim
@@ -488,11 +493,15 @@ export default function TeamMembersNim({
                 animate={{ opacity: 1 }}
                 className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl group"
               >
-                <Avatar
-                  src={getSimakPhotoUrl(invitation.invitee.nim) || invitation.invitee.image || undefined}
-                  name={invitation.invitee.name || invitation.invitee.username}
-                  size="sm"
-                />
+                <Avatar size="sm">
+                  <AvatarImage
+                    src={getSimakPhotoUrl(invitation.invitee.nim) || invitation.invitee.image || undefined}
+                    alt={invitation.invitee.name || invitation.invitee.username}
+                  />
+                  <AvatarFallback>
+                    {getInitials(invitation.invitee.name || invitation.invitee.username)}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
                     {invitation.invitee.name || invitation.invitee.username}
@@ -502,22 +511,25 @@ export default function TeamMembersNim({
                     {invitation.invitee.nim}
                   </p>
                 </div>
-                <Chip size="sm" color="warning" variant="flat">
-                  <Clock size={10} className="mr-1" />
+                <Badge className="bg-warning/15 text-warning">
+                  <Clock size={10} />
                   Menunggu
-                </Chip>
+                </Badge>
                 {isEditable && (
-                  <Tooltip content="Batalkan undangan">
-                    <Button
-                      size="sm"
-                      variant="light"
-                      color="danger"
-                      isIconOnly
-                      className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      onPress={() => handleCancelInvitation(invitation.id)}
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          size="icon-sm"
+                          variant="ghost"
+                          className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => handleCancelInvitation(invitation.id)}
+                        />
+                      }
                     >
                       <X size={14} />
-                    </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Batalkan undangan</TooltipContent>
                   </Tooltip>
                 )}
               </motion.div>
@@ -528,7 +540,7 @@ export default function TeamMembersNim({
         {/* Add Member Section */}
         {isEditable && canAddMore && projectId && (
           <>
-            <Divider />
+            <Separator />
 
             {showSearch ? (
               <div className="space-y-3">
@@ -536,13 +548,15 @@ export default function TeamMembersNim({
                 {selectedUser ? (
                   <div className="p-3 border-2 border-ring rounded-xl bg-app-quaternary">
                     <div className="flex items-center gap-3 mb-3">
-                      <Avatar
-                        src={getSimakPhotoUrl(selectedUser.nim) || selectedUser.image || undefined}
-                        name={selectedUser.name || selectedUser.username}
-                        size="md"
-                        isBordered
-                        color="primary"
-                      />
+                      <Avatar className="ring-2 ring-primary/40">
+                        <AvatarImage
+                          src={getSimakPhotoUrl(selectedUser.nim) || selectedUser.image || undefined}
+                          alt={selectedUser.name || selectedUser.username}
+                        />
+                        <AvatarFallback>
+                          {getInitials(selectedUser.name || selectedUser.username)}
+                        </AvatarFallback>
+                      </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium">
                           {selectedUser.name || selectedUser.username}
@@ -552,10 +566,9 @@ export default function TeamMembersNim({
                         </p>
                       </div>
                       <Button
-                        size="sm"
-                        variant="flat"
-                        isIconOnly
-                        onPress={() => setSelectedUser(null)}
+                        size="icon-sm"
+                        variant="outline"
+                        onClick={() => setSelectedUser(null)}
                       >
                         <X size={14} />
                       </Button>
@@ -565,24 +578,22 @@ export default function TeamMembersNim({
                       placeholder="Pesan undangan (opsional)..."
                       value={invitationMessage}
                       onChange={(e) => setInvitationMessage(e.target.value)}
-                      size="sm"
-                      minRows={2}
+                      rows={2}
                       className="mb-3"
                     />
 
                     <div className="flex gap-2">
                       <Button
-                        color="primary"
-                        startContent={<Send size={14} />}
-                        isLoading={isInviting}
-                        onPress={handleSendInvitation}
+                        disabled={isInviting}
+                        onClick={handleSendInvitation}
                         className="flex-1"
                       >
+                        {isInviting ? <Loader2 className="animate-spin" /> : <Send size={14} />}
                         Kirim Undangan
                       </Button>
                       <Button
-                        variant="flat"
-                        onPress={() => {
+                        variant="outline"
+                        onClick={() => {
                           setSelectedUser(null);
                           setShowSearch(false);
                         }}
@@ -594,25 +605,26 @@ export default function TeamMembersNim({
                 ) : (
                   <>
                     <div className="flex items-center gap-2">
-                      <Input
-                        placeholder="Cari NIM atau nama mahasiswa..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        startContent={
-                          isSearching ? (
-                            <Spinner size="sm" />
+                      <div className="relative flex-1">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2">
+                          {isSearching ? (
+                            <Spinner className="size-4" />
                           ) : (
                             <Search size={16} className="text-app-teritary-invert" />
-                          )
-                        }
-                        size="sm"
-                        autoFocus
-                      />
+                          )}
+                        </span>
+                        <Input
+                          placeholder="Cari NIM atau nama mahasiswa..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-9"
+                          autoFocus
+                        />
+                      </div>
                       <Button
-                        size="sm"
-                        variant="flat"
-                        isIconOnly
-                        onPress={() => {
+                        size="icon-sm"
+                        variant="outline"
+                        onClick={() => {
                           setShowSearch(false);
                           setSearchQuery('');
                           setSearchResults([]);
@@ -633,11 +645,15 @@ export default function TeamMembersNim({
                             className="flex items-center gap-3 p-2 hover:bg-app-quaternary rounded-lg cursor-pointer transition-colors"
                             onClick={() => handleSelectUser(user)}
                           >
-                            <Avatar
-                              src={getSimakPhotoUrl(user.nim) || user.image || undefined}
-                              name={user.name || user.username}
-                              size="sm"
-                            />
+                            <Avatar size="sm">
+                              <AvatarImage
+                                src={getSimakPhotoUrl(user.nim) || user.image || undefined}
+                                alt={user.name || user.username}
+                              />
+                              <AvatarFallback>
+                                {getInitials(user.name || user.username)}
+                              </AvatarFallback>
+                            </Avatar>
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium truncate">
                                 {user.name || user.username}
@@ -646,12 +662,7 @@ export default function TeamMembersNim({
                                 NIM: {user.nim}
                               </p>
                             </div>
-                            <Button
-                              size="sm"
-                              color="primary"
-                              variant="flat"
-                              isIconOnly
-                            >
+                            <Button size="icon-sm" variant="outline">
                               <UserPlus size={14} />
                             </Button>
                           </motion.div>
@@ -677,11 +688,11 @@ export default function TeamMembersNim({
               </div>
             ) : (
               <Button
-                variant="bordered"
-                className="w-full border-dashed"
-                startContent={<UserPlus size={18} />}
-                onPress={() => setShowSearch(true)}
+                variant="outline"
+                className="w-full border-dashed h-auto py-3"
+                onClick={() => setShowSearch(true)}
               >
+                <UserPlus size={18} />
                 <div className="text-left">
                   <p className="font-medium">Undang Anggota Tim</p>
                   <p className="text-xs text-app-secondary-invert">
@@ -708,7 +719,7 @@ export default function TeamMembersNim({
             Simpan project terlebih dahulu untuk mengundang anggota
           </div>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

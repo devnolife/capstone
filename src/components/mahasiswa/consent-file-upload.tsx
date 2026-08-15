@@ -1,15 +1,12 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import {
-  Card,
-  CardBody,
-  Button,
-  Progress,
-  Chip,
-  Tooltip,
-  addToast,
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { addToast } from '@/lib/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload,
@@ -205,7 +202,7 @@ export default function ConsentFileUpload({
 
   return (
     <Card className="border border-border bg-card shadow-sm">
-      <CardBody className="p-5">
+      <CardContent className="p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -215,7 +212,7 @@ export default function ConsentFileUpload({
             <div>
               <h3 className="font-semibold text-foreground flex items-center gap-2">
                 Surat Persetujuan
-                {isRequired && <span className="text-danger">*</span>}
+                {isRequired && <span className="text-destructive">*</span>}
               </h3>
               <p className="text-xs text-app-teritary-invert">
                 Persetujuan bahwa project dapat digunakan/dipelajari
@@ -223,9 +220,10 @@ export default function ConsentFileUpload({
             </div>
           </div>
           {document && (
-            <Chip size="sm" color="success" variant="flat" startContent={<CheckCircle2 size={12} />}>
+            <Badge className="bg-success/15 text-success">
+              <CheckCircle2 size={12} />
               Terupload
-            </Chip>
+            </Badge>
           )}
         </div>
 
@@ -270,28 +268,35 @@ export default function ConsentFileUpload({
                   </p>
                 </div>
                 <div className="flex gap-1">
-                  <Tooltip content="Lihat File">
-                    <Button
-                      size="sm"
-                      variant="flat"
-                      color="success"
-                      isIconOnly
-                      onPress={handlePreview}
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          size="icon-sm"
+                          variant="outline"
+                          className="text-success"
+                          onClick={handlePreview}
+                        />
+                      }
                     >
                       <Eye size={14} />
-                    </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Lihat File</TooltipContent>
                   </Tooltip>
                   {!readOnly && (
-                    <Tooltip content="Hapus">
-                      <Button
-                        size="sm"
-                        variant="flat"
-                        color="danger"
-                        isIconOnly
-                        onPress={handleRemove}
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            size="icon-sm"
+                            variant="destructive"
+                            onClick={handleRemove}
+                          />
+                        }
                       >
                         <Trash2 size={14} />
-                      </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Hapus</TooltipContent>
                     </Tooltip>
                   )}
                 </div>
@@ -313,12 +318,7 @@ export default function ConsentFileUpload({
                       <Upload size={24} className="text-primary animate-pulse" />
                     </div>
                     <p className="text-sm font-medium text-primary mb-2">Mengupload...</p>
-                    <Progress
-                      value={uploadProgress}
-                      color="primary"
-                      size="sm"
-                      className="max-w-xs mx-auto"
-                    />
+                    <Progress value={uploadProgress} className="max-w-xs mx-auto" />
                     <p className="text-xs text-app-teritary-invert mt-2">{uploadProgress}%</p>
                   </div>
                 </div>
@@ -332,10 +332,9 @@ export default function ConsentFileUpload({
                   className={`
                     p-6 border-2 border-dashed rounded-xl transition-all duration-200
                     ${readOnly ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}
-                    ${
-                      isDragOver
-                        ? 'border-ring bg-app-quaternary'
-                        : 'border-border bg-app-quinary hover:bg-app-quaternary'
+                    ${isDragOver
+                      ? 'border-ring bg-app-quaternary'
+                      : 'border-border bg-app-quinary hover:bg-app-quaternary'
                     }
                   `}
                 >
@@ -380,7 +379,7 @@ export default function ConsentFileUpload({
             <span>Dokumen persetujuan wajib diupload</span>
           </div>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

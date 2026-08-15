@@ -3,32 +3,97 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Button,
-  Chip,
-  Avatar,
   Table,
   TableHeader,
-  TableColumn,
+  TableHead,
   TableBody,
   TableRow,
   TableCell,
-  Input,
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
   Select,
+  SelectContent,
   SelectItem,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Spinner,
-  Switch,
-  Pagination,
-} from '@heroui/react';
-import { Search, UserPlus, Edit, Trash2, Users, ChevronRight, Shield, GraduationCap, UserCog, RefreshCw, CheckCircle, AlertCircle } from 'lucide-react';
-import { formatDate, getRoleLabel } from '@/lib/utils';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
+import { Search, UserPlus, Edit, Trash2, Users, Shield, GraduationCap, UserCog, RefreshCw, CheckCircle, AlertCircle, ChevronLeft, ChevronRight, Loader2, X } from 'lucide-react';
+import { formatDate, getInitials, getRoleLabel } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
+
+const roleToneClass: Record<User['role'], string> = {
+  ADMIN: 'bg-destructive/10 text-destructive',
+  DOSEN_PENGUJI: 'bg-secondary text-secondary-foreground',
+  MAHASISWA: 'bg-primary/10 text-primary',
+};
+
+const activeToneClass = (isActive: boolean) =>
+  isActive
+    ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+    : 'bg-muted text-muted-foreground';
+
+function PaginationControls({
+  page,
+  total,
+  onChange,
+  size = 'default',
+}: {
+  page: number;
+  total: number;
+  onChange: (page: number) => void;
+  size?: 'sm' | 'default';
+}) {
+  const pages = Array.from({ length: total }, (_, i) => i + 1);
+  const buttonSize = size === 'sm' ? 'icon-sm' : 'icon';
+  return (
+    <nav className="flex items-center gap-1" aria-label="Pagination">
+      <Button
+        size={buttonSize}
+        variant="outline"
+        aria-label="Halaman sebelumnya"
+        disabled={page <= 1}
+        onClick={() => onChange(page - 1)}
+      >
+        <ChevronLeft size={16} />
+      </Button>
+      {pages.map((p) => (
+        <Button
+          key={p}
+          size={buttonSize}
+          variant={p === page ? 'default' : 'outline'}
+          aria-current={p === page ? 'page' : undefined}
+          onClick={() => onChange(p)}
+        >
+          {p}
+        </Button>
+      ))}
+      <Button
+        size={buttonSize}
+        variant="outline"
+        aria-label="Halaman berikutnya"
+        disabled={page >= total}
+        onClick={() => onChange(page + 1)}
+      >
+        <ChevronRight size={16} />
+      </Button>
+    </nav>
+  );
+}
 
 interface User {
   id: string;
@@ -87,12 +152,10 @@ function MobileUserCard({
         <div className="space-y-3">
           {/* User Info */}
           <div className="flex items-center gap-3">
-            <Avatar
-              name={user.name}
-              src={user.image || undefined}
-              size="md"
-              className="ring-2 ring-slate-200/60 dark:ring-zinc-700/50"
-            />
+            <Avatar className="size-10 ring-2 ring-slate-200/60 dark:ring-zinc-700/50">
+              {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
+              <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+            </Avatar>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm text-slate-800 dark:text-white truncate">{user.name}</p>
               <p className="text-xs text-slate-500 dark:text-zinc-400 truncate">{user.username}</p>
@@ -101,28 +164,18 @@ function MobileUserCard({
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
-            <Chip
-              size="sm"
-              color={
-                user.role === 'ADMIN'
-                  ? 'danger'
-                  : user.role === 'DOSEN_PENGUJI'
-                    ? 'secondary'
-                    : 'primary'
-              }
-              variant="flat"
-              className="h-5 text-[10px]"
+            <Badge
+              variant="secondary"
+              className={`h-5 text-[10px] ${roleToneClass[user.role]}`}
             >
               {getRoleLabel(user.role)}
-            </Chip>
-            <Chip
-              size="sm"
-              color={user.isActive ? 'success' : 'default'}
-              variant="flat"
-              className="h-5 text-[10px]"
+            </Badge>
+            <Badge
+              variant="secondary"
+              className={`h-5 text-[10px] ${activeToneClass(user.isActive)}`}
             >
               {user.isActive ? 'Aktif' : 'Nonaktif'}
-            </Chip>
+            </Badge>
           </div>
 
           {/* Info Row */}
@@ -135,21 +188,20 @@ function MobileUserCard({
           <div className="flex gap-2">
             <Button
               size="sm"
-              variant="flat"
+              variant="outline"
               className="flex-1 h-8"
-              startContent={<Edit size={14} />}
-              onPress={() => onEdit(user)}
+              onClick={() => onEdit(user)}
             >
+              <Edit size={14} />
               Edit
             </Button>
             <Button
               size="sm"
-              variant="flat"
-              color="danger"
+              variant="destructive"
               className="flex-1 h-8"
-              startContent={<Trash2 size={14} />}
-              onPress={() => onDelete(user.id)}
+              onClick={() => onDelete(user.id)}
             >
+              <Trash2 size={14} />
               Hapus
             </Button>
           </div>
@@ -161,7 +213,7 @@ function MobileUserCard({
 
 export default function AdminUsersPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Spinner size="lg" /></div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Spinner className="size-8" /></div>}>
       <AdminUsersPageInner />
     </Suspense>
   );
@@ -177,12 +229,12 @@ function AdminUsersPageInner() {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onClose: onEditClose,
-  } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const onEditOpen = () => setIsEditOpen(true);
+  const onEditClose = () => setIsEditOpen(false);
   const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Form state
@@ -525,7 +577,7 @@ function AdminUsersPageInner() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -540,19 +592,18 @@ function AdminUsersPageInner() {
       {/* Header */}
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-default-900">Manajemen User</h1>
-          <p className="text-sm text-default-500 mt-0.5">
+          <h1 className="text-2xl font-semibold text-foreground">Manajemen User</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
             Kelola mahasiswa, dosen, dan admin
           </p>
         </div>
         <Button
-          color="primary"
-          startContent={<UserPlus size={16} />}
-          onPress={() => {
+          onClick={() => {
             resetForm();
             onOpen();
           }}
         >
+          <UserPlus size={16} />
           Tambah User
         </Button>
       </header>
@@ -560,7 +611,7 @@ function AdminUsersPageInner() {
       {/* Stats */}
       <section className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {[
-          { label: 'Total', value: stats.total, icon: Users, cls: 'bg-default-100 text-default-600' },
+          { label: 'Total', value: stats.total, icon: Users, cls: 'bg-muted text-foreground' },
           { label: 'Mahasiswa', value: stats.mahasiswa, icon: GraduationCap, cls: 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-300' },
           { label: 'Dosen', value: stats.dosen, icon: UserCog, cls: 'bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300' },
           { label: 'Admin', value: stats.admin, icon: Shield, cls: 'bg-rose-100 text-rose-600 dark:bg-rose-900/40 dark:text-rose-300' },
@@ -570,16 +621,16 @@ function AdminUsersPageInner() {
           return (
             <div
               key={s.label}
-              className="flex items-center gap-3 rounded-xl border border-divider/60 bg-content1 p-3.5"
+              className="flex items-center gap-3 rounded-xl border bg-card p-3.5"
             >
               <div className={`p-2 rounded-lg ${s.cls}`}>
                 <Icon size={16} />
               </div>
               <div className="min-w-0">
-                <p className="text-xl font-semibold text-default-900 tabular-nums leading-tight">
+                <p className="text-xl font-semibold text-foreground tabular-nums leading-tight">
                   {s.value}
                 </p>
-                <p className="text-xs text-default-500 leading-tight">{s.label}</p>
+                <p className="text-xs text-muted-foreground leading-tight">{s.label}</p>
               </div>
             </div>
           );
@@ -588,49 +639,62 @@ function AdminUsersPageInner() {
 
       {/* Filters */}
       <section className="flex flex-col gap-2 md:flex-row md:items-center">
-        <Input
-          placeholder="Cari nama, email, NIM/NIP, prodi..."
-          startContent={<Search size={16} className="text-default-400" />}
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          isClearable
-          onClear={() => setSearchQuery('')}
-          className="flex-1"
-          size="sm"
-        />
+        <div className="relative flex-1">
+          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Cari nama, email, NIM/NIP, prodi..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 pr-9"
+          />
+          {searchQuery && (
+            <Button
+              size="icon-xs"
+              variant="ghost"
+              aria-label="Bersihkan pencarian"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2"
+              onClick={() => setSearchQuery('')}
+            >
+              <X size={14} />
+            </Button>
+          )}
+        </div>
         <Select
-          aria-label="Filter role"
-          placeholder="Semua Role"
-          selectedKeys={[roleFilter]}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="w-full md:w-48"
-          size="sm"
+          value={roleFilter}
+          onValueChange={(value) => {
+            if (typeof value === 'string') setRoleFilter(value);
+          }}
         >
-          <SelectItem key="all">Semua Role</SelectItem>
-          <SelectItem key="MAHASISWA">Mahasiswa</SelectItem>
-          <SelectItem key="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
-          <SelectItem key="ADMIN">Admin</SelectItem>
+          <SelectTrigger aria-label="Filter role" className="w-full md:w-48">
+            <SelectValue placeholder="Semua Role" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Semua Role</SelectItem>
+            <SelectItem value="MAHASISWA">Mahasiswa</SelectItem>
+            <SelectItem value="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
+            <SelectItem value="ADMIN">Admin</SelectItem>
+          </SelectContent>
         </Select>
       </section>
 
       {/* Users List */}
       <motion.div variants={itemVariants}>
-        <div className="rounded-xl border border-divider/60 bg-content1 overflow-hidden">
-          <div className="px-4 py-2.5 border-b border-divider/60 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-default-700">
+        <div className="rounded-xl border bg-card overflow-hidden">
+          <div className="px-4 py-2.5 border-b flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-foreground">
               Daftar User
             </h2>
-            <span className="text-xs text-default-500 tabular-nums">
+            <span className="text-xs text-muted-foreground tabular-nums">
               {filteredUsers.length} hasil
             </span>
           </div>
           <div className="p-4">
             {filteredUsers.length === 0 ? (
               <div className="text-center py-10">
-                <div className="inline-flex p-3 rounded-full bg-default-100 mb-3">
-                  <Users size={32} className="text-default-400" />
+                <div className="inline-flex p-3 rounded-full bg-muted mb-3">
+                  <Users size={32} className="text-muted-foreground" />
                 </div>
-                <p className="text-sm text-default-500">
+                <p className="text-sm text-muted-foreground">
                   Tidak ada user ditemukan
                 </p>
               </div>
@@ -651,12 +715,11 @@ function AdminUsersPageInner() {
                   {/* Mobile Pagination */}
                   {totalPages > 1 && (
                     <div className="flex justify-center mt-4">
-                      <Pagination
+                      <PaginationControls
                         total={totalPages}
                         page={currentPage}
                         onChange={setCurrentPage}
                         size="sm"
-                        showControls
                       />
                     </div>
                   )}
@@ -664,79 +727,65 @@ function AdminUsersPageInner() {
 
                 {/* Desktop View - Table */}
                 <div className="hidden md:block">
-                  <Table aria-label="Users table" removeWrapper>
+                  <Table aria-label="Users table">
                     <TableHeader>
-                      <TableColumn>USER</TableColumn>
-                      <TableColumn>ROLE</TableColumn>
-                      <TableColumn>NIM/USERNAME</TableColumn>
-                      <TableColumn>STATUS</TableColumn>
-                      <TableColumn>TANGGAL DAFTAR</TableColumn>
-                      <TableColumn>AKSI</TableColumn>
+                      <TableRow>
+                        <TableHead>USER</TableHead>
+                        <TableHead>ROLE</TableHead>
+                        <TableHead>NIM/USERNAME</TableHead>
+                        <TableHead>STATUS</TableHead>
+                        <TableHead>TANGGAL DAFTAR</TableHead>
+                        <TableHead>AKSI</TableHead>
+                      </TableRow>
                     </TableHeader>
                     <TableBody>
                       {paginatedUsers.map((user) => (
                         <TableRow key={user.id}>
                           <TableCell>
                             <div className="flex items-center gap-3">
-                              <Avatar
-                                name={user.name}
-                                src={user.image || undefined}
-                                size="sm"
-                              />
+                              <Avatar className="size-8">
+                                {user.image ? <AvatarImage src={user.image} alt={user.name} /> : null}
+                                <AvatarFallback className="text-xs">{getInitials(user.name)}</AvatarFallback>
+                              </Avatar>
                               <div>
                                 <p className="font-medium text-sm">{user.name}</p>
-                                <p className="text-xs text-zinc-500">
+                                <p className="text-xs text-muted-foreground">
                                   {user.username}
                                 </p>
                               </div>
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Chip
-                              size="sm"
-                              color={
-                                user.role === 'ADMIN'
-                                  ? 'danger'
-                                  : user.role === 'DOSEN_PENGUJI'
-                                    ? 'secondary'
-                                    : 'primary'
-                              }
-                              variant="flat"
-                            >
+                            <Badge variant="secondary" className={roleToneClass[user.role]}>
                               {getRoleLabel(user.role)}
-                            </Chip>
+                            </Badge>
                           </TableCell>
-                          <TableCell className="text-zinc-600 dark:text-zinc-400">
+                          <TableCell className="text-muted-foreground">
                             {user.username}
                           </TableCell>
                           <TableCell>
-                            <Chip
-                              size="sm"
-                              color={user.isActive ? 'success' : 'default'}
-                              variant="flat"
-                            >
+                            <Badge variant="secondary" className={activeToneClass(user.isActive)}>
                               {user.isActive ? 'Aktif' : 'Nonaktif'}
-                            </Chip>
+                            </Badge>
                           </TableCell>
-                          <TableCell className="text-zinc-500 text-sm">
+                          <TableCell className="text-muted-foreground text-sm">
                             {formatDate(user.createdAt)}
                           </TableCell>
                           <TableCell>
                             <div className="flex gap-2">
                               <Button
-                                isIconOnly
-                                size="sm"
-                                variant="flat"
-                                onPress={() => openEditModal(user)}
+                                size="icon-sm"
+                                variant="outline"
+                                aria-label="Edit user"
+                                onClick={() => openEditModal(user)}
                               >
                                 <Edit size={16} />
                               </Button>
                               <Button
-                                isIconOnly
-                                size="sm"
-                                variant="flat"
-                                color="danger"
-                                onPress={() => handleDeleteUser(user.id)}
+                                size="icon-sm"
+                                variant="destructive"
+                                aria-label="Hapus user"
+                                onClick={() => handleDeleteUser(user.id)}
                               >
                                 <Trash2 size={16} />
                               </Button>
@@ -748,16 +797,14 @@ function AdminUsersPageInner() {
                   </Table>
                   {/* Desktop Pagination */}
                   {totalPages > 1 && (
-                    <div className="flex justify-between items-center mt-4 pt-4 border-t border-slate-200/60 dark:border-zinc-700/50">
-                      <span className="text-sm text-slate-500 dark:text-zinc-400">
+                    <div className="flex justify-between items-center mt-4 pt-4 border-t">
+                      <span className="text-sm text-muted-foreground">
                         Menampilkan {((currentPage - 1) * rowsPerPage) + 1} - {Math.min(currentPage * rowsPerPage, filteredUsers.length)} dari {filteredUsers.length} user
                       </span>
-                      <Pagination
+                      <PaginationControls
                         total={totalPages}
                         page={currentPage}
                         onChange={setCurrentPage}
-                        showControls
-                        color="primary"
                       />
                     </div>
                   )}
@@ -769,39 +816,27 @@ function AdminUsersPageInner() {
       </motion.div>
 
       {/* Create User Modal */}
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        size="2xl"
-        scrollBehavior="inside"
-        classNames={{
-          backdrop: 'bg-gradient-to-br from-blue-900/20 via-black/50 to-cyan-900/20 backdrop-blur-md',
-          base: 'border-0 bg-white dark:bg-zinc-900 shadow-2xl',
-          header: 'border-b-0',
-          body: 'p-0',
-          footer: 'border-t-0',
-        }}
-      >
-        <ModalContent>
+      <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <DialogContent className="sm:max-w-3xl p-0 gap-0">
           {/* Gradient Header */}
-          <div className="relative overflow-hidden">
+          <div className="relative overflow-hidden rounded-t-xl">
             <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-cyan-500 to-teal-500" />
             <div className="absolute inset-0 opacity-30">
               <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl" />
               <div className="absolute bottom-0 left-1/4 w-24 h-24 bg-white/10 rounded-full blur-xl" />
             </div>
-            <ModalHeader className="relative flex items-center gap-4 py-6 px-6">
+            <DialogHeader className="relative flex flex-row items-center gap-4 py-6 px-6">
               <div className="p-3 rounded-2xl bg-white/20 backdrop-blur-sm shadow-lg">
                 <UserPlus size={24} className="text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-white">Tambah User Baru</h2>
+                <DialogTitle className="text-xl font-bold text-white">Tambah User Baru</DialogTitle>
                 <p className="text-sm text-white/70">Buat akun pengguna baru atau sinkronkan dari SIMAK</p>
               </div>
-            </ModalHeader>
+            </DialogHeader>
           </div>
 
-          <ModalBody className="px-6 py-5 space-y-5">
+          <div className="px-6 py-5 space-y-5">
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -893,29 +928,24 @@ function AdminUsersPageInner() {
                       <span className="text-sm font-medium text-slate-700 dark:text-zinc-300">Cari Data Mahasiswa</span>
                     </div>
                     <div className="flex gap-3">
-                      <Input
-                        placeholder="Masukkan NIM mahasiswa..."
-                        value={formData.username}
-                        onChange={(e) =>
-                          setFormData({ ...formData, username: e.target.value })
-                        }
-                        className="flex-1"
-                        size="lg"
-                        classNames={{
-                          inputWrapper: 'bg-slate-50 dark:bg-zinc-900 border-slate-200 dark:border-zinc-700',
-                        }}
-                        startContent={
-                          <GraduationCap size={18} className="text-slate-400" />
-                        }
-                      />
+                      <div className="relative flex-1">
+                        <GraduationCap size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <Input
+                          placeholder="Masukkan NIM mahasiswa..."
+                          value={formData.username}
+                          onChange={(e) =>
+                            setFormData({ ...formData, username: e.target.value })
+                          }
+                          className="pl-10 h-11 bg-slate-50 dark:bg-zinc-900"
+                        />
+                      </div>
                       <Button
-                        color="success"
                         size="lg"
-                        isLoading={simakLoading}
-                        onPress={handleFetchSimak}
-                        className="px-6 bg-gradient-to-r from-emerald-500 to-teal-500 shadow-lg shadow-emerald-500/25"
+                        disabled={simakLoading}
+                        onClick={handleFetchSimak}
+                        className="px-6 bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/25"
                       >
-                        {!simakLoading && <Search size={18} />}
+                        {simakLoading ? <Loader2 className="animate-spin" /> : <Search size={18} />}
                         <span className="ml-1">Cari</span>
                       </Button>
                     </div>
@@ -994,10 +1024,7 @@ function AdminUsersPageInner() {
                       onChange={(e) =>
                         setFormData({ ...formData, password: e.target.value })
                       }
-                      size="lg"
-                      classNames={{
-                        inputWrapper: 'bg-white dark:bg-zinc-900 border-slate-200 dark:border-zinc-700',
-                      }}
+                      className="h-11 bg-white dark:bg-zinc-900"
                     />
                     <p className="text-xs text-slate-500 dark:text-zinc-400 mt-2 flex items-center gap-1">
                       <AlertCircle size={12} />
@@ -1012,120 +1039,116 @@ function AdminUsersPageInner() {
                 animate={{ opacity: 1, y: 0 }}
                 className="space-y-4"
               >
-                <Input
-                  label="Nama Lengkap"
-                  placeholder="Masukkan nama lengkap..."
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  isRequired
-                  size="lg"
-                  classNames={{
-                    inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
-                  }}
-                />
-                <Input
-                  label="Username (NIM/Username)"
-                  placeholder="NIM untuk Mahasiswa atau username untuk lainnya"
-                  value={formData.username}
-                  onChange={(e) =>
-                    setFormData({ ...formData, username: e.target.value })
-                  }
-                  isRequired
-                  size="lg"
-                  classNames={{
-                    inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
-                  }}
-                />
-                <Input
-                  label="Password"
-                  placeholder="Buat password..."
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData({ ...formData, password: e.target.value })
-                  }
-                  isRequired
-                  size="lg"
-                  classNames={{
-                    inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
-                  }}
-                />
-                <Select
-                  label="Role Pengguna"
-                  selectedKeys={[formData.role]}
-                  onChange={(e) =>
-                    setFormData({ ...formData, role: e.target.value })
-                  }
-                  isRequired
-                  size="lg"
-                  classNames={{
-                    trigger: 'bg-slate-50 dark:bg-zinc-800 border-slate-200 dark:border-zinc-700',
-                  }}
-                >
-                  <SelectItem key="MAHASISWA" startContent={<GraduationCap size={16} className="text-blue-500" />}>
-                    Mahasiswa
-                  </SelectItem>
-                  <SelectItem key="DOSEN_PENGUJI" startContent={<UserCog size={16} className="text-violet-500" />}>
-                    Dosen Penguji
-                  </SelectItem>
-                  <SelectItem key="ADMIN" startContent={<Shield size={16} className="text-rose-500" />}>
-                    Admin
-                  </SelectItem>
-                </Select>
+                <div className="space-y-1.5">
+                  <Label htmlFor="user-name">Nama Lengkap</Label>
+                  <Input
+                    id="user-name"
+                    placeholder="Masukkan nama lengkap..."
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    required
+                    className="h-11 bg-slate-50 dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="user-username">Username (NIM/Username)</Label>
+                  <Input
+                    id="user-username"
+                    placeholder="NIM untuk Mahasiswa atau username untuk lainnya"
+                    value={formData.username}
+                    onChange={(e) =>
+                      setFormData({ ...formData, username: e.target.value })
+                    }
+                    required
+                    className="h-11 bg-slate-50 dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="user-password">Password</Label>
+                  <Input
+                    id="user-password"
+                    placeholder="Buat password..."
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({ ...formData, password: e.target.value })
+                    }
+                    required
+                    className="h-11 bg-slate-50 dark:bg-zinc-800"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="user-role">Role Pengguna</Label>
+                  <Select
+                    value={formData.role}
+                    onValueChange={(value) => {
+                      if (typeof value === 'string') setFormData({ ...formData, role: value });
+                    }}
+                  >
+                    <SelectTrigger id="user-role" className="w-full h-11 bg-slate-50 dark:bg-zinc-800">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="MAHASISWA">
+                        <GraduationCap size={16} className="text-blue-500" />
+                        Mahasiswa
+                      </SelectItem>
+                      <SelectItem value="DOSEN_PENGUJI">
+                        <UserCog size={16} className="text-violet-500" />
+                        Dosen Penguji
+                      </SelectItem>
+                      <SelectItem value="ADMIN">
+                        <Shield size={16} className="text-rose-500" />
+                        Admin
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </motion.div>
             )}
-          </ModalBody>
+          </div>
 
-          <ModalFooter className="px-6 py-4 bg-slate-50 dark:bg-zinc-800/50">
+          <DialogFooter className="px-6 py-4 bg-slate-50 dark:bg-zinc-800/50 rounded-b-xl">
             <Button
-              variant="flat"
-              onPress={onClose}
+              variant="outline"
+              onClick={onClose}
               className="font-medium"
             >
               Batal
             </Button>
             <Button
-              onPress={handleCreateUser}
-              isDisabled={syncMode && !simakData}
+              onClick={handleCreateUser}
+              disabled={syncMode && !simakData}
               className={`font-semibold shadow-lg ${syncMode
                 ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-emerald-500/25'
                 : 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-blue-500/25'
                 }`}
-              startContent={syncMode ? <RefreshCw size={18} /> : <UserPlus size={18} />}
             >
+              {syncMode ? <RefreshCw size={18} /> : <UserPlus size={18} />}
               {syncMode ? 'Buat dari SIMAK' : 'Buat User'}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit User Modal */}
-      <Modal
-        isOpen={isEditOpen}
-        onClose={onEditClose}
-        size="lg"
-        scrollBehavior="inside"
-        classNames={{
-          backdrop: 'bg-black/50 backdrop-blur-sm',
-          base: 'border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900',
-        }}
-      >
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-lg">
+      <Dialog open={isEditOpen} onOpenChange={(open) => { if (!open) onEditClose(); }}>
+        <DialogContent className="sm:max-w-2xl p-0 gap-0">
+          <DialogHeader className="flex flex-row items-center gap-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-t-xl p-4">
             <div className="p-2 rounded-xl bg-white/20">
               <Edit size={20} />
             </div>
             <div>
-              <span className="font-semibold">Edit User</span>
+              <DialogTitle className="text-white">Edit User</DialogTitle>
               <p className="text-xs text-white/70 font-normal">Perbarui informasi pengguna</p>
             </div>
-          </ModalHeader>
+          </DialogHeader>
 
-          <ModalBody className="space-y-4 py-5">
+          <div className="space-y-4 p-6">
             {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm flex items-center gap-2">
+              <div className="bg-destructive/10 text-destructive border border-destructive/30 rounded-lg p-3 text-sm flex items-center gap-2">
                 <AlertCircle size={16} />
                 {error}
               </div>
@@ -1133,24 +1156,21 @@ function AdminUsersPageInner() {
 
             {/* User Info */}
             {selectedUser && (
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/60 dark:border-zinc-700/50">
-                <Avatar
-                  name={selectedUser.name}
-                  src={selectedUser.image || undefined}
-                  size="md"
-                />
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 border">
+                <Avatar className="size-10">
+                  {selectedUser.image ? <AvatarImage src={selectedUser.image} alt={selectedUser.name} /> : null}
+                  <AvatarFallback>{getInitials(selectedUser.name)}</AvatarFallback>
+                </Avatar>
                 <div>
-                  <p className="font-medium text-slate-800 dark:text-white">{selectedUser.name}</p>
-                  <p className="text-xs text-slate-500 dark:text-zinc-400">{selectedUser.username}</p>
+                  <p className="font-medium text-foreground">{selectedUser.name}</p>
+                  <p className="text-xs text-muted-foreground">{selectedUser.username}</p>
                 </div>
-                <Chip
-                  size="sm"
-                  color={selectedUser.role === 'ADMIN' ? 'danger' : selectedUser.role === 'DOSEN_PENGUJI' ? 'secondary' : 'primary'}
-                  variant="flat"
-                  className="ml-auto"
+                <Badge
+                  variant="secondary"
+                  className={`ml-auto ${roleToneClass[selectedUser.role]}`}
                 >
                   {getRoleLabel(selectedUser.role)}
-                </Chip>
+                </Badge>
               </div>
             )}
 
@@ -1164,18 +1184,17 @@ function AdminUsersPageInner() {
                   </div>
                   <Button
                     size="sm"
-                    color="success"
-                    variant="flat"
-                    isLoading={editSimakLoading}
-                    onPress={handleFetchSimakForEdit}
-                    startContent={!editSimakLoading && <RefreshCw size={14} />}
+                    variant="outline"
+                    disabled={editSimakLoading}
+                    onClick={handleFetchSimakForEdit}
                   >
+                    {editSimakLoading ? <Loader2 className="animate-spin" /> : <RefreshCw size={14} />}
                     Ambil Data
                   </Button>
                 </div>
 
                 {editSimakError && (
-                  <div className="text-sm text-danger flex items-center gap-2 mt-2">
+                  <div className="text-sm text-destructive flex items-center gap-2 mt-2">
                     <AlertCircle size={14} />
                     {editSimakError}
                   </div>
@@ -1203,64 +1222,77 @@ function AdminUsersPageInner() {
             )}
 
             {/* Form Fields */}
-            <Input
-              label="Nama Lengkap"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              isRequired
-              isDisabled={editSimakData !== null}
-            />
-
-            <Input
-              label="Username (NIM/Username)"
-              value={formData.username}
-              onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-              isRequired
-            />
-
-            <Input
-              label="Password Baru"
-              description="Kosongkan jika tidak ingin mengubah"
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
-
-            <Select
-              label="Role"
-              selectedKeys={[formData.role]}
-              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              isRequired
-            >
-              <SelectItem key="MAHASISWA">Mahasiswa</SelectItem>
-              <SelectItem key="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
-              <SelectItem key="ADMIN">Admin</SelectItem>
-            </Select>
-
-            <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-zinc-800/50 border border-slate-200/40 dark:border-zinc-700/30">
-              <span className="text-sm text-slate-700 dark:text-zinc-300">Status Aktif</span>
-              <Switch
-                isSelected={formData.isActive}
-                onValueChange={(value) => setFormData({ ...formData, isActive: value })}
-                color="success"
+            <div className="space-y-1.5">
+              <Label htmlFor="user-edit-name">Nama Lengkap</Label>
+              <Input
+                id="user-edit-name"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                disabled={editSimakData !== null}
               />
             </div>
-          </ModalBody>
 
-          <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
-            <Button variant="flat" onPress={onEditClose}>
+            <div className="space-y-1.5">
+              <Label htmlFor="user-edit-username">Username (NIM/Username)</Label>
+              <Input
+                id="user-edit-username"
+                value={formData.username}
+                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="user-edit-password">Password Baru</Label>
+              <Input
+                id="user-edit-password"
+                type="password"
+                value={formData.password}
+                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground">Kosongkan jika tidak ingin mengubah</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="user-edit-role">Role</Label>
+              <Select
+                value={formData.role}
+                onValueChange={(value) => {
+                  if (typeof value === 'string') setFormData({ ...formData, role: value });
+                }}
+              >
+                <SelectTrigger id="user-edit-role" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MAHASISWA">Mahasiswa</SelectItem>
+                  <SelectItem value="DOSEN_PENGUJI">Dosen Penguji</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center justify-between p-3 rounded-lg bg-muted/40 border">
+              <span className="text-sm text-foreground">Status Aktif</span>
+              <Switch
+                checked={formData.isActive}
+                onCheckedChange={(value) => setFormData({ ...formData, isActive: value })}
+              />
+            </div>
+          </div>
+
+          <DialogFooter className="border-t p-6 pt-4">
+            <Button variant="outline" onClick={onEditClose}>
               Batal
             </Button>
-            <Button
-              color={editSimakData ? "success" : "warning"}
-              onPress={handleUpdateUser}
-              startContent={editSimakData ? <RefreshCw size={16} /> : <Edit size={16} />}
-            >
+            <Button onClick={handleUpdateUser}>
+              {editSimakData ? <RefreshCw size={16} /> : <Edit size={16} />}
               {editSimakData ? 'Update dari SIMAK' : 'Update'}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirm Dialog */}
       <ConfirmDialog />

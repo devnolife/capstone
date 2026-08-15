@@ -1,15 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Chip,
-  Avatar,
-  Divider,
-} from '@heroui/react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Separator } from '@/components/ui/separator';
 import {
   Users,
   FolderGit2,
@@ -25,10 +21,22 @@ import {
 } from 'lucide-react';
 import {
   formatDate,
+  getInitials,
   getStatusColor,
   getStatusLabel,
   getRoleLabel,
 } from '@/lib/utils';
+
+const statusToneClass: Record<string, string> = {
+  default: 'bg-muted text-muted-foreground',
+  primary: 'bg-primary/10 text-primary',
+  secondary: 'bg-secondary text-secondary-foreground',
+  success:
+    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  warning:
+    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  danger: 'bg-destructive/10 text-destructive',
+};
 
 interface User {
   id: string;
@@ -240,26 +248,25 @@ export function AdminDashboardContent({
 
       {/* Recent activity - 2 columns */}
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
-          <CardHeader className="pb-2 flex items-center justify-between">
+        <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl shadow-none hover:shadow-xl transition-all gap-0 py-0">
+          <CardHeader className="pt-4 pb-2 flex flex-row items-center justify-between gap-2">
             <div>
               <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Registrasi</p>
               <h3 className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">User Terbaru</h3>
               <p className="text-xs text-[var(--color-steel)]">5 pendaftar terakhir</p>
             </div>
             <Button
-              as={Link}
-              href="/admin/users"
               size="sm"
-              variant="light"
+              variant="ghost"
               className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] hover:text-[var(--color-ember)]"
-              endContent={<ChevronRight size={14} />}
+              render={<Link href="/admin/users" />}
             >
               Semua
+              <ChevronRight size={14} />
             </Button>
           </CardHeader>
-          <Divider className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
-          <CardBody className="p-0">
+          <Separator className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
+          <CardContent className="p-0">
             {recentUsers.length === 0 ? (
               <p className="text-sm text-[var(--color-steel)] text-center py-8">
                 Belum ada user terdaftar
@@ -272,12 +279,10 @@ export function AdminDashboardContent({
                       href={`/admin/users?id=${u.id}`}
                       className="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--color-mist)] dark:hover:bg-zinc-900/50 transition-colors"
                     >
-                      <Avatar
-                        name={u.name}
-                        src={u.image || undefined}
-                        size="sm"
-                        className="shrink-0"
-                      />
+                      <Avatar className="size-8 shrink-0">
+                        {u.image ? <AvatarImage src={u.image} alt={u.name} /> : null}
+                        <AvatarFallback>{getInitials(u.name)}</AvatarFallback>
+                      </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-[var(--color-obsidian)] dark:text-white truncate">
                           {u.name}
@@ -287,13 +292,12 @@ export function AdminDashboardContent({
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <Chip
-                          size="sm"
-                          variant="bordered"
+                        <Badge
+                          variant="outline"
                           className="h-5 rounded-full border-current bg-transparent font-mono-display text-[10px] uppercase tracking-wider font-bold text-[var(--color-steel)]"
                         >
                           {getRoleLabel(u.role)}
-                        </Chip>
+                        </Badge>
                         <span className="text-[10px] text-[var(--color-steel)] hidden sm:inline">
                           {formatDate(u.createdAt)}
                         </span>
@@ -303,29 +307,28 @@ export function AdminDashboardContent({
                 ))}
               </ul>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
 
-        <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
-          <CardHeader className="pb-2 flex items-center justify-between">
+        <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl shadow-none hover:shadow-xl transition-all gap-0 py-0">
+          <CardHeader className="pt-4 pb-2 flex flex-row items-center justify-between gap-2">
             <div>
               <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Project</p>
               <h3 className="font-sans-display text-sm font-bold tracking-tight text-[var(--color-obsidian)] dark:text-white">Project Terbaru</h3>
               <p className="text-xs text-[var(--color-steel)]">5 project terakhir dibuat</p>
             </div>
             <Button
-              as={Link}
-              href="/admin/projects"
               size="sm"
-              variant="light"
+              variant="ghost"
               className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] hover:text-[var(--color-ember)]"
-              endContent={<ChevronRight size={14} />}
+              render={<Link href="/admin/projects" />}
             >
               Semua
+              <ChevronRight size={14} />
             </Button>
           </CardHeader>
-          <Divider className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
-          <CardBody className="p-0">
+          <Separator className="bg-[var(--color-pebble)] dark:bg-[var(--color-graphite)]" />
+          <CardContent className="p-0">
             {recentProjects.length === 0 ? (
               <p className="text-sm text-[var(--color-steel)] text-center py-8">
                 Belum ada project
@@ -349,20 +352,18 @@ export function AdminDashboardContent({
                           {p.mahasiswa.name} · {p.semester}
                         </p>
                       </div>
-                      <Chip
-                        size="sm"
-                        variant="flat"
-                        color={getStatusColor(p.status)}
-                        className="h-5 text-[10px] shrink-0"
+                      <Badge
+                        variant="secondary"
+                        className={`h-5 text-[10px] shrink-0 ${statusToneClass[getStatusColor(p.status)]}`}
                       >
                         {getStatusLabel(p.status)}
-                      </Chip>
+                      </Badge>
                     </Link>
                   </li>
                 ))}
               </ul>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
       </section>
     </div>

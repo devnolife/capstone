@@ -2,7 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Tabs, Tab, Chip, Select, SelectItem, Button } from '@heroui/react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   LayoutDashboard,
   ClipboardList,
@@ -71,6 +80,20 @@ export function resolveBlockerTarget(blocker: SubmissionBlocker): {
   }
   return BLOCKER_TARGET[blocker.code] ?? { tab: 'ringkasan' };
 }
+
+const STATUS_BADGE_CLASS: Record<string, string> = {
+  default: 'border-border bg-muted text-muted-foreground',
+  primary:
+    'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400',
+  secondary:
+    'border-violet-200 bg-violet-50 text-violet-700 dark:border-violet-800 dark:bg-violet-950/40 dark:text-violet-400',
+  success:
+    'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400',
+  warning:
+    'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400',
+  danger:
+    'border-red-200 bg-red-50 text-red-700 dark:border-red-800 dark:bg-red-950/40 dark:text-red-400',
+};
 
 const STATUS_LABELS: Record<
   string,
@@ -251,11 +274,11 @@ export function ProjectWorkspace({
       <span className="flex items-center gap-1.5">
         {icon} {label}
         {count > 0 ? (
-          <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-warning-500 px-1 text-[10px] font-bold text-white">
+          <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500 px-1 text-[10px] font-bold text-white">
             {count}
           </span>
         ) : tab !== 'ringkasan' && tab !== 'tim' && tab !== 'hasil' ? (
-          <CheckCircle2 size={13} className="text-success-500" />
+          <CheckCircle2 size={13} className="text-emerald-500" />
         ) : null}
       </span>
     );
@@ -268,17 +291,17 @@ export function ProjectWorkspace({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl font-bold truncate">{project.title}</h1>
-            <Chip size="sm" color={status.color} variant="flat">
+            <Badge variant="outline" className={STATUS_BADGE_CLASS[status.color]}>
               {status.label}
-            </Chip>
+            </Badge>
           </div>
-          <p className="text-xs text-default-500 mt-0.5">
+          <p className="text-xs text-muted-foreground mt-0.5">
             {project.semester} {project.tahunAkademik} · Semua kebutuhan project
             dalam satu halaman
           </p>
           {statusHint && (
-            <p className="flex items-start gap-1.5 text-xs text-default-600 dark:text-default-400 mt-1.5">
-              <Info size={13} className="mt-0.5 shrink-0 text-default-400" />
+            <p className="flex items-start gap-1.5 text-xs text-muted-foreground mt-1.5">
+              <Info size={13} className="mt-0.5 shrink-0 text-muted-foreground" />
               <span>
                 <span className="font-medium">{status.label}:</span> {statusHint}
               </span>
@@ -287,24 +310,30 @@ export function ProjectWorkspace({
         </div>
         {projects.length > 1 && (
           <Select
-            size="sm"
-            aria-label="Pilih project"
-            selectedKeys={[project.id]}
-            onSelectionChange={(keys) => {
-              const id = Array.from(keys)[0];
+            value={project.id}
+            onValueChange={(value) => {
+              const id = value;
               if (typeof id === 'string' && id !== project.id) {
                 const params = new URLSearchParams(searchParams.toString());
                 params.set('project', id);
                 router.push(`${pathname}?${params.toString()}`);
               }
             }}
-            className="w-full sm:w-64"
           >
-            {projects.map((p) => (
-              <SelectItem key={p.id} textValue={p.title}>
-                {p.title}
-              </SelectItem>
-            ))}
+            <SelectTrigger
+              size="sm"
+              aria-label="Pilih project"
+              className="w-full sm:w-64"
+            >
+              <SelectValue placeholder="Pilih project" />
+            </SelectTrigger>
+            <SelectContent>
+              {projects.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         )}
       </div>
@@ -319,7 +348,7 @@ export function ProjectWorkspace({
               </p>
               <p className="text-sm font-medium truncate">
                 {firstBlocker.label}
-                <span className="hidden sm:inline text-default-500 font-normal">
+                <span className="hidden sm:inline text-muted-foreground font-normal">
                   {' '}
                   — {firstBlocker.description}
                 </span>
@@ -327,12 +356,11 @@ export function ProjectWorkspace({
             </div>
             <Button
               size="sm"
-              color="primary"
-              endContent={<ArrowRight size={14} />}
-              onPress={() => goToBlocker(firstBlocker)}
+              onClick={() => goToBlocker(firstBlocker)}
               className="shrink-0"
             >
               Kerjakan
+              <ArrowRight size={14} />
             </Button>
           </div>
         </div>
@@ -341,19 +369,31 @@ export function ProjectWorkspace({
       {/* Tabs */}
       <Tabs
         aria-label="Workspace project"
-        selectedKey={activeTab}
-        onSelectionChange={(key) => setTab(String(key))}
-        variant="underlined"
-        color="primary"
-        classNames={{
-          tabList: 'w-full overflow-x-auto gap-2 mb-2',
-          tab: 'h-11 px-1',
-        }}
+        value={activeTab}
+        onValueChange={(value) => setTab(String(value))}
       >
-        <Tab
-          key="ringkasan"
-          title={tabTitle('Ringkasan', 'ringkasan', <LayoutDashboard size={15} />)}
-        >
+        <TabsList variant="line" className="w-full h-11 overflow-x-auto gap-2 mb-2 justify-start">
+          <TabsTrigger value="ringkasan" className="px-1">
+            {tabTitle('Ringkasan', 'ringkasan', <LayoutDashboard size={15} />)}
+          </TabsTrigger>
+          <TabsTrigger value="kelengkapan" className="px-1">
+            {tabTitle('Kelengkapan', 'kelengkapan', <ClipboardList size={15} />)}
+          </TabsTrigger>
+          <TabsTrigger value="tim" className="px-1">
+            {tabTitle('Tim', 'tim', <Users size={15} />)}
+          </TabsTrigger>
+          <TabsTrigger value="bukti" className="px-1">
+            {tabTitle('Bukti', 'bukti', <FolderCheck size={15} />)}
+          </TabsTrigger>
+          <TabsTrigger value="diskusi" className="px-1">
+            {tabTitle('Diskusi', 'diskusi', <MessagesSquare size={15} />)}
+          </TabsTrigger>
+          <TabsTrigger value="hasil" className="px-1">
+            {tabTitle('Hasil', 'hasil', <Award size={15} />)}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="ringkasan">
           <OverviewTab
             project={project}
             journey={journey}
@@ -361,40 +401,31 @@ export function ProjectWorkspace({
             onGoToBlocker={goToBlocker}
             onNavigateTab={setTab}
           />
-        </Tab>
-        <Tab
-          key="kelengkapan"
-          title={tabTitle('Kelengkapan', 'kelengkapan', <ClipboardList size={15} />)}
-        >
+        </TabsContent>
+        <TabsContent value="kelengkapan">
           <CompletenessTab projectId={project.id} canEdit={canEdit} />
-        </Tab>
-        <Tab key="tim" title={tabTitle('Tim', 'tim', <Users size={15} />)}>
+        </TabsContent>
+        <TabsContent value="tim">
           <TeamTab project={project} canEdit={canEdit} isOwner={isOwner} />
-        </Tab>
-        <Tab
-          key="bukti"
-          title={tabTitle('Bukti', 'bukti', <FolderCheck size={15} />)}
-        >
+        </TabsContent>
+        <TabsContent value="bukti">
           <EvidenceTab project={project} canEdit={canEdit} />
-        </Tab>
-        <Tab
-          key="diskusi"
-          title={tabTitle('Diskusi', 'diskusi', <MessagesSquare size={15} />)}
-        >
+        </TabsContent>
+        <TabsContent value="diskusi">
           <div className="pt-6">
             <DiscussionSection
               projectId={project.id}
               currentUserId={currentUserId}
             />
           </div>
-        </Tab>
-        <Tab key="hasil" title={tabTitle('Hasil', 'hasil', <Award size={15} />)}>
+        </TabsContent>
+        <TabsContent value="hasil">
           <ResultTab
             reviews={reviews}
             reviewStats={reviewStats}
             presentationSchedule={project.presentationSchedule}
           />
-        </Tab>
+        </TabsContent>
       </Tabs>
     </div>
   );

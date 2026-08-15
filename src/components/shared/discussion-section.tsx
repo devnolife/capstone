@@ -1,22 +1,20 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Spinner } from '@/components/ui/spinner';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Textarea,
-  Avatar,
-  Spinner,
-  Chip,
-  Divider,
-  addToast,
-  Dropdown,
-  DropdownTrigger,
   DropdownMenu,
-  DropdownItem,
-} from '@heroui/react';
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { addToast } from '@/lib/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MessageCircle,
@@ -31,6 +29,7 @@ import {
   UserCheck,
   ChevronDown,
   ChevronUp,
+  Loader2,
 } from 'lucide-react';
 import { getSimakPhotoUrl } from '@/lib/utils';
 
@@ -61,10 +60,10 @@ interface DiscussionSectionProps {
   currentUserId: string;
 }
 
-const roleConfig: Record<string, { label: string; color: 'primary' | 'warning' | 'danger' | 'success'; icon: typeof GraduationCap }> = {
-  MAHASISWA: { label: 'Mahasiswa', color: 'primary', icon: GraduationCap },
-  DOSEN_PENGUJI: { label: 'Dosen', color: 'warning', icon: UserCheck },
-  ADMIN: { label: 'Admin', color: 'danger', icon: ShieldCheck },
+const roleConfig: Record<string, { label: string; className: string; icon: typeof GraduationCap }> = {
+  MAHASISWA: { label: 'Mahasiswa', className: 'bg-primary/10 text-primary', icon: GraduationCap },
+  DOSEN_PENGUJI: { label: 'Dosen', className: 'bg-amber-500/10 text-amber-600 dark:text-amber-400', icon: UserCheck },
+  ADMIN: { label: 'Admin', className: 'bg-destructive/10 text-destructive', icon: ShieldCheck },
 };
 
 function timeAgo(dateStr: string): string {
@@ -107,24 +106,27 @@ function DiscussionMessage({
     <div className={`${isReply ? 'ml-8 pl-4 border-l-2 border-border' : ''}`}>
       <div className="group py-3">
         <div className="flex items-start gap-3">
-          <Avatar
-            src={discussion.author.image ? getSimakPhotoUrl(discussion.author.image) : undefined}
-            name={discussion.author.name}
-            size="sm"
-            className="shrink-0 mt-0.5"
-          />
+          <Avatar size="sm" className="shrink-0 mt-0.5">
+            {discussion.author.image && (
+              <AvatarImage
+                src={getSimakPhotoUrl(discussion.author.image)}
+                alt={discussion.author.name}
+              />
+            )}
+            <AvatarFallback>
+              {discussion.author.name?.charAt(0)?.toUpperCase() || '?'}
+            </AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-medium text-sm">{discussion.author.name}</span>
-              <Chip
-                size="sm"
-                color={roleCfg.color}
-                variant="flat"
-                startContent={<RoleIcon size={10} />}
-                className="h-5 text-[10px]"
+              <Badge
+                variant="secondary"
+                className={`h-5 text-[10px] ${roleCfg.className}`}
               >
+                <RoleIcon size={10} />
                 {roleCfg.label}
-              </Chip>
+              </Badge>
               <span className="flex items-center gap-1 text-[11px] text-app-teritary-invert">
                 <Clock size={10} />
                 {timeAgo(discussion.createdAt)}
@@ -137,46 +139,38 @@ function DiscussionMessage({
             <div className="flex items-center gap-2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
               {!isReply && (
                 <Button
-                  size="sm"
-                  variant="light"
-                  startContent={<Reply size={12} />}
+                  size="xs"
+                  variant="ghost"
                   className="h-6 text-xs text-app-teritary-invert"
-                  onPress={() => onReply(discussion.id)}
+                  onClick={() => onReply(discussion.id)}
                 >
+                  <Reply size={12} />
                   Balas
                 </Button>
               )}
               {isAuthor && (
-                <Dropdown>
-                  <DropdownTrigger>
-                    <Button
-                      size="sm"
-                      variant="light"
-                      isIconOnly
-                      className="h-6 w-6 min-w-0"
-                    >
-                      <MoreVertical size={12} />
-                    </Button>
-                  </DropdownTrigger>
-                  <DropdownMenu aria-label="Aksi diskusi">
-                    <DropdownItem
-                      key="edit"
-                      startContent={<Edit3 size={14} />}
-                      onPress={() => onEdit(discussion)}
-                    >
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button size="icon-xs" variant="ghost" className="h-6 w-6" />
+                    }
+                  >
+                    <MoreVertical size={12} />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => onEdit(discussion)}>
+                      <Edit3 size={14} />
                       Edit
-                    </DropdownItem>
-                    <DropdownItem
-                      key="delete"
-                      startContent={<Trash2 size={14} />}
-                      className="text-danger"
-                      color="danger"
-                      onPress={() => onDelete(discussion.id)}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={() => onDelete(discussion.id)}
                     >
+                      <Trash2 size={14} />
                       Hapus
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
           </div>
@@ -362,11 +356,11 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
           </div>
         </div>
       </CardHeader>
-      <Divider />
-      <CardBody className="p-0">
+      <Separator />
+      <CardContent className="p-0">
         {isLoading ? (
           <div className="flex items-center justify-center p-8">
-            <Spinner size="md" />
+            <Spinner className="size-6" />
           </div>
         ) : discussions.length === 0 ? (
           <div className="p-8 text-center">
@@ -417,10 +411,10 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
                     )}
                   </div>
                   <Button
-                    size="sm"
-                    variant="light"
-                    className="h-5 text-xs min-w-0 px-2"
-                    onPress={cancelAction}
+                    size="xs"
+                    variant="ghost"
+                    className="h-5 text-xs px-2"
+                    onClick={cancelAction}
                   >
                     Batal
                   </Button>
@@ -440,9 +434,8 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
                     : 'Tulis pesan diskusi...'
               }
               value={newMessage}
-              onValueChange={setNewMessage}
-              minRows={1}
-              maxRows={5}
+              onChange={(e) => setNewMessage(e.target.value)}
+              rows={1}
               className="flex-1"
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
@@ -452,21 +445,19 @@ export default function DiscussionSection({ projectId, currentUserId }: Discussi
               }}
             />
             <Button
-              isIconOnly
-              color="primary"
-              isLoading={isSending}
-              isDisabled={newMessage.trim().length < 2}
-              onPress={handleSend}
+              size="icon"
+              disabled={isSending || newMessage.trim().length < 2}
+              onClick={handleSend}
               className="shrink-0"
             >
-              <Send size={16} />
+              {isSending ? <Loader2 className="animate-spin" /> : <Send size={16} />}
             </Button>
           </div>
           <p className="text-[10px] text-app-teritary-invert mt-1">
             Tekan Enter untuk kirim, Shift+Enter untuk baris baru
           </p>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

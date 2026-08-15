@@ -3,21 +3,19 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Chip,
-  Input,
   Select,
+  SelectContent,
   SelectItem,
-  Progress,
-  Avatar,
-  Tabs,
-  Tab,
-  Divider,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ClipboardCheck,
   Clock,
@@ -116,10 +114,13 @@ const reviewStatusLabels: Record<string, string> = {
   COMPLETED: 'Selesai',
 };
 
-const reviewStatusColors: Record<string, 'warning' | 'primary' | 'success'> = {
-  PENDING: 'warning',
-  IN_PROGRESS: 'primary',
-  COMPLETED: 'success',
+const reviewStatusVariants: Record<
+  string,
+  'default' | 'secondary' | 'destructive' | 'outline'
+> = {
+  PENDING: 'outline',
+  IN_PROGRESS: 'default',
+  COMPLETED: 'secondary',
 };
 
 // Animation variants
@@ -145,7 +146,7 @@ function MobilePendingCard({ assignment }: { assignment: PendingAssignment }) {
   return (
     <motion.div variants={itemVariants}>
       <Card className="mb-3 border-l-4 border-l-warning">
-        <CardBody className="p-4">
+        <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0 flex-1">
@@ -154,32 +155,30 @@ function MobilePendingCard({ assignment }: { assignment: PendingAssignment }) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-sm truncate">{assignment.project.title}</p>
-                  <p className="text-xs text-default-500">{assignment.project.mahasiswa.name}</p>
+                  <p className="text-xs text-muted-foreground">{assignment.project.mahasiswa.name}</p>
                 </div>
               </div>
-              <Chip size="sm" color="warning" variant="flat" className="h-5 text-[10px] shrink-0">
+              <Badge variant="outline" className="h-5 text-[10px] shrink-0">
                 Belum Direview
-              </Chip>
+              </Badge>
             </div>
 
-            <div className="flex items-center gap-3 text-xs text-default-500">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span>{assignment.project._count.documents} dokumen</span>
               <span>•</span>
               <span>Ditugaskan: {formatDate(assignment.assignedAt)}</span>
             </div>
 
             <Button
-              as={Link}
-              href={`/dosen/projects/${assignment.project.id}/review`}
+              render={<Link href={`/dosen/projects/${assignment.project.id}/review`} />}
               size="sm"
-              color="primary"
               className="w-full h-8"
-              startContent={<Play size={14} />}
             >
+              <Play size={14} />
               Mulai Review
             </Button>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </motion.div>
   );
@@ -190,42 +189,40 @@ function MobileReviewCard({ review }: { review: Review }) {
   return (
     <motion.div variants={itemVariants}>
       <Card className="mb-3">
-        <CardBody className="p-4">
+        <CardContent className="p-4">
           <div className="space-y-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-2 min-w-0 flex-1">
-                <Avatar
-                  name={review.project.mahasiswa.name}
-                  size="sm"
-                  className="shrink-0"
-                />
+                <Avatar className="size-8 shrink-0">
+                  <AvatarFallback className="text-xs">
+                    {review.project.mahasiswa.name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-sm truncate">{review.project.title}</p>
-                  <p className="text-xs text-default-500">{review.project.mahasiswa.name}</p>
+                  <p className="text-xs text-muted-foreground">{review.project.mahasiswa.name}</p>
                 </div>
               </div>
-              <Chip
-                size="sm"
-                color={reviewStatusColors[review.status]}
-                variant="flat"
+              <Badge
+                variant={reviewStatusVariants[review.status]}
                 className="h-5 text-[10px] shrink-0"
               >
                 {reviewStatusLabels[review.status]}
-              </Chip>
+              </Badge>
             </div>
 
             {review.overallScore !== null && (
-              <div className="flex items-center justify-between p-2 rounded-lg bg-default-100">
-                <span className="text-sm text-default-600">Nilai</span>
+              <div className="flex items-center justify-between p-2 rounded-lg bg-muted">
+                <span className="text-sm text-foreground">Nilai</span>
                 <div className="flex items-center gap-1">
                   <Star size={16} className="text-warning fill-warning" />
                   <span className="font-bold text-lg">{review.overallScore}</span>
-                  <span className="text-default-400">/100</span>
+                  <span className="text-muted-foreground">/100</span>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center gap-3 text-xs text-default-500">
+            <div className="flex items-center gap-3 text-xs text-muted-foreground">
               <span>{review.scores.length} kriteria</span>
               <span>•</span>
               <span>{formatDate(review.updatedAt)}</span>
@@ -233,18 +230,16 @@ function MobileReviewCard({ review }: { review: Review }) {
 
             <div className="flex gap-2">
               <Button
-                as={Link}
-                href={`/dosen/projects/${review.project.id}/review`}
+                render={<Link href={`/dosen/projects/${review.project.id}/review`} />}
                 size="sm"
-                variant="flat"
-                color="primary"
+                variant="secondary"
                 className="flex-1 h-8"
               >
                 {review.status === 'COMPLETED' ? 'Lihat Review' : 'Lanjutkan'}
               </Button>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </motion.div>
   );
@@ -254,7 +249,7 @@ function MobileReviewCard({ review }: { review: Review }) {
 function DesktopPendingCard({ assignment }: { assignment: PendingAssignment }) {
   return (
     <Card className="border-l-4 border-l-warning">
-      <CardBody className="p-4">
+      <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="p-2 rounded-lg bg-warning/10">
@@ -262,7 +257,7 @@ function DesktopPendingCard({ assignment }: { assignment: PendingAssignment }) {
             </div>
             <div>
               <p className="font-semibold">{assignment.project.title}</p>
-              <div className="flex items-center gap-2 text-sm text-default-500">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <User size={14} />
                 <span>{assignment.project.mahasiswa.name}</span>
                 <span>•</span>
@@ -272,24 +267,22 @@ function DesktopPendingCard({ assignment }: { assignment: PendingAssignment }) {
           </div>
           <div className="flex items-center gap-4">
             <div className="text-right text-sm">
-              <p className="text-default-500">Dokumen</p>
+              <p className="text-muted-foreground">Dokumen</p>
               <p className="font-medium">{assignment.project._count.documents}</p>
             </div>
             <div className="text-right text-sm">
-              <p className="text-default-500">Ditugaskan</p>
+              <p className="text-muted-foreground">Ditugaskan</p>
               <p className="font-medium">{formatDate(assignment.assignedAt)}</p>
             </div>
             <Button
-              as={Link}
-              href={`/dosen/projects/${assignment.project.id}/review`}
-              color="primary"
-              startContent={<Play size={16} />}
+              render={<Link href={`/dosen/projects/${assignment.project.id}/review`} />}
             >
+              <Play size={16} />
               Mulai Review
             </Button>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }
@@ -298,13 +291,17 @@ function DesktopPendingCard({ assignment }: { assignment: PendingAssignment }) {
 function DesktopReviewCard({ review }: { review: Review }) {
   return (
     <Card className="mb-4">
-      <CardBody className="p-4">
+      <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Avatar name={review.project.mahasiswa.name} size="md" />
+            <Avatar className="size-10">
+              <AvatarFallback>
+                {review.project.mahasiswa.name.charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
             <div>
               <p className="font-semibold">{review.project.title}</p>
-              <div className="flex items-center gap-2 text-sm text-default-500">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>{review.project.mahasiswa.name}</span>
                 <span>•</span>
                 <span>{review.project.mahasiswa.username}</span>
@@ -314,7 +311,7 @@ function DesktopReviewCard({ review }: { review: Review }) {
           <div className="flex items-center gap-6">
             {review.overallScore !== null && (
               <div className="text-center">
-                <p className="text-xs text-default-500">Nilai</p>
+                <p className="text-xs text-muted-foreground">Nilai</p>
                 <div className="flex items-center gap-1">
                   <Star size={16} className="text-warning fill-warning" />
                   <span className="font-bold text-lg">{review.overallScore}</span>
@@ -322,28 +319,22 @@ function DesktopReviewCard({ review }: { review: Review }) {
               </div>
             )}
             <div className="text-center">
-              <p className="text-xs text-default-500">Kriteria</p>
+              <p className="text-xs text-muted-foreground">Kriteria</p>
               <p className="font-bold text-lg">{review.scores.length}</p>
             </div>
-            <Chip
-              size="sm"
-              color={reviewStatusColors[review.status]}
-              variant="flat"
-            >
+            <Badge variant={reviewStatusVariants[review.status]}>
               {reviewStatusLabels[review.status]}
-            </Chip>
+            </Badge>
             <Button
-              as={Link}
-              href={`/dosen/projects/${review.project.id}/review`}
-              variant="flat"
-              color="primary"
-              endContent={<ChevronRight size={16} />}
+              render={<Link href={`/dosen/projects/${review.project.id}/review`} />}
+              variant="secondary"
             >
               {review.status === 'COMPLETED' ? 'Lihat' : 'Lanjutkan'}
+              <ChevronRight size={16} />
             </Button>
           </div>
         </div>
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }
@@ -380,8 +371,8 @@ export function DosenReviewsContent({ reviews, pendingAssignments, stats }: Revi
       {/* Header */}
       <motion.div variants={itemVariants}>
         <header>
-          <h1 className="text-2xl font-semibold text-default-900">Review</h1>
-          <p className="text-sm text-default-500 mt-0.5">
+          <h1 className="text-2xl font-semibold text-foreground">Review</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
             Kelola review project mahasiswa
           </p>
         </header>
@@ -431,69 +422,60 @@ export function DosenReviewsContent({ reviews, pendingAssignments, stats }: Revi
       {/* Tabs & Filters */}
       <motion.div variants={itemVariants}>
         <Card>
-          <CardBody className="p-3 md:p-4">
+          <CardContent className="p-3 md:p-4">
             <div className="flex flex-col gap-4">
               <Tabs
-                selectedKey={selectedTab}
-                onSelectionChange={(key) => setSelectedTab(key as string)}
+                value={selectedTab}
+                onValueChange={(value) => setSelectedTab(value as string)}
                 aria-label="Review tabs"
-                color="primary"
-                variant="underlined"
               >
-                <Tab
-                  key="pending"
-                  title={
-                    <div className="flex items-center gap-2">
-                      <AlertCircle size={16} />
-                      <span>Perlu Direview</span>
-                      {pendingAssignments.length > 0 && (
-                        <Chip size="sm" color="warning" variant="flat">
-                          {pendingAssignments.length}
-                        </Chip>
-                      )}
-                    </div>
-                  }
-                />
-                <Tab
-                  key="reviews"
-                  title={
-                    <div className="flex items-center gap-2">
-                      <ClipboardCheck size={16} />
-                      <span>Riwayat Review</span>
-                    </div>
-                  }
-                />
+                <TabsList variant="line">
+                  <TabsTrigger value="pending">
+                    <AlertCircle size={16} />
+                    <span>Perlu Direview</span>
+                    {pendingAssignments.length > 0 && (
+                      <Badge variant="outline">{pendingAssignments.length}</Badge>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger value="reviews">
+                    <ClipboardCheck size={16} />
+                    <span>Riwayat Review</span>
+                  </TabsTrigger>
+                </TabsList>
               </Tabs>
 
               <div className="flex flex-col md:flex-row gap-3">
-                <Input
-                  placeholder="Cari project atau mahasiswa..."
-                  value={searchQuery}
-                  onValueChange={setSearchQuery}
-                  startContent={<Search size={18} className="text-default-400" />}
-                  className="md:max-w-xs"
-                  size="sm"
-                />
+                <div className="relative md:max-w-xs">
+                  <Search
+                    size={18}
+                    className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+                  />
+                  <Input
+                    placeholder="Cari project atau mahasiswa..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
                 {selectedTab === 'reviews' && (
                   <Select
-                    placeholder="Semua Status"
-                    selectedKeys={statusFilter ? [statusFilter] : []}
-                    onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || 'all')}
-                    className="md:max-w-[180px]"
-                    size="sm"
-                    startContent={<Filter size={16} className="text-default-400" />}
-                    items={[
-                      { key: 'all', label: 'Semua Status' },
-                      { key: 'IN_PROGRESS', label: 'Sedang Dikerjakan' },
-                      { key: 'COMPLETED', label: 'Selesai' },
-                    ]}
+                    value={statusFilter}
+                    onValueChange={(value) => setStatusFilter((value as string) || 'all')}
                   >
-                    {(item) => <SelectItem key={item.key}>{item.label}</SelectItem>}
+                    <SelectTrigger className="md:max-w-[180px]">
+                      <Filter size={16} className="text-muted-foreground" />
+                      <SelectValue placeholder="Semua Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua Status</SelectItem>
+                      <SelectItem value="IN_PROGRESS">Sedang Dikerjakan</SelectItem>
+                      <SelectItem value="COMPLETED">Selesai</SelectItem>
+                    </SelectContent>
                   </Select>
                 )}
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -503,13 +485,13 @@ export function DosenReviewsContent({ reviews, pendingAssignments, stats }: Revi
           // Pending Assignments
           filteredPending.length === 0 ? (
             <Card>
-              <CardBody className="py-12 text-center">
+              <CardContent className="py-12 text-center">
                 <CheckCircle2 size={48} className="mx-auto text-success mb-4" />
-                <p className="text-default-500 mb-2">Tidak ada project yang perlu direview</p>
-                <p className="text-sm text-default-400">
+                <p className="text-muted-foreground mb-2">Tidak ada project yang perlu direview</p>
+                <p className="text-sm text-muted-foreground">
                   Semua project yang ditugaskan sudah direview
                 </p>
-              </CardBody>
+              </CardContent>
             </Card>
           ) : (
             <>
@@ -534,24 +516,24 @@ export function DosenReviewsContent({ reviews, pendingAssignments, stats }: Revi
           // Reviews History
           filteredReviews.length === 0 ? (
             <Card>
-              <CardBody className="py-12 text-center">
+              <CardContent className="py-12 text-center">
                 {reviews.length === 0 ? (
                   <>
-                    <ClipboardCheck size={48} className="mx-auto text-default-300 mb-4" />
-                    <p className="text-default-500 mb-2">Belum ada review</p>
-                    <p className="text-sm text-default-400">
+                    <ClipboardCheck size={48} className="mx-auto text-muted-foreground/50 mb-4" />
+                    <p className="text-muted-foreground mb-2">Belum ada review</p>
+                    <p className="text-sm text-muted-foreground">
                       Mulai review project yang ditugaskan kepada Anda
                     </p>
                   </>
                 ) : (
                   <>
-                    <Search size={48} className="mx-auto text-default-300 mb-4" />
-                    <p className="text-default-500">
+                    <Search size={48} className="mx-auto text-muted-foreground/50 mb-4" />
+                    <p className="text-muted-foreground">
                       Tidak ada review yang cocok dengan filter
                     </p>
                   </>
                 )}
-              </CardBody>
+              </CardContent>
             </Card>
           ) : (
             <>

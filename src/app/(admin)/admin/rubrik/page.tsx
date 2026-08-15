@@ -1,25 +1,29 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
-  Button,
-  Chip,
-  Input,
-  Textarea,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Spinner,
-  Switch,
-  Progress,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
+import { Progress } from '@/components/ui/progress';
+import {
   Select,
+  SelectContent,
   SelectItem,
-  Tabs,
-  Tab,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 import {
   Plus,
@@ -33,6 +37,7 @@ import {
   ListOrdered,
   Users,
   UsersRound,
+  Loader2,
 } from 'lucide-react';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
@@ -74,12 +79,12 @@ export default function AdminRubrikPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<string>('kelompok');
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onClose: onEditClose,
-  } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const onEditOpen = () => setIsEditOpen(true);
+  const onEditClose = () => setIsEditOpen(false);
   const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Form state
@@ -287,7 +292,7 @@ export default function AdminRubrikPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -303,20 +308,19 @@ export default function AdminRubrikPage() {
       <motion.div variants={itemVariants}>
         <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-default-900">Rubrik Penilaian</h1>
-            <p className="text-sm text-default-500 mt-0.5">
+            <h1 className="text-2xl font-semibold text-foreground">Rubrik Penilaian</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
               Kelola kriteria penilaian untuk review project
             </p>
           </div>
           <Button
-            color="primary"
-            startContent={<Plus size={16} />}
-            onPress={() => {
+            onClick={() => {
               resetForm();
               setFormData((prev) => ({ ...prev, tipe: activeTab }));
               onOpen();
             }}
           >
+            <Plus size={16} />
             Tambah Rubrik {activeTab === 'individu' ? 'Individu' : 'Kelompok'}
           </Button>
         </header>
@@ -379,38 +383,29 @@ export default function AdminRubrikPage() {
       <motion.div variants={itemVariants}>
         <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
           <Tabs
-            selectedKey={activeTab}
-            onSelectionChange={(key) => setActiveTab(key as string)}
-            variant="underlined"
-            classNames={{
-              tabList: 'px-4 pt-3 border-b border-slate-200/60 dark:border-zinc-700/50',
-              tab: 'h-10',
-            }}
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as string)}
+            className="gap-0"
           >
-            <Tab
-              key="kelompok"
-              title={
-                <div className="flex items-center gap-2">
-                  <UsersRound size={16} />
-                  <span>Penilaian Kelompok</span>
-                  <Chip size="sm" variant="flat" className={totalBobotKelompok === 100 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}>
-                    {totalBobotKelompok}/100
-                  </Chip>
-                </div>
-              }
-            />
-            <Tab
-              key="individu"
-              title={
-                <div className="flex items-center gap-2">
-                  <Users size={16} />
-                  <span>Penilaian Individu</span>
-                  <Chip size="sm" variant="flat" className={totalBobotIndividu === 100 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}>
-                    {totalBobotIndividu}/100
-                  </Chip>
-                </div>
-              }
-            />
+            <TabsList
+              variant="line"
+              className="h-auto w-full justify-start rounded-none px-4 pt-3 pb-2 border-b border-slate-200/60 dark:border-zinc-700/50"
+            >
+              <TabsTrigger value="kelompok" className="h-10 flex-none">
+                <UsersRound size={16} />
+                <span>Penilaian Kelompok</span>
+                <Badge variant="secondary" className={totalBobotKelompok === 100 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}>
+                  {totalBobotKelompok}/100
+                </Badge>
+              </TabsTrigger>
+              <TabsTrigger value="individu" className="h-10 flex-none">
+                <Users size={16} />
+                <span>Penilaian Individu</span>
+                <Badge variant="secondary" className={totalBobotIndividu === 100 ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'}>
+                  {totalBobotIndividu}/100
+                </Badge>
+              </TabsTrigger>
+            </TabsList>
           </Tabs>
 
           {/* Progress Bar for Active Tab */}
@@ -433,16 +428,12 @@ export default function AdminRubrikPage() {
               </div>
               <Progress
                 value={Math.min(currentTotalBobot, 100)}
-                size="sm"
-                classNames={{
-                  indicator:
-                    currentTotalBobot === 100
-                      ? 'bg-gradient-to-r from-emerald-500 to-green-500'
-                      : currentTotalBobot > 100
-                        ? 'bg-gradient-to-r from-red-500 to-orange-500'
-                        : 'bg-gradient-to-r from-amber-500 to-yellow-500',
-                  track: 'bg-zinc-200 dark:bg-zinc-700',
-                }}
+                className={`[&_[data-slot=progress-track]]:bg-zinc-200 dark:[&_[data-slot=progress-track]]:bg-zinc-700 ${currentTotalBobot === 100
+                  ? '[&_[data-slot=progress-indicator]]:bg-gradient-to-r [&_[data-slot=progress-indicator]]:from-emerald-500 [&_[data-slot=progress-indicator]]:to-green-500'
+                  : currentTotalBobot > 100
+                    ? '[&_[data-slot=progress-indicator]]:bg-gradient-to-r [&_[data-slot=progress-indicator]]:from-red-500 [&_[data-slot=progress-indicator]]:to-orange-500'
+                    : '[&_[data-slot=progress-indicator]]:bg-gradient-to-r [&_[data-slot=progress-indicator]]:from-amber-500 [&_[data-slot=progress-indicator]]:to-yellow-500'
+                  }`}
               />
               {currentTotalBobot !== 100 && (
                 <p className="text-[11px] text-zinc-500 mt-1.5">
@@ -456,17 +447,15 @@ export default function AdminRubrikPage() {
 
           {/* Search */}
           <div className="px-4 pt-3">
-            <Input
-              placeholder={`Cari rubrik ${activeTab === 'kelompok' ? 'kelompok' : 'individu'}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              size="sm"
-              startContent={<Search size={16} className="text-slate-400 dark:text-zinc-500" />}
-              classNames={{
-                inputWrapper:
-                  'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50',
-              }}
-            />
+            <div className="relative">
+              <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
+              <Input
+                placeholder={`Cari rubrik ${activeTab === 'kelompok' ? 'kelompok' : 'individu'}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 bg-slate-50 dark:bg-zinc-800"
+              />
+            </div>
           </div>
 
           {filteredRubriks.length === 0 ? (
@@ -501,8 +490,8 @@ export default function AdminRubrikPage() {
                           )}
                         </div>
                       </div>
-                      <Chip
-                        size="sm"
+                      <Badge
+                        variant="secondary"
                         className={
                           rubrik.isActive
                             ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
@@ -510,37 +499,36 @@ export default function AdminRubrikPage() {
                         }
                       >
                         {rubrik.isActive ? 'Aktif' : 'Nonaktif'}
-                      </Chip>
+                      </Badge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Chip size="sm" variant="flat">
+                      <Badge variant="secondary">
                         {rubrik.kategori}
-                      </Chip>
-                      <Chip
-                        size="sm"
+                      </Badge>
+                      <Badge
+                        variant="secondary"
                         className="bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400"
                       >
                         Bobot: {rubrik.bobotMax}
-                      </Chip>
+                      </Badge>
                     </div>
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        variant="flat"
+                        variant="outline"
                         className="flex-1"
-                        startContent={<Edit size={14} />}
-                        onPress={() => openEditModal(rubrik)}
+                        onClick={() => openEditModal(rubrik)}
                       >
+                        <Edit size={14} />
                         Edit
                       </Button>
                       <Button
                         size="sm"
-                        variant="flat"
-                        color="danger"
+                        variant="destructive"
                         className="flex-1"
-                        startContent={<Trash2 size={14} />}
-                        onPress={() => handleDeleteRubrik(rubrik.id)}
+                        onClick={() => handleDeleteRubrik(rubrik.id)}
                       >
+                        <Trash2 size={14} />
                         Hapus
                       </Button>
                     </div>
@@ -601,9 +589,9 @@ export default function AdminRubrikPage() {
                           </div>
                         </td>
                         <td className="p-4">
-                          <Chip size="sm" variant="flat">
+                          <Badge variant="secondary">
                             {rubrik.kategori}
-                          </Chip>
+                          </Badge>
                         </td>
                         <td className="p-4">
                           <div className="flex items-center gap-2">
@@ -626,22 +614,22 @@ export default function AdminRubrikPage() {
                                   size={16}
                                   className="text-emerald-500"
                                 />
-                                <Chip
-                                  size="sm"
+                                <Badge
+                                  variant="secondary"
                                   className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                                 >
                                   Aktif
-                                </Chip>
+                                </Badge>
                               </>
                             ) : (
                               <>
                                 <XCircle size={16} className="text-zinc-400" />
-                                <Chip
-                                  size="sm"
+                                <Badge
+                                  variant="secondary"
                                   className="bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
                                 >
                                   Nonaktif
-                                </Chip>
+                                </Badge>
                               </>
                             )}
                           </div>
@@ -649,19 +637,18 @@ export default function AdminRubrikPage() {
                         <td className="p-4">
                           <div className="flex gap-2">
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="flat"
-                              onPress={() => openEditModal(rubrik)}
+                              size="icon-sm"
+                              variant="outline"
+                              aria-label="Edit rubrik"
+                              onClick={() => openEditModal(rubrik)}
                             >
                               <Edit size={16} />
                             </Button>
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="flat"
-                              color="danger"
-                              onPress={() => handleDeleteRubrik(rubrik.id)}
+                              size="icon-sm"
+                              variant="destructive"
+                              aria-label="Hapus rubrik"
+                              onClick={() => handleDeleteRubrik(rubrik.id)}
                             >
                               <Trash2 size={16} />
                             </Button>
@@ -678,244 +665,292 @@ export default function AdminRubrikPage() {
       </motion.div>
 
       {/* Create Rubrik Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-t-lg">
+      <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <DialogContent className="sm:max-w-2xl p-0 gap-0">
+          <DialogHeader className="flex flex-row items-center gap-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-t-xl p-4">
             <div className="p-2 rounded-lg bg-white/20">
               <Plus size={20} />
             </div>
-            <span>Tambah Rubrik Baru</span>
-          </ModalHeader>
-          <ModalBody className="space-y-4 pt-6">
+            <DialogTitle className="text-white">Tambah Rubrik Baru</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 p-6">
             {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
+              <div className="bg-destructive/10 text-destructive border border-destructive/30 rounded-lg p-3 text-sm">
                 {error}
               </div>
             )}
-            <Input
-              label="Nama Rubrik"
-              placeholder="Contoh: Kualitas Kode"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              isRequired
-            />
-            <Textarea
-              label="Deskripsi"
-              placeholder="Deskripsi kriteria penilaian..."
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-            <Input
-              label="Kategori"
-              placeholder="Contoh: Teknis, Dokumentasi, Presentasi"
-              value={formData.kategori}
-              onChange={(e) =>
-                setFormData({ ...formData, kategori: e.target.value })
-              }
-              isRequired
-              list="kategori-list"
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-name">Nama Rubrik</Label>
+              <Input
+                id="rubrik-name"
+                placeholder="Contoh: Kualitas Kode"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-description">Deskripsi</Label>
+              <Textarea
+                id="rubrik-description"
+                placeholder="Deskripsi kriteria penilaian..."
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-kategori">Kategori</Label>
+              <Input
+                id="rubrik-kategori"
+                placeholder="Contoh: Teknis, Dokumentasi, Presentasi"
+                value={formData.kategori}
+                onChange={(e) =>
+                  setFormData({ ...formData, kategori: e.target.value })
+                }
+                required
+                list="kategori-list"
+              />
+            </div>
             <datalist id="kategori-list">
               {kategoris.map((k) => (
                 <option key={k} value={k} />
               ))}
             </datalist>
-            <Select
-              label="Tipe Penilaian"
-              placeholder="Pilih tipe penilaian"
-              selectedKeys={[formData.tipe]}
-              onSelectionChange={(keys) => {
-                const selected = Array.from(keys)[0] as string;
-                setFormData({ ...formData, tipe: selected || 'kelompok' });
-              }}
-              isRequired
-              description="Kelompok = penilaian untuk project, Individu = penilaian per anggota"
-            >
-              <SelectItem key="kelompok" startContent={<UsersRound size={16} />}>
-                Kelompok
-              </SelectItem>
-              <SelectItem key="individu" startContent={<Users size={16} />}>
-                Individu
-              </SelectItem>
-            </Select>
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-tipe">Tipe Penilaian</Label>
+              <Select
+                value={formData.tipe}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, tipe: (value as string) || 'kelompok' });
+                }}
+              >
+                <SelectTrigger id="rubrik-tipe" className="w-full">
+                  <SelectValue placeholder="Pilih tipe penilaian" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="kelompok">
+                    <UsersRound size={16} />
+                    Kelompok
+                  </SelectItem>
+                  <SelectItem value="individu">
+                    <Users size={16} />
+                    Individu
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Kelompok = penilaian untuk project, Individu = penilaian per anggota
+              </p>
+            </div>
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="number"
-                label="Bobot Maksimal"
-                placeholder="20"
-                value={formData.bobotMax.toString()}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    bobotMax: parseInt(e.target.value) || 0,
-                  })
-                }
-                isRequired
-                min={1}
-                max={100}
-              />
-              <Input
-                type="number"
-                label="Urutan"
-                placeholder="0"
-                value={formData.urutan.toString()}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    urutan: parseInt(e.target.value) || 0,
-                  })
-                }
-                min={0}
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="rubrik-bobot">Bobot Maksimal</Label>
+                <Input
+                  id="rubrik-bobot"
+                  type="number"
+                  placeholder="20"
+                  value={formData.bobotMax.toString()}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      bobotMax: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  required
+                  min={1}
+                  max={100}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="rubrik-urutan">Urutan</Label>
+                <Input
+                  id="rubrik-urutan"
+                  type="number"
+                  placeholder="0"
+                  value={formData.urutan.toString()}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      urutan: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  min={0}
+                />
+              </div>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <span className="text-sm font-medium">Status Aktif</span>
               <Switch
-                isSelected={formData.isActive}
-                onValueChange={(value) =>
+                checked={formData.isActive}
+                onCheckedChange={(value) =>
                   setFormData({ ...formData, isActive: value })
                 }
               />
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onClose}>
+          </div>
+          <DialogFooter className="p-6 pt-0">
+            <Button variant="outline" onClick={onClose}>
               Batal
             </Button>
             <Button
               className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold"
-              onPress={handleCreateRubrik}
-              isLoading={isSubmitting}
+              onClick={handleCreateRubrik}
+              disabled={isSubmitting}
             >
+              {isSubmitting && <Loader2 className="animate-spin" />}
               Simpan
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Rubrik Modal */}
-      <Modal isOpen={isEditOpen} onClose={onEditClose} size="lg">
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-t-lg">
+      <Dialog open={isEditOpen} onOpenChange={(open) => { if (!open) onEditClose(); }}>
+        <DialogContent className="sm:max-w-2xl p-0 gap-0">
+          <DialogHeader className="flex flex-row items-center gap-3 bg-gradient-to-r from-indigo-500 to-blue-500 text-white rounded-t-xl p-4">
             <div className="p-2 rounded-lg bg-white/20">
               <Edit size={20} />
             </div>
-            <span>Edit Rubrik</span>
-          </ModalHeader>
-          <ModalBody className="space-y-4 pt-6">
+            <DialogTitle className="text-white">Edit Rubrik</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 p-6">
             {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
+              <div className="bg-destructive/10 text-destructive border border-destructive/30 rounded-lg p-3 text-sm">
                 {error}
               </div>
             )}
-            <Input
-              label="Nama Rubrik"
-              placeholder="Contoh: Kualitas Kode"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              isRequired
-            />
-            <Textarea
-              label="Deskripsi"
-              placeholder="Deskripsi kriteria penilaian..."
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-            <Input
-              label="Kategori"
-              placeholder="Contoh: Teknis, Dokumentasi, Presentasi"
-              value={formData.kategori}
-              onChange={(e) =>
-                setFormData({ ...formData, kategori: e.target.value })
-              }
-              isRequired
-              list="kategori-list-edit"
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-edit-name">Nama Rubrik</Label>
+              <Input
+                id="rubrik-edit-name"
+                placeholder="Contoh: Kualitas Kode"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-edit-description">Deskripsi</Label>
+              <Textarea
+                id="rubrik-edit-description"
+                placeholder="Deskripsi kriteria penilaian..."
+                value={formData.description}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-edit-kategori">Kategori</Label>
+              <Input
+                id="rubrik-edit-kategori"
+                placeholder="Contoh: Teknis, Dokumentasi, Presentasi"
+                value={formData.kategori}
+                onChange={(e) =>
+                  setFormData({ ...formData, kategori: e.target.value })
+                }
+                required
+                list="kategori-list-edit"
+              />
+            </div>
             <datalist id="kategori-list-edit">
               {kategoris.map((k) => (
                 <option key={k} value={k} />
               ))}
             </datalist>
-            <Select
-              label="Tipe Penilaian"
-              placeholder="Pilih tipe penilaian"
-              selectedKeys={[formData.tipe]}
-              onSelectionChange={(keys) => {
-                const selected = Array.from(keys)[0] as string;
-                setFormData({ ...formData, tipe: selected || 'kelompok' });
-              }}
-              isRequired
-              description="Kelompok = penilaian untuk project, Individu = penilaian per anggota"
-            >
-              <SelectItem key="kelompok" startContent={<UsersRound size={16} />}>
-                Kelompok
-              </SelectItem>
-              <SelectItem key="individu" startContent={<Users size={16} />}>
-                Individu
-              </SelectItem>
-            </Select>
+            <div className="space-y-1.5">
+              <Label htmlFor="rubrik-edit-tipe">Tipe Penilaian</Label>
+              <Select
+                value={formData.tipe}
+                onValueChange={(value) => {
+                  setFormData({ ...formData, tipe: (value as string) || 'kelompok' });
+                }}
+              >
+                <SelectTrigger id="rubrik-edit-tipe" className="w-full">
+                  <SelectValue placeholder="Pilih tipe penilaian" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="kelompok">
+                    <UsersRound size={16} />
+                    Kelompok
+                  </SelectItem>
+                  <SelectItem value="individu">
+                    <Users size={16} />
+                    Individu
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                Kelompok = penilaian untuk project, Individu = penilaian per anggota
+              </p>
+            </div>
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="number"
-                label="Bobot Maksimal"
-                placeholder="20"
-                value={formData.bobotMax.toString()}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    bobotMax: parseInt(e.target.value) || 0,
-                  })
-                }
-                isRequired
-                min={1}
-                max={100}
-              />
-              <Input
-                type="number"
-                label="Urutan"
-                placeholder="0"
-                value={formData.urutan.toString()}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    urutan: parseInt(e.target.value) || 0,
-                  })
-                }
-                min={0}
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="rubrik-edit-bobot">Bobot Maksimal</Label>
+                <Input
+                  id="rubrik-edit-bobot"
+                  type="number"
+                  placeholder="20"
+                  value={formData.bobotMax.toString()}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      bobotMax: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  required
+                  min={1}
+                  max={100}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="rubrik-edit-urutan">Urutan</Label>
+                <Input
+                  id="rubrik-edit-urutan"
+                  type="number"
+                  placeholder="0"
+                  value={formData.urutan.toString()}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      urutan: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  min={0}
+                />
+              </div>
             </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <span className="text-sm font-medium">Status Aktif</span>
               <Switch
-                isSelected={formData.isActive}
-                onValueChange={(value) =>
+                checked={formData.isActive}
+                onCheckedChange={(value) =>
                   setFormData({ ...formData, isActive: value })
                 }
               />
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onEditClose}>
+          </div>
+          <DialogFooter className="p-6 pt-0">
+            <Button variant="outline" onClick={onEditClose}>
               Batal
             </Button>
             <Button
               className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold"
-              onPress={handleUpdateRubrik}
-              isLoading={isSubmitting}
+              onClick={handleUpdateRubrik}
+              disabled={isSubmitting}
             >
+              {isSubmitting && <Loader2 className="animate-spin" />}
               Update
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirm Dialog */}
       <ConfirmDialog />

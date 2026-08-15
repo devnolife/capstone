@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import { GitBranch } from 'lucide-react';
 import { RequirementsForm } from './requirements-form';
 import { ProjectSetupForm } from './project-setup-form';
@@ -23,10 +23,10 @@ export function CompletenessTab({ projectId, canEdit }: CompletenessTabProps) {
           <GitBranch size={16} className="text-primary" />
           <h2 className="font-semibold">Repository & Setup Project</h2>
         </div>
-        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <CardBody className="p-4 md:p-6">
+        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+          <CardContent className="p-4 md:p-6">
             <ProjectSetupForm projectId={projectId} canEdit={canEdit} />
-          </CardBody>
+          </CardContent>
         </Card>
       </section>
 

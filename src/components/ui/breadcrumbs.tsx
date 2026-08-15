@@ -88,23 +88,23 @@ export function Breadcrumbs() {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="flex items-center gap-1 text-sm text-default-500 min-w-0"
+      className="flex items-center gap-1 text-sm text-muted-foreground min-w-0"
     >
       <Link
         href={home}
-        className="flex items-center gap-1 hover:text-default-800 transition-colors shrink-0"
+        className="flex items-center gap-1 hover:text-foreground transition-colors shrink-0"
       >
         <Home size={14} />
       </Link>
       {crumbs.map((c) => (
         <span key={c.href} className="flex items-center gap-1 min-w-0">
-          <ChevronRight size={14} className="text-default-300 shrink-0" />
+          <ChevronRight size={14} className="text-muted-foreground/60 shrink-0" />
           {c.isLast ? (
-            <span className="font-medium text-default-800 truncate">{c.label}</span>
+            <span className="font-medium text-foreground truncate">{c.label}</span>
           ) : (
             <Link
               href={c.href}
-              className="hover:text-default-800 transition-colors truncate"
+              className="hover:text-foreground transition-colors truncate"
             >
               {c.label}
             </Link>

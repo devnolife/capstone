@@ -2,15 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Spinner,
-  Chip,
-  Divider,
-} from '@heroui/react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Badge } from '@/components/ui/badge';
 import {
   Bell,
   Check,
@@ -46,7 +41,7 @@ const getNotificationIcon = (type: string) => {
     case 'system':
       return <AlertCircle size={20} className="text-warning" />;
     default:
-      return <Bell size={20} className="text-default-500" />;
+      return <Bell size={20} className="text-muted-foreground" />;
   }
 };
 
@@ -164,7 +159,7 @@ export default function NotificationsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -174,8 +169,8 @@ export default function NotificationsPage() {
       {/* Header */}
       <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-default-900">Notifikasi</h1>
-          <p className="text-sm text-default-500 mt-0.5">
+          <h1 className="text-2xl font-semibold text-foreground">Notifikasi</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
             {unreadCount > 0
               ? `${unreadCount} notifikasi belum dibaca`
               : 'Semua notifikasi sudah dibaca'}
@@ -185,21 +180,20 @@ export default function NotificationsPage() {
           {unreadCount > 0 && (
             <Button
               size="sm"
-              variant="flat"
-              startContent={<CheckCheck size={16} />}
-              onPress={handleMarkAllAsRead}
+              variant="secondary"
+              onClick={handleMarkAllAsRead}
             >
+              <CheckCheck size={16} />
               Tandai Semua Dibaca
             </Button>
           )}
           {notifications.some((n) => n.isRead) && (
             <Button
               size="sm"
-              variant="flat"
-              color="danger"
-              startContent={<Trash2 size={16} />}
-              onPress={handleDeleteAllRead}
+              variant="destructive"
+              onClick={handleDeleteAllRead}
             >
+              <Trash2 size={16} />
               Hapus Dibaca
             </Button>
           )}
@@ -209,27 +203,27 @@ export default function NotificationsPage() {
       {/* Notifications List */}
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold">
+          <CardTitle className="text-lg">
             Daftar Notifikasi ({notifications.length})
-          </h2>
+          </CardTitle>
         </CardHeader>
-        <CardBody className="p-0">
+        <CardContent className="p-0">
           {notifications.length === 0 ? (
             <div className="text-center py-12">
-              <Bell size={64} className="mx-auto text-default-300 mb-4" />
-              <p className="text-default-500">Tidak ada notifikasi</p>
+              <Bell size={64} className="mx-auto text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground">Tidak ada notifikasi</p>
             </div>
           ) : (
-            <div className="divide-y divide-divider">
+            <div className="divide-y divide-border">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-default-50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary-50/50' : ''
+                  className={`p-4 hover:bg-muted/50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary/5' : ''
                     }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-full bg-default-100">
+                    <div className="p-2 rounded-full bg-muted">
                       {getNotificationIcon(notification.type)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -240,16 +234,14 @@ export default function NotificationsPage() {
                               {notification.title}
                             </h3>
                             {!notification.isRead && (
-                              <Chip size="sm" color="primary" variant="flat">
-                                Baru
-                              </Chip>
+                              <Badge>Baru</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-default-600 mt-1">
+                          <p className="text-sm text-foreground mt-1">
                             {notification.message}
                           </p>
                           <div className="flex items-center gap-4 mt-2">
-                            <span className="text-xs text-default-400">
+                            <span className="text-xs text-muted-foreground">
                               {formatDate(notification.createdAt)}
                             </span>
                             {notification.link && (
@@ -263,10 +255,10 @@ export default function NotificationsPage() {
                         <div className="flex items-center gap-1">
                           {!notification.isRead && (
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              onPress={() => {
+                              size="icon-sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 handleMarkAsRead(notification.id);
                               }}
                             >
@@ -274,11 +266,11 @@ export default function NotificationsPage() {
                             </Button>
                           )}
                           <Button
-                            isIconOnly
-                            size="sm"
-                            variant="light"
-                            color="danger"
-                            onPress={() => {
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive"
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleDelete(notification.id);
                             }}
                           >
@@ -292,7 +284,7 @@ export default function NotificationsPage() {
               ))}
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Confirm Dialog */}

@@ -2,16 +2,18 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
-  Input,
   Select,
+  SelectContent,
   SelectItem,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { motion } from 'framer-motion';
 import {
   FolderGit2,
@@ -78,20 +80,20 @@ const itemVariants = {
   },
 };
 
-const getStatusColor = (status: string) => {
+const getStatusVariant = (status: string) => {
   switch (status) {
     case 'APPROVED':
-      return 'success';
+      return 'secondary' as const;
     case 'IN_REVIEW':
-      return 'warning';
+      return 'outline' as const;
     case 'REVISION_NEEDED':
-      return 'warning';
+      return 'outline' as const;
     case 'SUBMITTED':
-      return 'primary';
+      return 'default' as const;
     case 'REJECTED':
-      return 'danger';
+      return 'destructive' as const;
     default:
-      return 'default';
+      return 'outline' as const;
   }
 };
 
@@ -192,39 +194,39 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
       <motion.div variants={itemVariants}>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           <Card className="border border-border bg-card shadow-none">
-            <CardBody className="p-4 text-center">
+            <CardContent className="p-4 text-center">
               <FolderGit2 size={20} className="mx-auto mb-2 text-app-secondary-invert" />
               <p className="text-2xl font-bold tabular-nums">{stats.total}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Total</p>
-            </CardBody>
+            </CardContent>
           </Card>
           <Card className="border border-border bg-card shadow-none">
-            <CardBody className="p-4 text-center">
+            <CardContent className="p-4 text-center">
               <FileText size={20} className="mx-auto mb-2 text-primary" />
               <p className="text-2xl font-bold text-primary tabular-nums">{stats.submitted}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Menunggu</p>
-            </CardBody>
+            </CardContent>
           </Card>
           <Card className="border border-border bg-card shadow-none">
-            <CardBody className="p-4 text-center">
+            <CardContent className="p-4 text-center">
               <Clock size={20} className="mx-auto mb-2 text-warning" />
               <p className="text-2xl font-bold text-warning tabular-nums">{stats.inReview}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Direview</p>
-            </CardBody>
+            </CardContent>
           </Card>
           <Card className="border border-border bg-card shadow-none">
-            <CardBody className="p-4 text-center">
+            <CardContent className="p-4 text-center">
               <AlertTriangle size={20} className="mx-auto mb-2 text-warning" />
               <p className="text-2xl font-bold text-warning tabular-nums">{stats.revision}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Revisi</p>
-            </CardBody>
+            </CardContent>
           </Card>
           <Card className="border border-border bg-card shadow-none">
-            <CardBody className="p-4 text-center">
+            <CardContent className="p-4 text-center">
               <CheckCircle2 size={20} className="mx-auto mb-2 text-success" />
               <p className="text-2xl font-bold text-success tabular-nums">{stats.approved}</p>
               <p className="text-app-teritary-invert font-mono text-[10px] uppercase tracking-[0.18em]">Disetujui</p>
-            </CardBody>
+            </CardContent>
           </Card>
         </div>
       </motion.div>
@@ -232,38 +234,36 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
       {/* Filters */}
       <motion.div variants={itemVariants}>
         <Card className="border border-border bg-card shadow-none">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input
-                placeholder="Cari project atau mahasiswa..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                startContent={<Search size={16} className="text-app-teritary-invert" />}
-                variant="bordered"
-                classNames={{
-                  inputWrapper: 'border-border',
-                }}
-                className="flex-1"
-              />
-              <Select
-                placeholder="Filter Status"
-                selectedKeys={[statusFilter]}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                variant="bordered"
-                startContent={<Filter size={16} className="text-app-teritary-invert" />}
-                classNames={{
-                  trigger: 'border-border min-w-[180px]',
-                }}
-              >
-                <SelectItem key="all">Semua Status</SelectItem>
-                <SelectItem key="SUBMITTED">Menunggu Review</SelectItem>
-                <SelectItem key="IN_REVIEW">Sedang Direview</SelectItem>
-                <SelectItem key="REVISION_NEEDED">Perlu Revisi</SelectItem>
-                <SelectItem key="APPROVED">Disetujui</SelectItem>
-                <SelectItem key="REJECTED">Ditolak</SelectItem>
+              <div className="relative flex-1">
+                <Search
+                  size={16}
+                  className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  placeholder="Cari project atau mahasiswa..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as string)}>
+                <SelectTrigger className="min-w-[180px]">
+                  <Filter size={16} className="text-muted-foreground" />
+                  <SelectValue placeholder="Filter Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Status</SelectItem>
+                  <SelectItem value="SUBMITTED">Menunggu Review</SelectItem>
+                  <SelectItem value="IN_REVIEW">Sedang Direview</SelectItem>
+                  <SelectItem value="REVISION_NEEDED">Perlu Revisi</SelectItem>
+                  <SelectItem value="APPROVED">Disetujui</SelectItem>
+                  <SelectItem value="REJECTED">Ditolak</SelectItem>
+                </SelectContent>
               </Select>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -271,7 +271,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
       <motion.div variants={itemVariants} className="space-y-3">
         {filteredProjects.length === 0 ? (
           <Card className="border border-border bg-card shadow-none">
-            <CardBody className="p-8 text-center">
+            <CardContent className="p-8 text-center">
               <FolderGit2 size={48} className="mx-auto mb-4 text-app-teritary-invert" />
               <p className="font-semibold">Tidak ada project ditemukan</p>
               <p className="text-sm text-app-secondary-invert mt-1">
@@ -279,7 +279,7 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                   ? 'Belum ada project yang disubmit mahasiswa'
                   : 'Coba ubah filter atau kata kunci pencarian'}
               </p>
-            </CardBody>
+            </CardContent>
           </Card>
         ) : (
           filteredProjects.map((project) => {
@@ -289,33 +289,29 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
             return (
               <motion.div key={project.id} variants={itemVariants}>
                 <Card className="border border-border bg-card shadow-none hover:border-primary/50 transition-colors">
-                  <CardBody className="p-4">
+                  <CardContent className="p-4">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                       {/* Left - Project Info */}
                       <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <Avatar
-                          name={project.mahasiswa.name}
-                          src={avatarSrc}
-                          size="lg"
-                          className="shrink-0"
-                        />
+                        <Avatar className="size-12 shrink-0">
+                          <AvatarImage src={avatarSrc} alt={project.mahasiswa.name} />
+                          <AvatarFallback>
+                            {project.mahasiswa.name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <h3 className="font-semibold text-base truncate">
                               {project.title}
                             </h3>
-                            <Chip
-                              size="sm"
-                              color={getStatusColor(project.status)}
-                              variant="flat"
-                              startContent={<StatusIcon size={12} />}
-                            >
+                            <Badge variant={getStatusVariant(project.status)}>
+                              <StatusIcon size={12} />
                               {getStatusLabel(project.status)}
-                            </Chip>
+                            </Badge>
                             {project.isAssigned && (
-                              <Chip size="sm" color="secondary" variant="flat">
+                              <Badge variant="secondary">
                                 Ditugaskan
-                              </Chip>
+                              </Badge>
                             )}
                           </div>
                           {project.description && (
@@ -355,39 +351,35 @@ function DosenProjectsClientInner({ projects }: DosenProjectsClientProps) {
                       {/* Right - Actions */}
                       <div className="flex items-center gap-2 shrink-0">
                         <Button
-                          as={Link}
-                          href={`/dosen/projects/${project.id}`}
+                          render={<Link href={`/dosen/projects/${project.id}`} />}
                           size="sm"
-                          variant="flat"
-                          startContent={<Eye size={14} />}
+                          variant="secondary"
                         >
+                          <Eye size={14} />
                           Detail
                         </Button>
                         {!project.hasMyReview && ['SUBMITTED', 'IN_REVIEW'].includes(project.status) && (
                           <Button
-                            as={Link}
-                            href={`/dosen/projects/${project.id}/review`}
+                            render={<Link href={`/dosen/projects/${project.id}/review`} />}
                             size="sm"
-                            color="primary"
-                            startContent={<PlayCircle size={14} />}
                           >
+                            <PlayCircle size={14} />
                             Review
                           </Button>
                         )}
                         {project.hasMyReview && project.myReviewStatus === 'IN_PROGRESS' && (
                           <Button
-                            as={Link}
-                            href={`/dosen/projects/${project.id}/review`}
+                            render={<Link href={`/dosen/projects/${project.id}/review`} />}
                             size="sm"
-                            color="warning"
-                            startContent={<PlayCircle size={14} />}
+                            variant="outline"
                           >
+                            <PlayCircle size={14} />
                             Lanjutkan
                           </Button>
                         )}
                       </div>
                     </div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             );

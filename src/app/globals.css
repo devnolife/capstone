@@ -734,34 +734,6 @@ body {
 }
 
 /* ============================================
-   HEROUI FOCUS RING OVERRIDE
-   Clean approach: only target the specific focus ring issue
-   ============================================ */
-
-/* 
- * HeroUI uses focus-visible with ring-2 ring-focus for accessibility.
- * We want to replace the default ring with a subtle border change.
- */
-
-/* Override HeroUI's focus color to use primary instead of default */
-:root {
-  --heroui-focus: var(--heroui-primary);
-}
-
-/* Remove the ring but keep border transition */
-.group[data-focus-visible="true"] [data-slot="input-wrapper"],
-.group[data-focus-visible="true"] [data-slot="trigger"] {
-  --tw-ring-opacity: 0 !important;
-  border-color: hsl(var(--heroui-primary)) !important;
-}
-
-/* For inputs with border-transparent, add a visible border on focus */
-.group[data-focus-visible="true"] [data-slot="input-wrapper"][class*="border-transparent"],
-.group[data-focus="true"] [data-slot="input-wrapper"][class*="border-transparent"] {
-  border-color: hsl(var(--heroui-primary) / 0.5) !important;
-}
-
-/* ============================================
    GRADIENT BORDERS
    ============================================ */
 .gradient-border {

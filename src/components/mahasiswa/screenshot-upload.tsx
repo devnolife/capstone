@@ -1,27 +1,29 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Input,
-  Textarea,
   Select,
+  SelectContent,
   SelectItem,
-  Image,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Chip,
-  Progress,
-  addToast,
-  Spinner,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Spinner } from '@/components/ui/spinner';
+import { addToast } from '@/lib/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Upload,
@@ -37,6 +39,7 @@ import {
   TestTube,
   Layers,
   GripVertical,
+  Loader2,
 } from 'lucide-react';
 
 interface ProjectScreenshot {
@@ -83,12 +86,22 @@ const getProxyUrl = (url: string, fileKey: string) => {
   return `/api/minio/${fileKey}`;
 };
 
+function useDialogState() {
+  const [isOpen, setIsOpen] = useState(false);
+  return {
+    isOpen,
+    onOpen: () => setIsOpen(true),
+    onClose: () => setIsOpen(false),
+    onOpenChange: setIsOpen,
+  };
+}
+
 export default function ScreenshotUpload({
   projectId,
   readOnly = false,
 }: ScreenshotUploadProps) {
-  const uploadModal = useDisclosure();
-  const previewModal = useDisclosure();
+  const uploadModal = useDialogState();
+  const previewModal = useDialogState();
   const [screenshots, setScreenshots] = useState<ProjectScreenshot[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
@@ -247,7 +260,7 @@ export default function ScreenshotUpload({
   };
 
   // State for delete confirmation
-  const deleteConfirmModal = useDisclosure();
+  const deleteConfirmModal = useDialogState();
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   // Handle delete
@@ -323,22 +336,18 @@ export default function ScreenshotUpload({
               </div>
             </div>
             {!readOnly && (
-              <Button
-                color="primary"
-                size="sm"
-                startContent={<Plus size={16} />}
-                onPress={uploadModal.onOpen}
-              >
+              <Button size="sm" onClick={uploadModal.onOpen}>
+                <Plus size={16} />
                 Tambah Screenshot
               </Button>
             )}
           </div>
         </CardHeader>
 
-        <CardBody className="p-5">
+        <CardContent className="p-5">
           {isLoading ? (
             <div className="flex items-center justify-center py-10">
-              <Spinner size="lg" color="primary" />
+              <Spinner className="size-8 text-primary" />
             </div>
           ) : screenshots.length === 0 ? (
             <div className="text-center py-10">
@@ -350,12 +359,8 @@ export default function ScreenshotUpload({
                 Upload screenshot tampilan aplikasi untuk dokumentasi
               </p>
               {!readOnly && (
-                <Button
-                  variant="flat"
-                  color="primary"
-                  startContent={<Upload size={16} />}
-                  onPress={uploadModal.onOpen}
-                >
+                <Button variant="outline" onClick={uploadModal.onOpen}>
+                  <Upload size={16} />
                   Upload Screenshot Pertama
                 </Button>
               )}
@@ -383,7 +388,8 @@ export default function ScreenshotUpload({
                           className="w-full h-full cursor-pointer"
                           onClick={() => openPreview(screenshot)}
                         >
-                          <Image
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
                             src={imageUrl}
                             alt={screenshot.title}
                             className="w-full h-full object-cover"
@@ -394,12 +400,10 @@ export default function ScreenshotUpload({
                         {/* Delete button on hover */}
                         {!readOnly && (
                           <Button
-                            size="sm"
-                            variant="solid"
-                            isIconOnly
-                            color="danger"
+                            size="icon-sm"
+                            variant="destructive"
                             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-md"
-                            onPress={() => handleDelete(screenshot.id)}
+                            onClick={() => handleDelete(screenshot.id)}
                           >
                             <Trash2 size={14} />
                           </Button>
@@ -410,14 +414,10 @@ export default function ScreenshotUpload({
                       <div className="mt-2">
                         <p className="text-sm font-medium truncate">{screenshot.title}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <Chip
-                            size="sm"
-                            variant="flat"
-                            startContent={<CategoryIcon size={10} />}
-                            classNames={{ base: 'h-5' }}
-                          >
+                          <Badge variant="secondary">
+                            <CategoryIcon size={10} />
                             {categoryConfig.label}
-                          </Chip>
+                          </Badge>
                           <span className="text-xs text-app-teritary-invert">
                             {formatFileSize(screenshot.fileSize)}
                           </span>
@@ -429,17 +429,19 @@ export default function ScreenshotUpload({
               </AnimatePresence>
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Upload Modal */}
-      <Modal isOpen={uploadModal.isOpen} onClose={uploadModal.onClose} size="2xl">
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-2">
-            <Camera size={20} className="text-foreground" />
-            Upload Screenshot Baru
-          </ModalHeader>
-          <ModalBody className="pb-6">
+      <Dialog open={uploadModal.isOpen} onOpenChange={uploadModal.onOpenChange}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Camera size={20} className="text-foreground" />
+              Upload Screenshot Baru
+            </DialogTitle>
+          </DialogHeader>
+          <div className="pb-2">
             <div className="space-y-4">
               {/* File Upload Area */}
               <div
@@ -462,18 +464,17 @@ export default function ScreenshotUpload({
 
                 {previewDataUrl ? (
                   <div className="relative">
-                    <Image
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                       src={previewDataUrl}
                       alt="Preview"
                       className="max-h-48 mx-auto rounded-lg"
                     />
                     <Button
-                      size="sm"
-                      variant="flat"
-                      color="danger"
-                      isIconOnly
+                      size="icon-sm"
+                      variant="destructive"
                       className="absolute top-2 right-2"
-                      onPress={() => {
+                      onClick={() => {
                         setSelectedFile(null);
                         setPreviewDataUrl(null);
                         if (fileInputRef.current) fileInputRef.current.value = '';
@@ -499,148 +500,148 @@ export default function ScreenshotUpload({
               </div>
 
               {/* Title */}
-              <Input
-                label="Judul Screenshot"
-                placeholder="Contoh: Halaman Login, Dashboard Admin"
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                isRequired
-                variant="bordered"
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="screenshot-title">Judul Screenshot *</Label>
+                <Input
+                  id="screenshot-title"
+                  placeholder="Contoh: Halaman Login, Dashboard Admin"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  required
+                />
+              </div>
 
               {/* Category */}
-              <Select
-                label="Kategori"
-                placeholder="Pilih kategori"
-                selectedKeys={[formData.category]}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                variant="bordered"
-              >
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.value} startContent={<cat.icon size={16} />}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </Select>
+              <div className="space-y-1.5">
+                <Label>Kategori</Label>
+                <Select
+                  value={formData.category}
+                  onValueChange={(value) =>
+                    setFormData({ ...formData, category: (value as string) ?? formData.category })
+                  }
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Pilih kategori" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((cat) => (
+                      <SelectItem key={cat.value} value={cat.value}>
+                        <cat.icon size={16} />
+                        {cat.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
               {/* Description */}
-              <Textarea
-                label="Deskripsi (Opsional)"
-                placeholder="Jelaskan screenshot ini..."
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                variant="bordered"
-                minRows={2}
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="screenshot-description">Deskripsi (Opsional)</Label>
+                <Textarea
+                  id="screenshot-description"
+                  placeholder="Jelaskan screenshot ini..."
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  rows={2}
+                />
+              </div>
 
               {/* Upload Progress */}
               {isUploading && (
                 <div className="space-y-2">
-                  <Progress
-                    value={uploadProgress}
-                    color="primary"
-                    size="sm"
-                    label="Mengupload..."
-                    showValueLabel
-                  />
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-app-secondary-invert">Mengupload...</span>
+                    <span className="text-primary font-medium">{uploadProgress}%</span>
+                  </div>
+                  <Progress value={uploadProgress} />
                 </div>
               )}
             </div>
-          </ModalBody>
-          <ModalFooter>
+          </div>
+          <DialogFooter>
             <Button
-              variant="flat"
-              onPress={() => {
+              variant="outline"
+              onClick={() => {
                 uploadModal.onClose();
                 resetForm();
               }}
-              isDisabled={isUploading}
+              disabled={isUploading}
             >
               Batal
             </Button>
             <Button
-              color="primary"
-              onPress={handleUpload}
-              isLoading={isUploading}
-              isDisabled={!selectedFile || !formData.title.trim()}
-              startContent={!isUploading && <Upload size={16} />}
+              onClick={handleUpload}
+              disabled={isUploading || !selectedFile || !formData.title.trim()}
             >
+              {isUploading ? <Loader2 className="animate-spin" /> : <Upload size={16} />}
               Upload
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Preview Modal */}
-      <Modal
-        isOpen={previewModal.isOpen}
-        onClose={previewModal.onClose}
-        size="5xl"
-        scrollBehavior="inside"
-      >
-        <ModalContent>
-          <ModalHeader>{previewTitle}</ModalHeader>
-          <ModalBody className="p-0">
+      <Dialog open={previewModal.isOpen} onOpenChange={previewModal.onOpenChange}>
+        <DialogContent className="sm:max-w-5xl">
+          <DialogHeader>
+            <DialogTitle>{previewTitle}</DialogTitle>
+          </DialogHeader>
+          <div className="overflow-auto">
             {previewUrl && (
-              <Image
-                src={previewUrl}
-                alt={previewTitle}
-                className="w-full"
-                loading="lazy"
-              />
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img src={previewUrl} alt={previewTitle} className="w-full" loading="lazy" />
             )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={previewModal.onClose}>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={previewModal.onClose}>
               Tutup
             </Button>
             {previewUrl && (
-              <Button
-                color="primary"
-                as="a"
+              <a
                 href={previewUrl}
                 target="_blank"
                 rel="noopener noreferrer"
+                className={buttonVariants()}
               >
                 Buka di Tab Baru
-              </Button>
+              </a>
             )}
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Modal isOpen={deleteConfirmModal.isOpen} onClose={deleteConfirmModal.onClose} size="sm">
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-2">
-            <Trash2 size={20} className="text-danger" />
-            Konfirmasi Hapus
-          </ModalHeader>
-          <ModalBody>
-            <p className="text-app-secondary-invert">
-              Yakin ingin menghapus screenshot ini? Tindakan ini tidak dapat dibatalkan.
-            </p>
-          </ModalBody>
-          <ModalFooter>
+      <Dialog
+        open={deleteConfirmModal.isOpen}
+        onOpenChange={deleteConfirmModal.onOpenChange}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trash2 size={20} className="text-destructive" />
+              Konfirmasi Hapus
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-app-secondary-invert">
+            Yakin ingin menghapus screenshot ini? Tindakan ini tidak dapat dibatalkan.
+          </p>
+          <DialogFooter>
             <Button
-              variant="flat"
-              onPress={() => {
+              variant="outline"
+              onClick={() => {
                 deleteConfirmModal.onClose();
                 setDeleteTargetId(null);
               }}
             >
               Batal
             </Button>
-            <Button
-              color="danger"
-              onPress={confirmDelete}
-              startContent={<Trash2 size={16} />}
-            >
+            <Button variant="destructive" onClick={confirmDelete}>
+              <Trash2 size={16} />
               Hapus
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

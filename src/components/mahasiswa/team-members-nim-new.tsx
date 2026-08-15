@@ -1,16 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Card,
-  CardBody,
-  Input,
-  Button,
-  Avatar,
-  Chip,
-  Spinner,
-  Tooltip,
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -26,7 +23,7 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
-import { getSimakPhotoUrl } from '@/lib/utils';
+import { getInitials, getSimakPhotoUrl } from '@/lib/utils';
 
 interface SearchedUser {
   id: string;
@@ -157,8 +154,8 @@ export default function TeamMembersNimNew({
   const totalMembers = pendingMembers.length + 1; // +1 for owner
 
   return (
-    <Card className="border border-default-100 shadow-sm">
-      <CardBody className="p-5">
+    <Card className="border border-border shadow-sm">
+      <CardContent className="p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
@@ -167,7 +164,7 @@ export default function TeamMembersNimNew({
             </div>
             <div>
               <h3 className="font-semibold text-foreground">Tim Project</h3>
-              <p className="text-xs text-default-400">Kelola anggota tim</p>
+              <p className="text-xs text-muted-foreground">Kelola anggota tim</p>
             </div>
           </div>
           <div className="flex items-center gap-1.5">
@@ -176,11 +173,11 @@ export default function TeamMembersNimNew({
                 key={i}
                 className={`w-2 h-2 rounded-full transition-colors ${i < totalMembers
                   ? 'bg-violet-500'
-                  : 'bg-default-200 dark:bg-default-700'
+                  : 'bg-muted'
                   }`}
               />
             ))}
-            <span className="text-xs text-default-400 ml-1">
+            <span className="text-xs text-muted-foreground ml-1">
               {totalMembers}/{maxMembers + 1}
             </span>
           </div>
@@ -193,17 +190,15 @@ export default function TeamMembersNimNew({
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="flex items-center gap-2 p-2.5 mb-3 bg-danger-50 dark:bg-danger-500/10 text-danger rounded-lg text-xs"
+              className="flex items-center gap-2 p-2.5 mb-3 bg-destructive/10 text-destructive rounded-lg text-xs"
             >
               <AlertCircle size={14} />
               <span className="flex-1">{error}</span>
               <Button
-                size="sm"
-                variant="light"
-                color="danger"
-                isIconOnly
-                className="h-5 w-5 min-w-5"
-                onPress={() => setError('')}
+                size="icon-xs"
+                variant="ghost"
+                className="text-destructive"
+                onClick={() => setError('')}
               >
                 <X size={12} />
               </Button>
@@ -216,37 +211,33 @@ export default function TeamMembersNimNew({
           {/* Owner Card */}
           <div className="flex items-center gap-3 p-3 bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-500/10 dark:to-green-500/10 rounded-xl border border-emerald-100 dark:border-emerald-500/20">
             <div className="relative">
-              <Avatar
-                src={getSimakPhotoUrl(ownerNim) || getSimakPhotoUrl(ownerImage)}
-                name={ownerName || 'Owner'}
-                className="w-11 h-11 ring-2 ring-emerald-500/30"
-              />
+              <Avatar className="size-11 ring-2 ring-emerald-500/30">
+                <AvatarImage
+                  src={getSimakPhotoUrl(ownerNim) || getSimakPhotoUrl(ownerImage)}
+                  alt={ownerName || 'Owner'}
+                />
+                <AvatarFallback>{getInitials(ownerName || 'Owner')}</AvatarFallback>
+              </Avatar>
               <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center shadow-sm">
                 <Crown size={10} className="text-white" />
               </div>
             </div>
             <div className="flex-1 min-w-0">
               <p className="font-semibold text-sm truncate text-foreground">{ownerName || 'Anda'}</p>
-              <p className="text-xs text-default-500 flex items-center gap-1">
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
                 <span>{ownerNim || 'NIM'}</span>
                 {ownerGithubUsername && (
                   <>
-                    <span className="text-default-300">•</span>
-                    <Github size={10} className="text-default-400" />
-                    <span className="text-default-400">@{ownerGithubUsername}</span>
+                    <span className="text-muted-foreground">•</span>
+                    <Github size={10} className="text-muted-foreground" />
+                    <span className="text-muted-foreground">@{ownerGithubUsername}</span>
                   </>
                 )}
               </p>
             </div>
-            <Chip
-              size="sm"
-              classNames={{
-                base: 'bg-gradient-to-r from-emerald-500 to-green-500 border-0',
-                content: 'text-white font-medium text-[10px]'
-              }}
-            >
+            <Badge className="bg-gradient-to-r from-emerald-500 to-green-500 text-white text-[10px] font-medium">
               Ketua Tim
-            </Chip>
+            </Badge>
           </div>
 
           {/* Pending Members */}
@@ -258,54 +249,56 @@ export default function TeamMembersNimNew({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20, height: 0, marginBottom: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className="flex items-center gap-3 p-3 bg-default-50 dark:bg-default-100/5 rounded-xl border border-default-100 dark:border-default-800 group hover:border-violet-200 dark:hover:border-violet-500/30 transition-colors"
+                className="flex items-center gap-3 p-3 bg-muted/40 rounded-xl border border-border group hover:border-violet-200 dark:hover:border-violet-500/30 transition-colors"
               >
                 <div className="relative">
-                  <Avatar
-                    src={member.image}
-                    name={member.name}
-                    className="w-11 h-11"
-                  />
+                  <Avatar className="size-11">
+                    <AvatarImage src={member.image} alt={member.name} />
+                    <AvatarFallback>{getInitials(member.name)}</AvatarFallback>
+                  </Avatar>
                   <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white dark:border-zinc-900 flex items-center justify-center">
                     <UserCheck size={10} className="text-white" />
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate text-foreground">{member.name}</p>
-                  <p className="text-xs text-default-500 flex items-center gap-1">
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <span>{member.nim}</span>
                     {member.prodi && (
                       <>
-                        <span className="text-default-300">•</span>
+                        <span className="text-muted-foreground">•</span>
                         <span className="truncate">{member.prodi}</span>
                       </>
                     )}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Tooltip content={`@${member.githubUsername}`}>
-                    <Chip
-                      size="sm"
-                      variant="flat"
-                      color="success"
-                      classNames={{ base: 'h-6 gap-1' }}
-                      startContent={<Github size={10} />}
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Badge className="h-6 gap-1 bg-success/15 text-success" />
+                      }
                     >
+                      <Github size={10} />
                       <span className="text-[10px]">Connected</span>
-                    </Chip>
+                    </TooltipTrigger>
+                    <TooltipContent>@{member.githubUsername}</TooltipContent>
                   </Tooltip>
                   {isEditable && (
-                    <Tooltip content="Hapus dari tim">
-                      <Button
-                        size="sm"
-                        variant="light"
-                        color="danger"
-                        isIconOnly
-                        className="h-7 w-7 min-w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onPress={() => handleRemoveMember(member.id)}
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleRemoveMember(member.id)}
+                          />
+                        }
                       >
                         <Trash2 size={14} />
-                      </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Hapus dari tim</TooltipContent>
                     </Tooltip>
                   )}
                 </div>
@@ -315,8 +308,8 @@ export default function TeamMembersNimNew({
 
           {/* Empty State */}
           {pendingMembers.length === 0 && (
-            <div className="flex items-center justify-center gap-2 py-4 text-default-400">
-              <Users size={16} className="text-default-300" />
+            <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
+              <Users size={16} className="text-muted-foreground" />
               <span className="text-xs">Belum ada anggota ditambahkan</span>
             </div>
           )}
@@ -327,39 +320,32 @@ export default function TeamMembersNimNew({
           <div className="mt-4 space-y-3">
             {/* Search Input */}
             <div className="relative">
+              <span className="absolute left-2.5 top-1/2 z-10 -translate-y-1/2">
+                {isSearching ? (
+                  <Spinner className="size-4" />
+                ) : (
+                  <Search size={14} className="text-muted-foreground" />
+                )}
+              </span>
               <Input
-                size="sm"
-                variant="bordered"
                 placeholder="Cari berdasarkan NIM atau nama..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                startContent={
-                  isSearching ? (
-                    <Spinner size="sm" className="w-4 h-4" />
-                  ) : (
-                    <Search size={14} className="text-default-400" />
-                  )
-                }
-                endContent={
-                  searchQuery && (
-                    <Button
-                      size="sm"
-                      variant="light"
-                      isIconOnly
-                      className="h-6 w-6 min-w-6"
-                      onPress={() => {
-                        setSearchQuery('');
-                        setSearchResults([]);
-                      }}
-                    >
-                      <X size={14} />
-                    </Button>
-                  )
-                }
-                classNames={{
-                  inputWrapper: 'border-default-200 hover:border-violet-400 data-[focused=true]:border-violet-500',
-                }}
+                className="pl-9 pr-9"
               />
+              {searchQuery && (
+                <Button
+                  size="icon-xs"
+                  variant="ghost"
+                  className="absolute right-1.5 top-1/2 z-10 -translate-y-1/2"
+                  onClick={() => {
+                    setSearchQuery('');
+                    setSearchResults([]);
+                  }}
+                >
+                  <X size={14} />
+                </Button>
+              )}
 
               {/* Search Results Dropdown */}
               <AnimatePresence>
@@ -368,7 +354,7 @@ export default function TeamMembersNimNew({
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="absolute z-50 w-full mt-2 bg-white dark:bg-zinc-900 border border-default-200 dark:border-default-700 rounded-xl shadow-lg overflow-hidden"
+                    className="absolute z-50 w-full mt-2 bg-popover border border-border rounded-xl shadow-lg overflow-hidden"
                   >
                     <div className="max-h-[240px] overflow-y-auto">
                       {searchResults.map((user, index) => (
@@ -379,31 +365,30 @@ export default function TeamMembersNimNew({
                           transition={{ delay: index * 0.03 }}
                           type="button"
                           onClick={() => handleAddMember(user)}
-                          className="w-full flex items-center gap-3 p-3 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors text-left border-b border-default-100 dark:border-default-800 last:border-b-0 group"
+                          className="w-full flex items-center gap-3 p-3 hover:bg-violet-50 dark:hover:bg-violet-500/10 transition-colors text-left border-b border-border last:border-b-0 group"
                         >
-                          <Avatar
-                            src={getSimakPhotoUrl(user.nim) || getSimakPhotoUrl(user.image) || getSimakPhotoUrl(user.simakPhoto) || undefined}
-                            name={user.name || user.username}
-                            className="w-10 h-10"
-                          />
+                          <Avatar className="size-10">
+                            <AvatarImage
+                              src={getSimakPhotoUrl(user.nim) || getSimakPhotoUrl(user.image) || getSimakPhotoUrl(user.simakPhoto) || undefined}
+                              alt={user.name || user.username}
+                            />
+                            <AvatarFallback>
+                              {getInitials(user.name || user.username)}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <p className="font-medium text-sm truncate text-foreground">
                                 {user.name || user.username}
                               </p>
                               {user.githubUsername && (
-                                <Chip
-                                  size="sm"
-                                  variant="flat"
-                                  color="success"
-                                  classNames={{ base: 'h-5 gap-0.5' }}
-                                  startContent={<Github size={10} />}
-                                >
+                                <Badge className="h-5 gap-0.5 bg-success/15 text-success">
+                                  <Github size={10} />
                                   <span className="text-[10px]">Ready</span>
-                                </Chip>
+                                </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-muted-foreground">
                               {user.nim || user.username}
                               {user.prodi && ` • ${user.prodi}`}
                             </p>
@@ -423,10 +408,10 @@ export default function TeamMembersNimNew({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="absolute z-50 w-full mt-2 bg-white dark:bg-zinc-900 border border-default-200 dark:border-default-700 rounded-xl shadow-lg p-4"
+                  className="absolute z-50 w-full mt-2 bg-popover border border-border rounded-xl shadow-lg p-4"
                 >
-                  <div className="text-center text-default-400">
-                    <Users size={24} className="mx-auto mb-2 text-default-300" />
+                  <div className="text-center text-muted-foreground">
+                    <Users size={24} className="mx-auto mb-2 text-muted-foreground" />
                     <p className="text-sm font-medium">Tidak ditemukan</p>
                     <p className="text-xs">Coba kata kunci lain</p>
                   </div>
@@ -453,7 +438,7 @@ export default function TeamMembersNimNew({
             </span>
           </div>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

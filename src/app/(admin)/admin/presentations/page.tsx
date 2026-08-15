@@ -1,34 +1,30 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Spinner } from '@/components/ui/spinner';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Chip,
-  Tabs,
-  Tab,
-  Spinner,
-  Avatar,
-  Input,
-  Textarea,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  addToast,
-  Divider,
-} from '@heroui/react';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { addToast } from '@/lib/toast';
 import { motion } from 'framer-motion';
 import {
   Calendar,
   Clock,
   MapPin,
   Users,
-  FileText,
   Plus,
   Edit,
   Trash2,
@@ -37,11 +33,23 @@ import {
   AlertCircle,
   CalendarClock,
   GraduationCap,
-  Building,
   RefreshCw,
   Search,
+  Loader2,
+  X,
 } from 'lucide-react';
-import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+import { formatDate, getInitials, getStatusColor, getStatusLabel } from '@/lib/utils';
+
+const statusToneClass: Record<string, string> = {
+  default: 'bg-muted text-muted-foreground',
+  primary: 'bg-primary/10 text-primary',
+  secondary: 'bg-secondary text-secondary-foreground',
+  success:
+    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  warning:
+    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  danger: 'bg-destructive/10 text-destructive',
+};
 
 interface Project {
   id: string;
@@ -123,7 +131,9 @@ export default function PresentationsPage() {
   const [dateFilter, setDateFilter] = useState<'all' | 'today' | 'upcoming' | 'past'>('all');
 
   // Modal state
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
   const [selectedProject, setSelectedProject] = useState<ProjectForScheduling | null>(null);
   const [editingPresentation, setEditingPresentation] = useState<PresentationSchedule | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -385,8 +395,8 @@ export default function PresentationsPage() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-        <Spinner size="lg" color="primary" />
-        <p className="text-default-500">Memuat data jadwal presentasi...</p>
+        <Spinner className="size-8 text-primary" />
+        <p className="text-muted-foreground">Memuat data jadwal presentasi...</p>
       </div>
     );
   }
@@ -402,17 +412,13 @@ export default function PresentationsPage() {
       <motion.div variants={itemVariants}>
         <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-default-900">Jadwal Presentasi</h1>
-            <p className="text-sm text-default-500 mt-0.5">
+            <h1 className="text-2xl font-semibold text-foreground">Jadwal Presentasi</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
               Kelola jadwal presentasi project mahasiswa
             </p>
           </div>
-          <Button
-            variant="flat"
-            startContent={<RefreshCw size={16} />}
-            onPress={fetchData}
-            size="sm"
-          >
+          <Button variant="outline" onClick={fetchData} size="sm">
+            <RefreshCw size={16} />
             Refresh
           </Button>
         </header>
@@ -421,7 +427,7 @@ export default function PresentationsPage() {
       {/* Stats */}
       <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-amber-100 dark:bg-amber-800/50 text-amber-600 dark:text-amber-400">
                 <AlertCircle size={20} />
@@ -431,11 +437,11 @@ export default function PresentationsPage() {
                 <p className="text-sm text-amber-600 dark:text-amber-400">Menunggu Jadwal</p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
         <Card className="border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-blue-100 dark:bg-blue-800/50 text-blue-600 dark:text-blue-400">
                 <Calendar size={20} />
@@ -445,11 +451,11 @@ export default function PresentationsPage() {
                 <p className="text-sm text-blue-600 dark:text-blue-400">Terjadwal</p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
         <Card className="border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2.5 rounded-lg bg-green-100 dark:bg-green-800/50 text-green-600 dark:text-green-400">
                 <CheckCircle2 size={20} />
@@ -459,76 +465,109 @@ export default function PresentationsPage() {
                 <p className="text-sm text-green-600 dark:text-green-400">Selesai</p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* Search + Date filter */}
       <motion.div variants={itemVariants}>
         <Card>
-          <CardBody className="p-3 md:p-4 flex flex-col md:flex-row gap-3">
-            <Input
-              size="sm"
-              placeholder="Cari judul project, nama mahasiswa, ruangan..."
-              startContent={<Search size={16} className="text-default-400" />}
-              value={searchQuery}
-              onValueChange={setSearchQuery}
-              isClearable
-              onClear={() => setSearchQuery('')}
-              className="flex-1"
-            />
+          <CardContent className="p-3 md:p-4 flex flex-col md:flex-row gap-3">
+            <div className="relative flex-1">
+              <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Cari judul project, nama mahasiswa, ruangan..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 pr-9"
+              />
+              {searchQuery && (
+                <Button
+                  size="icon-xs"
+                  variant="ghost"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2"
+                  aria-label="Bersihkan pencarian"
+                  onClick={() => setSearchQuery('')}
+                >
+                  <X size={14} />
+                </Button>
+              )}
+            </div>
             <div className="flex gap-2">
               {(['all', 'today', 'upcoming', 'past'] as const).map((k) => (
                 <Button
                   key={k}
                   size="sm"
-                  variant={dateFilter === k ? 'solid' : 'bordered'}
-                  color={dateFilter === k ? 'primary' : 'default'}
-                  onPress={() => setDateFilter(k)}
+                  variant={dateFilter === k ? 'default' : 'outline'}
+                  onClick={() => setDateFilter(k)}
                 >
                   {k === 'all' ? 'Semua' : k === 'today' ? 'Hari ini' : k === 'upcoming' ? 'Akan datang' : 'Lewat'}
                 </Button>
               ))}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* Main Content */}
       <motion.div variants={itemVariants}>
-        <Card className="border border-default-200 dark:border-default-100">
-          <CardBody className="p-0">
+        <Card className="border">
+          <CardContent className="p-0">
             <Tabs
-              selectedKey={selectedTab}
-              onSelectionChange={(key) => setSelectedTab(key as string)}
-              variant="underlined"
-              classNames={{
-                tabList: "px-4 pt-4 gap-4 border-b border-default-200",
-                cursor: "bg-primary",
-                tab: "h-10 px-0",
-              }}
+              value={selectedTab}
+              onValueChange={(value) => setSelectedTab(value as string)}
+              className="gap-0"
             >
-              <Tab
-                key="pending"
-                title={
-                  <div className="flex items-center gap-2">
-                    <AlertCircle size={16} />
-                    <span>Menunggu Jadwal</span>
-                    {projectsReadyForPresentation.length > 0 && (
-                      <Chip size="sm" color="warning" variant="flat">
-                        {projectsReadyForPresentation.length}
-                      </Chip>
-                    )}
-                  </div>
-                }
+              <TabsList
+                variant="line"
+                className="h-auto w-full flex-wrap justify-start rounded-none gap-4 px-4 pt-4 pb-2 border-b"
               >
+                <TabsTrigger value="pending" className="h-10 flex-none px-0">
+                  <AlertCircle size={16} />
+                  <span>Menunggu Jadwal</span>
+                  {projectsReadyForPresentation.length > 0 && (
+                    <Badge variant="secondary" className={statusToneClass.warning}>
+                      {projectsReadyForPresentation.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="scheduled" className="h-10 flex-none px-0">
+                  <Calendar size={16} />
+                  <span>Terjadwal</span>
+                  {scheduledPresentations.length > 0 && (
+                    <Badge variant="secondary" className={statusToneClass.primary}>
+                      {scheduledPresentations.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="completed" className="h-10 flex-none px-0">
+                  <CheckCircle2 size={16} />
+                  <span>Selesai</span>
+                  {completedPresentations.length > 0 && (
+                    <Badge variant="secondary" className={statusToneClass.success}>
+                      {completedPresentations.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="cancelled" className="h-10 flex-none px-0">
+                  <XCircle size={16} />
+                  <span>Dibatalkan</span>
+                  {cancelledPresentations.length > 0 && (
+                    <Badge variant="secondary" className={statusToneClass.danger}>
+                      {cancelledPresentations.length}
+                    </Badge>
+                  )}
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="pending">
                 <div className="p-4 space-y-4">
                   {filteredPending.length === 0 ? (
                     <div className="text-center py-12">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
-                        <GraduationCap size={32} className="text-default-400" />
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                        <GraduationCap size={32} className="text-muted-foreground" />
                       </div>
-                      <p className="text-default-500">
+                      <p className="text-muted-foreground">
                         {projectsReadyForPresentation.length === 0
                           ? 'Tidak ada project yang menunggu jadwal presentasi'
                           : 'Tidak ada hasil yang cocok dengan pencarian'}
@@ -536,21 +575,20 @@ export default function PresentationsPage() {
                     </div>
                   ) : (
                     filteredPending.map((project) => (
-                      <Card key={project.id} className="border border-default-200">
-                        <CardBody className="p-4">
+                      <Card key={project.id} className="border">
+                        <CardContent className="p-4">
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div className="flex items-start gap-3">
-                              <Avatar
-                                name={project.mahasiswa.name}
-                                className="flex-shrink-0"
-                              />
+                              <Avatar className="flex-shrink-0">
+                                <AvatarFallback>{getInitials(project.mahasiswa.name)}</AvatarFallback>
+                              </Avatar>
                               <div>
                                 <h3 className="font-semibold">{project.title}</h3>
-                                <p className="text-sm text-default-500">
+                                <p className="text-sm text-muted-foreground">
                                   {project.mahasiswa.name} ({project.mahasiswa.nim || project.mahasiswa.username})
                                 </p>
                                 {project.members.length > 0 && (
-                                  <div className="flex items-center gap-1 mt-1 text-xs text-default-400">
+                                  <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                                     <Users size={12} />
                                     <span>{project.members.length + 1} anggota</span>
                                   </div>
@@ -558,50 +596,33 @@ export default function PresentationsPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <Chip
-                                color={getStatusColor(project.status)}
-                                variant="flat"
-                                size="sm"
+                              <Badge
+                                variant="secondary"
+                                className={statusToneClass[getStatusColor(project.status)]}
                               >
                                 {getStatusLabel(project.status)}
-                              </Chip>
-                              <Button
-                                color="primary"
-                                startContent={<Plus size={16} />}
-                                onPress={() => openScheduleModal(project)}
-                              >
+                              </Badge>
+                              <Button onClick={() => openScheduleModal(project)}>
+                                <Plus size={16} />
                                 Jadwalkan
                               </Button>
                             </div>
                           </div>
-                        </CardBody>
+                        </CardContent>
                       </Card>
                     ))
                   )}
                 </div>
-              </Tab>
+              </TabsContent>
 
-              <Tab
-                key="scheduled"
-                title={
-                  <div className="flex items-center gap-2">
-                    <Calendar size={16} />
-                    <span>Terjadwal</span>
-                    {scheduledPresentations.length > 0 && (
-                      <Chip size="sm" color="primary" variant="flat">
-                        {scheduledPresentations.length}
-                      </Chip>
-                    )}
-                  </div>
-                }
-              >
+              <TabsContent value="scheduled">
                 <div className="p-4 space-y-4">
                   {filteredScheduled.length === 0 ? (
                     <div className="text-center py-12">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
-                        <Calendar size={32} className="text-default-400" />
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                        <Calendar size={32} className="text-muted-foreground" />
                       </div>
-                      <p className="text-default-500">
+                      <p className="text-muted-foreground">
                         {scheduledPresentations.length === 0
                           ? 'Belum ada presentasi yang terjadwal'
                           : 'Tidak ada hasil yang cocok dengan pencarian'}
@@ -609,8 +630,8 @@ export default function PresentationsPage() {
                     </div>
                   ) : (
                     filteredScheduled.map((presentation) => (
-                      <Card key={presentation.id} className="border border-default-200">
-                        <CardBody className="p-4">
+                      <Card key={presentation.id} className="border">
+                        <CardContent className="p-4">
                           <div className="flex flex-col gap-4">
                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                               <div className="flex items-start gap-3">
@@ -619,27 +640,25 @@ export default function PresentationsPage() {
                                 </div>
                                 <div>
                                   <h3 className="font-semibold">{presentation.project.title}</h3>
-                                  <p className="text-sm text-default-500">
+                                  <p className="text-sm text-muted-foreground">
                                     {presentation.project.mahasiswa.name}
                                   </p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
                                 <Button
-                                  size="sm"
-                                  variant="flat"
-                                  color="default"
-                                  isIconOnly
-                                  onPress={() => openEditModal(presentation)}
+                                  size="icon-sm"
+                                  variant="outline"
+                                  aria-label="Edit jadwal"
+                                  onClick={() => openEditModal(presentation)}
                                 >
                                   <Edit size={16} />
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="flat"
-                                  color="danger"
-                                  isIconOnly
-                                  onPress={() => handleDelete(presentation.id)}
+                                  size="icon-sm"
+                                  variant="destructive"
+                                  aria-label="Hapus jadwal"
+                                  onClick={() => handleDelete(presentation.id)}
                                 >
                                   <Trash2 size={16} />
                                 </Button>
@@ -648,11 +667,11 @@ export default function PresentationsPage() {
 
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
                               <div className="flex items-center gap-2">
-                                <Calendar size={14} className="text-default-400" />
+                                <Calendar size={14} className="text-muted-foreground" />
                                 <span>{formatDate(presentation.scheduledDate)}</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Clock size={14} className="text-default-400" />
+                                <Clock size={14} className="text-muted-foreground" />
                                 <span>
                                   {presentation.startTime}
                                   {presentation.endTime && ` - ${presentation.endTime}`}
@@ -660,54 +679,41 @@ export default function PresentationsPage() {
                               </div>
                               {presentation.location && (
                                 <div className="flex items-center gap-2">
-                                  <MapPin size={14} className="text-default-400" />
+                                  <MapPin size={14} className="text-muted-foreground" />
                                   <span>{presentation.location}</span>
                                 </div>
                               )}
                             </div>
 
-                            <Divider />
+                            <Separator />
 
                             <div className="flex flex-wrap items-center gap-2">
                               <Button
                                 size="sm"
-                                color="success"
-                                variant="flat"
-                                startContent={<CheckCircle2 size={16} />}
-                                onPress={() => handleMarkCompleted(presentation)}
+                                variant="outline"
+                                className="text-emerald-700 dark:text-emerald-400"
+                                onClick={() => handleMarkCompleted(presentation)}
                               >
+                                <CheckCircle2 size={16} />
                                 Tandai Selesai
                               </Button>
                             </div>
                           </div>
-                        </CardBody>
+                        </CardContent>
                       </Card>
                     ))
                   )}
                 </div>
-              </Tab>
+              </TabsContent>
 
-              <Tab
-                key="completed"
-                title={
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 size={16} />
-                    <span>Selesai</span>
-                    {completedPresentations.length > 0 && (
-                      <Chip size="sm" color="success" variant="flat">
-                        {completedPresentations.length}
-                      </Chip>
-                    )}
-                  </div>
-                }
-              >
+              <TabsContent value="completed">
                 <div className="p-4 space-y-4">
                   {filteredCompleted.length === 0 ? (
                     <div className="text-center py-12">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
-                        <CheckCircle2 size={32} className="text-default-400" />
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                        <CheckCircle2 size={32} className="text-muted-foreground" />
                       </div>
-                      <p className="text-default-500">
+                      <p className="text-muted-foreground">
                         {completedPresentations.length === 0
                           ? 'Belum ada presentasi yang selesai'
                           : 'Tidak ada hasil yang cocok dengan pencarian'}
@@ -715,87 +721,72 @@ export default function PresentationsPage() {
                     </div>
                   ) : (
                     filteredCompleted.map((presentation) => (
-                      <Card key={presentation.id} className="border border-default-200">
-                        <CardBody className="p-4">
+                      <Card key={presentation.id} className="border">
+                        <CardContent className="p-4">
                           <div className="flex flex-col gap-4">
                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                               <div className="flex items-start gap-3">
-                                <div className="p-2.5 rounded-lg bg-success/10 text-success">
+                                <div className="p-2.5 rounded-lg bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
                                   <CheckCircle2 size={20} />
                                 </div>
                                 <div>
                                   <h3 className="font-semibold">{presentation.project.title}</h3>
-                                  <p className="text-sm text-default-500">
+                                  <p className="text-sm text-muted-foreground">
                                     {presentation.project.mahasiswa.name}
                                   </p>
-                                  <p className="text-xs text-default-400 mt-1">
+                                  <p className="text-xs text-muted-foreground mt-1">
                                     Presentasi: {formatDate(presentation.scheduledDate)}
                                   </p>
                                 </div>
                               </div>
-                              <Chip
-                                color={getStatusColor(presentation.project.status)}
-                                variant="flat"
+                              <Badge
+                                variant="secondary"
+                                className={statusToneClass[getStatusColor(presentation.project.status)]}
                               >
                                 {getStatusLabel(presentation.project.status)}
-                              </Chip>
+                              </Badge>
                             </div>
 
                             {/* Show finalize buttons if project is still PRESENTATION_SCHEDULED */}
                             {presentation.project.status === 'PRESENTATION_SCHEDULED' && (
                               <>
-                                <Divider />
+                                <Separator />
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <span className="text-sm text-default-500 mr-2">Hasil Presentasi:</span>
+                                  <span className="text-sm text-muted-foreground mr-2">Hasil Presentasi:</span>
                                   <Button
                                     size="sm"
-                                    color="success"
-                                    startContent={<CheckCircle2 size={16} />}
-                                    onPress={() => handleFinalizeProject(presentation.project.id, 'APPROVED')}
+                                    onClick={() => handleFinalizeProject(presentation.project.id, 'APPROVED')}
                                   >
+                                    <CheckCircle2 size={16} />
                                     Setujui Project
                                   </Button>
                                   <Button
                                     size="sm"
-                                    color="danger"
-                                    variant="flat"
-                                    startContent={<XCircle size={16} />}
-                                    onPress={() => handleFinalizeProject(presentation.project.id, 'REJECTED')}
+                                    variant="destructive"
+                                    onClick={() => handleFinalizeProject(presentation.project.id, 'REJECTED')}
                                   >
+                                    <XCircle size={16} />
                                     Tolak Project
                                   </Button>
                                 </div>
                               </>
                             )}
                           </div>
-                        </CardBody>
+                        </CardContent>
                       </Card>
                     ))
                   )}
                 </div>
-              </Tab>
+              </TabsContent>
 
-              <Tab
-                key="cancelled"
-                title={
-                  <div className="flex items-center gap-2">
-                    <XCircle size={16} />
-                    <span>Dibatalkan</span>
-                    {cancelledPresentations.length > 0 && (
-                      <Chip size="sm" color="danger" variant="flat">
-                        {cancelledPresentations.length}
-                      </Chip>
-                    )}
-                  </div>
-                }
-              >
+              <TabsContent value="cancelled">
                 <div className="p-4 space-y-4">
                   {filteredCancelled.length === 0 ? (
                     <div className="text-center py-12">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-default-100 flex items-center justify-center">
-                        <XCircle size={32} className="text-default-400" />
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                        <XCircle size={32} className="text-muted-foreground" />
                       </div>
-                      <p className="text-default-500">
+                      <p className="text-muted-foreground">
                         {cancelledPresentations.length === 0
                           ? 'Tidak ada presentasi yang dibatalkan'
                           : 'Tidak ada hasil yang cocok dengan pencarian'}
@@ -803,20 +794,20 @@ export default function PresentationsPage() {
                     </div>
                   ) : (
                     filteredCancelled.map((presentation) => (
-                      <Card key={presentation.id} className="border border-default-200">
-                        <CardBody className="p-4">
+                      <Card key={presentation.id} className="border">
+                        <CardContent className="p-4">
                           <div className="flex flex-col gap-4">
                             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                               <div className="flex items-start gap-3">
-                                <div className="p-2.5 rounded-lg bg-danger/10 text-danger">
+                                <div className="p-2.5 rounded-lg bg-destructive/10 text-destructive">
                                   <XCircle size={20} />
                                 </div>
                                 <div>
                                   <h3 className="font-semibold">{presentation.project.title}</h3>
-                                  <p className="text-sm text-default-500">
+                                  <p className="text-sm text-muted-foreground">
                                     {presentation.project.mahasiswa.name}
                                   </p>
-                                  <p className="text-xs text-default-400 mt-1">
+                                  <p className="text-xs text-muted-foreground mt-1">
                                     Jadwal sebelumnya: {formatDate(presentation.scheduledDate)} {presentation.startTime}
                                   </p>
                                 </div>
@@ -824,137 +815,141 @@ export default function PresentationsPage() {
                               <div className="flex items-center gap-2">
                                 <Button
                                   size="sm"
-                                  color="primary"
-                                  variant="flat"
-                                  startContent={<CalendarClock size={16} />}
-                                  onPress={() => openEditModal(presentation)}
+                                  variant="outline"
+                                  onClick={() => openEditModal(presentation)}
                                 >
+                                  <CalendarClock size={16} />
                                   Jadwalkan Ulang
                                 </Button>
                                 <Button
-                                  size="sm"
-                                  variant="flat"
-                                  color="danger"
-                                  isIconOnly
-                                  onPress={() => handleDelete(presentation.id)}
+                                  size="icon-sm"
+                                  variant="destructive"
+                                  aria-label="Hapus jadwal"
+                                  onClick={() => handleDelete(presentation.id)}
                                 >
                                   <Trash2 size={16} />
                                 </Button>
                               </div>
                             </div>
                           </div>
-                        </CardBody>
+                        </CardContent>
                       </Card>
                     ))
                   )}
                 </div>
-              </Tab>
+              </TabsContent>
             </Tabs>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* Schedule Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <ModalContent>
-          <ModalHeader>
-            <div className="flex items-center gap-2">
+      <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
               <Calendar size={20} />
               <span>
                 {editingPresentation ? 'Edit Jadwal Presentasi' : 'Jadwalkan Presentasi'}
               </span>
-            </div>
-          </ModalHeader>
-          <ModalBody>
-            {(selectedProject || editingPresentation) && (
-              <div className="space-y-4">
-                {/* Project Info */}
-                <Card className="border border-default-200 bg-default-50">
-                  <CardBody className="p-3">
-                    <div className="flex items-center gap-3">
-                      <Avatar
-                        name={
+            </DialogTitle>
+          </DialogHeader>
+          {(selectedProject || editingPresentation) && (
+            <div className="space-y-4">
+              {/* Project Info */}
+              <Card className="border bg-muted/40">
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="size-8">
+                      <AvatarFallback className="text-xs">
+                        {getInitials(
                           selectedProject?.mahasiswa.name ||
-                          editingPresentation?.project.mahasiswa.name
-                        }
-                        size="sm"
-                      />
-                      <div>
-                        <p className="font-medium text-sm">
-                          {selectedProject?.title || editingPresentation?.project.title}
-                        </p>
-                        <p className="text-xs text-default-500">
-                          {selectedProject?.mahasiswa.name ||
-                            editingPresentation?.project.mahasiswa.name}
-                        </p>
-                      </div>
+                          editingPresentation?.project.mahasiswa.name ||
+                          ''
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium text-sm">
+                        {selectedProject?.title || editingPresentation?.project.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {selectedProject?.mahasiswa.name ||
+                          editingPresentation?.project.mahasiswa.name}
+                      </p>
                     </div>
-                  </CardBody>
-                </Card>
+                  </div>
+                </CardContent>
+              </Card>
 
-                {/* Form */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Form */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="presentation-date">Tanggal Presentasi</Label>
                   <Input
+                    id="presentation-date"
                     type="date"
-                    label="Tanggal Presentasi"
-                    placeholder="Pilih tanggal"
                     value={formData.scheduledDate}
                     onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
-                    isRequired
-                    startContent={<Calendar size={16} className="text-default-400" />}
+                    required
                   />
-                  <div className="grid grid-cols-2 gap-2">
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="presentation-start">Jam Mulai</Label>
                     <Input
+                      id="presentation-start"
                       type="time"
-                      label="Jam Mulai"
                       value={formData.startTime}
                       onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
-                      isRequired
-                      startContent={<Clock size={16} className="text-default-400" />}
+                      required
                     />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="presentation-end">Jam Selesai</Label>
                     <Input
+                      id="presentation-end"
                       type="time"
-                      label="Jam Selesai"
                       value={formData.endTime}
                       onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
-                      startContent={<Clock size={16} className="text-default-400" />}
                     />
                   </div>
                 </div>
+              </div>
 
+              <div className="space-y-1.5">
+                <Label htmlFor="presentation-location">Lokasi / Ruangan</Label>
                 <Input
-                  label="Lokasi / Ruangan"
+                  id="presentation-location"
                   placeholder="Contoh: Ruang Sidang Lt. 3"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  startContent={<MapPin size={16} className="text-default-400" />}
                 />
+              </div>
 
+              <div className="space-y-1.5">
+                <Label htmlFor="presentation-notes">Catatan</Label>
                 <Textarea
-                  label="Catatan"
+                  id="presentation-notes"
                   placeholder="Catatan tambahan untuk mahasiswa..."
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  minRows={2}
+                  rows={2}
                 />
               </div>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onClose}>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose}>
               Batal
             </Button>
-            <Button
-              color="primary"
-              onPress={handleSave}
-              isLoading={isSaving}
-              startContent={!isSaving && <CheckCircle2 size={16} />}
-            >
+            <Button onClick={handleSave} disabled={isSaving}>
+              {isSaving ? <Loader2 className="animate-spin" /> : <CheckCircle2 size={16} />}
               {editingPresentation ? 'Simpan Perubahan' : 'Jadwalkan'}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

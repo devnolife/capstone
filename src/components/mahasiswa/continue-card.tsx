@@ -1,17 +1,28 @@
 'use client';
 
 import Link from 'next/link';
-import { Button, Chip, Progress } from '@heroui/react';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { buttonVariants } from '@/components/ui/button';
 import { ArrowRight, ShieldAlert } from 'lucide-react';
 import type { StudentJourney } from '@/lib/student-journey';
-import { getStatusColor, getStatusLabel } from '@/lib/utils';
+import { cn, getStatusColor, getStatusLabel } from '@/lib/utils';
 
-const ACTION_COLOR = {
-  primary: 'primary',
-  warning: 'warning',
-  success: 'success',
-  neutral: 'default',
+const ACTION_CLASS = {
+  primary: '',
+  warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
+  success: 'bg-success text-success-foreground hover:bg-success/90',
+  neutral: 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
 } as const;
+
+const STATUS_BADGE_CLASS: Record<string, string> = {
+  default: 'bg-muted text-muted-foreground',
+  primary: 'bg-primary/10 text-primary',
+  secondary: 'bg-secondary text-secondary-foreground',
+  success: 'bg-success/15 text-success',
+  warning: 'bg-warning/15 text-warning',
+  danger: 'bg-destructive/10 text-destructive',
+};
 
 interface ContinueCardProps {
   journey: StudentJourney;
@@ -31,43 +42,42 @@ export function ContinueCard({ journey }: ContinueCardProps) {
               Lanjutkan pekerjaan
             </p>
             {journey.projectStatus && (
-              <Chip
-                size="sm"
-                color={getStatusColor(journey.projectStatus)}
-                variant="flat"
+              <Badge
+                className={STATUS_BADGE_CLASS[getStatusColor(journey.projectStatus)]}
               >
                 {getStatusLabel(journey.projectStatus)}
-              </Chip>
+              </Badge>
             )}
           </div>
           <h2 className="text-lg font-bold truncate">
             {journey.nextAction.label}
           </h2>
-          <p className="text-sm text-default-600 line-clamp-2">
+          <p className="text-sm text-muted-foreground line-clamp-2">
             {journey.nextAction.description}
           </p>
           <div className="flex items-center gap-3 pt-1">
             <div className="flex items-center gap-2 w-40">
               <Progress
                 value={journey.progress}
-                color={journey.progress >= 100 ? 'success' : 'primary'}
-                size="sm"
                 aria-label={`Progress ${journey.progress}%`}
-                className="flex-1"
+                className={cn(
+                  'flex-1',
+                  journey.progress >= 100 &&
+                  '[&_[data-slot=progress-indicator]]:bg-success'
+                )}
               />
-              <span className="text-xs font-semibold text-default-600">
+              <span className="text-xs font-semibold text-muted-foreground">
                 {journey.progress}%
               </span>
             </div>
             {journey.deadline && (
               <span
-                className={`inline-flex items-center gap-1 text-xs font-medium ${
-                  journey.deadline.isPast
-                    ? 'text-danger'
+                className={`inline-flex items-center gap-1 text-xs font-medium ${journey.deadline.isPast
+                    ? 'text-destructive'
                     : journey.deadline.daysRemaining <= 3
-                      ? 'text-warning-600'
-                      : 'text-default-500'
-                }`}
+                      ? 'text-warning'
+                      : 'text-muted-foreground'
+                  }`}
               >
                 <ShieldAlert size={13} />
                 {journey.deadline.isPast
@@ -79,16 +89,17 @@ export function ContinueCard({ journey }: ContinueCardProps) {
             )}
           </div>
         </div>
-        <Button
-          as={Link}
+        <Link
           href={journey.nextAction.href}
-          color={ACTION_COLOR[journey.nextAction.tone]}
-          size="lg"
-          endContent={<ArrowRight size={18} />}
-          className="shrink-0 font-semibold"
+          className={cn(
+            buttonVariants({ size: 'lg' }),
+            ACTION_CLASS[journey.nextAction.tone],
+            'shrink-0 font-semibold'
+          )}
         >
           Kerjakan Sekarang
-        </Button>
+          <ArrowRight size={18} />
+        </Link>
       </div>
     </div>
   );

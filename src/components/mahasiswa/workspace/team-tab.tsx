@@ -1,6 +1,6 @@
 'use client';
 
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import TeamMembersNim from '@/components/mahasiswa/team-members-nim';
 import InvitationsContent from '@/components/mahasiswa/invitations-content';
 import type { WorkspaceProject } from './types';
@@ -22,11 +22,11 @@ export function TeamTab({ project, canEdit, isOwner }: TeamTabProps) {
     userId: member.userId ?? undefined,
     user: member.user
       ? {
-          id: member.user.id,
-          name: member.user.name,
-          nim: member.user.nim,
-          image: member.user.image,
-        }
+        id: member.user.id,
+        name: member.user.name,
+        nim: member.user.nim,
+        image: member.user.image,
+      }
       : undefined,
     joinedAt:
       typeof member.joinedAt === 'string'
@@ -37,8 +37,8 @@ export function TeamTab({ project, canEdit, isOwner }: TeamTabProps) {
   return (
     <div className="space-y-6 pt-6">
       {/* Anggota tim */}
-      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-6">
+      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+        <CardContent className="p-6">
           <TeamMembersNim
             projectId={project.id}
             members={members}
@@ -48,7 +48,7 @@ export function TeamTab({ project, canEdit, isOwner }: TeamTabProps) {
             ownerNim={project.mahasiswa.nim ?? undefined}
             isEditable={canEdit && isOwner}
           />
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Undangan yang saya terima */}

@@ -1,6 +1,9 @@
 'use client';
 
-import { Card, CardBody, Chip, Progress, Button } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 import {
   AlertCircle,
   CalendarClock,
@@ -40,18 +43,21 @@ export function OverviewTab({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Checklist readiness */}
-        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <CardBody className="p-6">
+        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+          <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-lg">Checklist Submission</h2>
               {readiness && (
-                <Chip
-                  size="sm"
-                  color={readiness.canSubmit ? 'success' : 'warning'}
-                  variant="flat"
+                <Badge
+                  variant="outline"
+                  className={
+                    readiness.canSubmit
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-400'
+                      : 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400'
+                  }
                 >
                   {readiness.completedChecks}/{readiness.totalChecks} lengkap
-                </Chip>
+                </Badge>
               )}
             </div>
 
@@ -59,8 +65,6 @@ export function OverviewTab({
               <Progress
                 aria-label="Kelengkapan submission"
                 value={(readiness.completedChecks / readiness.totalChecks) * 100}
-                color={readiness.canSubmit ? 'success' : 'warning'}
-                size="sm"
                 className="mb-4"
               />
             )}
@@ -75,28 +79,27 @@ export function OverviewTab({
                       key={`${blocker.code}-${blocker.field ?? index}`}
                       type="button"
                       onClick={() => navigable && onGoToBlocker(blocker)}
-                      className={`w-full flex items-start gap-3 p-3 rounded-xl border border-warning-200 dark:border-warning-800/40 bg-warning-50 dark:bg-warning-900/10 text-left ${
-                        navigable
-                          ? 'hover:bg-warning-100 dark:hover:bg-warning-900/20 transition-colors cursor-pointer'
+                      className={`w-full flex items-start gap-3 p-3 rounded-xl border border-amber-200 dark:border-amber-800/40 bg-amber-50 dark:bg-amber-900/10 text-left ${navigable
+                          ? 'hover:bg-amber-100 dark:hover:bg-amber-900/20 transition-colors cursor-pointer'
                           : 'cursor-default'
-                      }`}
+                        }`}
                     >
                       <AlertCircle
                         size={16}
-                        className="text-warning-600 mt-0.5 shrink-0"
+                        className="text-amber-600 mt-0.5 shrink-0"
                       />
                       <span className="flex-1 min-w-0">
                         <span className="block text-sm font-medium">
                           {blocker.label}
                         </span>
-                        <span className="block text-xs text-default-500">
+                        <span className="block text-xs text-muted-foreground">
                           {blocker.description}
                         </span>
                       </span>
                       {navigable && (
                         <ChevronRight
                           size={16}
-                          className="text-default-400 mt-1 shrink-0"
+                          className="text-muted-foreground mt-1 shrink-0"
                         />
                       )}
                     </button>
@@ -104,9 +107,9 @@ export function OverviewTab({
                 })}
               </div>
             ) : (
-              <div className="flex items-center gap-2 p-3 rounded-xl bg-success-50 dark:bg-success-900/10 border border-success-200 dark:border-success-800/40">
-                <CheckCircle2 size={16} className="text-success-600" />
-                <p className="text-sm text-success-700 dark:text-success-400">
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-emerald-50 dark:bg-emerald-900/10 border border-emerald-200 dark:border-emerald-800/40">
+                <CheckCircle2 size={16} className="text-emerald-600" />
+                <p className="text-sm text-emerald-700 dark:text-emerald-400">
                   Semua persyaratan lengkap — project siap disubmit.
                 </p>
               </div>
@@ -122,14 +125,14 @@ export function OverviewTab({
                   />
                 </div>
               )}
-          </CardBody>
+          </CardContent>
         </Card>
 
         {/* Info ringkas */}
         <div className="space-y-6">
           {/* Presentasi */}
-          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <CardBody className="p-6">
+          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+            <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <GraduationCap size={18} className="text-secondary" />
                 <h2 className="font-semibold">Jadwal Presentasi</h2>
@@ -137,7 +140,7 @@ export function OverviewTab({
               {presentation ? (
                 <div className="space-y-1.5 text-sm">
                   <p className="flex items-center gap-2">
-                    <CalendarClock size={14} className="text-default-400" />
+                    <CalendarClock size={14} className="text-muted-foreground" />
                     {new Date(presentation.scheduledDate).toLocaleDateString(
                       'id-ID',
                       {
@@ -152,31 +155,30 @@ export function OverviewTab({
                   </p>
                   {presentation.location && (
                     <p className="flex items-center gap-2">
-                      <MapPin size={14} className="text-default-400" />
+                      <MapPin size={14} className="text-muted-foreground" />
                       {presentation.location}
                     </p>
                   )}
                   <Button
                     size="sm"
-                    variant="flat"
-                    color="secondary"
+                    variant="secondary"
                     className="mt-2"
-                    onPress={() => onNavigateTab('hasil')}
+                    onClick={() => onNavigateTab('hasil')}
                   >
                     Lihat detail
                   </Button>
                 </div>
               ) : (
-                <p className="text-sm text-default-400">
+                <p className="text-sm text-muted-foreground">
                   Belum ada jadwal presentasi.
                 </p>
               )}
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Dosen penguji */}
-          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <CardBody className="p-6">
+          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+            <CardContent className="p-6">
               <h2 className="font-semibold mb-3">Dosen Penguji</h2>
               {project.assignments.length > 0 ? (
                 <ul className="space-y-1 text-sm">
@@ -185,11 +187,11 @@ export function OverviewTab({
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-default-400">
+                <p className="text-sm text-muted-foreground">
                   Belum ada dosen penguji yang ditugaskan.
                 </p>
               )}
-            </CardBody>
+            </CardContent>
           </Card>
         </div>
       </div>

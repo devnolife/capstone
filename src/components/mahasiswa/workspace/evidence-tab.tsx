@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, CardBody } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
 import { WorkLogSection } from '@/components/mahasiswa/work-log-section';
 import { UserPhotoUpload } from '@/components/mahasiswa/user-photo-upload';
 import StakeholderUpload from '@/components/mahasiswa/stakeholder-upload';
@@ -29,54 +29,54 @@ export function EvidenceTab({ project, canEdit }: EvidenceTabProps) {
     <div className="space-y-6 pt-6">
       {/* Laporan pengerjaan per-commit */}
       <section id="section-worklog" className="scroll-mt-24">
-        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <CardBody className="p-6">
+        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+          <CardContent className="p-6">
             <WorkLogSection projectId={project.id} readOnly={!canEdit} />
-          </CardBody>
+          </CardContent>
         </Card>
       </section>
 
       {/* Foto bersama pengguna */}
       <section id="section-userphoto" className="scroll-mt-24">
-        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-          <CardBody className="p-6">
+        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+          <CardContent className="p-6">
             <UserPhotoUpload projectId={project.id} readOnly={!canEdit} />
-          </CardBody>
+          </CardContent>
         </Card>
       </section>
 
       {/* Dokumen stakeholder */}
       <section id="section-stakeholder" className="scroll-mt-24">
-      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-6">
-          <StakeholderUpload
-            projectId={project.id}
-            documents={
-              stakeholderDocs as Parameters<typeof StakeholderUpload>[0]['documents']
-            }
-            onDocumentsChange={(docs) =>
-              setStakeholderDocs(docs as WorkspaceStakeholderDocument[] & typeof stakeholderDocs)
-            }
-            readOnly={!canEdit}
-          />
-        </CardBody>
-      </Card>
+        <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+          <CardContent className="p-6">
+            <StakeholderUpload
+              projectId={project.id}
+              documents={
+                stakeholderDocs as Parameters<typeof StakeholderUpload>[0]['documents']
+              }
+              onDocumentsChange={(docs) =>
+                setStakeholderDocs(docs as WorkspaceStakeholderDocument[] & typeof stakeholderDocs)
+              }
+              readOnly={!canEdit}
+            />
+          </CardContent>
+        </Card>
       </section>
 
       {/* Screenshot aplikasi */}
-      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-        <CardBody className="p-6">
+      <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+        <CardContent className="p-6">
           <ProjectScreenshotUpload projectId={project.id} readOnly={!canEdit} />
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Lihat kode repository */}
       {project.githubRepoUrl && (
         <section id="section-code" className="scroll-mt-24">
-          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-            <CardBody className="p-4 md:p-6">
+          <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm py-0">
+            <CardContent className="p-4 md:p-6">
               <CodeBrowser projectId={project.id} />
-            </CardBody>
+            </CardContent>
           </Card>
         </section>
       )}

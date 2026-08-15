@@ -1,15 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
-  Tabs,
-  Tab,
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { motion } from 'framer-motion';
 import {
   Clock,
@@ -82,22 +78,24 @@ const itemVariants = {
   },
 };
 
-const getStatusColor = (status: string) => {
+const getStatusVariant = (
+  status: string
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
   switch (status) {
     case 'COMPLETED':
-      return 'success';
+      return 'secondary';
     case 'IN_PROGRESS':
-      return 'warning';
+      return 'outline';
     case 'PENDING':
-      return 'default';
+      return 'outline';
     case 'APPROVED':
-      return 'success';
+      return 'secondary';
     case 'REVISION_NEEDED':
-      return 'warning';
+      return 'outline';
     case 'SUBMITTED':
-      return 'primary';
-    default:
       return 'default';
+    default:
+      return 'outline';
   }
 };
 
@@ -192,42 +190,25 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
       {/* Tabs */}
       <motion.div variants={itemVariants}>
         <Tabs
-          selectedKey={selectedTab}
-          onSelectionChange={(key) => setSelectedTab(key as string)}
-          variant="underlined"
-          classNames={{
-            tabList: 'gap-4',
-            tab: 'px-0 h-10',
-          }}
+          value={selectedTab}
+          onValueChange={(value) => setSelectedTab(value as string)}
         >
-          <Tab
-            key="pending"
-            title={
-              <div className="flex items-center gap-2">
-                <Hourglass size={16} />
-                <span>Perlu Direview</span>
-                {stats.pendingAssignments > 0 && (
-                  <Chip size="sm" variant="flat" color="warning">
-                    {stats.pendingAssignments}
-                  </Chip>
-                )}
-              </div>
-            }
-          />
-          <Tab
-            key="history"
-            title={
-              <div className="flex items-center gap-2">
-                <FileText size={16} />
-                <span>Riwayat Review</span>
-                {stats.totalReviews > 0 && (
-                  <Chip size="sm" variant="flat">
-                    {stats.totalReviews}
-                  </Chip>
-                )}
-              </div>
-            }
-          />
+          <TabsList variant="line" className="gap-4">
+            <TabsTrigger value="pending" className="h-10">
+              <Hourglass size={16} />
+              <span>Perlu Direview</span>
+              {stats.pendingAssignments > 0 && (
+                <Badge variant="outline">{stats.pendingAssignments}</Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="history" className="h-10">
+              <FileText size={16} />
+              <span>Riwayat Review</span>
+              {stats.totalReviews > 0 && (
+                <Badge variant="outline">{stats.totalReviews}</Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
         </Tabs>
       </motion.div>
 
@@ -237,13 +218,13 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
           <>
             {pendingAssignments.length === 0 ? (
               <Card className="rounded-2xl border border-border bg-card shadow-none">
-                <CardBody className="p-8 text-center">
+                <CardContent className="p-8 text-center">
                   <CheckCircle2 size={48} className="mx-auto mb-4 text-success" />
                   <p className="font-semibold">Tidak ada project yang perlu direview</p>
                   <p className="text-sm text-app-secondary-invert mt-1">
                     Semua project yang ditugaskan sudah direview
                   </p>
-                </CardBody>
+                </CardContent>
               </Card>
             ) : (
               pendingAssignments.map((assignment) => {
@@ -254,15 +235,18 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                     key={assignment.id}
                     className="rounded-2xl border border-border bg-card shadow-none hover:border-primary/50 transition-colors"
                   >
-                    <CardBody className="p-4">
+                    <CardContent className="p-4">
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <Avatar
-                            name={assignment.project.mahasiswa.name}
-                            src={avatarSrc}
-                            size="md"
-                            className="shrink-0"
-                          />
+                          <Avatar className="size-10 shrink-0">
+                            <AvatarImage
+                              src={avatarSrc}
+                              alt={assignment.project.mahasiswa.name}
+                            />
+                            <AvatarFallback>
+                              {assignment.project.mahasiswa.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="min-w-0">
                             <h3 className="font-semibold text-sm truncate">
                               {assignment.project.title}
@@ -271,13 +255,9 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                               {assignment.project.mahasiswa.name} ({assignment.project.mahasiswa.username})
                             </p>
                             <div className="flex items-center gap-2 mt-1">
-                              <Chip
-                                size="sm"
-                                color={getStatusColor(assignment.project.status)}
-                                variant="flat"
-                              >
+                              <Badge variant={getStatusVariant(assignment.project.status)}>
                                 {getStatusLabel(assignment.project.status)}
-                              </Chip>
+                              </Badge>
                               {assignment.project.submittedAt && (
                                 <span className="text-xs text-app-teritary-invert flex items-center gap-1">
                                   <Calendar size={10} />
@@ -293,26 +273,23 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                         </div>
                         <div className="flex items-center gap-2">
                           <Button
-                            as={Link}
-                            href={`/dosen/projects/${assignment.project.id}`}
+                            render={<Link href={`/dosen/projects/${assignment.project.id}`} />}
                             size="sm"
-                            variant="flat"
-                            startContent={<Eye size={14} />}
+                            variant="secondary"
                           >
+                            <Eye size={14} />
                             Lihat
                           </Button>
                           <Button
-                            as={Link}
-                            href={`/dosen/projects/${assignment.project.id}/review`}
+                            render={<Link href={`/dosen/projects/${assignment.project.id}/review`} />}
                             size="sm"
-                            color="primary"
-                            startContent={<PlayCircle size={14} />}
                           >
+                            <PlayCircle size={14} />
                             Mulai Review
                           </Button>
                         </div>
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 );
               })
@@ -322,13 +299,13 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
           <>
             {reviews.length === 0 ? (
               <Card className="rounded-2xl border border-border bg-card shadow-none">
-                <CardBody className="p-8 text-center">
+                <CardContent className="p-8 text-center">
                   <FileText size={48} className="mx-auto mb-4 text-app-teritary-invert" />
                   <p className="font-semibold">Belum ada riwayat review</p>
                   <p className="text-sm text-app-secondary-invert mt-1">
                     Review yang sudah selesai akan muncul di sini
                   </p>
-                </CardBody>
+                </CardContent>
               </Card>
             ) : (
               reviews.map((review) => {
@@ -339,15 +316,18 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                     key={review.id}
                     className="rounded-2xl border border-border bg-card shadow-none hover:border-primary/50 transition-colors"
                   >
-                    <CardBody className="p-4">
+                    <CardContent className="p-4">
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 flex-1 min-w-0">
-                          <Avatar
-                            name={review.project.mahasiswa.name}
-                            src={avatarSrc}
-                            size="md"
-                            className="shrink-0"
-                          />
+                          <Avatar className="size-10 shrink-0">
+                            <AvatarImage
+                              src={avatarSrc}
+                              alt={review.project.mahasiswa.name}
+                            />
+                            <AvatarFallback>
+                              {review.project.mahasiswa.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="min-w-0">
                             <h3 className="font-semibold text-sm truncate">
                               {review.project.title}
@@ -356,17 +336,13 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                               {review.project.mahasiswa.name} ({review.project.mahasiswa.username})
                             </p>
                             <div className="flex items-center gap-2 mt-1">
-                              <Chip
-                                size="sm"
-                                color={getStatusColor(review.status)}
-                                variant="flat"
-                              >
+                              <Badge variant={getStatusVariant(review.status)}>
                                 {getStatusLabel(review.status)}
-                              </Chip>
+                              </Badge>
                               {review.overallScore !== null && (
-                                <Chip size="sm" variant="flat" color="secondary">
+                                <Badge variant="secondary">
                                   Skor: {review.overallScore}
-                                </Chip>
+                                </Badge>
                               )}
                               <span className="text-xs text-app-teritary-invert flex items-center gap-1">
                                 <Clock size={10} />
@@ -380,28 +356,26 @@ export function DosenReviewsClient({ reviews, pendingAssignments }: DosenReviews
                         </div>
                         <div className="flex items-center gap-2">
                           <Button
-                            as={Link}
-                            href={`/dosen/projects/${review.project.id}`}
+                            render={<Link href={`/dosen/projects/${review.project.id}`} />}
                             size="sm"
-                            variant="flat"
-                            startContent={<Eye size={14} />}
+                            variant="secondary"
                           >
+                            <Eye size={14} />
                             Lihat
                           </Button>
                           {review.status === 'IN_PROGRESS' && (
                             <Button
-                              as={Link}
-                              href={`/dosen/projects/${review.project.id}/review`}
+                              render={<Link href={`/dosen/projects/${review.project.id}/review`} />}
                               size="sm"
-                              color="warning"
-                              startContent={<PlayCircle size={14} />}
+                              variant="outline"
                             >
+                              <PlayCircle size={14} />
                               Lanjutkan
                             </Button>
                           )}
                         </div>
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 );
               })

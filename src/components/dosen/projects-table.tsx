@@ -2,20 +2,18 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader, CardTitle, CardAction } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Chip,
-  Avatar,
   Table,
   TableHeader,
-  TableColumn,
+  TableHead,
   TableBody,
   TableRow,
   TableCell,
-} from '@heroui/react';
+} from '@/components/ui/table';
 import { FolderGit2, FileText, ChevronRight, Calendar } from 'lucide-react';
 import { getStatusColor, getStatusLabel } from '@/lib/utils';
 
@@ -62,43 +60,61 @@ const itemVariants = {
   },
 };
 
+/** Pemetaan warna status (HeroUI legacy) ke varian Badge shadcn. */
+function statusBadgeVariant(
+  status: string
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  switch (getStatusColor(status)) {
+    case 'danger':
+      return 'destructive';
+    case 'success':
+    case 'secondary':
+      return 'secondary';
+    case 'primary':
+      return 'default';
+    default:
+      return 'outline';
+  }
+}
+
 // Mobile Project Card for Dosen
 function MobileProjectCard({ project }: { project: Project }) {
   return (
     <motion.div variants={itemVariants}>
       <Card className="mb-3">
-        <CardBody className="p-4">
+        <CardContent className="p-4">
           <div className="space-y-3">
             {/* Mahasiswa Info */}
             <div className="flex items-center gap-3">
-              <Avatar
-                name={project.mahasiswa.name}
-                src={project.mahasiswa.image || undefined}
-                size="sm"
-                className="ring-2 ring-default-200"
-              />
+              <Avatar className="size-8 ring-2 ring-border">
+                <AvatarImage
+                  src={project.mahasiswa.image || undefined}
+                  alt={project.mahasiswa.name}
+                />
+                <AvatarFallback className="text-xs">
+                  {project.mahasiswa.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">
                   {project.mahasiswa.name}
                 </p>
-                <p className="text-xs text-default-500">
+                <p className="text-xs text-muted-foreground">
                   {project.mahasiswa.username}
                 </p>
               </div>
-              <Chip
-                size="sm"
-                color={getStatusColor(project.status)}
-                variant="flat"
+              <Badge
+                variant={statusBadgeVariant(project.status)}
                 className="h-5 text-[10px] shrink-0"
               >
                 {getStatusLabel(project.status)}
-              </Chip>
+              </Badge>
             </div>
 
             {/* Project Info */}
             <div className="pl-11">
               <p className="font-semibold text-sm line-clamp-2">{project.title}</p>
-              <div className="flex items-center gap-3 mt-1 text-xs text-default-500">
+              <div className="flex items-center gap-3 mt-1 text-xs text-muted-foreground">
                 <div className="flex items-center gap-1">
                   <Calendar size={10} />
                   <span>{project.semester}</span>
@@ -113,18 +129,15 @@ function MobileProjectCard({ project }: { project: Project }) {
             {/* Action */}
             <div className="pl-11">
               <Button
-                as={Link}
-                href={`/dosen/projects/${project.id}`}
+                render={<Link href={`/dosen/projects/${project.id}`} />}
                 size="sm"
-                variant="flat"
-                color="primary"
                 className="w-full h-8"
               >
                 Review Project
               </Button>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </motion.div>
   );
@@ -133,28 +146,28 @@ function MobileProjectCard({ project }: { project: Project }) {
 export function ProjectsTable({ projects }: ProjectsTableProps) {
   return (
     <Card>
-      <CardHeader className="flex justify-between items-center px-4 py-3">
-        <h2 className="text-base md:text-lg font-semibold">Project Ditugaskan</h2>
-        <Button
-          as={Link}
-          href="/dosen/projects"
-          variant="light"
-          color="primary"
-          size="sm"
-          endContent={<ChevronRight size={16} />}
-        >
-          <span className="hidden sm:inline">Lihat Semua</span>
-          <span className="sm:hidden">Semua</span>
-        </Button>
+      <CardHeader className="px-4 py-3">
+        <CardTitle className="text-base md:text-lg">Project Ditugaskan</CardTitle>
+        <CardAction>
+          <Button
+            render={<Link href="/dosen/projects" />}
+            variant="ghost"
+            size="sm"
+          >
+            <span className="hidden sm:inline">Lihat Semua</span>
+            <span className="sm:hidden">Semua</span>
+            <ChevronRight size={16} />
+          </Button>
+        </CardAction>
       </CardHeader>
-      <CardBody className="pt-0">
+      <CardContent className="pt-0">
         {projects.length === 0 ? (
           <div className="text-center py-8">
             <FolderGit2
               size={48}
-              className="mx-auto text-default-300 mb-4"
+              className="mx-auto text-muted-foreground/50 mb-4"
             />
-            <p className="text-default-500 text-sm md:text-base">
+            <p className="text-muted-foreground text-sm md:text-base">
               Belum ada project yang ditugaskan kepada Anda
             </p>
           </div>
@@ -175,29 +188,35 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
 
             {/* Desktop View - Table */}
             <div className="hidden md:block">
-              <Table aria-label="Projects table" removeWrapper>
+              <Table aria-label="Projects table">
                 <TableHeader>
-                  <TableColumn>MAHASISWA</TableColumn>
-                  <TableColumn>PROJECT</TableColumn>
-                  <TableColumn>STATUS</TableColumn>
-                  <TableColumn>DOKUMEN</TableColumn>
-                  <TableColumn>AKSI</TableColumn>
+                  <TableRow>
+                    <TableHead>MAHASISWA</TableHead>
+                    <TableHead>PROJECT</TableHead>
+                    <TableHead>STATUS</TableHead>
+                    <TableHead>DOKUMEN</TableHead>
+                    <TableHead>AKSI</TableHead>
+                  </TableRow>
                 </TableHeader>
                 <TableBody>
                   {projects.slice(0, 5).map((project) => (
                     <TableRow key={project.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <Avatar
-                            name={project.mahasiswa.name}
-                            src={project.mahasiswa.image || undefined}
-                            size="sm"
-                          />
+                          <Avatar className="size-8">
+                            <AvatarImage
+                              src={project.mahasiswa.image || undefined}
+                              alt={project.mahasiswa.name}
+                            />
+                            <AvatarFallback className="text-xs">
+                              {project.mahasiswa.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
                           <div>
                             <p className="font-medium text-sm">
                               {project.mahasiswa.name}
                             </p>
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-muted-foreground">
                               {project.mahasiswa.username}
                             </p>
                           </div>
@@ -207,27 +226,20 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                         <p className="font-medium truncate max-w-[200px]">
                           {project.title}
                         </p>
-                        <p className="text-xs text-default-500">
+                        <p className="text-xs text-muted-foreground">
                           {project.semester}
                         </p>
                       </TableCell>
                       <TableCell>
-                        <Chip
-                          size="sm"
-                          color={getStatusColor(project.status)}
-                          variant="flat"
-                        >
+                        <Badge variant={statusBadgeVariant(project.status)}>
                           {getStatusLabel(project.status)}
-                        </Chip>
+                        </Badge>
                       </TableCell>
                       <TableCell>{project._count.documents} file</TableCell>
                       <TableCell>
                         <Button
-                          as={Link}
-                          href={`/dosen/projects/${project.id}`}
+                          render={<Link href={`/dosen/projects/${project.id}`} />}
                           size="sm"
-                          variant="flat"
-                          color="primary"
                         >
                           Review
                         </Button>
@@ -239,7 +251,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
             </div>
           </>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

@@ -3,21 +3,21 @@
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Spinner } from '@/components/ui/spinner';
 import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
-  Spinner,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Switch,
-  addToast,
-} from '@heroui/react';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
+import { addToast } from '@/lib/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -59,12 +59,22 @@ import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
 import {
   formatDateTime,
+  getInitials,
   getStatusColor,
   getStatusLabel,
-  getDocumentTypeLabel,
-  formatFileSize,
   getSimakPhotoUrl,
 } from '@/lib/utils';
+
+const statusToneClass: Record<string, string> = {
+  default: 'bg-muted text-muted-foreground',
+  primary: 'bg-primary/10 text-primary',
+  secondary: 'bg-secondary text-secondary-foreground',
+  success:
+    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  warning:
+    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  danger: 'bg-destructive/10 text-destructive',
+};
 
 interface ProjectMember {
   id: string;
@@ -593,7 +603,7 @@ export default function AdminProjectDetailPage({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -604,14 +614,13 @@ export default function AdminProjectDetailPage({
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
           <AlertCircle size={32} className="text-red-500" />
         </div>
-        <p className="text-danger text-lg font-medium">{error || 'Project tidak ditemukan'}</p>
+        <p className="text-destructive text-lg font-medium">{error || 'Project tidak ditemukan'}</p>
         <Button
-          as={Link}
-          href="/admin/projects"
-          variant="flat"
+          variant="outline"
           className="mt-4"
-          startContent={<ArrowLeft size={16} />}
+          render={<Link href="/admin/projects" />}
         >
+          <ArrowLeft size={16} />
           Kembali ke Daftar Project
         </Button>
       </div>
@@ -644,39 +653,38 @@ export default function AdminProjectDetailPage({
                 "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")",
             }}
           />
-          <CardBody className="p-6 relative">
+          <CardContent className="p-6 relative">
             {/* Top Actions */}
             <div className="flex items-center justify-between mb-6">
               <Button
-                as={Link}
-                href="/admin/projects"
-                variant="flat"
+                variant="ghost"
                 size="sm"
                 className="bg-white/20 text-white hover:bg-white/30"
-                startContent={<ArrowLeft size={16} />}
+                render={<Link href="/admin/projects" />}
               >
+                <ArrowLeft size={16} />
                 Kembali
               </Button>
               <div className="flex items-center gap-2">
                 {canStartReview && (
                   <Button
                     size="sm"
+                    variant="ghost"
                     className="bg-white/20 text-white hover:bg-white/30 font-semibold"
-                    startContent={<PlayCircle size={16} />}
-                    onPress={() => handleStatusChange('IN_REVIEW')}
-                    isLoading={isChangingStatus}
+                    onClick={() => handleStatusChange('IN_REVIEW')}
+                    disabled={isChangingStatus}
                   >
+                    {isChangingStatus ? <Loader2 className="animate-spin" /> : <PlayCircle size={16} />}
                     Mulai Review
                   </Button>
                 )}
                 {canApprove && (
                   <Button
-                    color="success"
                     size="sm"
-                    className="font-semibold"
-                    startContent={<CheckCircle2 size={16} />}
-                    onPress={handleApproveClick}
+                    className="font-semibold bg-emerald-600 text-white hover:bg-emerald-600/90"
+                    onClick={handleApproveClick}
                   >
+                    <CheckCircle2 size={16} />
                     Approve
                   </Button>
                 )}
@@ -691,12 +699,11 @@ export default function AdminProjectDetailPage({
                     <FolderGit2 size={28} />
                   </div>
                   <div>
-                    <Chip
-                      size="sm"
+                    <Badge
                       className="bg-white/20 text-white mb-2"
                     >
                       {getStatusLabel(project.status)}
-                    </Chip>
+                    </Badge>
                     <h1 className="text-2xl md:text-3xl font-bold">{project.title}</h1>
                   </div>
                 </div>
@@ -761,7 +768,7 @@ export default function AdminProjectDetailPage({
                 </div>
               )}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -769,7 +776,7 @@ export default function AdminProjectDetailPage({
       {project.orgRepoUrl && (
         <motion.div variants={itemVariants}>
           <Card className="border border-emerald-200 dark:border-emerald-800 bg-emerald-50/50 dark:bg-emerald-900/20">
-            <CardBody className="p-4">
+            <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2 rounded-lg bg-emerald-100 dark:bg-emerald-800/50">
@@ -785,18 +792,15 @@ export default function AdminProjectDetailPage({
                   </div>
                 </div>
                 <Button
-                  as="a"
-                  href={project.orgRepoUrl}
-                  target="_blank"
                   size="sm"
-                  color="success"
-                  variant="flat"
-                  startContent={<ExternalLink size={14} />}
+                  variant="outline"
+                  render={<a href={project.orgRepoUrl} target="_blank" rel="noopener noreferrer" />}
                 >
+                  <ExternalLink size={14} />
                   Buka Repo Org
                 </Button>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         </motion.div>
       )}
@@ -812,34 +816,33 @@ export default function AdminProjectDetailPage({
                 <div className="flex items-center gap-2">
                   <Users size={18} className="text-violet-600 dark:text-violet-400" />
                   <h3 className="font-semibold">Tim Project</h3>
-                  <Chip size="sm" variant="flat" color="primary">
+                  <Badge variant="secondary" className={statusToneClass.primary}>
                     {1 + (project.members?.filter(m => m.role !== 'leader').length || 0)} anggota
-                  </Chip>
+                  </Badge>
                 </div>
               </div>
-              <CardBody className="p-5">
+              <CardContent className="p-5">
                 {/* Ketua (Owner) */}
-                <div className="flex items-center gap-4 p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-100 dark:border-primary-800">
-                  <Avatar
-                    name={project.mahasiswa.name}
-                    src={avatarUrl}
-                    size="lg"
-                    className="ring-2 ring-primary-200 dark:ring-primary-700"
-                    imgProps={{ referrerPolicy: "no-referrer" }}
-                  />
+                <div className="flex items-center gap-4 p-3 rounded-xl bg-primary/5 border border-primary/20">
+                  <Avatar className="size-12 ring-2 ring-primary/30">
+                    {avatarUrl ? (
+                      <AvatarImage src={avatarUrl} alt={project.mahasiswa.name} referrerPolicy="no-referrer" />
+                    ) : null}
+                    <AvatarFallback>{getInitials(project.mahasiswa.name)}</AvatarFallback>
+                  </Avatar>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <p className="font-semibold text-lg">{project.mahasiswa.name}</p>
                       <Crown size={16} className="text-amber-500" />
-                      <Chip size="sm" color="primary" variant="flat">Ketua</Chip>
+                      <Badge variant="secondary" className={statusToneClass.primary}>Ketua</Badge>
                     </div>
-                    <p className="text-default-500 text-sm font-mono">
+                    <p className="text-muted-foreground text-sm font-mono">
                       {project.mahasiswa.nim || project.mahasiswa.username || '-'}
                     </p>
                     {project.mahasiswa.prodi && (
-                      <p className="text-default-400 text-xs">{project.mahasiswa.prodi}</p>
+                      <p className="text-muted-foreground text-xs">{project.mahasiswa.prodi}</p>
                     )}
-                    <p className="text-default-400 text-xs">{project.mahasiswa.email}</p>
+                    <p className="text-muted-foreground text-xs">{project.mahasiswa.email}</p>
                   </div>
                   {project.mahasiswa.githubUsername && (
                     <a
@@ -857,7 +860,7 @@ export default function AdminProjectDetailPage({
                 {/* Team Members */}
                 {project.members && project.members.filter(m => m.role !== 'leader').length > 0 && (
                   <div className="mt-4 pt-4 border-t border-zinc-100 dark:border-zinc-800">
-                    <p className="text-sm font-medium text-default-500 mb-3">
+                    <p className="text-sm font-medium text-muted-foreground mb-3">
                       Anggota Tim ({project.members.filter(m => m.role !== 'leader').length})
                     </p>
                     <div className="space-y-2">
@@ -866,21 +869,26 @@ export default function AdminProjectDetailPage({
                           key={member.id}
                           className="flex items-center gap-3 p-3 rounded-xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-100 dark:border-zinc-700"
                         >
-                          <Avatar
-                            name={member.user?.name || member.name || member.githubUsername || 'Member'}
-                            src={member.user?.image || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
-                            size="sm"
-                            className="w-10 h-10"
-                            imgProps={{ referrerPolicy: "no-referrer" }}
-                          />
+                          <Avatar className="w-10 h-10">
+                            {(member.user?.image || member.githubUsername) ? (
+                              <AvatarImage
+                                src={member.user?.image || `https://github.com/${member.githubUsername}.png`}
+                                alt={member.user?.name || member.name || member.githubUsername || 'Member'}
+                                referrerPolicy="no-referrer"
+                              />
+                            ) : null}
+                            <AvatarFallback className="text-xs">
+                              {getInitials(member.user?.name || member.name || member.githubUsername || 'Member')}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="flex-1 min-w-0">
                             <p className="font-medium text-sm">{member.user?.name || member.name || member.githubUsername}</p>
-                            <p className="text-xs text-default-500">
+                            <p className="text-xs text-muted-foreground">
                               {member.user?.nim || member.user?.username}
                               {member.user?.prodi && ` - ${member.user.prodi}`}
                             </p>
                           </div>
-                          <Chip size="sm" color="success" variant="flat">Anggota</Chip>
+                          <Badge variant="secondary" className={statusToneClass.success}>Anggota</Badge>
                           {(member.user?.githubUsername || member.githubUsername) && (
                             <a
                               href={`https://github.com/${member.user?.githubUsername || member.githubUsername}`}
@@ -910,27 +918,26 @@ export default function AdminProjectDetailPage({
                           key={invitation.id}
                           className="flex items-center gap-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800/50"
                         >
-                          <Avatar
-                            name={invitation.invitee.name}
-                            src={invitation.invitee.image || undefined}
-                            size="sm"
-                            className="w-10 h-10 opacity-75"
-                            imgProps={{ referrerPolicy: "no-referrer" }}
-                          />
+                          <Avatar className="w-10 h-10 opacity-75">
+                            {invitation.invitee.image ? (
+                              <AvatarImage src={invitation.invitee.image} alt={invitation.invitee.name} referrerPolicy="no-referrer" />
+                            ) : null}
+                            <AvatarFallback className="text-xs">{getInitials(invitation.invitee.name)}</AvatarFallback>
+                          </Avatar>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-sm text-default-700 dark:text-default-300">{invitation.invitee.name}</p>
-                            <p className="text-xs text-default-500">
+                            <p className="font-medium text-sm text-foreground">{invitation.invitee.name}</p>
+                            <p className="text-xs text-muted-foreground">
                               {invitation.invitee.nim || invitation.invitee.username}
                               {invitation.invitee.prodi && ` - ${invitation.invitee.prodi}`}
                             </p>
                           </div>
-                          <Chip size="sm" color="warning" variant="flat">Menunggu</Chip>
+                          <Badge variant="secondary" className={statusToneClass.warning}>Menunggu</Badge>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
 
@@ -938,15 +945,15 @@ export default function AdminProjectDetailPage({
           {project.description && (
             <motion.div variants={itemVariants}>
               <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm">
-                <CardBody className="p-5">
+                <CardContent className="p-5">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 rounded-xl bg-blue-100 dark:bg-blue-900/30">
                       <FileText size={18} className="text-blue-600 dark:text-blue-400" />
                     </div>
                     <h2 className="font-semibold text-lg">Deskripsi Project</h2>
                   </div>
-                  <p className="text-default-600 leading-relaxed whitespace-pre-wrap">{project.description}</p>
-                </CardBody>
+                  <p className="text-foreground leading-relaxed whitespace-pre-wrap">{project.description}</p>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -955,7 +962,7 @@ export default function AdminProjectDetailPage({
           {project.githubRepoUrl && githubInfo && (
             <motion.div variants={itemVariants}>
               <Card className="border border-zinc-200 dark:border-zinc-800 shadow-sm overflow-hidden">
-                <CardBody className="p-0">
+                <CardContent className="p-0">
                   {/* Repository Header */}
                   <div className="flex items-center gap-4 p-5 border-b border-zinc-100 dark:border-zinc-800">
                     <div className="p-3 rounded-2xl bg-zinc-900 dark:bg-zinc-700 text-white">
@@ -965,27 +972,23 @@ export default function AdminProjectDetailPage({
                       <p className="font-semibold text-lg">
                         {project.githubRepoName || 'GitHub Repository'}
                       </p>
-                      <p className="text-sm text-default-500 truncate">{project.githubRepoUrl}</p>
+                      <p className="text-sm text-muted-foreground truncate">{project.githubRepoUrl}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
                         size="sm"
-                        variant="flat"
-                        color="primary"
-                        startContent={showCodeViewer ? <ChevronUp size={16} /> : <Eye size={16} />}
-                        onPress={() => setShowCodeViewer(!showCodeViewer)}
+                        variant="outline"
+                        onClick={() => setShowCodeViewer(!showCodeViewer)}
                       >
+                        {showCodeViewer ? <ChevronUp size={16} /> : <Eye size={16} />}
                         {showCodeViewer ? 'Sembunyikan' : 'Lihat Kode'}
                       </Button>
                       <Button
-                        as="a"
-                        href={project.githubRepoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         size="sm"
-                        variant="bordered"
-                        startContent={<ExternalLink size={14} />}
+                        variant="outline"
+                        render={<a href={project.githubRepoUrl} target="_blank" rel="noopener noreferrer" />}
                       >
+                        <ExternalLink size={14} />
                         GitHub
                       </Button>
                     </div>
@@ -1014,7 +1017,7 @@ export default function AdminProjectDetailPage({
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -1029,29 +1032,30 @@ export default function AdminProjectDetailPage({
                     <h3 className="font-semibold">Screenshot Aplikasi</h3>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Chip size="sm" variant="flat" color="secondary">
+                    <Badge variant="secondary">
                       {screenshots.length} gambar
-                    </Chip>
+                    </Badge>
                     {screenshots.filter(s => s.isFeatured).length > 0 && (
-                      <Chip size="sm" variant="flat" color="warning" startContent={<Sparkles size={12} />}>
+                      <Badge variant="secondary" className={statusToneClass.warning}>
+                        <Sparkles size={12} />
                         {screenshots.filter(s => s.isFeatured).length} featured
-                      </Chip>
+                      </Badge>
                     )}
                   </div>
                 </div>
               </div>
-              <CardBody className="p-4">
+              <CardContent className="p-4">
                 {isLoadingScreenshots ? (
                   <div className="text-center py-8">
-                    <Spinner size="sm" />
-                    <p className="text-sm text-default-500 mt-2">Memuat screenshot...</p>
+                    <Spinner className="mx-auto" />
+                    <p className="text-sm text-muted-foreground mt-2">Memuat screenshot...</p>
                   </div>
                 ) : screenshots.length === 0 ? (
                   <div className="text-center py-8">
                     <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center">
                       <ImageIcon size={24} className="text-zinc-400" />
                     </div>
-                    <p className="text-sm text-default-500">Belum ada screenshot</p>
+                    <p className="text-sm text-muted-foreground">Belum ada screenshot</p>
                   </div>
                 ) : (
                   <>
@@ -1101,9 +1105,8 @@ export default function AdminProjectDetailPage({
                       <div className="mt-3 text-center">
                         <Button
                           size="sm"
-                          variant="flat"
-                          color="secondary"
-                          onPress={() => {
+                          variant="outline"
+                          onClick={() => {
                             setSelectedScreenshot(screenshots[0]);
                             setIsScreenshotModalOpen(true);
                           }}
@@ -1114,135 +1117,134 @@ export default function AdminProjectDetailPage({
                     )}
 
                     {/* Quick stats bar */}
-                    <div className="mt-3 flex items-center justify-between text-xs text-default-500">
+                    <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
                       <span>{screenshots.filter(s => s.isFeatured).length} featured untuk landing page</span>
                       <span>Klik thumbnail untuk detail</span>
                     </div>
                   </>
                 )}
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
         </div>
 
         {/* Screenshot Detail Modal */}
-        <Modal
-          isOpen={isScreenshotModalOpen}
-          onClose={() => {
-            setIsScreenshotModalOpen(false);
-            setSelectedScreenshot(null);
+        <Dialog
+          open={isScreenshotModalOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setIsScreenshotModalOpen(false);
+              setSelectedScreenshot(null);
+            }
           }}
-          size="5xl"
-          scrollBehavior="inside"
         >
-          <ModalContent>
-            <ModalHeader className="border-b border-zinc-200 dark:border-zinc-700">
-              <div className="flex items-center gap-2">
+          <DialogContent className="sm:max-w-6xl">
+            <DialogHeader className="pb-4 border-b">
+              <DialogTitle className="flex items-center gap-2">
                 <ImageIcon size={20} className="text-purple-500" />
                 <span>Screenshot Gallery ({screenshots.length} gambar)</span>
-              </div>
-            </ModalHeader>
-            <ModalBody className="p-6">
-              {selectedScreenshot && (
-                <div className="flex gap-6">
-                  {/* Main image view */}
-                  <div className="flex-1">
-                    <div className="relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
-                      <img
-                        src={selectedScreenshot.fileUrl}
-                        alt={selectedScreenshot.title}
-                        className="w-full h-auto max-h-[60vh] object-contain"
-                      />
-                      {selectedScreenshot.isFeatured && (
-                        <div className="absolute top-3 left-3">
-                          <Chip color="warning" variant="solid" startContent={<Sparkles size={12} />}>
-                            Featured
-                          </Chip>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Image info */}
-                    <div className="mt-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
-                      <h4 className="font-semibold text-lg">{selectedScreenshot.title}</h4>
-                      {selectedScreenshot.category && (
-                        <p className="text-sm text-default-500 mt-1">Kategori: {selectedScreenshot.category}</p>
-                      )}
-                      <div className="mt-3 flex items-center gap-3">
-                        <Button
-                          as="a"
-                          href={selectedScreenshot.fileUrl}
-                          target="_blank"
-                          size="sm"
-                          variant="flat"
-                          color="primary"
-                          startContent={<ExternalLink size={14} />}
-                        >
-                          Buka Full Size
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant={selectedScreenshot.isFeatured ? "solid" : "flat"}
-                          color={selectedScreenshot.isFeatured ? "warning" : "default"}
-                          onPress={() => handleToggleFeatured(selectedScreenshot.id, selectedScreenshot.isFeatured)}
-                          isLoading={togglingFeatured === selectedScreenshot.id}
-                          startContent={togglingFeatured !== selectedScreenshot.id && <Sparkles size={14} />}
-                        >
-                          {selectedScreenshot.isFeatured ? 'Remove from Featured' : 'Add to Featured'}
-                        </Button>
+              </DialogTitle>
+            </DialogHeader>
+            {selectedScreenshot && (
+              <div className="flex gap-6">
+                {/* Main image view */}
+                <div className="flex-1">
+                  <div className="relative rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700">
+                    <img
+                      src={selectedScreenshot.fileUrl}
+                      alt={selectedScreenshot.title}
+                      className="w-full h-auto max-h-[60vh] object-contain"
+                    />
+                    {selectedScreenshot.isFeatured && (
+                      <div className="absolute top-3 left-3">
+                        <Badge className="bg-amber-500 text-white">
+                          <Sparkles size={12} />
+                          Featured
+                        </Badge>
                       </div>
-                    </div>
+                    )}
                   </div>
 
-                  {/* Thumbnail sidebar */}
-                  <div className="w-48 flex-shrink-0">
-                    <p className="text-sm font-medium text-default-600 mb-3">Semua Screenshot</p>
-                    <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
-                      {screenshots.map((screenshot) => (
-                        <div
-                          key={screenshot.id}
-                          onClick={() => setSelectedScreenshot(screenshot)}
-                          className={`relative rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${selectedScreenshot.id === screenshot.id
-                            ? 'border-purple-500 ring-2 ring-purple-500/30'
-                            : screenshot.isFeatured
-                              ? 'border-amber-400'
-                              : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-400'
-                            }`}
-                        >
-                          {screenshot.isFeatured && (
-                            <div className="absolute top-1 right-1 z-10">
-                              <div className="w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center">
-                                <Sparkles size={8} className="text-white" />
-                              </div>
-                            </div>
-                          )}
-                          <div className="aspect-video bg-zinc-100 dark:bg-zinc-800">
-                            <img
-                              src={screenshot.fileUrl}
-                              alt={screenshot.title}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        </div>
-                      ))}
+                  {/* Image info */}
+                  <div className="mt-4 p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl">
+                    <h4 className="font-semibold text-lg">{selectedScreenshot.title}</h4>
+                    {selectedScreenshot.category && (
+                      <p className="text-sm text-muted-foreground mt-1">Kategori: {selectedScreenshot.category}</p>
+                    )}
+                    <div className="mt-3 flex items-center gap-3">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        render={<a href={selectedScreenshot.fileUrl} target="_blank" rel="noopener noreferrer" />}
+                      >
+                        <ExternalLink size={14} />
+                        Buka Full Size
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant={selectedScreenshot.isFeatured ? 'default' : 'outline'}
+                        onClick={() => handleToggleFeatured(selectedScreenshot.id, selectedScreenshot.isFeatured)}
+                        disabled={togglingFeatured === selectedScreenshot.id}
+                      >
+                        {togglingFeatured === selectedScreenshot.id ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Sparkles size={14} />
+                        )}
+                        {selectedScreenshot.isFeatured ? 'Remove from Featured' : 'Add to Featured'}
+                      </Button>
                     </div>
                   </div>
                 </div>
-              )}
-            </ModalBody>
-            <ModalFooter className="border-t border-zinc-200 dark:border-zinc-700">
+
+                {/* Thumbnail sidebar */}
+                <div className="w-48 flex-shrink-0">
+                  <p className="text-sm font-medium text-muted-foreground mb-3">Semua Screenshot</p>
+                  <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+                    {screenshots.map((screenshot) => (
+                      <div
+                        key={screenshot.id}
+                        onClick={() => setSelectedScreenshot(screenshot)}
+                        className={`relative rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${selectedScreenshot.id === screenshot.id
+                          ? 'border-purple-500 ring-2 ring-purple-500/30'
+                          : screenshot.isFeatured
+                            ? 'border-amber-400'
+                            : 'border-zinc-200 dark:border-zinc-700 hover:border-zinc-400'
+                          }`}
+                      >
+                        {screenshot.isFeatured && (
+                          <div className="absolute top-1 right-1 z-10">
+                            <div className="w-4 h-4 rounded-full bg-amber-400 flex items-center justify-center">
+                              <Sparkles size={8} className="text-white" />
+                            </div>
+                          </div>
+                        )}
+                        <div className="aspect-video bg-zinc-100 dark:bg-zinc-800">
+                          <img
+                            src={screenshot.fileUrl}
+                            alt={screenshot.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+            <DialogFooter className="border-t pt-4">
               <div className="flex items-center justify-between w-full">
                 <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
                   <Sparkles size={12} />
                   Screenshot featured akan tampil di landing page
                 </p>
-                <Button variant="flat" onPress={() => setIsScreenshotModalOpen(false)}>
+                <Button variant="outline" onClick={() => setIsScreenshotModalOpen(false)}>
                   Tutup
                 </Button>
               </div>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Right Column - Sidebar */}
         <div className="space-y-6">
@@ -1255,50 +1257,46 @@ export default function AdminProjectDetailPage({
                   <h3 className="font-semibold">Aksi Admin</h3>
                 </div>
               </div>
-              <CardBody className="p-4 space-y-3">
+              <CardContent className="p-4 space-y-3">
                 {canStartReview && (
                   <Button
                     className="w-full"
-                    color="primary"
-                    variant="flat"
-                    startContent={<PlayCircle size={18} />}
-                    onPress={() => handleStatusChange('IN_REVIEW')}
-                    isLoading={isChangingStatus}
+                    variant="outline"
+                    onClick={() => handleStatusChange('IN_REVIEW')}
+                    disabled={isChangingStatus}
                   >
+                    {isChangingStatus ? <Loader2 className="animate-spin" /> : <PlayCircle size={18} />}
                     Mulai Review
                   </Button>
                 )}
                 {canApprove && (
                   <Button
-                    className="w-full"
-                    color="success"
-                    startContent={<CheckCircle2 size={18} />}
-                    onPress={handleApproveClick}
+                    className="w-full bg-emerald-600 text-white hover:bg-emerald-600/90"
+                    onClick={handleApproveClick}
                   >
+                    <CheckCircle2 size={18} />
                     Approve Project
                   </Button>
                 )}
                 {canRequestRevision && (
                   <Button
                     className="w-full"
-                    color="warning"
-                    variant="flat"
-                    startContent={<RotateCcw size={18} />}
-                    onPress={() => handleStatusChange('REVISION_NEEDED')}
-                    isLoading={isChangingStatus}
+                    variant="outline"
+                    onClick={() => handleStatusChange('REVISION_NEEDED')}
+                    disabled={isChangingStatus}
                   >
+                    {isChangingStatus ? <Loader2 className="animate-spin" /> : <RotateCcw size={18} />}
                     Minta Revisi
                   </Button>
                 )}
                 {canReject && (
                   <Button
                     className="w-full"
-                    color="danger"
-                    variant="flat"
-                    startContent={<XCircle size={18} />}
-                    onPress={() => handleStatusChange('REJECTED')}
-                    isLoading={isChangingStatus}
+                    variant="destructive"
+                    onClick={() => handleStatusChange('REJECTED')}
+                    disabled={isChangingStatus}
                   >
+                    {isChangingStatus ? <Loader2 className="animate-spin" /> : <XCircle size={18} />}
                     Reject Project
                   </Button>
                 )}
@@ -1307,44 +1305,44 @@ export default function AdminProjectDetailPage({
                 {canRevertToDraft && (
                   <Button
                     className="w-full"
-                    color="secondary"
-                    variant="flat"
-                    startContent={<Undo2 size={18} />}
-                    onPress={() => setRevertModalOpen(true)}
+                    variant="secondary"
+                    onClick={() => setRevertModalOpen(true)}
                   >
+                    <Undo2 size={18} />
                     Kembalikan ke Draft
                   </Button>
                 )}
 
                 <Button
-                  as={Link}
-                  href="/admin/assignments"
                   className="w-full"
-                  variant="bordered"
-                  startContent={<UserPlus size={18} />}
+                  variant="outline"
+                  render={<Link href="/admin/assignments" />}
                 >
+                  <UserPlus size={18} />
                   Kelola Penugasan Dosen
                 </Button>
 
                 {/* Delete Button */}
                 <Button
                   className="w-full"
-                  color="danger"
-                  variant="flat"
-                  startContent={<Trash2 size={18} />}
-                  onPress={() => setDeleteModalOpen(true)}
+                  variant="destructive"
+                  onClick={() => setDeleteModalOpen(true)}
                 >
+                  <Trash2 size={18} />
                   Hapus Project
                 </Button>
 
                 {/* Status Info */}
                 <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                  <p className="text-xs text-default-400 mb-2">Status saat ini:</p>
-                  <Chip color={getStatusColor(project.status)} variant="flat" size="lg" className="w-full justify-center">
+                  <p className="text-xs text-muted-foreground mb-2">Status saat ini:</p>
+                  <Badge
+                    variant="secondary"
+                    className={`w-full justify-center h-7 ${statusToneClass[getStatusColor(project.status)]}`}
+                  >
                     {getStatusLabel(project.status)}
-                  </Chip>
+                  </Badge>
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
 
@@ -1358,7 +1356,7 @@ export default function AdminProjectDetailPage({
                     <h3 className="font-semibold">Review ({project.reviews.length})</h3>
                   </div>
                 </div>
-                <CardBody className="p-4">
+                <CardContent className="p-4">
                   <div className="space-y-3">
                     {project.reviews.map((review) => (
                       <div
@@ -1367,9 +1365,12 @@ export default function AdminProjectDetailPage({
                       >
                         <div className="flex items-center justify-between mb-2">
                           <p className="font-medium text-sm">{review.reviewer.name}</p>
-                          <Chip size="sm" color={getStatusColor(review.status)} variant="flat">
+                          <Badge
+                            variant="secondary"
+                            className={statusToneClass[getStatusColor(review.status)]}
+                          >
                             {getStatusLabel(review.status)}
-                          </Chip>
+                          </Badge>
                         </div>
                         {review.overallScore !== null && (
                           <div className="flex items-center gap-2">
@@ -1378,14 +1379,14 @@ export default function AdminProjectDetailPage({
                           </div>
                         )}
                         {review.overallComment && (
-                          <p className="text-xs text-default-500 mt-2 line-clamp-2">
+                          <p className="text-xs text-muted-foreground mt-2 line-clamp-2">
                             {review.overallComment}
                           </p>
                         )}
                       </div>
                     ))}
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -1400,21 +1401,21 @@ export default function AdminProjectDetailPage({
                     <h3 className="font-semibold">Production URL & Testing</h3>
                   </div>
                 </div>
-                <CardBody className="p-4 space-y-4">
+                <CardContent className="p-4 space-y-4">
                   {/* Production URL */}
                   <div className="space-y-2">
-                    <p className="text-xs font-medium text-default-500">URL Production</p>
+                    <p className="text-xs font-medium text-muted-foreground">URL Production</p>
                     <div className="flex gap-2">
                       <div className="flex-1 p-2.5 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg border border-zinc-200 dark:border-zinc-700 truncate text-sm font-mono">
                         {project.requirements.productionUrl}
                       </div>
                       <Button
-                        size="sm"
-                        variant="flat"
-                        isIconOnly
-                        onPress={() => copyToClipboard(project.requirements!.productionUrl!, 'url')}
+                        size="icon-sm"
+                        variant="outline"
+                        aria-label="Salin URL"
+                        onClick={() => copyToClipboard(project.requirements!.productionUrl!, 'url')}
                       >
-                        {copiedField === 'url' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                        {copiedField === 'url' ? <CheckCircle2 size={14} className="text-emerald-600" /> : <Copy size={14} />}
                       </Button>
                     </div>
 
@@ -1434,22 +1435,20 @@ export default function AdminProjectDetailPage({
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        variant="flat"
-                        color="primary"
-                        onPress={checkProductionUrl}
-                        isLoading={isCheckingUrl}
-                        startContent={!isCheckingUrl && <Eye size={14} />}
+                        variant="outline"
+                        onClick={checkProductionUrl}
+                        disabled={isCheckingUrl}
                         className="flex-1"
                       >
+                        {isCheckingUrl ? <Loader2 className="animate-spin" /> : <Eye size={14} />}
                         Cek URL
                       </Button>
                       <Button
                         size="sm"
-                        color="primary"
-                        onPress={openWithCredentials}
-                        startContent={<ExternalLink size={14} />}
+                        onClick={openWithCredentials}
                         className="flex-1"
                       >
+                        <ExternalLink size={14} />
                         Buka & Test
                       </Button>
                     </div>
@@ -1458,7 +1457,7 @@ export default function AdminProjectDetailPage({
                   {/* Testing Credentials */}
                   {(project.requirements.testingUsername || project.requirements.testingPassword) && (
                     <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800 space-y-3">
-                      <p className="text-xs font-medium text-default-500 flex items-center gap-1.5">
+                      <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
                         <KeyRound size={12} />
                         Akun Testing
                       </p>
@@ -1466,19 +1465,19 @@ export default function AdminProjectDetailPage({
                       {project.requirements.testingUsername && (
                         <div className="flex items-center gap-2">
                           <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">
-                            <User size={14} className="text-default-500" />
+                            <User size={14} className="text-muted-foreground" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs text-default-400">Username</p>
+                            <p className="text-xs text-muted-foreground">Username</p>
                             <p className="text-sm font-mono truncate">{project.requirements.testingUsername}</p>
                           </div>
                           <Button
-                            size="sm"
-                            variant="light"
-                            isIconOnly
-                            onPress={() => copyToClipboard(project.requirements!.testingUsername!, 'username')}
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label="Salin username"
+                            onClick={() => copyToClipboard(project.requirements!.testingUsername!, 'username')}
                           >
-                            {copiedField === 'username' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                            {copiedField === 'username' ? <CheckCircle2 size={14} className="text-emerald-600" /> : <Copy size={14} />}
                           </Button>
                         </div>
                       )}
@@ -1486,19 +1485,19 @@ export default function AdminProjectDetailPage({
                       {project.requirements.testingPassword && (
                         <div className="flex items-center gap-2">
                           <div className="p-2 rounded-lg bg-zinc-100 dark:bg-zinc-800">
-                            <KeyRound size={14} className="text-default-500" />
+                            <KeyRound size={14} className="text-muted-foreground" />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs text-default-400">Password</p>
+                            <p className="text-xs text-muted-foreground">Password</p>
                             <p className="text-sm font-mono truncate">{project.requirements.testingPassword}</p>
                           </div>
                           <Button
-                            size="sm"
-                            variant="light"
-                            isIconOnly
-                            onPress={() => copyToClipboard(project.requirements!.testingPassword!, 'password')}
+                            size="icon-sm"
+                            variant="ghost"
+                            aria-label="Salin password"
+                            onClick={() => copyToClipboard(project.requirements!.testingPassword!, 'password')}
                           >
-                            {copiedField === 'password' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
+                            {copiedField === 'password' ? <CheckCircle2 size={14} className="text-emerald-600" /> : <Copy size={14} />}
                           </Button>
                         </div>
                       )}
@@ -1508,7 +1507,7 @@ export default function AdminProjectDetailPage({
                   {/* Testing Notes */}
                   {project.requirements.testingNotes && (
                     <div className="pt-3 border-t border-zinc-100 dark:border-zinc-800">
-                      <p className="text-xs font-medium text-default-500 mb-2">Catatan Testing</p>
+                      <p className="text-xs font-medium text-muted-foreground mb-2">Catatan Testing</p>
                       <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800/50">
                         <p className="text-sm text-amber-800 dark:text-amber-200 whitespace-pre-wrap">
                           {project.requirements.testingNotes}
@@ -1516,7 +1515,7 @@ export default function AdminProjectDetailPage({
                       </div>
                     </div>
                   )}
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -1530,19 +1529,19 @@ export default function AdminProjectDetailPage({
                   <h3 className="font-semibold">Timeline</h3>
                 </div>
               </div>
-              <CardBody className="p-4">
+              <CardContent className="p-4">
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 mt-2 rounded-full bg-blue-500" />
                     <div>
-                      <p className="text-xs text-default-500">Dibuat</p>
+                      <p className="text-xs text-muted-foreground">Dibuat</p>
                       <p className="text-sm font-medium">{formatDateTime(project.createdAt)}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <div className="w-2 h-2 mt-2 rounded-full bg-emerald-500" />
                     <div>
-                      <p className="text-xs text-default-500">Terakhir Diperbarui</p>
+                      <p className="text-xs text-muted-foreground">Terakhir Diperbarui</p>
                       <p className="text-sm font-medium">{formatDateTime(project.updatedAt)}</p>
                     </div>
                   </div>
@@ -1550,7 +1549,7 @@ export default function AdminProjectDetailPage({
                     <div className="flex items-start gap-3">
                       <div className="w-2 h-2 mt-2 rounded-full bg-violet-500" />
                       <div>
-                        <p className="text-xs text-default-500">Disubmit</p>
+                        <p className="text-xs text-muted-foreground">Disubmit</p>
                         <p className="text-sm font-medium">{formatDateTime(project.submittedAt)}</p>
                       </div>
                     </div>
@@ -1559,306 +1558,284 @@ export default function AdminProjectDetailPage({
                     <div className="flex items-start gap-3">
                       <div className="w-2 h-2 mt-2 rounded-full bg-emerald-500" />
                       <div>
-                        <p className="text-xs text-default-500">Di-fork ke Org</p>
+                        <p className="text-xs text-muted-foreground">Di-fork ke Org</p>
                         <p className="text-sm font-medium">{formatDateTime(project.forkedAt)}</p>
                       </div>
                     </div>
                   )}
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
         </div>
       </div>
 
       {/* Approval Modal with Fork Option */}
-      <Modal
-        isOpen={approvalModalOpen}
-        onClose={() => {
-          setApprovalModalOpen(false);
-          setApprovalError('');
-        }}
-        size="lg"
-        classNames={{
-          backdrop: 'bg-black/50 backdrop-blur-sm',
-          base: 'border border-slate-200/60 dark:border-zinc-700/50',
+      <Dialog
+        open={approvalModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setApprovalModalOpen(false);
+            setApprovalError('');
+          }
         }}
       >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
-                <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
-                  <CheckCircle2 size={20} />
-                </div>
-                <div>
-                  <span className="block font-semibold text-slate-800 dark:text-white">Approve Project</span>
-                  <span className="text-sm font-normal text-slate-500 dark:text-zinc-400">
-                    Setujui project dan atur integrasi GitHub
-                  </span>
-                </div>
-              </ModalHeader>
-              <ModalBody className="py-5">
-                <div className="space-y-4">
-                  {/* Project Info */}
-                  <div className="p-4 bg-slate-50 dark:bg-zinc-800/50 rounded-xl border border-slate-200/40 dark:border-zinc-700/30">
-                    <h4 className="font-semibold text-slate-800 dark:text-white mb-2">{project.title}</h4>
-                    <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-zinc-400">
-                      <Avatar
-                        name={project.mahasiswa.name}
-                        src={avatarUrl}
-                        size="sm"
-                        imgProps={{ referrerPolicy: "no-referrer" }}
-                      />
-                      <span>{project.mahasiswa.name}</span>
-                      <span className="text-slate-300 dark:text-zinc-600">|</span>
-                      <span>{project.semester}</span>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader className="flex flex-row items-center gap-3 pb-4 border-b">
+            <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 size={20} />
+            </div>
+            <div>
+              <DialogTitle>Approve Project</DialogTitle>
+              <DialogDescription>
+                Setujui project dan atur integrasi GitHub
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+          <div className="space-y-4">
+            {/* Project Info */}
+            <div className="p-4 bg-muted/40 rounded-xl border">
+              <h4 className="font-semibold text-foreground mb-2">{project.title}</h4>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Avatar className="size-7">
+                  {avatarUrl ? (
+                    <AvatarImage src={avatarUrl} alt={project.mahasiswa.name} referrerPolicy="no-referrer" />
+                  ) : null}
+                  <AvatarFallback className="text-[10px]">{getInitials(project.mahasiswa.name)}</AvatarFallback>
+                </Avatar>
+                <span>{project.mahasiswa.name}</span>
+                <span>|</span>
+                <span>{project.semester}</span>
+              </div>
+            </div>
+
+            {/* Fork Option */}
+            {project.githubRepoUrl ? (
+              <div className="p-4 border rounded-xl space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-violet-50 dark:bg-violet-900/30 rounded-lg text-violet-600 dark:text-violet-400">
+                      <GitFork size={20} />
                     </div>
-                  </div>
-
-                  {/* Fork Option */}
-                  {project.githubRepoUrl ? (
-                    <div className="p-4 border border-slate-200/60 dark:border-zinc-700/50 rounded-xl space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-violet-50 dark:bg-violet-900/30 rounded-lg text-violet-600 dark:text-violet-400">
-                            <GitFork size={20} />
-                          </div>
-                          <div>
-                            <p className="font-medium text-slate-800 dark:text-white">Fork ke Organisasi</p>
-                            <p className="text-xs text-slate-500 dark:text-zinc-400">
-                              Repository akan di-fork ke org capstone
-                            </p>
-                          </div>
-                        </div>
-                        <Switch
-                          isSelected={forkToOrg}
-                          onValueChange={setForkToOrg}
-                        />
-                      </div>
-
-                      {forkToOrg && (
-                        <div className="mt-3 p-3 bg-violet-50/50 dark:bg-violet-900/20 border border-violet-200/50 dark:border-violet-800/30 rounded-lg space-y-2">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Building2 size={14} className="text-violet-600 dark:text-violet-400" />
-                            <span className="font-medium text-violet-700 dark:text-violet-300">capstone-informatika</span>
-                          </div>
-                          <p className="text-xs text-slate-600 dark:text-zinc-400">
-                            Repository akan otomatis:
-                          </p>
-                          <ul className="text-xs text-slate-500 dark:text-zinc-500 space-y-1 ml-4 list-disc">
-                            <li>Di-fork ke organisasi dengan nama baru</li>
-                            <li>
-                              {project.mahasiswa.githubUsername
-                                ? `Menambahkan @${project.mahasiswa.githubUsername} sebagai collaborator`
-                                : 'Menambahkan mahasiswa sebagai collaborator'}
-                            </li>
-                            {project.members && project.members.length > 0 && (
-                              <li>
-                                Menambahkan {project.members.length} anggota tim sebagai collaborator
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      )}
-
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-500">
-                        <Github size={12} />
-                        <a
-                          href={project.githubRepoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="hover:text-primary hover:underline truncate"
-                        >
-                          {project.githubRepoUrl}
-                        </a>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="p-4 bg-amber-50/50 dark:bg-amber-900/20 border border-amber-200/60 dark:border-amber-800/30 rounded-xl">
-                      <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
-                        <AlertCircle size={18} />
-                        <span className="font-medium">Tidak ada repository GitHub</span>
-                      </div>
-                      <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
-                        Project akan disetujui tanpa fork ke organisasi
+                    <div>
+                      <p className="font-medium text-foreground">Fork ke Organisasi</p>
+                      <p className="text-xs text-muted-foreground">
+                        Repository akan di-fork ke org capstone
                       </p>
                     </div>
-                  )}
-
-                  {/* Error Message */}
-                  {approvalError && (
-                    <div className="p-3 bg-danger-50 border border-danger-200 rounded-lg">
-                      <div className="flex items-center gap-2 text-danger">
-                        <AlertCircle size={16} />
-                        <span className="text-sm">{approvalError}</span>
-                      </div>
-                    </div>
-                  )}
+                  </div>
+                  <Switch
+                    checked={forkToOrg}
+                    onCheckedChange={setForkToOrg}
+                  />
                 </div>
-              </ModalBody>
-              <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
-                <Button variant="flat" onPress={onClose} isDisabled={isApproving}>
-                  Batal
-                </Button>
-                <Button
-                  color="success"
-                  onPress={handleApprovalSubmit}
-                  isLoading={isApproving}
-                  startContent={!isApproving && <CheckCircle2 size={18} />}
-                >
-                  {forkToOrg && project.githubRepoUrl
-                    ? 'Approve & Fork'
-                    : 'Approve'}
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+
+                {forkToOrg && (
+                  <div className="mt-3 p-3 bg-violet-50/50 dark:bg-violet-900/20 border border-violet-200/50 dark:border-violet-800/30 rounded-lg space-y-2">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Building2 size={14} className="text-violet-600 dark:text-violet-400" />
+                      <span className="font-medium text-violet-700 dark:text-violet-300">capstone-informatika</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Repository akan otomatis:
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1 ml-4 list-disc">
+                      <li>Di-fork ke organisasi dengan nama baru</li>
+                      <li>
+                        {project.mahasiswa.githubUsername
+                          ? `Menambahkan @${project.mahasiswa.githubUsername} sebagai collaborator`
+                          : 'Menambahkan mahasiswa sebagai collaborator'}
+                      </li>
+                      {project.members && project.members.length > 0 && (
+                        <li>
+                          Menambahkan {project.members.length} anggota tim sebagai collaborator
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Github size={12} />
+                  <a
+                    href={project.githubRepoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-primary hover:underline truncate"
+                  >
+                    {project.githubRepoUrl}
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-amber-50/50 dark:bg-amber-900/20 border border-amber-200/60 dark:border-amber-800/30 rounded-xl">
+                <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                  <AlertCircle size={18} />
+                  <span className="font-medium">Tidak ada repository GitHub</span>
+                </div>
+                <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
+                  Project akan disetujui tanpa fork ke organisasi
+                </p>
+              </div>
+            )}
+
+            {/* Error Message */}
+            {approvalError && (
+              <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+                <div className="flex items-center gap-2 text-destructive">
+                  <AlertCircle size={16} />
+                  <span className="text-sm">{approvalError}</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <DialogFooter className="border-t pt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setApprovalModalOpen(false);
+                setApprovalError('');
+              }}
+              disabled={isApproving}
+            >
+              Batal
+            </Button>
+            <Button
+              className="bg-emerald-600 text-white hover:bg-emerald-600/90"
+              onClick={handleApprovalSubmit}
+              disabled={isApproving}
+            >
+              {isApproving ? <Loader2 className="animate-spin" /> : <CheckCircle2 size={18} />}
+              {forkToOrg && project.githubRepoUrl
+                ? 'Approve & Fork'
+                : 'Approve'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete Confirmation Modal */}
-      <Modal
-        isOpen={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        classNames={{
-          backdrop: 'bg-black/50 backdrop-blur-sm',
-          base: 'border border-slate-200/60 dark:border-zinc-700/50',
-        }}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
-                <div className="p-2 rounded-xl bg-danger-50 dark:bg-danger-900/30 text-danger">
-                  <Trash2 size={20} />
-                </div>
-                <span className="font-semibold text-slate-800 dark:text-white">Hapus Project</span>
-              </ModalHeader>
-              <ModalBody className="py-5">
-                <div className="space-y-4">
-                  <p className="text-slate-600 dark:text-zinc-400">
-                    Apakah Anda yakin ingin menghapus project ini?
-                  </p>
-                  <div className="p-3 bg-slate-50 dark:bg-zinc-800/50 rounded-lg border border-slate-200/60 dark:border-zinc-700/50">
-                    <p className="font-semibold text-slate-800 dark:text-white">{project.title}</p>
-                    <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
-                      {project.mahasiswa.name} - {project.semester}
-                    </p>
-                    <div className="mt-2">
-                      <Chip size="sm" color={getStatusColor(project.status)} variant="flat">
-                        {getStatusLabel(project.status)}
-                      </Chip>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-danger-50 dark:bg-danger-900/20 border border-danger-200 dark:border-danger-800/30 rounded-lg">
-                    <p className="text-sm text-danger font-medium">
-                      Tindakan ini akan menghapus semua data terkait termasuk:
-                    </p>
-                    <ul className="text-xs text-danger-600 dark:text-danger-400 mt-2 space-y-1 ml-4 list-disc">
-                      <li>Semua dokumen yang diupload</li>
-                      <li>Semua review dan komentar</li>
-                      <li>Semua assignment dosen penguji</li>
-                      <li>Semua anggota tim dan undangan</li>
-                      <li>Semua screenshot aplikasi</li>
-                    </ul>
-                    <p className="text-xs text-danger font-semibold mt-2">
-                      Tindakan ini tidak dapat dibatalkan!
-                    </p>
-                  </div>
-                </div>
-              </ModalBody>
-              <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
-                <Button variant="flat" onPress={onClose} isDisabled={isDeleting}>
-                  Batal
-                </Button>
-                <Button
-                  color="danger"
-                  onPress={handleDeleteProject}
-                  isLoading={isDeleting}
-                  startContent={!isDeleting && <Trash2 size={18} />}
+      <Dialog open={deleteModalOpen} onOpenChange={(open) => { if (!open) setDeleteModalOpen(false); }}>
+        <DialogContent>
+          <DialogHeader className="flex flex-row items-center gap-3 pb-4 border-b">
+            <div className="p-2 rounded-xl bg-destructive/10 text-destructive">
+              <Trash2 size={20} />
+            </div>
+            <DialogTitle>Hapus Project</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Apakah Anda yakin ingin menghapus project ini?
+            </p>
+            <div className="p-3 bg-muted/40 rounded-lg border">
+              <p className="font-semibold text-foreground">{project.title}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {project.mahasiswa.name} - {project.semester}
+              </p>
+              <div className="mt-2">
+                <Badge
+                  variant="secondary"
+                  className={statusToneClass[getStatusColor(project.status)]}
                 >
-                  Hapus Project
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+                  {getStatusLabel(project.status)}
+                </Badge>
+              </div>
+            </div>
+            <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+              <p className="text-sm text-destructive font-medium">
+                Tindakan ini akan menghapus semua data terkait termasuk:
+              </p>
+              <ul className="text-xs text-destructive mt-2 space-y-1 ml-4 list-disc">
+                <li>Semua dokumen yang diupload</li>
+                <li>Semua review dan komentar</li>
+                <li>Semua assignment dosen penguji</li>
+                <li>Semua anggota tim dan undangan</li>
+                <li>Semua screenshot aplikasi</li>
+              </ul>
+              <p className="text-xs text-destructive font-semibold mt-2">
+                Tindakan ini tidak dapat dibatalkan!
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="border-t pt-4">
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)} disabled={isDeleting}>
+              Batal
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteProject}
+              disabled={isDeleting}
+            >
+              {isDeleting ? <Loader2 className="animate-spin" /> : <Trash2 size={18} />}
+              Hapus Project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Revert to Draft Confirmation Modal */}
-      <Modal
-        isOpen={revertModalOpen}
-        onClose={() => setRevertModalOpen(false)}
-        classNames={{
-          backdrop: 'bg-black/50 backdrop-blur-sm',
-          base: 'border border-slate-200/60 dark:border-zinc-700/50',
-        }}
-      >
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex items-center gap-3 border-b border-slate-200/60 dark:border-zinc-700/50">
-                <div className="p-2 rounded-xl bg-secondary-50 dark:bg-secondary-900/30 text-secondary">
-                  <Undo2 size={20} />
-                </div>
-                <div>
-                  <span className="block font-semibold text-slate-800 dark:text-white">Kembalikan ke Draft</span>
-                  <span className="text-sm font-normal text-slate-500 dark:text-zinc-400">
-                    Izinkan mahasiswa mengedit kembali project
-                  </span>
-                </div>
-              </ModalHeader>
-              <ModalBody className="py-5">
-                <div className="space-y-4">
-                  <p className="text-slate-600 dark:text-zinc-400">
-                    Apakah Anda yakin ingin mengembalikan status project ini ke <strong>DRAFT</strong>?
-                  </p>
-                  <div className="p-3 bg-slate-50 dark:bg-zinc-800/50 rounded-lg border border-slate-200/60 dark:border-zinc-700/50">
-                    <p className="font-semibold text-slate-800 dark:text-white">{project.title}</p>
-                    <p className="text-sm text-slate-500 dark:text-zinc-400 mt-1">
-                      {project.mahasiswa.name} - {project.semester}
-                    </p>
-                    <div className="mt-2 flex items-center gap-2">
-                      <Chip size="sm" color={getStatusColor(project.status)} variant="flat">
-                        {getStatusLabel(project.status)}
-                      </Chip>
-                      <span className="text-default-400">→</span>
-                      <Chip size="sm" color="default" variant="flat">
-                        DRAFT
-                      </Chip>
-                    </div>
-                  </div>
-                  <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg">
-                    <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">
-                      Dengan mengembalikan ke DRAFT:
-                    </p>
-                    <ul className="text-xs text-blue-600 dark:text-blue-400 mt-2 space-y-1 ml-4 list-disc">
-                      <li>Mahasiswa dapat mengedit project kembali</li>
-                      <li>Mahasiswa perlu submit ulang untuk review</li>
-                      <li>Review sebelumnya tetap tersimpan</li>
-                      <li>Project tidak tampil di daftar yang perlu di-review</li>
-                    </ul>
-                  </div>
-                </div>
-              </ModalBody>
-              <ModalFooter className="border-t border-slate-200/60 dark:border-zinc-700/50">
-                <Button variant="flat" onPress={onClose} isDisabled={isReverting}>
-                  Batal
-                </Button>
-                <Button
-                  color="secondary"
-                  onPress={handleRevertToDraft}
-                  isLoading={isReverting}
-                  startContent={!isReverting && <Undo2 size={18} />}
+      <Dialog open={revertModalOpen} onOpenChange={(open) => { if (!open) setRevertModalOpen(false); }}>
+        <DialogContent>
+          <DialogHeader className="flex flex-row items-center gap-3 pb-4 border-b">
+            <div className="p-2 rounded-xl bg-secondary text-secondary-foreground">
+              <Undo2 size={20} />
+            </div>
+            <div>
+              <DialogTitle>Kembalikan ke Draft</DialogTitle>
+              <DialogDescription>
+                Izinkan mahasiswa mengedit kembali project
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              Apakah Anda yakin ingin mengembalikan status project ini ke <strong>DRAFT</strong>?
+            </p>
+            <div className="p-3 bg-muted/40 rounded-lg border">
+              <p className="font-semibold text-foreground">{project.title}</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                {project.mahasiswa.name} - {project.semester}
+              </p>
+              <div className="mt-2 flex items-center gap-2">
+                <Badge
+                  variant="secondary"
+                  className={statusToneClass[getStatusColor(project.status)]}
                 >
-                  Kembalikan ke Draft
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+                  {getStatusLabel(project.status)}
+                </Badge>
+                <span className="text-muted-foreground">→</span>
+                <Badge variant="secondary" className={statusToneClass.default}>
+                  DRAFT
+                </Badge>
+              </div>
+            </div>
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800/30 rounded-lg">
+              <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                Dengan mengembalikan ke DRAFT:
+              </p>
+              <ul className="text-xs text-blue-600 dark:text-blue-400 mt-2 space-y-1 ml-4 list-disc">
+                <li>Mahasiswa dapat mengedit project kembali</li>
+                <li>Mahasiswa perlu submit ulang untuk review</li>
+                <li>Review sebelumnya tetap tersimpan</li>
+                <li>Project tidak tampil di daftar yang perlu di-review</li>
+              </ul>
+            </div>
+          </div>
+          <DialogFooter className="border-t pt-4">
+            <Button variant="outline" onClick={() => setRevertModalOpen(false)} disabled={isReverting}>
+              Batal
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={handleRevertToDraft}
+              disabled={isReverting}
+            >
+              {isReverting ? <Loader2 className="animate-spin" /> : <Undo2 size={18} />}
+              Kembalikan ke Draft
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   );
 }

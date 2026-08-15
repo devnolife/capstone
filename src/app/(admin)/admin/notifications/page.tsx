@@ -2,20 +2,22 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Spinner,
-  Chip,
-  Divider,
-  Input,
-  Textarea,
   Select,
+  SelectContent,
   SelectItem,
-  addToast,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { addToast } from '@/lib/toast';
 import {
   Bell,
   Check,
@@ -28,6 +30,7 @@ import {
   ExternalLink,
   Megaphone,
   Send,
+  Loader2,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -47,13 +50,13 @@ const getNotificationIcon = (type: string) => {
     case 'assignment':
       return <UserCog size={20} className="text-primary" />;
     case 'review':
-      return <ClipboardCheck size={20} className="text-success" />;
+      return <ClipboardCheck size={20} className="text-emerald-600 dark:text-emerald-400" />;
     case 'submission':
-      return <FileText size={20} className="text-secondary" />;
+      return <FileText size={20} className="text-secondary-foreground" />;
     case 'system':
-      return <AlertCircle size={20} className="text-warning" />;
+      return <AlertCircle size={20} className="text-amber-600 dark:text-amber-400" />;
     default:
-      return <Bell size={20} className="text-default-500" />;
+      return <Bell size={20} className="text-muted-foreground" />;
   }
 };
 
@@ -216,7 +219,7 @@ export default function NotificationsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -227,7 +230,7 @@ export default function NotificationsPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Notifikasi</h1>
-          <p className="text-default-500">
+          <p className="text-muted-foreground">
             {unreadCount > 0
               ? `${unreadCount} notifikasi belum dibaca`
               : 'Semua notifikasi sudah dibaca'}
@@ -235,21 +238,14 @@ export default function NotificationsPage() {
         </div>
         <div className="flex gap-2">
           {unreadCount > 0 && (
-            <Button
-              variant="flat"
-              startContent={<CheckCheck size={18} />}
-              onPress={handleMarkAllAsRead}
-            >
+            <Button variant="outline" onClick={handleMarkAllAsRead}>
+              <CheckCheck size={18} />
               Tandai Semua Dibaca
             </Button>
           )}
           {notifications.some((n) => n.isRead) && (
-            <Button
-              variant="flat"
-              color="danger"
-              startContent={<Trash2 size={18} />}
-              onPress={handleDeleteAllRead}
-            >
+            <Button variant="destructive" onClick={handleDeleteAllRead}>
+              <Trash2 size={18} />
               Hapus Dibaca
             </Button>
           )}
@@ -258,74 +254,91 @@ export default function NotificationsPage() {
 
       {/* Broadcast Composer */}
       <Card>
-        <CardHeader className="flex items-center gap-2">
+        <CardHeader className="flex flex-row items-center gap-2">
           <Megaphone size={18} className="text-primary" />
           <h2 className="text-lg font-semibold">Kirim Pengumuman</h2>
         </CardHeader>
-        <Divider />
-        <CardBody className="space-y-3">
+        <Separator />
+        <CardContent className="space-y-3">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Select
-              label="Penerima"
-              size="sm"
-              selectedKeys={[broadcastRole]}
-              onSelectionChange={(keys) => {
-                const v = Array.from(keys)[0] as string;
-                if (v) setBroadcastRole(v as typeof broadcastRole);
-              }}
-            >
-              <SelectItem key="all">Semua pengguna</SelectItem>
-              <SelectItem key="MAHASISWA">Semua mahasiswa</SelectItem>
-              <SelectItem key="DOSEN_PENGUJI">Semua dosen penguji</SelectItem>
-              <SelectItem key="ADMIN">Semua admin</SelectItem>
-            </Select>
-            <Select
-              label="Tipe"
-              size="sm"
-              selectedKeys={[broadcastType]}
-              onSelectionChange={(keys) => {
-                const v = Array.from(keys)[0] as string;
-                if (v) setBroadcastType(v);
-              }}
-            >
-              <SelectItem key="system">Sistem</SelectItem>
-              <SelectItem key="assignment">Penugasan</SelectItem>
-              <SelectItem key="review">Review</SelectItem>
-              <SelectItem key="submission">Submission</SelectItem>
-            </Select>
+            <div className="space-y-1.5">
+              <Label htmlFor="broadcast-role">Penerima</Label>
+              <Select
+                value={broadcastRole}
+                onValueChange={(value) => {
+                  if (typeof value === 'string') setBroadcastRole(value as typeof broadcastRole);
+                }}
+              >
+                <SelectTrigger id="broadcast-role" size="sm" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua pengguna</SelectItem>
+                  <SelectItem value="MAHASISWA">Semua mahasiswa</SelectItem>
+                  <SelectItem value="DOSEN_PENGUJI">Semua dosen penguji</SelectItem>
+                  <SelectItem value="ADMIN">Semua admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="broadcast-type">Tipe</Label>
+              <Select
+                value={broadcastType}
+                onValueChange={(value) => {
+                  if (typeof value === 'string') setBroadcastType(value);
+                }}
+              >
+                <SelectTrigger id="broadcast-type" size="sm" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="system">Sistem</SelectItem>
+                  <SelectItem value="assignment">Penugasan</SelectItem>
+                  <SelectItem value="review">Review</SelectItem>
+                  <SelectItem value="submission">Submission</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-          <Input
-            label="Judul"
-            size="sm"
-            value={broadcastTitle}
-            onValueChange={setBroadcastTitle}
-            maxLength={120}
-          />
-          <Textarea
-            label="Pesan"
-            minRows={2}
-            value={broadcastMessage}
-            onValueChange={setBroadcastMessage}
-            maxLength={1000}
-          />
-          <Input
-            label="Link (opsional)"
-            placeholder="/admin/projects"
-            size="sm"
-            value={broadcastLink}
-            onValueChange={setBroadcastLink}
-          />
+          <div className="space-y-1.5">
+            <Label htmlFor="broadcast-title">Judul</Label>
+            <Input
+              id="broadcast-title"
+              value={broadcastTitle}
+              onChange={(e) => setBroadcastTitle(e.target.value)}
+              maxLength={120}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="broadcast-message">Pesan</Label>
+            <Textarea
+              id="broadcast-message"
+              rows={2}
+              value={broadcastMessage}
+              onChange={(e) => setBroadcastMessage(e.target.value)}
+              maxLength={1000}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="broadcast-link">Link (opsional)</Label>
+            <Input
+              id="broadcast-link"
+              placeholder="/admin/projects"
+              value={broadcastLink}
+              onChange={(e) => setBroadcastLink(e.target.value)}
+            />
+          </div>
           <div className="flex justify-end">
-            <Button
-              color="primary"
-              startContent={<Send size={16} />}
-              onPress={handleSendBroadcast}
-              isLoading={isSendingBroadcast}
-            >
+            <Button onClick={handleSendBroadcast} disabled={isSendingBroadcast}>
+              {isSendingBroadcast ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <Send size={16} />
+              )}
               Kirim
             </Button>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Notifications List */}
@@ -335,23 +348,23 @@ export default function NotificationsPage() {
             Daftar Notifikasi ({notifications.length})
           </h2>
         </CardHeader>
-        <CardBody className="p-0">
+        <CardContent className="p-0">
           {notifications.length === 0 ? (
             <div className="text-center py-12">
-              <Bell size={64} className="mx-auto text-default-300 mb-4" />
-              <p className="text-default-500">Tidak ada notifikasi</p>
+              <Bell size={64} className="mx-auto text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground">Tidak ada notifikasi</p>
             </div>
           ) : (
-            <div className="divide-y divide-divider">
+            <div className="divide-y divide-border">
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-default-50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary-50/50' : ''
+                  className={`p-4 hover:bg-muted/50 transition-colors cursor-pointer ${!notification.isRead ? 'bg-primary/5' : ''
                     }`}
                   onClick={() => handleNotificationClick(notification)}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-full bg-default-100">
+                    <div className="p-2 rounded-full bg-muted">
                       {getNotificationIcon(notification.type)}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -362,16 +375,16 @@ export default function NotificationsPage() {
                               {notification.title}
                             </h3>
                             {!notification.isRead && (
-                              <Chip size="sm" color="primary" variant="flat">
+                              <Badge variant="secondary" className="bg-primary/10 text-primary">
                                 Baru
-                              </Chip>
+                              </Badge>
                             )}
                           </div>
-                          <p className="text-sm text-default-600 mt-1">
+                          <p className="text-sm text-foreground mt-1">
                             {notification.message}
                           </p>
                           <div className="flex items-center gap-4 mt-2">
-                            <span className="text-xs text-default-400">
+                            <span className="text-xs text-muted-foreground">
                               {formatDate(notification.createdAt)}
                             </span>
                             {notification.link && (
@@ -385,10 +398,9 @@ export default function NotificationsPage() {
                         <div className="flex items-center gap-1">
                           {!notification.isRead && (
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              onPress={() => {
+                              size="icon-sm"
+                              variant="ghost"
+                              onClick={() => {
                                 handleMarkAsRead(notification.id);
                               }}
                             >
@@ -396,11 +408,10 @@ export default function NotificationsPage() {
                             </Button>
                           )}
                           <Button
-                            isIconOnly
-                            size="sm"
-                            variant="light"
-                            color="danger"
-                            onPress={() => {
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-destructive"
+                            onClick={() => {
                               handleDelete(notification.id);
                             }}
                           >
@@ -414,7 +425,7 @@ export default function NotificationsPage() {
               ))}
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Confirm Dialog */}

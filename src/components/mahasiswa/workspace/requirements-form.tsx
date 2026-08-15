@@ -2,18 +2,14 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
-import {
-  Card,
-  CardBody,
-  Button,
-  Input,
-  Textarea,
-  Progress,
-  Chip,
-  Spinner,
-  addToast,
-  Avatar,
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
+import { addToast } from '@/lib/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Save,
@@ -58,11 +54,11 @@ import {
   Wrench,
 } from 'lucide-react';
 import { PageHeader } from '@/components/caret/PageHeader';
-import { 
-  DEPLOYMENT_PLATFORMS, 
-  getDeploymentPlatform, 
-  getToolCategoriesForPlatform, 
-  getDeploymentTool, 
+import {
+  DEPLOYMENT_PLATFORMS,
+  getDeploymentPlatform,
+  getToolCategoriesForPlatform,
+  getDeploymentTool,
   parseDeploymentTools,
 } from '@/lib/utils';
 
@@ -580,7 +576,7 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
 
       return updated;
     });
-    
+
     // Reset URL validation when URL changes
     if (key === 'productionUrl') {
       setUrlValidation({ status: 'idle' });
@@ -630,7 +626,7 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center space-y-4">
-          <Spinner size="lg" color="primary" />
+          <Spinner className="size-8 text-primary mx-auto" />
           <p className="text-app-secondary-invert">Memuat persyaratan...</p>
         </div>
       </div>
@@ -640,8 +636,8 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
   if (!project) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="p-4 rounded-full bg-danger/10">
-          <AlertCircle size={48} className="text-danger" />
+        <div className="p-4 rounded-full bg-destructive/10">
+          <AlertCircle size={48} className="text-destructive" />
         </div>
         <p className="text-lg font-medium">Project tidak ditemukan</p>
       </div>
@@ -674,8 +670,8 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
       )}
 
       {/* Progress Card */}
-      <Card className="mb-6 border border-border bg-card shadow-none overflow-hidden">
-        <CardBody className="p-0">
+      <Card className="mb-6 border border-border bg-card shadow-none overflow-hidden py-0">
+        <CardContent className="p-0">
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
@@ -699,11 +695,6 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
             </div>
             <Progress
               value={completion.percent}
-              size="md"
-              classNames={{
-                track: 'h-3 bg-app-primary',
-                indicator: completion.percent === 100 ? 'bg-success' : 'bg-primary',
-              }}
             />
             {completion.percent === 100 && (
               <motion.div
@@ -748,7 +739,7 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
               );
             })}
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Requirement Sections */}
@@ -762,7 +753,7 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
             <Card
               key={section.id}
               id={section.id}
-              className="border border-border bg-card shadow-none overflow-hidden scroll-mt-4"
+              className="border border-border bg-card shadow-none overflow-hidden scroll-mt-4 py-0 gap-0"
             >
               {/* Section Header */}
               <button
@@ -815,9 +806,10 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                   </div>
 
                   {sectionCompletion.percent === 100 && (
-                    <Chip size="sm" color="success" variant="flat" startContent={<CheckCircle2 size={12} />}>
+                    <Badge variant="outline" className="border-success/40 bg-success/10 text-success">
+                      <CheckCircle2 size={12} />
                       Lengkap
-                    </Chip>
+                    </Badge>
                   )}
 
                   <motion.div
@@ -875,14 +867,13 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                   </div>
                                 </div>
                                 {isFilled && (
-                                  <Chip
-                                    size="sm"
-                                    color="success"
-                                    variant="flat"
-                                    startContent={<CheckCircle2 size={12} />}
+                                  <Badge
+                                    variant="outline"
+                                    className="border-success/40 bg-success/10 text-success"
                                   >
+                                    <CheckCircle2 size={12} />
                                     Terisi
-                                  </Chip>
+                                  </Badge>
                                 )}
                               </div>
 
@@ -922,25 +913,22 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                               isSelected ? '' : option.key
                                             );
                                           }}
-                                          className={`text-left p-3 rounded-xl border transition-all ${
-                                            isSelected
-                                              ? 'border-ring bg-app-quinary ring-1 ring-ring/40'
-                                              : 'border-border hover:bg-app-quinary'
-                                          } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
+                                          className={`text-left p-3 rounded-xl border transition-all ${isSelected
+                                            ? 'border-ring bg-app-quinary ring-1 ring-ring/40'
+                                            : 'border-border hover:bg-app-quinary'
+                                            } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
                                         >
                                           <div className="flex items-center justify-between mb-1">
                                             <span className={`text-sm font-semibold ${isSelected ? 'text-foreground' : ''}`}>
                                               {option.label}
                                             </span>
                                             {option.bonusPoints !== undefined && (
-                                              <Chip
-                                                size="sm"
-                                                variant="flat"
-                                                color={isSelected ? 'primary' : 'default'}
-                                                startContent={<Trophy size={10} />}
+                                              <Badge
+                                                variant={isSelected ? 'secondary' : 'outline'}
                                               >
+                                                <Trophy size={10} />
                                                 +{option.bonusPoints} poin
-                                              </Chip>
+                                              </Badge>
                                             )}
                                           </div>
                                           <p className="text-xs text-app-teritary-invert line-clamp-2">{option.description}</p>
@@ -1047,9 +1035,9 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                               {category.label}
                                             </span>
                                             {selectedInCategory.length > 0 && (
-                                              <Chip size="sm" variant="flat" color="primary" className="h-5">
+                                              <Badge variant="secondary" className="h-5">
                                                 {selectedInCategory.length}
-                                              </Chip>
+                                              </Badge>
                                             )}
                                           </div>
                                           <div className="flex flex-wrap gap-2">
@@ -1061,11 +1049,10 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                                   type="button"
                                                   disabled={!isOwner}
                                                   onClick={() => toggleTool(tool.key)}
-                                                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
-                                                    isActive
-                                                      ? 'border-ring bg-app-quaternary text-foreground ring-1 ring-ring/30'
-                                                      : 'border-border bg-app-quinary text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground'
-                                                  } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
+                                                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${isActive
+                                                    ? 'border-ring bg-app-quaternary text-foreground ring-1 ring-ring/30'
+                                                    : 'border-border bg-app-quinary text-app-secondary-invert hover:bg-app-quaternary hover:text-foreground'
+                                                    } ${!isOwner ? 'opacity-80 cursor-default' : 'cursor-pointer'}`}
                                                   title={tool.description}
                                                 >
                                                   {isActive && <CheckCircle2 size={12} className="text-primary" />}
@@ -1082,33 +1069,37 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                               })() : field.type === 'url' ? (
                                 <div className="space-y-2">
                                   <div className="flex gap-2">
-                                    <Input
-                                      type="url"
-                                      placeholder={field.placeholder}
-                                      value={formData[field.key] || ''}
-                                      onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                                      onFocus={() => setActiveField(field.key)}
-                                      onBlur={() => setActiveField(null)}
-                                      variant="bordered"
-                                      isReadOnly={!isOwner}
-                                      startContent={<Globe size={16} className="text-app-teritary-invert" />}
-                                      classNames={{
-                                        inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
-                                          focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
-                                        input: 'placeholder:text-app-teritary-invert',
-                                      }}
-                                    />
+                                    <div className="relative flex-1">
+                                      <Globe
+                                        size={16}
+                                        className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                                      />
+                                      <Input
+                                        type="url"
+                                        placeholder={field.placeholder}
+                                        value={formData[field.key] || ''}
+                                        onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                                        onFocus={() => setActiveField(field.key)}
+                                        onBlur={() => setActiveField(null)}
+                                        readOnly={!isOwner}
+                                        className={`pl-8 ${!isOwner ? 'opacity-80' : ''}`}
+                                      />
+                                    </div>
                                     {isOwner && (
                                       <Button
-                                        color={urlValidation.status === 'valid' ? 'success' : urlValidation.status === 'invalid' ? 'danger' : 'primary'}
-                                        variant="flat"
-                                        isLoading={urlValidation.status === 'checking'}
-                                        onPress={validateProductionUrl}
-                                        isDisabled={!formData.productionUrl?.trim()}
+                                        variant="secondary"
+                                        disabled={
+                                          !formData.productionUrl?.trim() ||
+                                          urlValidation.status === 'checking'
+                                        }
+                                        onClick={validateProductionUrl}
                                         className="min-w-[100px]"
                                       >
                                         {urlValidation.status === 'checking' ? (
-                                          'Mengecek...'
+                                          <>
+                                            <Loader2 size={16} className="animate-spin" />
+                                            Mengecek...
+                                          </>
                                         ) : urlValidation.status === 'valid' ? (
                                           <>
                                             <CheckCircle2 size={16} />
@@ -1127,18 +1118,17 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                   </div>
                                   {/* URL Validation Result */}
                                   {urlValidation.status !== 'idle' && urlValidation.status !== 'checking' && (
-                                    <div className={`p-3 rounded-xl text-sm ${
-                                      urlValidation.status === 'valid' 
-                                        ? 'bg-success/10 border border-success/30'
-                                        : 'bg-danger/10 border border-danger/30'
-                                    }`}>
+                                    <div className={`p-3 rounded-xl text-sm ${urlValidation.status === 'valid'
+                                      ? 'bg-success/10 border border-success/30'
+                                      : 'bg-destructive/10 border border-destructive/30'
+                                      }`}>
                                       <div className="flex items-center gap-2">
                                         {urlValidation.status === 'valid' ? (
                                           <CheckCircle2 size={16} className="text-success" />
                                         ) : (
-                                          <XCircle size={16} className="text-danger" />
+                                          <XCircle size={16} className="text-destructive" />
                                         )}
-                                        <span className={urlValidation.status === 'valid' ? 'text-success' : 'text-danger'}>
+                                        <span className={urlValidation.status === 'valid' ? 'text-success' : 'text-destructive'}>
                                           {urlValidation.message}
                                         </span>
                                       </div>
@@ -1149,16 +1139,18 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                       )}
                                       {urlValidation.status === 'valid' && formData.productionUrl && (
                                         <Button
-                                          as="a"
-                                          href={formData.productionUrl}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
                                           size="sm"
-                                          variant="flat"
-                                          color="success"
+                                          variant="outline"
                                           className="mt-2"
-                                          startContent={<ExternalLink size={14} />}
+                                          render={
+                                            <a
+                                              href={formData.productionUrl}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                            />
+                                          }
                                         >
+                                          <ExternalLink size={14} />
                                           Buka URL
                                         </Button>
                                       )}
@@ -1172,13 +1164,8 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                                   onFocus={() => setActiveField(field.key)}
                                   onBlur={() => setActiveField(null)}
-                                  variant="bordered"
-                                  isReadOnly={!isOwner}
-                                  classNames={{
-                                    inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
-                                      focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
-                                    input: 'placeholder:text-app-teritary-invert',
-                                  }}
+                                  readOnly={!isOwner}
+                                  className={!isOwner ? 'opacity-80' : ''}
                                 />
                               ) : field.type === 'password' ? (
                                 <Input
@@ -1188,13 +1175,8 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                                   onFocus={() => setActiveField(field.key)}
                                   onBlur={() => setActiveField(null)}
-                                  variant="bordered"
-                                  isReadOnly={!isOwner}
-                                  classNames={{
-                                    inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
-                                      focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
-                                    input: 'placeholder:text-app-teritary-invert',
-                                  }}
+                                  readOnly={!isOwner}
+                                  className={!isOwner ? 'opacity-80' : ''}
                                 />
                               ) : (
                                 <Textarea
@@ -1203,15 +1185,9 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
                                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
                                   onFocus={() => setActiveField(field.key)}
                                   onBlur={() => setActiveField(null)}
-                                  minRows={field.minRows || 4}
-                                  maxRows={12}
-                                  variant="bordered"
-                                  isReadOnly={!isOwner}
-                                  classNames={{
-                                    inputWrapper: `border-border bg-app-quinary hover:bg-app-quaternary 
-                                      focus-within:!border-ring shadow-none ${!isOwner ? 'opacity-80' : ''}`,
-                                    input: 'placeholder:text-app-teritary-invert',
-                                  }}
+                                  rows={field.minRows || 4}
+                                  readOnly={!isOwner}
+                                  className={!isOwner ? 'opacity-80' : ''}
                                 />
                               )}
 
@@ -1240,13 +1216,16 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
       {isOwner && (
         <div className="hidden sm:block fixed bottom-6 right-6 z-50">
           <Button
-            color="primary"
             size="lg"
-            startContent={!isSaving && <Save size={18} />}
-            isLoading={isSaving}
-            onPress={handleSave}
+            disabled={isSaving}
+            onClick={handleSave}
             className="font-semibold px-6 rounded-full shadow-lg"
           >
+            {isSaving ? (
+              <Loader2 size={18} className="animate-spin" />
+            ) : (
+              <Save size={18} />
+            )}
             Simpan Perubahan
           </Button>
         </div>
@@ -1265,20 +1244,18 @@ export function RequirementsForm({ projectId }: { projectId: string }) {
               </div>
               <Progress
                 value={completion.percent}
-                size="sm"
-                classNames={{
-                  track: 'bg-app-primary',
-                  indicator: completion.percent === 100 ? 'bg-success' : 'bg-primary',
-                }}
               />
             </div>
             <Button
-              color="primary"
-              startContent={!isSaving && <Save size={16} />}
-              isLoading={isSaving}
-              onPress={handleSave}
+              disabled={isSaving}
+              onClick={handleSave}
               className="font-semibold rounded-full px-6"
             >
+              {isSaving ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Save size={16} />
+              )}
               Simpan
             </Button>
           </div>

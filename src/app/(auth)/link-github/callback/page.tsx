@@ -7,7 +7,8 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardBody, Spinner } from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import { CheckCircle, XCircle } from 'lucide-react';
 
 function CallbackContent() {
@@ -75,36 +76,36 @@ function CallbackContent() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md">
-        <CardBody className="p-8 text-center">
+        <CardContent className="p-8 text-center">
           {status === 'loading' && (
             <>
-              <Spinner size="lg" className="mb-4" />
-              <p className="text-default-600">{message}</p>
+              <Spinner className="mx-auto mb-4 size-8" />
+              <p className="text-foreground">{message}</p>
             </>
           )}
 
           {status === 'success' && (
             <>
-              <div className="w-16 h-16 bg-success-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-success" />
+              <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <h2 className="text-xl font-bold text-success mb-2">Berhasil!</h2>
-              <p className="text-default-600">{message}</p>
-              <p className="text-sm text-default-400 mt-4">Mengalihkan...</p>
+              <h2 className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">Berhasil!</h2>
+              <p className="text-foreground">{message}</p>
+              <p className="text-sm text-muted-foreground mt-4">Mengalihkan...</p>
             </>
           )}
 
           {status === 'error' && (
             <>
-              <div className="w-16 h-16 bg-danger-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <XCircle className="w-8 h-8 text-danger" />
+              <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <XCircle className="w-8 h-8 text-destructive" />
               </div>
-              <h2 className="text-xl font-bold text-danger mb-2">Gagal</h2>
-              <p className="text-default-600">{message}</p>
-              <p className="text-sm text-default-400 mt-4">Mengalihkan...</p>
+              <h2 className="text-xl font-bold text-destructive mb-2">Gagal</h2>
+              <p className="text-foreground">{message}</p>
+              <p className="text-sm text-muted-foreground mt-4">Mengalihkan...</p>
             </>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
     </div>
   );
@@ -114,7 +115,7 @@ export default function GitHubLinkCallbackPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     }>
       <CallbackContent />

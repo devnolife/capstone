@@ -3,18 +3,19 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { motion } from 'framer-motion';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Switch,
   Select,
+  SelectContent,
   SelectItem,
-  Button,
-  Divider,
-  Chip,
-  Spinner,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Settings,
   Sun,
@@ -31,6 +32,7 @@ import {
   Link,
   Unlink,
   ExternalLink,
+  Loader2,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -216,8 +218,8 @@ export function SettingsContent({ role }: SettingsContentProps) {
       <motion.div variants={itemVariants}>
         <div className="flex items-end justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-default-900">Pengaturan</h1>
-            <p className="text-sm text-default-500 mt-0.5">
+            <h1 className="text-2xl font-semibold text-foreground">Pengaturan</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
               Sesuaikan preferensi aplikasi Anda
             </p>
           </div>
@@ -230,7 +232,7 @@ export function SettingsContent({ role }: SettingsContentProps) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0 }}
-          className="bg-success-50 text-success border border-success-200 rounded-lg p-3 text-sm flex items-center gap-2"
+          className="bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-300 dark:border-emerald-800 rounded-lg p-3 text-sm flex items-center gap-2"
         >
           <CheckCircle size={16} />
           Pengaturan berhasil disimpan
@@ -239,135 +241,132 @@ export function SettingsContent({ role }: SettingsContentProps) {
 
       {/* Appearance */}
       <motion.div variants={itemVariants}>
-        <Card shadow="none" className="border border-divider/60">
+        <Card className="border border-border shadow-none">
           <CardHeader className="pb-0">
-            <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Palette size={16} />
               Tampilan
             </h3>
           </CardHeader>
-          <CardBody className="space-y-4">
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Tema</p>
-                <p className="text-sm text-default-500">
+                <p className="text-sm text-muted-foreground">
                   Pilih tema tampilan aplikasi
                 </p>
               </div>
               <div className="flex gap-2">
                 <Button
                   size="sm"
-                  variant={theme === 'light' ? 'solid' : 'bordered'}
-                  color={theme === 'light' ? 'primary' : 'default'}
-                  onPress={() => setTheme('light')}
-                  startContent={<Sun size={16} />}
+                  variant={theme === 'light' ? 'default' : 'outline'}
+                  onClick={() => setTheme('light')}
                 >
+                  <Sun size={16} />
                   Terang
                 </Button>
                 <Button
                   size="sm"
-                  variant={theme === 'dark' ? 'solid' : 'bordered'}
-                  color={theme === 'dark' ? 'primary' : 'default'}
-                  onPress={() => setTheme('dark')}
-                  startContent={<Moon size={16} />}
+                  variant={theme === 'dark' ? 'default' : 'outline'}
+                  onClick={() => setTheme('dark')}
                 >
+                  <Moon size={16} />
                   Gelap
                 </Button>
                 <Button
                   size="sm"
-                  variant={theme === 'system' ? 'solid' : 'bordered'}
-                  color={theme === 'system' ? 'primary' : 'default'}
-                  onPress={() => setTheme('system')}
-                  startContent={<Monitor size={16} />}
+                  variant={theme === 'system' ? 'default' : 'outline'}
+                  onClick={() => setTheme('system')}
                   className="hidden md:flex"
                 >
+                  <Monitor size={16} />
                   Sistem
                 </Button>
               </div>
             </div>
 
-            <Divider />
+            <Separator />
 
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Bahasa</p>
-                <p className="text-sm text-default-500">
+                <p className="text-sm text-muted-foreground">
                   Pilih bahasa tampilan
                 </p>
               </div>
               <Select
-                selectedKeys={[language]}
-                onSelectionChange={(keys) => setLanguage(Array.from(keys)[0] as string)}
-                className="max-w-[150px]"
-                size="sm"
-                startContent={<Globe size={16} className="text-default-400" />}
+                value={language}
+                onValueChange={(value) => setLanguage(value as string)}
               >
-                <SelectItem key="id">Indonesia</SelectItem>
-                <SelectItem key="en">English</SelectItem>
+                <SelectTrigger size="sm" className="w-[150px]" aria-label="Bahasa">
+                  <Globe size={16} className="text-muted-foreground" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="id">Indonesia</SelectItem>
+                  <SelectItem value="en">English</SelectItem>
+                </SelectContent>
               </Select>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* Notifications */}
       <motion.div variants={itemVariants}>
-        <Card shadow="none" className="border border-divider/60">
+        <Card className="border border-border shadow-none">
           <CardHeader className="pb-0">
-            <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Bell size={16} />
               Notifikasi
             </h3>
           </CardHeader>
-          <CardBody className="space-y-4">
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Notifikasi Email</p>
-                <p className="text-sm text-default-500">
+                <p className="text-sm text-muted-foreground">
                   Terima notifikasi melalui email
                 </p>
               </div>
               <Switch
-                isSelected={emailNotifications}
-                onValueChange={setEmailNotifications}
-                color="primary"
+                checked={emailNotifications}
+                onCheckedChange={setEmailNotifications}
               />
             </div>
 
-            <Divider />
+            <Separator />
 
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Notifikasi Push</p>
-                <p className="text-sm text-default-500">
+                <p className="text-sm text-muted-foreground">
                   Terima notifikasi di browser
                 </p>
               </div>
               <Switch
-                isSelected={pushNotifications}
-                onValueChange={setPushNotifications}
-                color="primary"
+                checked={pushNotifications}
+                onCheckedChange={setPushNotifications}
               />
             </div>
 
-            <Divider />
+            <Separator />
 
             {role === 'dosen' && (
               <>
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Pengingat Review</p>
-                    <p className="text-sm text-default-500">
+                    <p className="text-sm text-muted-foreground">
                       Ingatkan untuk review project yang pending
                     </p>
                   </div>
                   <Switch
-                    isSelected={reviewReminders}
-                    onValueChange={setReviewReminders}
-                    color="primary"
+                    checked={reviewReminders}
+                    onCheckedChange={setReviewReminders}
                   />
                 </div>
-                <Divider />
+                <Separator />
               </>
             )}
 
@@ -376,17 +375,16 @@ export function SettingsContent({ role }: SettingsContentProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Update Project</p>
-                    <p className="text-sm text-default-500">
+                    <p className="text-sm text-muted-foreground">
                       Notifikasi saat ada update review
                     </p>
                   </div>
                   <Switch
-                    isSelected={projectUpdates}
-                    onValueChange={setProjectUpdates}
-                    color="primary"
+                    checked={projectUpdates}
+                    onCheckedChange={setProjectUpdates}
                   />
                 </div>
-                <Divider />
+                <Separator />
               </>
             )}
 
@@ -395,91 +393,90 @@ export function SettingsContent({ role }: SettingsContentProps) {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Update Sistem</p>
-                    <p className="text-sm text-default-500">
+                    <p className="text-sm text-muted-foreground">
                       Notifikasi saat ada aktivitas penting
                     </p>
                   </div>
                   <Switch
-                    isSelected={projectUpdates}
-                    onValueChange={setProjectUpdates}
-                    color="primary"
+                    checked={projectUpdates}
+                    onCheckedChange={setProjectUpdates}
                   />
                 </div>
-                <Divider />
+                <Separator />
               </>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* Privacy */}
       <motion.div variants={itemVariants}>
-        <Card shadow="none" className="border border-divider/60">
+        <Card className="border border-border shadow-none">
           <CardHeader className="pb-0">
-            <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
               <Shield size={16} />
               Privasi
             </h3>
           </CardHeader>
-          <CardBody className="space-y-4">
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium">Tampilkan Profil</p>
-                <p className="text-sm text-default-500">
+                <p className="text-sm text-muted-foreground">
                   Izinkan pengguna lain melihat profil Anda
                 </p>
               </div>
-              <Switch isSelected={showProfile} onValueChange={setShowProfile} color="primary" />
+              <Switch checked={showProfile} onCheckedChange={setShowProfile} />
             </div>
 
             {role === 'mahasiswa' && (
               <>
-                <Divider />
+                <Separator />
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="font-medium">Tampilkan GitHub</p>
-                    <p className="text-sm text-default-500">
+                    <p className="text-sm text-muted-foreground">
                       Tampilkan link GitHub di profil
                     </p>
                   </div>
-                  <Switch isSelected={showGithub} onValueChange={setShowGithub} color="primary" />
+                  <Switch checked={showGithub} onCheckedChange={setShowGithub} />
                 </div>
               </>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* GitHub Integration - Only for Mahasiswa */}
       {role === 'mahasiswa' && (
         <motion.div variants={itemVariants}>
-          <Card shadow="none" className="border border-divider/60">
+          <Card className="border border-border shadow-none">
             <CardHeader className="pb-0">
-              <h3 className="text-sm font-semibold text-default-700 flex items-center gap-2">
+              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
                 <Github size={16} />
                 Integrasi GitHub
               </h3>
             </CardHeader>
-            <CardBody className="space-y-4">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <p className="font-medium">Akun GitHub</p>
-                  <p className="text-sm text-default-500">
+                  <p className="text-sm text-muted-foreground">
                     Hubungkan akun GitHub untuk fitur review code dan manajemen repository
                   </p>
                 </div>
 
                 {isLoadingGithub ? (
-                  <Spinner size="sm" />
+                  <Spinner />
                 ) : githubStatus?.linked ? (
                   <div className="flex items-center gap-3">
-                    <Chip
-                      color="success"
-                      variant="flat"
-                      startContent={<CheckCircle size={14} />}
+                    <Badge
+                      variant="secondary"
+                      className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
                     >
+                      <CheckCircle size={14} />
                       Terhubung
-                    </Chip>
+                    </Badge>
                     <a
                       href={`https://github.com/${githubStatus.githubUsername}`}
                       target="_blank"
@@ -491,44 +488,47 @@ export function SettingsContent({ role }: SettingsContentProps) {
                     </a>
                   </div>
                 ) : (
-                  <Chip color="warning" variant="flat">
+                  <Badge
+                    variant="secondary"
+                    className="bg-amber-500/10 text-amber-700 dark:text-amber-400"
+                  >
                     Belum Terhubung
-                  </Chip>
+                  </Badge>
                 )}
               </div>
 
-              <Divider />
+              <Separator />
 
               <div className="flex justify-end gap-2">
                 {githubStatus?.linked ? (
                   <Button
-                    color="danger"
-                    variant="flat"
-                    startContent={<Unlink size={16} />}
-                    onPress={handleGitHubUnlink}
-                    isLoading={isUnlinking}
+                    variant="destructive"
+                    onClick={handleGitHubUnlink}
+                    disabled={isUnlinking}
                   >
+                    {isUnlinking ? (
+                      <Loader2 className="animate-spin" />
+                    ) : (
+                      <Unlink size={16} />
+                    )}
                     Putuskan Hubungan
                   </Button>
                 ) : (
-                  <Button
-                    color="primary"
-                    startContent={<Link size={16} />}
-                    onPress={handleGitHubLink}
-                  >
+                  <Button onClick={handleGitHubLink}>
+                    <Link size={16} />
                     Hubungkan GitHub
                   </Button>
                 )}
               </div>
 
               {!githubStatus?.linked && (
-                <div className="bg-warning-50 dark:bg-warning-900/20 border border-warning-200 dark:border-warning-800 rounded-lg p-3">
-                  <p className="text-sm text-warning-700 dark:text-warning-300">
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                  <p className="text-sm text-amber-700 dark:text-amber-300">
                     <strong>Penting:</strong> Anda perlu menghubungkan akun GitHub untuk dapat membuat project dan menggunakan fitur review code.
                   </p>
                 </div>
               )}
-            </CardBody>
+            </CardContent>
           </Card>
         </motion.div>
       )}
@@ -536,12 +536,10 @@ export function SettingsContent({ role }: SettingsContentProps) {
       {/* Save Button */}
       <motion.div variants={itemVariants} className="flex justify-end pb-4">
         <Button
-          color="primary"
-          startContent={<Save size={18} />}
-          onPress={handleSave}
-          isLoading={isSaving}
-          isDisabled={isLoadingPrefs}
+          onClick={handleSave}
+          disabled={isSaving || isLoadingPrefs}
         >
+          {isSaving ? <Loader2 className="animate-spin" /> : <Save size={18} />}
           Simpan Pengaturan
         </Button>
       </motion.div>

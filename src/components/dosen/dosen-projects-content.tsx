@@ -4,23 +4,27 @@ import { useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
   Table,
   TableHeader,
-  TableColumn,
+  TableHead,
   TableBody,
   TableRow,
   TableCell,
-  Input,
+} from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import {
   Select,
+  SelectContent,
   SelectItem,
-  Progress,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
 import { Search, FolderGit2, FileText, Calendar, ChevronRight, ClipboardCheck, Eye, Users } from 'lucide-react';
 import { getStatusColor, getStatusLabel } from '@/lib/utils';
 import { PageHeader } from '@/components/caret/PageHeader';
@@ -98,6 +102,23 @@ const getProgress = (status: string) => {
   }
 };
 
+/** Pemetaan warna status (HeroUI legacy) ke varian Badge shadcn. */
+function statusBadgeVariant(
+  status: string
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  switch (getStatusColor(status)) {
+    case 'danger':
+      return 'destructive';
+    case 'success':
+    case 'secondary':
+      return 'secondary';
+    case 'primary':
+      return 'default';
+    default:
+      return 'outline';
+  }
+}
+
 // Mobile Project Card for full list
 function MobileProjectCard({
   project,
@@ -111,16 +132,19 @@ function MobileProjectCard({
   return (
     <motion.div variants={itemVariants}>
       <Card className="mb-3 border border-border bg-card shadow-none overflow-hidden">
-        <CardBody className="p-4">
+        <CardContent className="p-4">
           <div className="space-y-3">
             {/* Mahasiswa Info */}
             <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-border">
-              <Avatar
-                name={project.mahasiswa.name}
-                src={project.mahasiswa.image || undefined}
-                size="sm"
-                className="ring-2 ring-border"
-              />
+              <Avatar className="size-8 ring-2 ring-border">
+                <AvatarImage
+                  src={project.mahasiswa.image || undefined}
+                  alt={project.mahasiswa.name}
+                />
+                <AvatarFallback className="text-xs">
+                  {project.mahasiswa.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">
                   {project.mahasiswa.name}
@@ -146,25 +170,17 @@ function MobileProjectCard({
 
             {/* Status Chips */}
             <div className="flex flex-wrap gap-2">
-              <Chip
-                size="sm"
-                color={getStatusColor(project.status)}
-                variant="flat"
-              >
+              <Badge variant={statusBadgeVariant(project.status)}>
                 {getStatusLabel(project.status)}
-              </Chip>
+              </Badge>
               {myReview ? (
-                <Chip
-                  size="sm"
-                  color={getStatusColor(myReview.status)}
-                  variant="flat"
-                >
+                <Badge variant={statusBadgeVariant(myReview.status)}>
                   {getStatusLabel(myReview.status)}
-                </Chip>
+                </Badge>
               ) : (
-                <Chip size="sm" variant="flat" color="warning">
+                <Badge variant="outline">
                   Belum Direview
-                </Chip>
+                </Badge>
               )}
             </div>
 
@@ -174,13 +190,7 @@ function MobileProjectCard({
                 <span className="text-app-teritary-invert">Progress</span>
                 <span className="font-medium tabular-nums">{getProgress(project.status)}%</span>
               </div>
-              <Progress
-                value={getProgress(project.status)}
-                color={getStatusColor(project.status)}
-                size="sm"
-                className="h-1.5"
-                classNames={{ track: 'bg-app-primary' }}
-              />
+              <Progress value={getProgress(project.status)} />
             </div>
 
             {/* Info Row */}
@@ -204,28 +214,25 @@ function MobileProjectCard({
             {/* Actions */}
             <div className="flex gap-2 pt-2">
               <Button
-                as={Link}
-                href={`/dosen/projects/${project.id}`}
+                render={<Link href={`/dosen/projects/${project.id}`} />}
                 size="sm"
-                variant="flat"
+                variant="secondary"
                 className="flex-1"
-                startContent={<Eye size={14} />}
               >
+                <Eye size={14} />
                 Detail
               </Button>
               <Button
-                as={Link}
-                href={`/dosen/projects/${project.id}/review`}
+                render={<Link href={`/dosen/projects/${project.id}/review`} />}
                 size="sm"
-                color="primary"
                 className="flex-1"
-                startContent={<ClipboardCheck size={14} />}
               >
+                <ClipboardCheck size={14} />
                 Review
               </Button>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </motion.div>
   );
@@ -298,39 +305,41 @@ export function DosenProjectsContent({
       {/* Filters */}
       <motion.div variants={itemVariants}>
         <div className="flex flex-col gap-2 md:flex-row md:items-center">
-          <Input
-            placeholder="Cari project atau mahasiswa..."
-            startContent={<Search size={16} className="text-default-400" />}
-            className="flex-1"
-            size="sm"
-            value={searchQuery}
-            onValueChange={setSearchQuery}
-            isClearable
-            onClear={() => setSearchQuery('')}
-          />
+          <div className="relative flex-1">
+            <Search
+              size={16}
+              className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+            />
+            <Input
+              placeholder="Cari project atau mahasiswa..."
+              className="pl-9"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
           <Select
-            placeholder="Filter Status"
-            aria-label="Filter status"
-            className="w-full md:max-w-[200px]"
-            size="sm"
-            selectedKeys={[statusFilter]}
-            onSelectionChange={(keys) => {
-              const next = Array.from(keys as Set<string>)[0];
-              if (next) setStatusFilter(next);
+            value={statusFilter}
+            onValueChange={(value) => {
+              if (value) setStatusFilter(value as string);
             }}
           >
-            <SelectItem key="all">Semua Status</SelectItem>
-            <SelectItem key="SUBMITTED">Disubmit</SelectItem>
-            <SelectItem key="IN_REVIEW">Dalam Review</SelectItem>
-            <SelectItem key="APPROVED">Disetujui</SelectItem>
-            <SelectItem key="REVISION_NEEDED">Perlu Revisi</SelectItem>
+            <SelectTrigger aria-label="Filter status" className="w-full md:max-w-[200px]">
+              <SelectValue placeholder="Filter Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Status</SelectItem>
+              <SelectItem value="SUBMITTED">Disubmit</SelectItem>
+              <SelectItem value="IN_REVIEW">Dalam Review</SelectItem>
+              <SelectItem value="APPROVED">Disetujui</SelectItem>
+              <SelectItem value="REVISION_NEEDED">Perlu Revisi</SelectItem>
+            </SelectContent>
           </Select>
         </div>
       </motion.div>
 
       {/* Projects List/Table */}
       <motion.div variants={itemVariants}>
-        <Card shadow="none" className="border border-border bg-card overflow-hidden">
+        <Card className="border border-border bg-card overflow-hidden shadow-none">
           <div className="px-4 py-2.5 border-b border-border flex items-center justify-between">
             <h2 className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Project Ditugaskan</h2>
             <span className="text-xs text-app-teritary-invert tabular-nums">
@@ -338,7 +347,7 @@ export function DosenProjectsContent({
             </span>
           </div>
 
-          <CardBody className="p-0">
+          <CardContent className="p-0">
             {filteredProjects.length === 0 ? (
               <div className="text-center py-12 px-4">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-app-quaternary flex items-center justify-center">
@@ -370,15 +379,17 @@ export function DosenProjectsContent({
 
                 {/* Desktop View - Table */}
                 <div className="hidden md:block p-4">
-                  <Table aria-label="Projects table" removeWrapper>
+                  <Table aria-label="Projects table">
                     <TableHeader>
-                      <TableColumn>MAHASISWA</TableColumn>
-                      <TableColumn>PROJECT</TableColumn>
-                      <TableColumn>SEMESTER</TableColumn>
-                      <TableColumn>STATUS</TableColumn>
-                      <TableColumn>PROGRESS</TableColumn>
-                      <TableColumn>REVIEW STATUS</TableColumn>
-                      <TableColumn>AKSI</TableColumn>
+                      <TableRow>
+                        <TableHead>MAHASISWA</TableHead>
+                        <TableHead>PROJECT</TableHead>
+                        <TableHead>SEMESTER</TableHead>
+                        <TableHead>STATUS</TableHead>
+                        <TableHead>PROGRESS</TableHead>
+                        <TableHead>REVIEW STATUS</TableHead>
+                        <TableHead>AKSI</TableHead>
+                      </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredProjects.map((project) => {
@@ -390,12 +401,15 @@ export function DosenProjectsContent({
                           <TableRow key={project.id} className="hover:bg-app-quinary">
                             <TableCell>
                               <div className="flex items-center gap-3">
-                                <Avatar
-                                  name={project.mahasiswa.name}
-                                  src={project.mahasiswa.image || undefined}
-                                  size="sm"
-                                  className="ring-2 ring-border"
-                                />
+                                <Avatar className="size-8 ring-2 ring-border">
+                                  <AvatarImage
+                                    src={project.mahasiswa.image || undefined}
+                                    alt={project.mahasiswa.name}
+                                  />
+                                  <AvatarFallback className="text-xs">
+                                    {project.mahasiswa.name.charAt(0).toUpperCase()}
+                                  </AvatarFallback>
+                                </Avatar>
                                 <div>
                                   <p className="font-medium text-sm">
                                     {project.mahasiswa.name}
@@ -424,23 +438,13 @@ export function DosenProjectsContent({
                               </p>
                             </TableCell>
                             <TableCell>
-                              <Chip
-                                size="sm"
-                                color={getStatusColor(project.status)}
-                                variant="flat"
-                              >
+                              <Badge variant={statusBadgeVariant(project.status)}>
                                 {getStatusLabel(project.status)}
-                              </Chip>
+                              </Badge>
                             </TableCell>
                             <TableCell>
                               <div className="w-24">
-                                <Progress
-                                  value={getProgress(project.status)}
-                                  color={getStatusColor(project.status)}
-                                  size="sm"
-                                  className="h-1.5"
-                                  classNames={{ track: 'bg-app-primary' }}
-                                />
+                                <Progress value={getProgress(project.status)} />
                                 <p className="text-xs text-app-secondary-invert mt-1 tabular-nums">
                                   {getProgress(project.status)}%
                                 </p>
@@ -448,37 +452,30 @@ export function DosenProjectsContent({
                             </TableCell>
                             <TableCell>
                               {myReview ? (
-                                <Chip
-                                  size="sm"
-                                  color={getStatusColor(myReview.status)}
-                                  variant="flat"
-                                >
+                                <Badge variant={statusBadgeVariant(myReview.status)}>
                                   {getStatusLabel(myReview.status)}
-                                </Chip>
+                                </Badge>
                               ) : (
-                                <Chip size="sm" variant="flat" color="warning">
+                                <Badge variant="outline">
                                   Belum Direview
-                                </Chip>
+                                </Badge>
                               )}
                             </TableCell>
                             <TableCell>
                               <div className="flex gap-2">
                                 <Button
-                                  as={Link}
-                                  href={`/dosen/projects/${project.id}`}
+                                  render={<Link href={`/dosen/projects/${project.id}`} />}
                                   size="sm"
-                                  variant="flat"
-                                  startContent={<Eye size={14} />}
+                                  variant="secondary"
                                 >
+                                  <Eye size={14} />
                                   Detail
                                 </Button>
                                 <Button
-                                  as={Link}
-                                  href={`/dosen/projects/${project.id}/review`}
+                                  render={<Link href={`/dosen/projects/${project.id}/review`} />}
                                   size="sm"
-                                  color="primary"
-                                  startContent={<ClipboardCheck size={14} />}
                                 >
+                                  <ClipboardCheck size={14} />
                                   Review
                                 </Button>
                               </div>
@@ -491,7 +488,7 @@ export function DosenProjectsContent({
                 </div>
               </>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
     </motion.div>

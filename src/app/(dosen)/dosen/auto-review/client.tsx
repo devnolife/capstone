@@ -1,17 +1,19 @@
 'use client';
 
 import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
-  Input,
   Select,
+  SelectContent,
   SelectItem,
-  Tooltip,
-} from '@heroui/react';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { motion } from 'framer-motion';
 import {
   Bot,
@@ -97,15 +99,15 @@ const getScoreBgColor = (score: number) => {
 const getStatusConfig = (status: string) => {
   switch (status) {
     case 'excellent':
-      return { color: 'success' as const, label: 'Excellent', icon: CheckCircle2 };
+      return { variant: 'secondary' as const, label: 'Excellent', icon: CheckCircle2 };
     case 'good':
-      return { color: 'primary' as const, label: 'Good', icon: CheckCircle2 };
+      return { variant: 'default' as const, label: 'Good', icon: CheckCircle2 };
     case 'warning':
-      return { color: 'warning' as const, label: 'Warning', icon: AlertTriangle };
+      return { variant: 'outline' as const, label: 'Warning', icon: AlertTriangle };
     case 'poor':
-      return { color: 'danger' as const, label: 'Needs Work', icon: XCircle };
+      return { variant: 'destructive' as const, label: 'Needs Work', icon: XCircle };
     default:
-      return { color: 'default' as const, label: 'Unknown', icon: Minus };
+      return { variant: 'outline' as const, label: 'Unknown', icon: Minus };
   }
 };
 
@@ -154,7 +156,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
     good: projects.filter((p) => p.status === 'good').length,
     warning: projects.filter((p) => p.status === 'warning').length,
     poor: projects.filter((p) => p.status === 'poor').length,
-    avgScore: projects.length > 0 
+    avgScore: projects.length > 0
       ? Math.round(projects.reduce((acc, p) => acc + p.overallScore, 0) / projects.length)
       : 0,
   };
@@ -175,12 +177,11 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
           description="Analisis otomatis kualitas project menggunakan AI"
           actions={
             <Button
-              color="secondary"
-              variant="flat"
-              startContent={<RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />}
-              onPress={handleRefreshAll}
-              isLoading={isRefreshing}
+              variant="secondary"
+              onClick={handleRefreshAll}
+              disabled={isRefreshing}
             >
+              <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
               {isRefreshing ? 'Menganalisis...' : 'Refresh Semua'}
             </Button>
           }
@@ -190,7 +191,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
       {/* Development Notice */}
       <motion.div variants={itemVariants}>
         <Card className="rounded-2xl border border-dashed border-warning/30 bg-warning/5 shadow-none">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning/10 text-warning">
                 <Construction size={18} />
@@ -198,13 +199,13 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
               <div>
                 <h4 className="font-semibold text-sm mb-1">Fitur dalam Pengembangan</h4>
                 <p className="text-xs text-app-secondary-invert leading-relaxed">
-                  Sistem AI Auto Review sedang dalam tahap pengembangan. Skor yang ditampilkan saat ini 
-                  adalah estimasi berdasarkan status project. Fitur analisis kode dan AI scoring akan 
+                  Sistem AI Auto Review sedang dalam tahap pengembangan. Skor yang ditampilkan saat ini
+                  adalah estimasi berdasarkan status project. Fitur analisis kode dan AI scoring akan
                   segera tersedia.
                 </p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -283,37 +284,35 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
       {/* Filters */}
       <motion.div variants={itemVariants}>
         <Card className="rounded-2xl border border-border bg-card shadow-none">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-3">
-              <Input
-                placeholder="Cari project atau mahasiswa..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                startContent={<Search size={16} className="text-app-teritary-invert" />}
-                variant="bordered"
-                classNames={{
-                  inputWrapper: 'border-border bg-app-quinary',
-                }}
-                className="flex-1"
-              />
-              <Select
-                placeholder="Filter Status"
-                selectedKeys={[statusFilter]}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                variant="bordered"
-                startContent={<Filter size={16} className="text-app-teritary-invert" />}
-                classNames={{
-                  trigger: 'border-border bg-app-quinary min-w-[160px]',
-                }}
-              >
-                <SelectItem key="all">Semua Status</SelectItem>
-                <SelectItem key="excellent">Excellent</SelectItem>
-                <SelectItem key="good">Good</SelectItem>
-                <SelectItem key="warning">Warning</SelectItem>
-                <SelectItem key="poor">Needs Work</SelectItem>
+              <div className="relative flex-1">
+                <Search
+                  size={16}
+                  className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  placeholder="Cari project atau mahasiswa..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as string)}>
+                <SelectTrigger className="min-w-[160px]">
+                  <Filter size={16} className="text-muted-foreground" />
+                  <SelectValue placeholder="Filter Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Status</SelectItem>
+                  <SelectItem value="excellent">Excellent</SelectItem>
+                  <SelectItem value="good">Good</SelectItem>
+                  <SelectItem value="warning">Warning</SelectItem>
+                  <SelectItem value="poor">Needs Work</SelectItem>
+                </SelectContent>
               </Select>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -321,15 +320,15 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
       <motion.div variants={itemVariants} className="space-y-4">
         {filteredProjects.length === 0 ? (
           <Card className="rounded-2xl border border-border bg-card shadow-none">
-            <CardBody className="p-8 text-center">
+            <CardContent className="p-8 text-center">
               <Bot size={48} className="mx-auto mb-4 text-app-teritary-invert" />
               <p className="font-semibold">Tidak ada project yang ditemukan</p>
               <p className="text-sm text-app-secondary-invert mt-1">
-                {projects.length === 0 
+                {projects.length === 0
                   ? 'Belum ada project yang ditugaskan kepada Anda'
                   : 'Coba ubah filter atau kata kunci pencarian'}
               </p>
-            </CardBody>
+            </CardContent>
           </Card>
         ) : (
           filteredProjects.map((project) => {
@@ -340,7 +339,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
             return (
               <motion.div key={project.id} variants={itemVariants}>
                 <Card className="rounded-2xl border border-border bg-card shadow-none hover:border-primary/50 transition-colors">
-                  <CardBody className="p-0">
+                  <CardContent className="p-0">
                     <div className="flex flex-col lg:flex-row">
                       {/* Left Section - Project Info */}
                       <div className="flex-1 p-4 lg:p-5">
@@ -394,12 +393,12 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                                   {project.title}
                                 </h3>
                                 <div className="flex items-center gap-2 mt-1">
-                                  <Avatar
-                                    name={project.mahasiswa.name}
-                                    src={avatarSrc}
-                                    size="sm"
-                                    className="w-5 h-5"
-                                  />
+                                  <Avatar className="size-5">
+                                    <AvatarImage src={avatarSrc} alt={project.mahasiswa.name} />
+                                    <AvatarFallback className="text-[10px]">
+                                      {project.mahasiswa.name.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
                                   <span className="text-sm text-app-secondary-invert">
                                     {project.mahasiswa.name}
                                   </span>
@@ -408,14 +407,10 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                                   </span>
                                 </div>
                               </div>
-                              <Chip
-                                size="sm"
-                                color={statusConfig.color}
-                                variant="flat"
-                                startContent={<StatusIcon size={12} />}
-                              >
+                              <Badge variant={statusConfig.variant}>
+                                <StatusIcon size={12} />
                                 {statusConfig.label}
-                              </Chip>
+                              </Badge>
                             </div>
 
                             {/* Meta Info */}
@@ -434,13 +429,12 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                                 })}
                               </span>
                               <span
-                                className={`flex items-center gap-1 ${
-                                  project.trend === 'up'
+                                className={`flex items-center gap-1 ${project.trend === 'up'
                                     ? 'text-success'
                                     : project.trend === 'down'
-                                    ? 'text-danger'
-                                    : 'text-app-teritary-invert'
-                                }`}
+                                      ? 'text-danger'
+                                      : 'text-app-teritary-invert'
+                                  }`}
                               >
                                 {project.trend === 'up' && <TrendingUp size={12} />}
                                 {project.trend === 'down' && <TrendingDown size={12} />}
@@ -458,27 +452,27 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                                 const AspectIcon = aspect.icon;
 
                                 return (
-                                  <Tooltip
-                                    key={aspect.key}
-                                    content={`${aspect.label}: ${score}/100`}
-                                  >
-                                    <div className="space-y-1">
-                                      <div className="flex items-center justify-between text-xs">
-                                        <span className="flex items-center gap-1 text-app-teritary-invert">
-                                          <AspectIcon size={10} />
-                                          {aspect.label}
-                                        </span>
-                                        <span className={`font-medium tabular-nums ${getScoreColor(score)}`}>
-                                          {score}
-                                        </span>
+                                  <Tooltip key={aspect.key}>
+                                    <TooltipTrigger render={<div />}>
+                                      <div className="space-y-1">
+                                        <div className="flex items-center justify-between text-xs">
+                                          <span className="flex items-center gap-1 text-app-teritary-invert">
+                                            <AspectIcon size={10} />
+                                            {aspect.label}
+                                          </span>
+                                          <span className={`font-medium tabular-nums ${getScoreColor(score)}`}>
+                                            {score}
+                                          </span>
+                                        </div>
+                                        <div className="h-1.5 bg-app-primary rounded-full overflow-hidden">
+                                          <div
+                                            className={`h-full rounded-full ${getScoreBgColor(score)}`}
+                                            style={{ width: `${score}%` }}
+                                          />
+                                        </div>
                                       </div>
-                                      <div className="h-1.5 bg-app-primary rounded-full overflow-hidden">
-                                        <div
-                                          className={`h-full rounded-full ${getScoreBgColor(score)}`}
-                                          style={{ width: `${score}%` }}
-                                        />
-                                      </div>
-                                    </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>{`${aspect.label}: ${score}/100`}</TooltipContent>
                                   </Tooltip>
                                 );
                               })}
@@ -490,27 +484,23 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                       {/* Right Section - Actions */}
                       <div className="flex lg:flex-col items-center justify-end gap-2 p-4 lg:p-5 lg:pl-0 border-t lg:border-t-0 lg:border-l border-border">
                         <Button
-                          as={Link}
-                          href={`/dosen/auto-review/${project.id}`}
+                          render={<Link href={`/dosen/auto-review/${project.id}`} />}
                           size="sm"
-                          color="primary"
-                          variant="flat"
-                          endContent={<ChevronRight size={14} />}
                         >
                           Detail
+                          <ChevronRight size={14} />
                         </Button>
                         <Button
-                          as={Link}
-                          href={`/dosen/projects/${project.id}`}
+                          render={<Link href={`/dosen/projects/${project.id}`} />}
                           size="sm"
-                          variant="bordered"
-                          startContent={<Eye size={14} />}
+                          variant="outline"
                         >
+                          <Eye size={14} />
                           Project
                         </Button>
                       </div>
                     </div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </motion.div>
             );
@@ -521,7 +511,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
       {/* Info Card */}
       <motion.div variants={itemVariants}>
         <Card className="rounded-2xl border border-dashed border-border bg-card shadow-none">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <Bot size={18} />
@@ -535,7 +525,7 @@ export function AutoReviewClient({ projects }: AutoReviewClientProps) {
                 </p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
     </motion.div>

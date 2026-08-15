@@ -1,13 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   FolderGit2,
   Users,
@@ -74,6 +71,23 @@ function getGreeting(): string {
   return 'Selamat Malam';
 }
 
+/** Pemetaan warna status (HeroUI legacy) ke varian Badge shadcn. */
+function statusBadgeVariant(
+  status: string
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  switch (getStatusColor(status)) {
+    case 'danger':
+      return 'destructive';
+    case 'success':
+    case 'secondary':
+      return 'secondary';
+    case 'primary':
+      return 'default';
+    default:
+      return 'outline';
+  }
+}
+
 export function DosenDashboardContent({
   userName,
   stats,
@@ -106,19 +120,18 @@ export function DosenDashboardContent({
           </p>
         </div>
         <Button
-          as={Link}
-          href="/dosen/projects"
+          render={<Link href="/dosen/projects" />}
           className="bg-[var(--color-ember)] text-white font-mono-display text-[10px] uppercase tracking-widest font-bold"
-          endContent={<ChevronRight size={16} />}
         >
           Lihat Semua Project
+          <ChevronRight size={16} />
         </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card shadow="none" className={statCardClass}>
-          <CardBody className="p-4">
+        <Card className={statCardClass}>
+          <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className={iconContainerClass}>
                 <FolderGit2 size={20} className="text-[var(--color-ember)]" />
@@ -128,11 +141,11 @@ export function DosenDashboardContent({
                 <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Total Project</p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
-        <Card shadow="none" className={statCardClass}>
-          <CardBody className="p-4">
+        <Card className={statCardClass}>
+          <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className={iconContainerClass}>
                 <Clock size={20} className="text-amber-600 dark:text-amber-400" />
@@ -142,11 +155,11 @@ export function DosenDashboardContent({
                 <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Perlu Direview</p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
-        <Card shadow="none" className={statCardClass}>
-          <CardBody className="p-4">
+        <Card className={statCardClass}>
+          <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className={iconContainerClass}>
                 <CheckCircle2 size={20} className="text-emerald-600 dark:text-emerald-400" />
@@ -156,11 +169,11 @@ export function DosenDashboardContent({
                 <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Selesai Review</p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
-        <Card shadow="none" className={statCardClass}>
-          <CardBody className="p-4">
+        <Card className={statCardClass}>
+          <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className={iconContainerClass}>
                 <Users size={20} className="text-[var(--color-steel)]" />
@@ -170,7 +183,7 @@ export function DosenDashboardContent({
                 <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Mahasiswa</p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
 
@@ -178,8 +191,8 @@ export function DosenDashboardContent({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left - Project List */}
         <div className="lg:col-span-2">
-          <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
-            <CardBody className="p-0">
+          <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
+            <CardContent className="p-0">
               <div className="p-4 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -192,14 +205,13 @@ export function DosenDashboardContent({
                     </div>
                   </div>
                   <Button
-                    as={Link}
-                    href="/dosen/projects"
+                    render={<Link href="/dosen/projects" />}
                     size="sm"
-                    variant="light"
+                    variant="ghost"
                     className="font-mono-display text-[10px] uppercase tracking-widest font-bold text-[var(--color-steel)] hover:text-[var(--color-ember)]"
-                    endContent={<ChevronRight size={14} />}
                   >
                     Lihat Semua
+                    <ChevronRight size={14} />
                   </Button>
                 </div>
               </div>
@@ -217,11 +229,15 @@ export function DosenDashboardContent({
                     >
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-3 min-w-0">
-                          <Avatar
-                            name={project.mahasiswa.name}
-                            src={getSimakPhotoUrl(project.mahasiswa.profilePhoto || project.mahasiswa.image || project.mahasiswa.username)}
-                            size="sm"
-                          />
+                          <Avatar className="size-8">
+                            <AvatarImage
+                              src={getSimakPhotoUrl(project.mahasiswa.profilePhoto || project.mahasiswa.image || project.mahasiswa.username)}
+                              alt={project.mahasiswa.name}
+                            />
+                            <AvatarFallback className="text-xs">
+                              {project.mahasiswa.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="min-w-0">
                             <h4 className="font-sans-display font-bold tracking-tight text-sm truncate text-[var(--color-obsidian)] dark:text-white">{project.title}</h4>
                             <p className="text-xs text-[var(--color-steel)]">
@@ -230,15 +246,13 @@ export function DosenDashboardContent({
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                          <Chip size="sm" color={getStatusColor(project.status)} variant="flat">
+                          <Badge variant={statusBadgeVariant(project.status)}>
                             {getStatusLabel(project.status)}
-                          </Chip>
+                          </Badge>
                           <Button
-                            as={Link}
-                            href={`/dosen/projects/${project.id}`}
-                            size="sm"
-                            variant="light"
-                            isIconOnly
+                            render={<Link href={`/dosen/projects/${project.id}`} />}
+                            size="icon-sm"
+                            variant="ghost"
                           >
                             <Eye size={16} />
                           </Button>
@@ -248,14 +262,14 @@ export function DosenDashboardContent({
                   ))
                 )}
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         </div>
 
         {/* Right - Activity */}
         <div>
-          <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
-            <CardBody className="p-0">
+          <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all">
+            <CardContent className="p-0">
               <div className="p-4 border-b border-[var(--color-pebble)] dark:border-[var(--color-graphite)]">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-2xl border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] bg-[var(--color-fog)] dark:bg-zinc-900/40">
@@ -288,9 +302,9 @@ export function DosenDashboardContent({
                         <p className="text-sm font-semibold truncate text-[var(--color-obsidian)] dark:text-white">{activity.project.title}</p>
                         <p className="text-xs text-[var(--color-steel)]">Review untuk {activity.project.mahasiswa.name}</p>
                         <div className="flex items-center gap-2 mt-1">
-                          <Chip size="sm" color={getStatusColor(activity.status)} variant="flat">
+                          <Badge variant={statusBadgeVariant(activity.status)}>
                             {getStatusLabel(activity.status)}
-                          </Chip>
+                          </Badge>
                           <span className="text-xs text-[var(--color-steel)]">
                             {formatDateTime(activity.updatedAt)}
                           </span>
@@ -300,35 +314,33 @@ export function DosenDashboardContent({
                   ))
                 )}
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Quick Actions */}
-          <Card shadow="none" className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all mt-4">
-            <CardBody className="p-4">
+          <Card className="bg-[var(--color-snow)] dark:bg-[var(--color-obsidian)] border border-[var(--color-pebble)] dark:border-[var(--color-graphite)] rounded-2xl hover:shadow-xl transition-all mt-4">
+            <CardContent className="p-4">
               <p className="font-mono-display text-[9px] uppercase tracking-widest font-bold text-[var(--color-steel)]">Navigasi</p>
               <h3 className="font-sans-display font-bold tracking-tight text-sm mb-3 text-[var(--color-obsidian)] dark:text-white">Aksi Cepat</h3>
               <div className="space-y-2">
                 <Button
-                  as={Link}
-                  href="/dosen/reviews"
-                  variant="flat"
+                  render={<Link href="/dosen/reviews" />}
+                  variant="secondary"
                   className="w-full justify-start bg-[var(--color-fog)] dark:bg-zinc-900/40 text-[var(--color-obsidian)] dark:text-white border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]"
-                  startContent={<ClipboardCheck size={16} />}
                 >
+                  <ClipboardCheck size={16} />
                   Lihat Review Saya
                 </Button>
                 <Button
-                  as={Link}
-                  href="/dosen/auto-review"
-                  variant="flat"
+                  render={<Link href="/dosen/auto-review" />}
+                  variant="secondary"
                   className="w-full justify-start bg-[var(--color-fog)] dark:bg-zinc-900/40 text-[var(--color-obsidian)] dark:text-white border border-[var(--color-pebble)] dark:border-[var(--color-graphite)]"
-                  startContent={<TrendingUp size={16} />}
                 >
+                  <TrendingUp size={16} />
                   Auto Review (AI)
                 </Button>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         </div>
       </div>

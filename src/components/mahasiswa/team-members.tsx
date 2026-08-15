@@ -1,18 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Input,
-  Button,
-  Avatar,
-  Chip,
-  Spinner,
-  Tooltip,
-  Divider,
-} from '@heroui/react';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Separator } from '@/components/ui/separator';
+import { getInitials } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users,
@@ -25,6 +22,7 @@ import {
   Crown,
   AlertCircle,
   CheckCircle2,
+  Loader2,
 } from 'lucide-react';
 import { useDebounce } from '@/hooks/use-debounce';
 
@@ -219,22 +217,20 @@ export default function TeamMembers({
       <div className="space-y-3">
         {/* Owner */}
         <div className="flex items-center gap-2">
-          <Avatar
-            src={ownerImage}
-            name={ownerName || 'Owner'}
-            size="sm"
-            isBordered
-            color="primary"
-          />
+          <Avatar size="sm" className="ring-2 ring-primary/40">
+            <AvatarImage src={ownerImage} alt={ownerName || 'Owner'} />
+            <AvatarFallback>{getInitials(ownerName || 'Owner')}</AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium truncate">{ownerName}</p>
             {ownerGithubUsername && (
               <p className="text-xs text-app-secondary-invert">@{ownerGithubUsername}</p>
             )}
           </div>
-          <Chip size="sm" color="primary" variant="flat" startContent={<Crown size={10} />}>
+          <Badge className="bg-primary/10 text-primary">
+            <Crown size={10} />
             Owner
-          </Chip>
+          </Badge>
         </div>
 
         {/* Members */}
@@ -245,11 +241,12 @@ export default function TeamMembers({
 
           return (
             <div key={member.id} className="flex items-center gap-2 group">
-              <Avatar
-                src={avatarUrl}
-                name={member.name || member.githubUsername}
-                size="sm"
-              />
+              <Avatar size="sm">
+                <AvatarImage src={avatarUrl} alt={member.name || member.githubUsername} />
+                <AvatarFallback>
+                  {getInitials(member.name || member.githubUsername)}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">
                   {member.name || member.githubUsername}
@@ -258,12 +255,10 @@ export default function TeamMembers({
               </div>
               {isEditable && (
                 <Button
-                  size="sm"
-                  variant="light"
-                  color="danger"
-                  isIconOnly
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
-                  onPress={() => handleRemoveMember(member)}
+                  size="icon-sm"
+                  variant="ghost"
+                  className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => handleRemoveMember(member)}
                 >
                   <X size={14} />
                 </Button>
@@ -276,11 +271,11 @@ export default function TeamMembers({
         {isEditable && canAddMore && (
           <Button
             size="sm"
-            variant="flat"
-            startContent={<UserPlus size={14} />}
-            onPress={() => setShowSearch(true)}
+            variant="outline"
+            onClick={() => setShowSearch(true)}
             className="w-full"
           >
+            <UserPlus size={14} />
             Tambah Anggota ({members.length}/{maxMembers})
           </Button>
         )}
@@ -302,26 +297,24 @@ export default function TeamMembers({
                 <p className="text-xs text-app-teritary-invert">Anggota kolaborator GitHub</p>
               </div>
             </div>
-            <Chip size="sm" variant="flat">
+            <Badge variant="secondary">
               {members.length + 1}/{maxMembers + 1} orang
-            </Chip>
+            </Badge>
           </div>
         </CardHeader>
       )}
 
-      <CardBody className="space-y-4 pt-2">
+      <CardContent className="space-y-4 pt-2">
         {/* Error Message */}
         {error && (
-          <div className="flex items-center gap-2 p-3 bg-danger/10 text-danger rounded-lg text-sm">
+          <div className="flex items-center gap-2 p-3 bg-destructive/10 text-destructive rounded-lg text-sm">
             <AlertCircle size={16} />
             {error}
             <Button
-              size="sm"
-              variant="light"
-              color="danger"
-              isIconOnly
-              className="ml-auto"
-              onPress={() => setError('')}
+              size="icon-sm"
+              variant="ghost"
+              className="ml-auto text-destructive"
+              onClick={() => setError('')}
             >
               <X size={14} />
             </Button>
@@ -330,13 +323,10 @@ export default function TeamMembers({
 
         {/* Owner - Team Lead */}
         <div className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl">
-          <Avatar
-            src={ownerImage}
-            name={ownerName || 'Owner'}
-            size="sm"
-            isBordered
-            color="primary"
-          />
+          <Avatar size="sm" className="ring-2 ring-primary/40">
+            <AvatarImage src={ownerImage} alt={ownerName || 'Owner'} />
+            <AvatarFallback>{getInitials(ownerName || 'Owner')}</AvatarFallback>
+          </Avatar>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm truncate">{ownerName}</p>
             {ownerGithubUsername && (
@@ -346,9 +336,10 @@ export default function TeamMembers({
               </p>
             )}
           </div>
-          <Chip size="sm" color="primary" variant="flat" startContent={<Crown size={10} />}>
+          <Badge className="bg-primary/10 text-primary">
+            <Crown size={10} />
             Owner
-          </Chip>
+          </Badge>
         </div>
 
         {/* Team Members List */}
@@ -367,11 +358,12 @@ export default function TeamMembers({
                 exit={{ opacity: 0, x: 10 }}
                 className="flex items-center gap-3 p-3 bg-app-quinary border border-border rounded-xl group"
               >
-                <Avatar
-                  src={avatarUrl}
-                  name={member.name || member.githubUsername}
-                  size="sm"
-                />
+                <Avatar size="sm">
+                  <AvatarImage src={avatarUrl} alt={member.name || member.githubUsername} />
+                  <AvatarFallback>
+                    {getInitials(member.name || member.githubUsername)}
+                  </AvatarFallback>
+                </Avatar>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">
                     {member.name || member.githubUsername}
@@ -381,26 +373,27 @@ export default function TeamMembers({
                     @{member.githubUsername}
                   </p>
                 </div>
-                <Tooltip content="Lihat profil GitHub">
-                  <Button
-                    as="a"
-                    href={`https://github.com/${member.githubUsername}`}
-                    target="_blank"
-                    size="sm"
-                    variant="light"
-                    isIconOnly
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <a
+                        href={`https://github.com/${member.githubUsername}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex size-7 items-center justify-center rounded-lg hover:bg-muted"
+                      />
+                    }
                   >
                     <ExternalLink size={14} />
-                  </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Lihat profil GitHub</TooltipContent>
                 </Tooltip>
                 {isEditable && (
                   <Button
-                    size="sm"
-                    variant="light"
-                    color="danger"
-                    isIconOnly
-                    className="opacity-0 group-hover:opacity-100 transition-opacity"
-                    onPress={() => handleRemoveMember(member)}
+                    size="icon-sm"
+                    variant="ghost"
+                    className="text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleRemoveMember(member)}
                   >
                     <X size={14} />
                   </Button>
@@ -413,30 +406,31 @@ export default function TeamMembers({
         {/* Add Member Section */}
         {isEditable && canAddMore && (
           <>
-            <Divider />
+            <Separator />
 
             {showSearch ? (
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
-                  <Input
-                    placeholder="Cari username GitHub..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    startContent={
-                      isSearching ? (
-                        <Spinner size="sm" />
+                  <div className="relative flex-1">
+                    <span className="absolute left-2.5 top-1/2 -translate-y-1/2">
+                      {isSearching ? (
+                        <Spinner className="size-4" />
                       ) : (
                         <Search size={16} className="text-app-teritary-invert" />
-                      )
-                    }
-                    size="sm"
-                    autoFocus
-                  />
+                      )}
+                    </span>
+                    <Input
+                      placeholder="Cari username GitHub..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-9"
+                      autoFocus
+                    />
+                  </div>
                   <Button
-                    size="sm"
-                    variant="flat"
-                    isIconOnly
-                    onPress={() => {
+                    size="icon-sm"
+                    variant="outline"
+                    onClick={() => {
                       setShowSearch(false);
                       setSearchQuery('');
                       setSearchResults([]);
@@ -457,7 +451,10 @@ export default function TeamMembers({
                         className="flex items-center gap-3 p-2 hover:bg-app-quaternary rounded-lg cursor-pointer transition-colors"
                         onClick={() => handleAddMember(user)}
                       >
-                        <Avatar src={user.avatar_url} name={user.login} size="sm" />
+                        <Avatar size="sm">
+                          <AvatarImage src={user.avatar_url} alt={user.login} />
+                          <AvatarFallback>{getInitials(user.login)}</AvatarFallback>
+                        </Avatar>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">
                             {user.name || user.login}
@@ -467,14 +464,8 @@ export default function TeamMembers({
                             {user.bio && ` • ${user.bio}`}
                           </p>
                         </div>
-                        <Button
-                          size="sm"
-                          color="primary"
-                          variant="flat"
-                          isIconOnly
-                          isLoading={isAdding}
-                        >
-                          <Plus size={14} />
+                        <Button size="icon-sm" variant="outline" disabled={isAdding}>
+                          {isAdding ? <Loader2 className="animate-spin" /> : <Plus size={14} />}
                         </Button>
                       </motion.div>
                     ))}
@@ -497,11 +488,11 @@ export default function TeamMembers({
               </div>
             ) : (
               <Button
-                variant="bordered"
-                className="w-full border-dashed"
-                startContent={<UserPlus size={18} />}
-                onPress={() => setShowSearch(true)}
+                variant="outline"
+                className="w-full border-dashed h-auto py-3"
+                onClick={() => setShowSearch(true)}
               >
+                <UserPlus size={18} />
                 <div className="text-left">
                   <p className="font-medium">Tambah Anggota Tim</p>
                   <p className="text-xs text-app-secondary-invert">
@@ -520,7 +511,7 @@ export default function TeamMembers({
             Tim sudah lengkap (maksimal {maxMembers} anggota)
           </div>
         )}
-      </CardBody>
+      </CardContent>
     </Card>
   );
 }

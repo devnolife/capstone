@@ -2,15 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Spinner,
-  Chip,
-  Avatar,
-} from '@heroui/react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Bell,
   Check,
@@ -23,6 +19,7 @@ import {
   ExternalLink,
   Users,
   X,
+  Loader2,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -242,7 +239,7 @@ export default function NotificationsPage() {
   if (isLoading) {
     return (
       <div className="flex h-[60vh] items-center justify-center">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -264,21 +261,20 @@ export default function NotificationsPage() {
             {unreadCount > 0 && (
               <Button
                 size="sm"
-                variant="flat"
-                startContent={<CheckCheck size={16} />}
-                onPress={handleMarkAllAsRead}
+                variant="outline"
+                onClick={handleMarkAllAsRead}
               >
+                <CheckCheck size={16} />
                 Tandai Semua Dibaca
               </Button>
             )}
             {notifications.some((n) => n.isRead) && (
               <Button
                 size="sm"
-                variant="flat"
-                color="danger"
-                startContent={<Trash2 size={16} />}
-                onPress={handleDeleteAllRead}
+                variant="destructive"
+                onClick={handleDeleteAllRead}
               >
+                <Trash2 size={16} />
                 Hapus Dibaca
               </Button>
             )}
@@ -297,10 +293,10 @@ export default function NotificationsPage() {
               <h2 className="font-display text-lg font-[450] tracking-tight">
                 Undangan Tim (<span className="tabular-nums">{invitations.length}</span>)
               </h2>
-              <Chip size="sm" color="warning" variant="flat">Perlu Respon</Chip>
+              <Badge variant="outline" className="border-amber-500/40 text-amber-600 dark:text-amber-400">Perlu Respon</Badge>
             </div>
           </CardHeader>
-          <CardBody className="p-0">
+          <CardContent className="p-0">
             <div className="divide-y divide-border">
               {invitations.map((invitation) => (
                 <div
@@ -308,12 +304,14 @@ export default function NotificationsPage() {
                   className="bg-app-quinary p-4"
                 >
                   <div className="flex items-start gap-4">
-                    <Avatar
-                      name={invitation.inviter.name}
-                      src={invitation.inviter.image || undefined}
-                      size="md"
-                      className="ring-2 ring-border"
-                    />
+                    <Avatar size="lg" className="ring-2 ring-border">
+                      {invitation.inviter.image && (
+                        <AvatarImage src={invitation.inviter.image} alt={invitation.inviter.name} />
+                      )}
+                      <AvatarFallback>
+                        {invitation.inviter.name?.charAt(0)?.toUpperCase() || '?'}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-start justify-between gap-2">
                         <div>
@@ -335,9 +333,9 @@ export default function NotificationsPage() {
                               </p>
                             )}
                             <div className="mt-2 flex items-center gap-2">
-                              <Chip size="sm" variant="flat" className="bg-app-quaternary text-app-secondary-invert">
+                              <Badge variant="secondary" className="bg-app-quaternary text-app-secondary-invert">
                                 {invitation.project.semester} {invitation.project.tahunAkademik}
-                              </Chip>
+                              </Badge>
                             </div>
                           </div>
                           <p className="text-app-teritary-invert mt-2 font-mono text-[10px] tracking-wider">
@@ -347,24 +345,28 @@ export default function NotificationsPage() {
                         <div className="flex items-center gap-2">
                           <Button
                             size="sm"
-                            color="success"
-                            variant="flat"
-                            startContent={<Check size={16} />}
-                            isLoading={respondingTo === invitation.id}
-                            isDisabled={respondingTo !== null}
-                            onPress={() => handleInvitationResponse(invitation.id, 'accept')}
+                            variant="outline"
+                            disabled={respondingTo !== null}
+                            onClick={() => handleInvitationResponse(invitation.id, 'accept')}
                           >
+                            {respondingTo === invitation.id ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <Check size={16} />
+                            )}
                             Terima
                           </Button>
                           <Button
                             size="sm"
-                            color="danger"
-                            variant="flat"
-                            startContent={<X size={16} />}
-                            isLoading={respondingTo === invitation.id}
-                            isDisabled={respondingTo !== null}
-                            onPress={() => handleInvitationResponse(invitation.id, 'reject')}
+                            variant="destructive"
+                            disabled={respondingTo !== null}
+                            onClick={() => handleInvitationResponse(invitation.id, 'reject')}
                           >
+                            {respondingTo === invitation.id ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <X size={16} />
+                            )}
                             Tolak
                           </Button>
                         </div>
@@ -374,7 +376,7 @@ export default function NotificationsPage() {
                 </div>
               ))}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       )}
 
@@ -385,7 +387,7 @@ export default function NotificationsPage() {
             Daftar Notifikasi (<span className="tabular-nums">{notifications.length}</span>)
           </h2>
         </CardHeader>
-        <CardBody className="p-0">
+        <CardContent className="p-0">
           {notifications.length === 0 ? (
             <div className="py-12 text-center">
               <div className="bg-app-primary text-app-teritary-invert mx-auto mb-4 flex size-16 items-center justify-center rounded-full">
@@ -414,9 +416,9 @@ export default function NotificationsPage() {
                               {notification.title}
                             </h3>
                             {!notification.isRead && (
-                              <Chip size="sm" color="primary" variant="flat">
+                              <Badge>
                                 Baru
-                              </Chip>
+                              </Badge>
                             )}
                           </div>
                           <p className="text-app-secondary-invert mt-1 text-sm">
@@ -437,10 +439,10 @@ export default function NotificationsPage() {
                         <div className="flex items-center gap-1">
                           {!notification.isRead && (
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="light"
-                              onPress={() => {
+                              size="icon-sm"
+                              variant="ghost"
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 handleMarkAsRead(notification.id);
                               }}
                             >
@@ -448,11 +450,11 @@ export default function NotificationsPage() {
                             </Button>
                           )}
                           <Button
-                            isIconOnly
-                            size="sm"
-                            variant="light"
-                            color="danger"
-                            onPress={() => {
+                            size="icon-sm"
+                            variant="ghost"
+                            className="text-destructive hover:text-destructive"
+                            onClick={(e) => {
+                              e.stopPropagation();
                               handleDelete(notification.id);
                             }}
                           >
@@ -466,7 +468,7 @@ export default function NotificationsPage() {
               ))}
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Confirm Dialog */}

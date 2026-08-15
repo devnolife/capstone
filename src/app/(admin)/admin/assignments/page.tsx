@@ -3,28 +3,35 @@
 import { useState, useEffect, useMemo, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 import {
-  Button,
-  Chip,
-  Avatar,
-  Input,
   Select,
+  SelectContent,
   SelectItem,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Spinner,
-  Tabs,
-  Tab,
-  Badge,
-  Tooltip,
-  addToast,
-} from '@heroui/react';
-import { Search, UserPlus, Trash2, UserCog, FolderGit2, Users, ClipboardCheck, Link2, AlertTriangle, CheckCircle2, Filter } from 'lucide-react';
-import { formatDate, getStatusColor, getStatusLabel } from '@/lib/utils';
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { addToast } from '@/lib/toast';
+import { Search, UserPlus, Trash2, UserCog, FolderGit2, Users, ClipboardCheck, AlertTriangle, CheckCircle2, Filter, Loader2 } from 'lucide-react';
+import { getInitials, getStatusColor, getStatusLabel } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
+
+const statusToneClass: Record<string, string> = {
+  default: 'bg-muted text-muted-foreground',
+  primary: 'bg-primary/10 text-primary',
+  secondary: 'bg-secondary text-secondary-foreground',
+  success:
+    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+  warning:
+    'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  danger: 'bg-destructive/10 text-destructive',
+};
 
 // Animation variants
 const containerVariants = {
@@ -120,9 +127,9 @@ function ProjectAssignmentCard({
           <div className="flex-1 min-w-0">
             <p className="font-semibold text-sm line-clamp-2">{project.title}</p>
             <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <Chip size="sm" color={getStatusColor(project.status)} variant="flat" className="h-5 text-[10px]">
+              <Badge variant="secondary" className={`h-5 text-[10px] ${statusToneClass[getStatusColor(project.status)]}`}>
                 {getStatusLabel(project.status)}
-              </Chip>
+              </Badge>
               <span className="text-xs text-zinc-500">
                 {project.mahasiswa.name}
                 {project.mahasiswa.nim ? ` (${project.mahasiswa.nim})` : ''}
@@ -130,13 +137,15 @@ function ProjectAssignmentCard({
             </div>
           </div>
           {project.assignments.length === 0 ? (
-            <Chip size="sm" color="warning" variant="flat" startContent={<AlertTriangle size={12} />} className="shrink-0">
+            <Badge variant="secondary" className={`shrink-0 ${statusToneClass.warning}`}>
+              <AlertTriangle size={12} />
               Belum ada
-            </Chip>
+            </Badge>
           ) : (
-            <Chip size="sm" color="success" variant="flat" startContent={<CheckCircle2 size={12} />} className="shrink-0">
+            <Badge variant="secondary" className={`shrink-0 ${statusToneClass.success}`}>
+              <CheckCircle2 size={12} />
               {project.assignments.length} dosen
-            </Chip>
+            </Badge>
           )}
         </div>
 
@@ -151,20 +160,25 @@ function ProjectAssignmentCard({
                   className="flex items-center justify-between p-2 rounded-lg bg-zinc-50 dark:bg-zinc-800/50"
                 >
                   <div className="flex items-center gap-2">
-                    <Avatar name={assignment.dosen.name} size="sm" className="w-6 h-6" />
+                    <Avatar className="w-6 h-6">
+                      <AvatarFallback className="text-[10px]">{getInitials(assignment.dosen.name)}</AvatarFallback>
+                    </Avatar>
                     <span className="text-sm">{assignment.dosen.name}</span>
                   </div>
-                  <Tooltip content="Hapus penugasan">
-                    <Button
-                      isIconOnly
-                      size="sm"
-                      variant="light"
-                      color="danger"
-                      className="min-w-6 w-6 h-6"
-                      onPress={() => onRemoveAssignment(assignment.id)}
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          size="icon-xs"
+                          variant="ghost"
+                          className="text-destructive"
+                          onClick={() => onRemoveAssignment(assignment.id)}
+                        />
+                      }
                     >
                       <Trash2 size={14} />
-                    </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Hapus penugasan</TooltipContent>
                   </Tooltip>
                 </div>
               ))}
@@ -175,38 +189,41 @@ function ProjectAssignmentCard({
         {/* Quick Assign */}
         <div className="flex items-center gap-2">
           <Select
-            size="sm"
-            placeholder={availableDosen.length === 0 ? 'Semua dosen sudah ditugaskan' : 'Pilih dosen...'}
-            selectedKeys={selectedDosen ? [selectedDosen] : []}
-            onChange={(e) => setSelectedDosen(e.target.value)}
-            isDisabled={availableDosen.length === 0}
-            classNames={{
-              trigger: 'bg-zinc-50 dark:bg-zinc-800 min-h-9 h-9',
+            value={selectedDosen || null}
+            onValueChange={(value) => {
+              if (typeof value === 'string') setSelectedDosen(value);
             }}
-            className="flex-1"
-            aria-label="Pilih dosen penguji"
           >
-            {availableDosen.map((dosen) => (
-              <SelectItem key={dosen.id} textValue={dosen.name}>
-                <div className="flex items-center gap-2">
-                  <Avatar name={dosen.name} size="sm" className="w-5 h-5" />
-                  <div>
-                    <p className="text-sm">{dosen.name}</p>
-                    {dosen.nip && <p className="text-[10px] text-zinc-400">{dosen.nip}</p>}
-                  </div>
-                </div>
-              </SelectItem>
-            ))}
+            <SelectTrigger
+              className="flex-1 h-9 bg-zinc-50 dark:bg-zinc-800"
+              disabled={availableDosen.length === 0}
+              aria-label="Pilih dosen penguji"
+            >
+              <SelectValue
+                placeholder={availableDosen.length === 0 ? 'Semua dosen sudah ditugaskan' : 'Pilih dosen...'}
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {availableDosen.map((dosen) => (
+                <SelectItem key={dosen.id} value={dosen.id}>
+                  <span className="flex items-center gap-2">
+                    <Avatar className="w-5 h-5">
+                      <AvatarFallback className="text-[9px]">{getInitials(dosen.name)}</AvatarFallback>
+                    </Avatar>
+                    <span className="text-sm">{dosen.name}</span>
+                    {dosen.nip && <span className="text-[10px] text-muted-foreground">{dosen.nip}</span>}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
           <Button
             size="sm"
-            color="primary"
-            isDisabled={!selectedDosen || isAssigning}
-            isLoading={localAssigning}
-            onPress={handleAssign}
-            startContent={!localAssigning && <UserPlus size={14} />}
+            disabled={!selectedDosen || isAssigning || localAssigning}
+            onClick={handleAssign}
             className="shrink-0"
           >
+            {localAssigning ? <Loader2 className="animate-spin" /> : <UserPlus size={14} />}
             Assign
           </Button>
         </div>
@@ -217,7 +234,7 @@ function ProjectAssignmentCard({
 
 export default function AdminAssignmentsPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Spinner size="lg" /></div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-[60vh]"><Spinner className="size-8" /></div>}>
       <AdminAssignmentsPageInner />
     </Suspense>
   );
@@ -421,7 +438,7 @@ function AdminAssignmentsPageInner() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -432,8 +449,8 @@ function AdminAssignmentsPageInner() {
       <motion.div variants={itemVariants}>
         <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-default-900">Penugasan Dosen</h1>
-            <p className="text-sm text-default-500 mt-0.5">
+            <h1 className="text-2xl font-semibold text-foreground">Penugasan Dosen</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
               Kelola penugasan dosen penguji ke project mahasiswa
             </p>
           </div>
@@ -494,33 +511,36 @@ function AdminAssignmentsPageInner() {
       <motion.div variants={itemVariants}>
         <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
           <div className="flex flex-col sm:flex-row gap-3">
-            <Input
-              placeholder="Cari project atau mahasiswa..."
-              startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              classNames={{ inputWrapper: 'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50' }}
-              className="flex-1"
-            />
+            <div className="relative flex-1">
+              <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
+              <Input
+                placeholder="Cari project atau mahasiswa..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 h-10 bg-slate-50 dark:bg-zinc-800"
+              />
+            </div>
             <Select
-              size="md"
-              placeholder="Semua Status"
-              selectedKeys={statusFilter !== 'all' ? [statusFilter] : []}
-              onChange={(e) => setStatusFilter(e.target.value || 'all')}
-              startContent={<Filter size={16} className="text-slate-400" />}
-              classNames={{ trigger: 'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50' }}
-              className="w-full sm:w-52"
-              aria-label="Filter status"
+              value={statusFilter}
+              onValueChange={(value) => {
+                if (typeof value === 'string') setStatusFilter(value || 'all');
+              }}
             >
-              {availableStatuses.map((status) => (
-                <SelectItem key={status} textValue={getStatusLabel(status)}>
-                  <div className="flex items-center gap-2">
-                    <Chip size="sm" color={getStatusColor(status)} variant="dot" className="border-none">
-                      {getStatusLabel(status)}
-                    </Chip>
-                  </div>
-                </SelectItem>
-              ))}
+              <SelectTrigger
+                className="w-full sm:w-52 h-10 bg-slate-50 dark:bg-zinc-800"
+                aria-label="Filter status"
+              >
+                <Filter size={16} className="text-slate-400" />
+                <SelectValue placeholder="Semua Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Status</SelectItem>
+                {availableStatuses.map((status) => (
+                  <SelectItem key={status} value={status}>
+                    {getStatusLabel(status)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </Select>
           </div>
         </div>
@@ -530,38 +550,29 @@ function AdminAssignmentsPageInner() {
       <motion.div variants={itemVariants}>
         <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 overflow-hidden">
           <Tabs
-            selectedKey={activeTab}
-            onSelectionChange={(key) => setActiveTab(key as string)}
-            variant="underlined"
-            classNames={{
-              tabList: 'px-4 pt-3 border-b border-slate-200/60 dark:border-zinc-700/50',
-              tab: 'h-10',
-            }}
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as string)}
+            className="gap-0"
           >
-            <Tab
-              key="unassigned"
-              title={
-                <div className="flex items-center gap-2">
-                  <AlertTriangle size={16} />
-                  <span>Belum Ditugaskan</span>
-                  {unassignedProjects.length > 0 && (
-                    <Badge color="danger" content={unassignedProjects.length} size="sm">
-                      <span />
-                    </Badge>
-                  )}
-                </div>
-              }
-            />
-            <Tab
-              key="assigned"
-              title={
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 size={16} />
-                  <span>Sudah Ditugaskan</span>
-                  <span className="text-xs text-zinc-400">({assignedProjects.length})</span>
-                </div>
-              }
-            />
+            <TabsList
+              variant="line"
+              className="h-auto w-full justify-start rounded-none px-4 pt-3 pb-2 border-b border-slate-200/60 dark:border-zinc-700/50"
+            >
+              <TabsTrigger value="unassigned" className="h-10 flex-none">
+                <AlertTriangle size={16} />
+                <span>Belum Ditugaskan</span>
+                {unassignedProjects.length > 0 && (
+                  <Badge variant="secondary" className={statusToneClass.danger}>
+                    {unassignedProjects.length}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger value="assigned" className="h-10 flex-none">
+                <CheckCircle2 size={16} />
+                <span>Sudah Ditugaskan</span>
+                <span className="text-xs text-muted-foreground">({assignedProjects.length})</span>
+              </TabsTrigger>
+            </TabsList>
           </Tabs>
 
           <div className="p-4">

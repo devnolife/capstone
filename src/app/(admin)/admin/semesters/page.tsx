@@ -1,19 +1,19 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
-  Button,
-  Chip,
-  Input,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Spinner,
-  Switch,
-} from '@heroui/react';
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Spinner } from '@/components/ui/spinner';
+import { Switch } from '@/components/ui/switch';
 import { motion } from 'framer-motion';
 import {
   Plus,
@@ -25,6 +25,7 @@ import {
   CalendarClock,
   Search,
   Clock,
+  Loader2,
 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
@@ -93,12 +94,12 @@ export default function AdminSemestersPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const {
-    isOpen: isEditOpen,
-    onOpen: onEditOpen,
-    onClose: onEditClose,
-  } = useDisclosure();
+  const [isOpen, setIsOpen] = useState(false);
+  const onOpen = () => setIsOpen(true);
+  const onClose = () => setIsOpen(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const onEditOpen = () => setIsEditOpen(true);
+  const onEditClose = () => setIsEditOpen(false);
   const { confirm, ConfirmDialog } = useConfirmDialog();
 
   // Form state
@@ -283,7 +284,7 @@ export default function AdminSemestersPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -299,19 +300,18 @@ export default function AdminSemestersPage() {
       <motion.div variants={itemVariants}>
         <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold text-default-900">Manajemen Semester</h1>
-            <p className="text-sm text-default-500 mt-0.5">
+            <h1 className="text-2xl font-semibold text-foreground">Manajemen Semester</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">
               Kelola periode semester untuk pengumpulan project
             </p>
           </div>
           <Button
-            color="primary"
-            startContent={<Plus size={16} />}
-            onPress={() => {
+            onClick={() => {
               resetForm();
               onOpen();
             }}
           >
+            <Plus size={16} />
             Tambah Semester
           </Button>
         </header>
@@ -363,12 +363,11 @@ export default function AdminSemestersPage() {
                   )}
                 </div>
               </div>
-              <Chip
-                size="lg"
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold px-4"
+              <Badge
+                className="h-7 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold text-sm"
               >
                 {activeSemester.tahunAkademik}
-              </Chip>
+              </Badge>
             </div>
           </div>
         </motion.div>
@@ -436,16 +435,15 @@ export default function AdminSemestersPage() {
       {/* Search Card - Softer */}
       <motion.div variants={itemVariants}>
         <div className="rounded-xl border border-slate-200/60 dark:border-zinc-700/50 bg-white dark:bg-zinc-900/50 p-4">
-          <Input
-            placeholder="Cari semester..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            startContent={<Search size={18} className="text-slate-400 dark:text-zinc-500" />}
-            classNames={{
-              inputWrapper:
-                'bg-slate-50 dark:bg-zinc-800 border-slate-200/60 dark:border-zinc-700/50',
-            }}
-          />
+          <div className="relative">
+            <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-zinc-500" />
+            <Input
+              placeholder="Cari semester..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 bg-slate-50 dark:bg-zinc-800"
+            />
+          </div>
         </div>
       </motion.div>
 
@@ -499,18 +497,17 @@ export default function AdminSemestersPage() {
                         </div>
                       </div>
                       {semester.isActive ? (
-                        <Chip
-                          size="sm"
+                        <Badge
+                          variant="secondary"
                           className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                         >
                           Aktif
-                        </Chip>
+                        </Badge>
                       ) : (
                         <Button
                           size="sm"
-                          variant="flat"
-                          color="primary"
-                          onPress={() => handleSetActive(semester)}
+                          variant="outline"
+                          onClick={() => handleSetActive(semester)}
                         >
                           Set Aktif
                         </Button>
@@ -538,22 +535,21 @@ export default function AdminSemestersPage() {
                     <div className="flex gap-2">
                       <Button
                         size="sm"
-                        variant="flat"
+                        variant="outline"
                         className="flex-1"
-                        startContent={<Edit size={14} />}
-                        onPress={() => openEditModal(semester)}
+                        onClick={() => openEditModal(semester)}
                       >
+                        <Edit size={14} />
                         Edit
                       </Button>
                       <Button
                         size="sm"
-                        variant="flat"
-                        color="danger"
+                        variant="destructive"
                         className="flex-1"
-                        startContent={<Trash2 size={14} />}
-                        onPress={() => handleDeleteSemester(semester.id)}
-                        isDisabled={semester.isActive}
+                        onClick={() => handleDeleteSemester(semester.id)}
+                        disabled={semester.isActive}
                       >
+                        <Trash2 size={14} />
                         Hapus
                       </Button>
                     </div>
@@ -608,9 +604,9 @@ export default function AdminSemestersPage() {
                           </div>
                         </td>
                         <td className="p-4">
-                          <Chip size="sm" variant="flat">
+                          <Badge variant="secondary">
                             {semester.tahunAkademik}
-                          </Chip>
+                          </Badge>
                         </td>
                         <td className="p-4">
                           <div className="space-y-1.5 text-sm">
@@ -637,18 +633,17 @@ export default function AdminSemestersPage() {
                         </td>
                         <td className="p-4">
                           {semester.isActive ? (
-                            <Chip
-                              size="sm"
+                            <Badge
+                              variant="secondary"
                               className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400"
                             >
                               Aktif
-                            </Chip>
+                            </Badge>
                           ) : (
                             <Button
                               size="sm"
-                              variant="flat"
-                              color="primary"
-                              onPress={() => handleSetActive(semester)}
+                              variant="outline"
+                              onClick={() => handleSetActive(semester)}
                             >
                               Set Aktif
                             </Button>
@@ -657,20 +652,19 @@ export default function AdminSemestersPage() {
                         <td className="p-4">
                           <div className="flex gap-2">
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="flat"
-                              onPress={() => openEditModal(semester)}
+                              size="icon-sm"
+                              variant="outline"
+                              aria-label="Edit semester"
+                              onClick={() => openEditModal(semester)}
                             >
                               <Edit size={16} />
                             </Button>
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="flat"
-                              color="danger"
-                              onPress={() => handleDeleteSemester(semester.id)}
-                              isDisabled={semester.isActive}
+                              size="icon-sm"
+                              variant="destructive"
+                              aria-label="Hapus semester"
+                              onClick={() => handleDeleteSemester(semester.id)}
+                              disabled={semester.isActive}
                             >
                               <Trash2 size={16} />
                             </Button>
@@ -687,192 +681,228 @@ export default function AdminSemestersPage() {
       </motion.div>
 
       {/* Create Semester Modal */}
-      <Modal isOpen={isOpen} onClose={onClose} size="lg">
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-lg">
+      <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+        <DialogContent className="sm:max-w-2xl p-0 gap-0">
+          <DialogHeader className="flex flex-row items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-xl p-4">
             <div className="p-2 rounded-lg bg-white/20">
               <Plus size={20} />
             </div>
-            <span>Tambah Semester Baru</span>
-          </ModalHeader>
-          <ModalBody className="space-y-4 pt-6">
+            <DialogTitle className="text-white">Tambah Semester Baru</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 p-6">
             {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
+              <div className="bg-destructive/10 text-destructive border border-destructive/30 rounded-lg p-3 text-sm">
                 {error}
               </div>
             )}
-            <Input
-              label="Nama Semester"
-              placeholder="Contoh: Ganjil 2024/2025"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              isRequired
-            />
-            <Input
-              label="Tahun Akademik"
-              placeholder="Contoh: 2024/2025"
-              value={formData.tahunAkademik}
-              onChange={(e) =>
-                setFormData({ ...formData, tahunAkademik: e.target.value })
-              }
-              isRequired
-              list="tahun-akademik-list"
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="semester-name">Nama Semester</Label>
+              <Input
+                id="semester-name"
+                placeholder="Contoh: Ganjil 2024/2025"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="semester-tahun">Tahun Akademik</Label>
+              <Input
+                id="semester-tahun"
+                placeholder="Contoh: 2024/2025"
+                value={formData.tahunAkademik}
+                onChange={(e) =>
+                  setFormData({ ...formData, tahunAkademik: e.target.value })
+                }
+                required
+                list="tahun-akademik-list"
+              />
+            </div>
             <datalist id="tahun-akademik-list">
               {tahunAkademikOptions.map((ta) => (
                 <option key={ta} value={ta} />
               ))}
             </datalist>
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="date"
-                label="Tanggal Mulai"
-                value={formData.startDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, startDate: e.target.value })
-                }
-                isRequired
-              />
-              <Input
-                type="date"
-                label="Tanggal Selesai"
-                value={formData.endDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, endDate: e.target.value })
-                }
-                isRequired
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="semester-start">Tanggal Mulai</Label>
+                <Input
+                  id="semester-start"
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startDate: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="semester-end">Tanggal Selesai</Label>
+                <Input
+                  id="semester-end"
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
+                  required
+                />
+              </div>
             </div>
-            <Input
-              type="datetime-local"
-              label="Batas Submission Project"
-              description="Opsional. Jika diisi, mahasiswa tidak dapat submit setelah waktu ini."
-              value={formData.submissionDeadline}
-              onChange={(e) =>
-                setFormData({ ...formData, submissionDeadline: e.target.value })
-              }
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="semester-deadline">Batas Submission Project</Label>
+              <Input
+                id="semester-deadline"
+                type="datetime-local"
+                value={formData.submissionDeadline}
+                onChange={(e) =>
+                  setFormData({ ...formData, submissionDeadline: e.target.value })
+                }
+              />
+              <p className="text-xs text-muted-foreground">
+                Opsional. Jika diisi, mahasiswa tidak dapat submit setelah waktu ini.
+              </p>
+            </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <span className="text-sm font-medium">
                 Set sebagai Semester Aktif
               </span>
               <Switch
-                isSelected={formData.isActive}
-                onValueChange={(value) =>
+                checked={formData.isActive}
+                onCheckedChange={(value) =>
                   setFormData({ ...formData, isActive: value })
                 }
               />
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onClose}>
+          </div>
+          <DialogFooter className="p-6 pt-0">
+            <Button variant="outline" onClick={onClose}>
               Batal
             </Button>
             <Button
               className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold"
-              onPress={handleCreateSemester}
-              isLoading={isSubmitting}
+              onClick={handleCreateSemester}
+              disabled={isSubmitting}
             >
+              {isSubmitting && <Loader2 className="animate-spin" />}
               Simpan
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit Semester Modal */}
-      <Modal isOpen={isEditOpen} onClose={onEditClose} size="lg">
-        <ModalContent>
-          <ModalHeader className="flex items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-lg">
+      <Dialog open={isEditOpen} onOpenChange={(open) => { if (!open) onEditClose(); }}>
+        <DialogContent className="sm:max-w-2xl p-0 gap-0">
+          <DialogHeader className="flex flex-row items-center gap-3 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-t-xl p-4">
             <div className="p-2 rounded-lg bg-white/20">
               <Edit size={20} />
             </div>
-            <span>Edit Semester</span>
-          </ModalHeader>
-          <ModalBody className="space-y-4 pt-6">
+            <DialogTitle className="text-white">Edit Semester</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 p-6">
             {error && (
-              <div className="bg-danger-50 text-danger border border-danger-200 rounded-lg p-3 text-sm">
+              <div className="bg-destructive/10 text-destructive border border-destructive/30 rounded-lg p-3 text-sm">
                 {error}
               </div>
             )}
-            <Input
-              label="Nama Semester"
-              placeholder="Contoh: Ganjil 2024/2025"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              isRequired
-            />
-            <Input
-              label="Tahun Akademik"
-              placeholder="Contoh: 2024/2025"
-              value={formData.tahunAkademik}
-              onChange={(e) =>
-                setFormData({ ...formData, tahunAkademik: e.target.value })
-              }
-              isRequired
-              list="tahun-akademik-list-edit"
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="semester-edit-name">Nama Semester</Label>
+              <Input
+                id="semester-edit-name"
+                placeholder="Contoh: Ganjil 2024/2025"
+                value={formData.name}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="semester-edit-tahun">Tahun Akademik</Label>
+              <Input
+                id="semester-edit-tahun"
+                placeholder="Contoh: 2024/2025"
+                value={formData.tahunAkademik}
+                onChange={(e) =>
+                  setFormData({ ...formData, tahunAkademik: e.target.value })
+                }
+                required
+                list="tahun-akademik-list-edit"
+              />
+            </div>
             <datalist id="tahun-akademik-list-edit">
               {tahunAkademikOptions.map((ta) => (
                 <option key={ta} value={ta} />
               ))}
             </datalist>
             <div className="grid grid-cols-2 gap-4">
-              <Input
-                type="date"
-                label="Tanggal Mulai"
-                value={formData.startDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, startDate: e.target.value })
-                }
-                isRequired
-              />
-              <Input
-                type="date"
-                label="Tanggal Selesai"
-                value={formData.endDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, endDate: e.target.value })
-                }
-                isRequired
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="semester-edit-start">Tanggal Mulai</Label>
+                <Input
+                  id="semester-edit-start"
+                  type="date"
+                  value={formData.startDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, startDate: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="semester-edit-end">Tanggal Selesai</Label>
+                <Input
+                  id="semester-edit-end"
+                  type="date"
+                  value={formData.endDate}
+                  onChange={(e) =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
+                  required
+                />
+              </div>
             </div>
-            <Input
-              type="datetime-local"
-              label="Batas Submission Project"
-              description="Opsional. Kosongkan untuk menonaktifkan batas submission."
-              value={formData.submissionDeadline}
-              onChange={(e) =>
-                setFormData({ ...formData, submissionDeadline: e.target.value })
-              }
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="semester-edit-deadline">Batas Submission Project</Label>
+              <Input
+                id="semester-edit-deadline"
+                type="datetime-local"
+                value={formData.submissionDeadline}
+                onChange={(e) =>
+                  setFormData({ ...formData, submissionDeadline: e.target.value })
+                }
+              />
+              <p className="text-xs text-muted-foreground">
+                Opsional. Kosongkan untuk menonaktifkan batas submission.
+              </p>
+            </div>
             <div className="flex items-center justify-between p-3 rounded-lg bg-zinc-100 dark:bg-zinc-800">
               <span className="text-sm font-medium">Semester Aktif</span>
               <Switch
-                isSelected={formData.isActive}
-                onValueChange={(value) =>
+                checked={formData.isActive}
+                onCheckedChange={(value) =>
                   setFormData({ ...formData, isActive: value })
                 }
               />
             </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="flat" onPress={onEditClose}>
+          </div>
+          <DialogFooter className="p-6 pt-0">
+            <Button variant="outline" onClick={onEditClose}>
               Batal
             </Button>
             <Button
               className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold"
-              onPress={handleUpdateSemester}
-              isLoading={isSubmitting}
+              onClick={handleUpdateSemester}
+              disabled={isSubmitting}
             >
+              {isSubmitting && <Loader2 className="animate-spin" />}
               Update
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirm Dialog */}
       <ConfirmDialog />

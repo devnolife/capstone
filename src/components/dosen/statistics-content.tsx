@@ -1,22 +1,20 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Spinner,
-  Chip,
-  Progress,
-  Divider,
   Table,
   TableHeader,
-  TableColumn,
+  TableHead,
   TableBody,
   TableRow,
   TableCell,
-  Tooltip,
-} from '@heroui/react';
+} from '@/components/ui/table';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   TrendingUp,
   CheckCircle2,
@@ -97,6 +95,43 @@ function getGradeLabel(score: number): { label: string; color: 'success' | 'prim
   return { label: 'D', color: 'danger' };
 }
 
+type LegacyColor = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+
+/** Pemetaan warna legacy ke varian Badge shadcn. */
+function badgeVariant(
+  color: LegacyColor
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  switch (color) {
+    case 'danger':
+      return 'destructive';
+    case 'success':
+    case 'secondary':
+      return 'secondary';
+    case 'primary':
+      return 'default';
+    default:
+      return 'outline';
+  }
+}
+
+/** Warna indikator Progress agar semantik warna lama tetap terlihat. */
+function progressIndicatorClass(color: LegacyColor): string {
+  switch (color) {
+    case 'success':
+      return '[&_[data-slot=progress-indicator]]:bg-success';
+    case 'warning':
+      return '[&_[data-slot=progress-indicator]]:bg-warning';
+    case 'danger':
+      return '[&_[data-slot=progress-indicator]]:bg-destructive';
+    case 'secondary':
+      return '[&_[data-slot=progress-indicator]]:bg-secondary';
+    case 'default':
+      return '[&_[data-slot=progress-indicator]]:bg-muted-foreground';
+    default:
+      return '';
+  }
+}
+
 function getStatusColor(status: string): 'success' | 'primary' | 'warning' | 'default' {
   switch (status) {
     case 'COMPLETED':
@@ -160,7 +195,7 @@ export function StatisticsContent() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <Spinner size="lg" label="Memuat statistik..." />
+        <Spinner className="size-8" aria-label="Memuat statistik..." />
       </div>
     );
   }
@@ -168,10 +203,10 @@ export function StatisticsContent() {
   if (!stats) {
     return (
       <Card className="rounded-2xl border border-border bg-card shadow-none">
-        <CardBody className="text-center py-10">
+        <CardContent className="text-center py-10">
           <AlertCircle className="w-12 h-12 mx-auto text-warning mb-4" />
           <p className="text-app-secondary-invert">Gagal memuat data statistik</p>
-        </CardBody>
+        </CardContent>
       </Card>
     );
   }
@@ -241,10 +276,10 @@ export function StatisticsContent() {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <Target className="w-5 h-5 text-app-teritary-invert" />
-              <h3 className="font-semibold">Progress Review</h3>
+              <CardTitle className="font-semibold">Progress Review</CardTitle>
             </div>
           </CardHeader>
-          <CardBody className="space-y-4">
+          <CardContent className="space-y-4">
             <div className="text-center py-4">
               <div className="relative inline-flex items-center justify-center">
                 <svg className="w-32 h-32 transform -rotate-90">
@@ -276,7 +311,7 @@ export function StatisticsContent() {
               </div>
             </div>
 
-            <Divider />
+            <Separator />
 
             <div className="space-y-3">
               <div className="flex justify-between items-center">
@@ -301,7 +336,7 @@ export function StatisticsContent() {
                 <span className="font-semibold tabular-nums">{summary.pendingReviews}</span>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
         {/* Score Distribution */}
@@ -309,10 +344,10 @@ export function StatisticsContent() {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <PieChart className="w-5 h-5 text-app-teritary-invert" />
-              <h3 className="font-semibold">Distribusi Nilai</h3>
+              <CardTitle className="font-semibold">Distribusi Nilai</CardTitle>
             </div>
           </CardHeader>
-          <CardBody className="space-y-4">
+          <CardContent className="space-y-4">
             <div className="space-y-3">
               <div>
                 <div className="flex justify-between text-sm mb-1">
@@ -324,10 +359,7 @@ export function StatisticsContent() {
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.excellent / summary.completedReviews) * 100 : 0}
-                  color="success"
-                  size="sm"
-                  className="h-2"
-                  classNames={{ track: 'bg-app-primary' }}
+                  className={progressIndicatorClass('success')}
                 />
               </div>
 
@@ -341,10 +373,7 @@ export function StatisticsContent() {
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.good / summary.completedReviews) * 100 : 0}
-                  color="primary"
-                  size="sm"
-                  className="h-2"
-                  classNames={{ track: 'bg-app-primary' }}
+                  className={progressIndicatorClass('primary')}
                 />
               </div>
 
@@ -358,10 +387,7 @@ export function StatisticsContent() {
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.average / summary.completedReviews) * 100 : 0}
-                  color="secondary"
-                  size="sm"
-                  className="h-2"
-                  classNames={{ track: 'bg-app-primary' }}
+                  className={progressIndicatorClass('secondary')}
                 />
               </div>
 
@@ -375,31 +401,25 @@ export function StatisticsContent() {
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.belowAverage / summary.completedReviews) * 100 : 0}
-                  color="warning"
-                  size="sm"
-                  className="h-2"
-                  classNames={{ track: 'bg-app-primary' }}
+                  className={progressIndicatorClass('warning')}
                 />
               </div>
 
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-danger" />
+                    <AlertCircle className="w-4 h-4 text-destructive" />
                     Sangat Kurang (0-39)
                   </span>
                   <span className="font-semibold tabular-nums">{scoreDistribution.poor}</span>
                 </div>
                 <Progress
                   value={summary.completedReviews > 0 ? (scoreDistribution.poor / summary.completedReviews) * 100 : 0}
-                  color="danger"
-                  size="sm"
-                  className="h-2"
-                  classNames={{ track: 'bg-app-primary' }}
+                  className={progressIndicatorClass('danger')}
                 />
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
 
@@ -408,39 +428,39 @@ export function StatisticsContent() {
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-app-teritary-invert" />
-            <h3 className="font-semibold">Tren Review 6 Bulan Terakhir</h3>
+            <CardTitle className="font-semibold">Tren Review 6 Bulan Terakhir</CardTitle>
           </div>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div className="flex items-end gap-2 h-48 px-4">
             {monthlyStats.map((month, idx) => (
-              <Tooltip
-                key={idx}
-                content={
+              <Tooltip key={idx}>
+                <TooltipTrigger render={<div className="flex-1" />}>
+                  <div className="flex h-full flex-col items-center justify-end gap-2">
+                    <div
+                      className={cn(
+                        'w-full rounded-t-lg transition-all duration-300 hover:opacity-80 cursor-pointer',
+                        month.completed > 0 ? 'bg-primary' : 'bg-app-quaternary'
+                      )}
+                      style={{
+                        height: `${(month.completed / maxMonthlyCompleted) * 100}%`,
+                        minHeight: month.completed > 0 ? '20px' : '4px',
+                      }}
+                    />
+                    <span className="text-xs text-app-teritary-invert">{month.month}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
                   <div className="text-center p-1">
                     <p className="font-semibold">{month.month} {month.year}</p>
                     <p className="text-sm">{month.completed} review selesai</p>
                     <p className="text-sm">Rata-rata: {month.averageScore}</p>
                   </div>
-                }
-              >
-                <div className="flex-1 flex flex-col items-center gap-2">
-                  <div
-                    className={cn(
-                      'w-full rounded-t-lg transition-all duration-300 hover:opacity-80 cursor-pointer',
-                      month.completed > 0 ? 'bg-primary' : 'bg-app-quaternary'
-                    )}
-                    style={{
-                      height: `${(month.completed / maxMonthlyCompleted) * 100}%`,
-                      minHeight: month.completed > 0 ? '20px' : '4px',
-                    }}
-                  />
-                  <span className="text-xs text-app-teritary-invert">{month.month}</span>
-                </div>
+                </TooltipContent>
               </Tooltip>
             ))}
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Kategori Performance */}
@@ -448,10 +468,10 @@ export function StatisticsContent() {
         <CardHeader className="pb-2">
           <div className="flex items-center gap-2">
             <Activity className="w-5 h-5 text-app-teritary-invert" />
-            <h3 className="font-semibold">Performa per Kategori</h3>
+            <CardTitle className="font-semibold">Performa per Kategori</CardTitle>
           </div>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {kategoriAverages.map((kategori) => {
               const grade = getGradeLabel(kategori.averagePercentage);
@@ -471,22 +491,19 @@ export function StatisticsContent() {
                       <p className="text-2xl font-bold tabular-nums">{Math.round(kategori.averagePercentage)}%</p>
                       <p className="text-xs text-app-teritary-invert">{kategori.totalReviews} review</p>
                     </div>
-                    <Chip color={grade.color} size="sm" variant="flat">
+                    <Badge variant={badgeVariant(grade.color)}>
                       {grade.label}
-                    </Chip>
+                    </Badge>
                   </div>
                   <Progress
                     value={kategori.averagePercentage}
-                    color={grade.color}
-                    size="sm"
-                    className="mt-3"
-                    classNames={{ track: 'bg-app-primary' }}
+                    className={cn('mt-3', progressIndicatorClass(grade.color))}
                   />
                 </div>
               );
             })}
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Rubrik Details */}
@@ -495,18 +512,20 @@ export function StatisticsContent() {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <FileText className="w-5 h-5 text-app-teritary-invert" />
-              <h3 className="font-semibold">Detail per Rubrik Penilaian</h3>
+              <CardTitle className="font-semibold">Detail per Rubrik Penilaian</CardTitle>
             </div>
           </CardHeader>
-          <CardBody>
-            <Table removeWrapper aria-label="Rubrik statistics table">
+          <CardContent>
+            <Table aria-label="Rubrik statistics table">
               <TableHeader>
-                <TableColumn>RUBRIK</TableColumn>
-                <TableColumn>KATEGORI</TableColumn>
-                <TableColumn className="text-center">RATA-RATA</TableColumn>
-                <TableColumn className="text-center">PERSENTASE</TableColumn>
-                <TableColumn className="text-center">GRADE</TableColumn>
-                <TableColumn className="text-center">TOTAL REVIEW</TableColumn>
+                <TableRow>
+                  <TableHead>RUBRIK</TableHead>
+                  <TableHead>KATEGORI</TableHead>
+                  <TableHead className="text-center">RATA-RATA</TableHead>
+                  <TableHead className="text-center">PERSENTASE</TableHead>
+                  <TableHead className="text-center">GRADE</TableHead>
+                  <TableHead className="text-center">TOTAL REVIEW</TableHead>
+                </TableRow>
               </TableHeader>
               <TableBody>
                 {rubrikAverages.map((rubrik) => {
@@ -517,14 +536,10 @@ export function StatisticsContent() {
                         <span className="font-medium">{rubrik.name}</span>
                       </TableCell>
                       <TableCell>
-                        <Chip
-                          size="sm"
-                          variant="flat"
-                          startContent={getKategoriIcon(rubrik.kategori)}
-                          className="gap-1"
-                        >
+                        <Badge variant="outline" className="gap-1">
+                          {getKategoriIcon(rubrik.kategori)}
                           {rubrik.kategori}
-                        </Chip>
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-center">
                         <span className="font-semibold tabular-nums">
@@ -535,10 +550,7 @@ export function StatisticsContent() {
                         <div className="flex items-center gap-2 justify-center">
                           <Progress
                             value={rubrik.averagePercentage}
-                            color={grade.color}
-                            size="sm"
-                            className="max-w-20"
-                            classNames={{ track: 'bg-app-primary' }}
+                            className={cn('max-w-20', progressIndicatorClass(grade.color))}
                           />
                           <span className="text-sm font-medium w-12 tabular-nums">
                             {Math.round(rubrik.averagePercentage)}%
@@ -546,9 +558,9 @@ export function StatisticsContent() {
                         </div>
                       </TableCell>
                       <TableCell className="text-center">
-                        <Chip color={grade.color} size="sm" variant="flat">
+                        <Badge variant={badgeVariant(grade.color)}>
                           {grade.label}
-                        </Chip>
+                        </Badge>
                       </TableCell>
                       <TableCell className="text-center text-app-secondary-invert">
                         {rubrik.totalReviews}
@@ -558,7 +570,7 @@ export function StatisticsContent() {
                 })}
               </TableBody>
             </Table>
-          </CardBody>
+          </CardContent>
         </Card>
       )}
 
@@ -569,10 +581,10 @@ export function StatisticsContent() {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <Clock className="w-5 h-5 text-app-teritary-invert" />
-              <h3 className="font-semibold">Review Terbaru</h3>
+              <CardTitle className="font-semibold">Review Terbaru</CardTitle>
             </div>
           </CardHeader>
-          <CardBody>
+          <CardContent>
             {recentReviews.length === 0 ? (
               <p className="text-center text-app-secondary-invert py-8">Belum ada review</p>
             ) : (
@@ -588,27 +600,32 @@ export function StatisticsContent() {
                     </div>
                     <div className="flex items-center gap-2">
                       {review.overallScore !== null && (
-                        <Chip
-                          size="sm"
-                          variant="flat"
-                          color={getGradeLabel(review.overallScore).color}
-                        >
+                        <Badge variant={badgeVariant(getGradeLabel(review.overallScore).color)}>
                           {Math.round(review.overallScore)}
-                        </Chip>
+                        </Badge>
                       )}
-                      <Chip size="sm" variant="dot" color={getStatusColor(review.status)}>
+                      <Badge variant="outline" className="gap-1.5">
+                        <span
+                          className={cn(
+                            'size-1.5 rounded-full',
+                            getStatusColor(review.status) === 'success' && 'bg-success',
+                            getStatusColor(review.status) === 'primary' && 'bg-primary',
+                            getStatusColor(review.status) === 'warning' && 'bg-warning',
+                            getStatusColor(review.status) === 'default' && 'bg-muted-foreground'
+                          )}
+                        />
                         {review.status === 'COMPLETED'
                           ? 'Selesai'
                           : review.status === 'IN_PROGRESS'
-                          ? 'Proses'
-                          : 'Pending'}
-                      </Chip>
+                            ? 'Proses'
+                            : 'Pending'}
+                      </Badge>
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
 
         {/* Project Status Distribution */}
@@ -616,15 +633,15 @@ export function StatisticsContent() {
           <CardHeader className="pb-2">
             <div className="flex items-center gap-2">
               <PieChart className="w-5 h-5 text-app-teritary-invert" />
-              <h3 className="font-semibold">Status Project</h3>
+              <CardTitle className="font-semibold">Status Project</CardTitle>
             </div>
           </CardHeader>
-          <CardBody>
+          <CardContent>
             <div className="space-y-3">
               {Object.entries(projectStatusCounts).map(([status, count]) => {
                 const total = Object.values(projectStatusCounts).reduce((a, b) => a + b, 0);
                 const percentage = total > 0 ? (count / total) * 100 : 0;
-                const colorMap: Record<string, 'default' | 'primary' | 'success' | 'warning' | 'danger'> = {
+                const colorMap: Record<string, LegacyColor> = {
                   DRAFT: 'default',
                   SUBMITTED: 'primary',
                   IN_REVIEW: 'primary',
@@ -640,10 +657,7 @@ export function StatisticsContent() {
                     </div>
                     <Progress
                       value={percentage}
-                      color={colorMap[status] || 'default'}
-                      size="sm"
-                      className="h-2"
-                      classNames={{ track: 'bg-app-primary' }}
+                      className={progressIndicatorClass(colorMap[status] || 'default')}
                     />
                   </div>
                 );
@@ -652,7 +666,7 @@ export function StatisticsContent() {
 
             {projectsBySemester.length > 0 && (
               <>
-                <Divider className="my-4" />
+                <Separator className="my-4" />
                 <div>
                   <p className="text-sm font-medium mb-3 flex items-center gap-2">
                     <Calendar className="w-4 h-4" />
@@ -660,15 +674,15 @@ export function StatisticsContent() {
                   </p>
                   <div className="flex flex-wrap gap-2">
                     {projectsBySemester.map((sem, idx) => (
-                      <Chip key={idx} variant="flat" size="sm">
+                      <Badge key={idx} variant="outline">
                         {sem.semester} {sem.tahunAkademik}: {sem.count}
-                      </Chip>
+                      </Badge>
                     ))}
                   </div>
                 </div>
               </>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
     </div>

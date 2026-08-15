@@ -3,13 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -115,15 +112,15 @@ const getScoreBgColor = (score: number) => {
 const getStatusConfig = (status: string) => {
   switch (status) {
     case 'excellent':
-      return { color: 'success' as const, label: 'Excellent', icon: CheckCircle2 };
+      return { variant: 'secondary' as const, label: 'Excellent', icon: CheckCircle2 };
     case 'good':
-      return { color: 'primary' as const, label: 'Good', icon: CheckCircle2 };
+      return { variant: 'default' as const, label: 'Good', icon: CheckCircle2 };
     case 'warning':
-      return { color: 'warning' as const, label: 'Warning', icon: AlertTriangle };
+      return { variant: 'outline' as const, label: 'Warning', icon: AlertTriangle };
     case 'poor':
-      return { color: 'danger' as const, label: 'Needs Work', icon: XCircle };
+      return { variant: 'destructive' as const, label: 'Needs Work', icon: XCircle };
     default:
-      return { color: 'default' as const, label: 'Unknown', icon: Minus };
+      return { variant: 'outline' as const, label: 'Unknown', icon: Minus };
   }
 };
 
@@ -185,13 +182,10 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
       <motion.div variants={itemVariants}>
         <div className="flex items-start gap-3 mb-4">
           <Button
-            as={Link}
-            href="/dosen/auto-review"
-            variant="light"
-            isIconOnly
-            radius="full"
-            size="sm"
-            className="mt-1 shrink-0"
+            render={<Link href="/dosen/auto-review" />}
+            variant="ghost"
+            size="icon-sm"
+            className="mt-1 shrink-0 rounded-full"
           >
             <ArrowLeft size={18} />
           </Button>
@@ -203,12 +197,11 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
               description="Analisis otomatis kualitas project"
               actions={
                 <Button
-                  color="secondary"
-                  variant="flat"
-                  startContent={<RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />}
-                  onPress={handleRefresh}
-                  isLoading={isRefreshing}
+                  variant="secondary"
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
                 >
+                  <RefreshCw size={16} className={isRefreshing ? 'animate-spin' : ''} />
                   {isRefreshing ? 'Menganalisis...' : 'Re-analyze'}
                 </Button>
               }
@@ -220,7 +213,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
       {/* Development Notice */}
       <motion.div variants={itemVariants}>
         <Card className="rounded-2xl border border-dashed border-warning/30 bg-warning/5 shadow-none">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-warning/10 text-warning">
                 <Construction size={18} />
@@ -228,13 +221,13 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
               <div>
                 <h4 className="font-semibold text-sm mb-1">Fitur dalam Pengembangan</h4>
                 <p className="text-xs text-app-secondary-invert leading-relaxed">
-                  Sistem AI Auto Review sedang dalam tahap pengembangan. Skor dan detail analisis yang ditampilkan 
-                  saat ini adalah estimasi placeholder berdasarkan status project. Analisis kode dan AI scoring 
+                  Sistem AI Auto Review sedang dalam tahap pengembangan. Skor dan detail analisis yang ditampilkan
+                  saat ini adalah estimasi placeholder berdasarkan status project. Analisis kode dan AI scoring
                   akan segera tersedia.
                 </p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -279,17 +272,17 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
 
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <Chip size="sm" color={analysisStatusConfig.color} variant="flat" startContent={<StatusIcon size={12} />}>
+                    <Badge variant={analysisStatusConfig.variant}>
+                      <StatusIcon size={12} />
                       {analysisStatusConfig.label}
-                    </Chip>
+                    </Badge>
                     <span
-                      className={`flex items-center gap-1 text-sm ${
-                        project.trend === 'up'
+                      className={`flex items-center gap-1 text-sm ${project.trend === 'up'
                           ? 'text-success'
                           : project.trend === 'down'
-                          ? 'text-danger'
-                          : 'text-app-teritary-invert'
-                      }`}
+                            ? 'text-danger'
+                            : 'text-app-teritary-invert'
+                        }`}
                     >
                       {project.trend === 'up' && <TrendingUp size={14} />}
                       {project.trend === 'down' && <TrendingDown size={14} />}
@@ -305,15 +298,16 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
             </div>
           </div>
 
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Mahasiswa Info */}
               <div className="flex items-center gap-3 p-3 rounded-xl border border-border bg-app-quinary">
-                <Avatar 
-                  name={project.mahasiswa.name} 
-                  src={avatarSrc}
-                  size="md" 
-                />
+                <Avatar className="size-10">
+                  <AvatarImage src={avatarSrc} alt={project.mahasiswa.name} />
+                  <AvatarFallback>
+                    {project.mahasiswa.name.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
                 <div>
                   <p className="font-semibold text-sm">{project.mahasiswa.name}</p>
                   <p className="text-xs text-app-teritary-invert">
@@ -346,52 +340,48 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
             <div className="flex flex-wrap gap-2 mt-4">
               {project.githubRepoUrl && (
                 <Button
-                  as="a"
-                  href={project.githubRepoUrl}
-                  target="_blank"
+                  render={
+                    <a href={project.githubRepoUrl} target="_blank" rel="noopener noreferrer" />
+                  }
                   size="sm"
-                  variant="flat"
-                  startContent={<Github size={14} />}
+                  variant="secondary"
                 >
+                  <Github size={14} />
                   Repository
                 </Button>
               )}
               {project.productionUrl && (
                 <Button
-                  as="a"
-                  href={project.productionUrl}
-                  target="_blank"
+                  render={
+                    <a href={project.productionUrl} target="_blank" rel="noopener noreferrer" />
+                  }
                   size="sm"
-                  variant="flat"
-                  color="success"
-                  startContent={<Globe size={14} />}
+                  variant="secondary"
                 >
+                  <Globe size={14} />
                   Live Demo
                 </Button>
               )}
               <Button
-                as={Link}
-                href={`/dosen/projects/${project.id}`}
+                render={<Link href={`/dosen/projects/${project.id}`} />}
                 size="sm"
-                variant="flat"
-                color="primary"
-                startContent={<Eye size={14} />}
               >
+                <Eye size={14} />
                 Lihat Project
               </Button>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {/* Analysis History */}
       <motion.div variants={itemVariants}>
         <Card className="rounded-2xl border border-border bg-card shadow-none">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <History size={16} className="text-app-teritary-invert" />
               <h3 className="font-semibold text-sm">Riwayat Analisis</h3>
-              <Chip size="sm" variant="flat" color="warning">Placeholder</Chip>
+              <Badge variant="outline">Placeholder</Badge>
             </div>
             <div className="flex items-end gap-2 h-24">
               {project.analysisHistory.map((history, idx) => (
@@ -412,7 +402,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                 </div>
               ))}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -422,9 +412,9 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
           {project.aspects.map((aspect) => {
             const AspectIcon = ASPECT_ICONS[aspect.key] || FileText;
             const aspectStatus = getStatusConfig(
-              aspect.score >= 80 ? 'excellent' : 
-              aspect.score >= 70 ? 'good' : 
-              aspect.score >= 50 ? 'warning' : 'poor'
+              aspect.score >= 80 ? 'excellent' :
+                aspect.score >= 70 ? 'good' :
+                  aspect.score >= 50 ? 'warning' : 'poor'
             );
             const scoreDiff = aspect.score - aspect.previousScore;
 
@@ -448,18 +438,17 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                             {aspect.score}
                           </span>
                           <span
-                            className={`text-xs flex items-center gap-0.5 ${
-                              scoreDiff > 0 ? 'text-success' : scoreDiff < 0 ? 'text-danger' : 'text-app-teritary-invert'
-                            }`}
+                            className={`text-xs flex items-center gap-0.5 ${scoreDiff > 0 ? 'text-success' : scoreDiff < 0 ? 'text-danger' : 'text-app-teritary-invert'
+                              }`}
                           >
                             {scoreDiff > 0 ? <TrendingUp size={12} /> : scoreDiff < 0 ? <TrendingDown size={12} /> : <Minus size={12} />}
                             {scoreDiff > 0 ? '+' : ''}
                             {scoreDiff}
                           </span>
                         </div>
-                        <Chip size="sm" color={aspectStatus.color} variant="flat" className="mt-1">
+                        <Badge variant={aspectStatus.variant} className="mt-1">
                           {aspectStatus.label}
-                        </Chip>
+                        </Badge>
                       </div>
                     </div>
                   </div>
@@ -475,13 +464,13 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                   </div>
                 </div>
 
-                <CardBody className="p-4 space-y-4">
+                <CardContent className="p-4 space-y-4">
                   {/* Details Table */}
                   <div className="space-y-2">
                     <h4 className="text-sm font-medium flex items-center gap-2">
                       <FileText size={14} className="text-app-teritary-invert" />
                       Detail Analisis
-                      <Chip size="sm" variant="flat" color="warning">Placeholder</Chip>
+                      <Badge variant="outline">Placeholder</Badge>
                     </h4>
                     <div className="space-y-1.5">
                       {aspect.details.map((detail, idx) => (
@@ -518,7 +507,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                       </div>
                     </div>
                   )}
-                </CardBody>
+                </CardContent>
               </Card>
             );
           })}
@@ -528,7 +517,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
       {/* Info Card */}
       <motion.div variants={itemVariants}>
         <Card className="rounded-2xl border border-dashed border-border bg-card shadow-none">
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex items-start gap-3">
               <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                 <AlertCircle size={18} />
@@ -542,7 +531,7 @@ export function AutoReviewDetailClient({ project }: AutoReviewDetailClientProps)
                 </p>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
     </motion.div>

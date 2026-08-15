@@ -1,26 +1,29 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  Card,
-  CardBody,
-  CardHeader,
-  Button,
-  Input,
-  Textarea,
   Select,
+  SelectContent,
   SelectItem,
-  Image,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-  Chip,
-  Progress,
-  addToast,
-} from "@heroui/react";
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { addToast } from "@/lib/toast";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Upload,
@@ -37,6 +40,7 @@ import {
   User,
   Briefcase,
   Plus,
+  Loader2,
 } from "lucide-react";
 import { useConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -74,17 +78,27 @@ const DOCUMENT_TYPES = [
 ];
 
 const getTypeConfig = (type: string) => {
-  const config: Record<string, { color: "success" | "primary" | "warning" | "secondary" | "danger" | "default"; icon: React.ElementType; label: string }> = {
-    SIGNATURE: { color: "success", icon: FileSignature, label: "Tanda Tangan" },
-    PHOTO: { color: "primary", icon: Camera, label: "Foto" },
-    AGREEMENT_LETTER: { color: "warning", icon: FileText, label: "Surat Persetujuan" },
-    ID_CARD: { color: "secondary", icon: IdCard, label: "Kartu Identitas" },
-    SCREENSHOT: { color: "primary", icon: Camera, label: "Screenshot" },
-    SUPPORTING_DOCUMENT: { color: "warning", icon: FileText, label: "Dokumen Pelengkap" },
-    OTHER: { color: "danger", icon: File, label: "Lainnya" },
+  const config: Record<string, { className: string; icon: React.ElementType; label: string }> = {
+    SIGNATURE: { className: "bg-success/15 text-success", icon: FileSignature, label: "Tanda Tangan" },
+    PHOTO: { className: "bg-primary/10 text-primary", icon: Camera, label: "Foto" },
+    AGREEMENT_LETTER: { className: "bg-warning/15 text-warning", icon: FileText, label: "Surat Persetujuan" },
+    ID_CARD: { className: "bg-secondary text-secondary-foreground", icon: IdCard, label: "Kartu Identitas" },
+    SCREENSHOT: { className: "bg-primary/10 text-primary", icon: Camera, label: "Screenshot" },
+    SUPPORTING_DOCUMENT: { className: "bg-warning/15 text-warning", icon: FileText, label: "Dokumen Pelengkap" },
+    OTHER: { className: "bg-destructive/10 text-destructive", icon: File, label: "Lainnya" },
   };
   return config[type] || config.OTHER;
 };
+
+function useDialogState() {
+  const [isOpen, setIsOpen] = useState(false);
+  return {
+    isOpen,
+    onOpen: () => setIsOpen(true),
+    onClose: () => setIsOpen(false),
+    onOpenChange: setIsOpen,
+  };
+}
 
 export default function StakeholderUpload({
   projectId,
@@ -92,8 +106,8 @@ export default function StakeholderUpload({
   onDocumentsChange,
   readOnly = false,
 }: StakeholderUploadProps) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const previewModal = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDialogState();
+  const previewModal = useDialogState();
   const { confirm, ConfirmDialog } = useConfirmDialog();
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -315,11 +329,8 @@ export default function StakeholderUpload({
           </p>
         </div>
         {!readOnly && (
-          <Button
-            color="primary"
-            startContent={<Plus className="w-4 h-4" />}
-            onPress={onOpen}
-          >
+          <Button onClick={onOpen}>
+            <Plus className="w-4 h-4" />
             Tambah Dokumen
           </Button>
         )}
@@ -328,7 +339,7 @@ export default function StakeholderUpload({
       {/* Documents Grid */}
       {documents.length === 0 ? (
         <Card className="border-2 border-dashed border-border bg-app-quinary">
-          <CardBody className="flex flex-col items-center justify-center py-12">
+          <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="w-16 h-16 rounded-full bg-app-primary flex items-center justify-center mb-4">
               <FileSignature className="w-8 h-8 text-app-teritary-invert" />
             </div>
@@ -343,7 +354,7 @@ export default function StakeholderUpload({
                 </>
               )}
             </p>
-          </CardBody>
+          </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -365,29 +376,27 @@ export default function StakeholderUpload({
                     {/* Preview Thumbnail */}
                     {isImage ? (
                       <div className="relative h-40 bg-app-quinary overflow-hidden">
-                        <Image
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
                           src={doc.fileUrl}
                           alt={doc.fileName}
                           className="w-full h-full object-cover"
-                          removeWrapper
                         />
                         <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button
-                            isIconOnly
-                            size="sm"
-                            variant="flat"
+                            size="icon-sm"
+                            variant="ghost"
                             className="bg-white/20 backdrop-blur-sm text-white"
-                            onPress={() => handlePreview(doc)}
+                            onClick={() => handlePreview(doc)}
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
                           {!readOnly && (
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="flat"
+                              size="icon-sm"
+                              variant="ghost"
                               className="bg-white/20 backdrop-blur-sm text-white"
-                              onPress={() => handleDelete(doc.id)}
+                              onClick={() => handleDelete(doc.id)}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -399,21 +408,19 @@ export default function StakeholderUpload({
                         <FileText className="w-16 h-16 text-app-teritary-invert" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                           <Button
-                            isIconOnly
-                            size="sm"
-                            variant="flat"
+                            size="icon-sm"
+                            variant="ghost"
                             className="bg-white/20 backdrop-blur-sm text-white"
-                            onPress={() => handlePreview(doc)}
+                            onClick={() => handlePreview(doc)}
                           >
                             <Eye className="w-4 h-4" />
                           </Button>
                           {!readOnly && (
                             <Button
-                              isIconOnly
-                              size="sm"
-                              variant="flat"
+                              size="icon-sm"
+                              variant="ghost"
                               className="bg-white/20 backdrop-blur-sm text-white"
-                              onPress={() => handleDelete(doc.id)}
+                              onClick={() => handleDelete(doc.id)}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -422,16 +429,12 @@ export default function StakeholderUpload({
                       </div>
                     )}
 
-                    <CardBody className="p-4 space-y-3">
+                    <CardContent className="p-4 space-y-3">
                       {/* Type Badge */}
-                      <Chip
-                        size="sm"
-                        color={typeConfig.color}
-                        variant="flat"
-                        startContent={<TypeIcon className="w-3 h-3" />}
-                      >
+                      <Badge className={typeConfig.className}>
+                        <TypeIcon className="w-3 h-3" />
                         {typeConfig.label}
-                      </Chip>
+                      </Badge>
 
                       {/* Stakeholder Info */}
                       <div className="space-y-1">
@@ -464,7 +467,7 @@ export default function StakeholderUpload({
                         <span className="truncate max-w-[60%]">{doc.fileName}</span>
                         <span>{formatFileSize(doc.fileSize)}</span>
                       </div>
-                    </CardBody>
+                    </CardContent>
                   </Card>
                 </motion.div>
               );
@@ -474,18 +477,18 @@ export default function StakeholderUpload({
       )}
 
       {/* Upload Modal */}
-      <Modal size="2xl" isOpen={isOpen} onClose={onClose} scrollBehavior="inside">
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1">
-            <h3 className="text-lg font-semibold">Tambah Dokumen Stakeholder</h3>
-            <p className="text-sm text-app-secondary-invert font-normal">
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Tambah Dokumen Stakeholder</DialogTitle>
+            <DialogDescription>
               Upload dokumen seperti tanda tangan, foto, atau surat persetujuan
-            </p>
-          </ModalHeader>
-          <ModalBody className="gap-6">
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-6 overflow-y-auto">
             {/* File Upload Area */}
             <div className="space-y-3">
-              <label className="text-sm font-medium">File Dokumen *</label>
+              <Label>File Dokumen *</Label>
               <div
                 className={`border-2 border-dashed rounded-xl p-6 transition-colors cursor-pointer hover:bg-app-quaternary ${selectedFile ? "border-success/40 bg-success/10" : "border-border bg-app-quinary"
                   }`}
@@ -502,7 +505,8 @@ export default function StakeholderUpload({
                 {selectedFile ? (
                   <div className="flex items-center gap-4">
                     {filePreview ? (
-                      <Image
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
                         src={filePreview}
                         alt="Preview"
                         className="w-20 h-20 object-cover rounded-lg"
@@ -519,11 +523,9 @@ export default function StakeholderUpload({
                       </p>
                     </div>
                     <Button
-                      isIconOnly
-                      size="sm"
-                      variant="flat"
-                      color="danger"
-                      onPress={() => {
+                      size="icon-sm"
+                      variant="destructive"
+                      onClick={() => {
                         setSelectedFile(null);
                         setFilePreview(null);
                         if (fileInputRef.current) fileInputRef.current.value = "";
@@ -547,62 +549,84 @@ export default function StakeholderUpload({
             </div>
 
             {/* Document Type */}
-            <Select
-              label="Jenis Dokumen"
-              labelPlacement="outside"
-              placeholder="Pilih jenis dokumen"
-              selectedKeys={[documentType]}
-              onSelectionChange={(keys) => {
-                const selected = Array.from(keys)[0] as string;
-                if (selected) setDocumentType(selected);
-              }}
-              isRequired
-            >
-              {DOCUMENT_TYPES.map((type) => (
-                <SelectItem key={type.value} startContent={<type.icon className="w-4 h-4" />}>
-                  {type.label}
-                </SelectItem>
-              ))}
-            </Select>
+            <div className="space-y-1.5">
+              <Label>Jenis Dokumen *</Label>
+              <Select
+                value={documentType}
+                onValueChange={(value) => {
+                  const selected = value as string;
+                  if (selected) setDocumentType(selected);
+                }}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Pilih jenis dokumen" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DOCUMENT_TYPES.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      <type.icon className="w-4 h-4" />
+                      {type.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
             {/* Stakeholder Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Nama Stakeholder"
-                labelPlacement="outside"
-                placeholder="Contoh: Budi Santoso"
-                value={stakeholderName}
-                onValueChange={setStakeholderName}
-                startContent={<User className="w-4 h-4 text-app-teritary-invert" />}
-                isRequired
-              />
-              <Input
-                label="Jabatan/Peran"
-                labelPlacement="outside"
-                placeholder="Contoh: Direktur IT"
-                value={stakeholderRole}
-                onValueChange={setStakeholderRole}
-                startContent={<Briefcase className="w-4 h-4 text-app-teritary-invert" />}
-              />
+              <div className="space-y-1.5">
+                <Label htmlFor="stakeholder-name">Nama Stakeholder *</Label>
+                <div className="relative">
+                  <User className="absolute left-2.5 top-1/2 w-4 h-4 -translate-y-1/2 text-app-teritary-invert" />
+                  <Input
+                    id="stakeholder-name"
+                    placeholder="Contoh: Budi Santoso"
+                    value={stakeholderName}
+                    onChange={(e) => setStakeholderName(e.target.value)}
+                    className="pl-9"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="stakeholder-role">Jabatan/Peran</Label>
+                <div className="relative">
+                  <Briefcase className="absolute left-2.5 top-1/2 w-4 h-4 -translate-y-1/2 text-app-teritary-invert" />
+                  <Input
+                    id="stakeholder-role"
+                    placeholder="Contoh: Direktur IT"
+                    value={stakeholderRole}
+                    onChange={(e) => setStakeholderRole(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+              </div>
             </div>
 
-            <Input
-              label="Organisasi/Perusahaan"
-              labelPlacement="outside"
-              placeholder="Contoh: PT Teknologi Indonesia"
-              value={organization}
-              onValueChange={setOrganization}
-              startContent={<Building2 className="w-4 h-4 text-app-teritary-invert" />}
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="stakeholder-org">Organisasi/Perusahaan</Label>
+              <div className="relative">
+                <Building2 className="absolute left-2.5 top-1/2 w-4 h-4 -translate-y-1/2 text-app-teritary-invert" />
+                <Input
+                  id="stakeholder-org"
+                  placeholder="Contoh: PT Teknologi Indonesia"
+                  value={organization}
+                  onChange={(e) => setOrganization(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
 
-            <Textarea
-              label="Deskripsi (Opsional)"
-              labelPlacement="outside"
-              placeholder="Tambahkan keterangan tentang dokumen ini..."
-              value={description}
-              onValueChange={setDescription}
-              minRows={2}
-            />
+            <div className="space-y-1.5">
+              <Label htmlFor="stakeholder-description">Deskripsi (Opsional)</Label>
+              <Textarea
+                id="stakeholder-description"
+                placeholder="Tambahkan keterangan tentang dokumen ini..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                rows={2}
+              />
+            </div>
 
             {/* Upload Progress */}
             {isUploading && (
@@ -611,41 +635,36 @@ export default function StakeholderUpload({
                   <span className="text-app-secondary-invert">Mengupload...</span>
                   <span className="text-primary font-medium">{uploadProgress}%</span>
                 </div>
-                <Progress
-                  value={uploadProgress}
-                  color="primary"
-                  size="sm"
-                  className="w-full"
-                />
+                <Progress value={uploadProgress} className="w-full" />
               </div>
             )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={onClose} isDisabled={isUploading}>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={onClose} disabled={isUploading}>
               Batal
             </Button>
             <Button
-              color="primary"
-              onPress={handleUpload}
-              isLoading={isUploading}
-              isDisabled={!selectedFile || !stakeholderName.trim()}
-              startContent={!isUploading && <CheckCircle2 className="w-4 h-4" />}
+              onClick={handleUpload}
+              disabled={isUploading || !selectedFile || !stakeholderName.trim()}
             >
+              {isUploading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <CheckCircle2 className="w-4 h-4" />
+              )}
               {isUploading ? "Mengupload..." : "Upload Dokumen"}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Preview Modal */}
-      <Modal
-        size="4xl"
-        isOpen={previewModal.isOpen}
-        onClose={previewModal.onClose}
-      >
-        <ModalContent>
-          <ModalHeader>{previewFileName}</ModalHeader>
-          <ModalBody className="p-0">
+      <Dialog open={previewModal.isOpen} onOpenChange={previewModal.onOpenChange}>
+        <DialogContent className="sm:max-w-4xl">
+          <DialogHeader>
+            <DialogTitle>{previewFileName}</DialogTitle>
+          </DialogHeader>
+          <div>
             {previewUrl && (
               previewUrl.endsWith(".pdf") ? (
                 <iframe
@@ -655,7 +674,8 @@ export default function StakeholderUpload({
                 />
               ) : (
                 <div className="flex items-center justify-center p-4">
-                  <Image
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
                     src={previewUrl}
                     alt={previewFileName}
                     className="max-h-[70vh] object-contain"
@@ -663,23 +683,22 @@ export default function StakeholderUpload({
                 </div>
               )
             )}
-          </ModalBody>
-          <ModalFooter>
-            <Button variant="light" onPress={previewModal.onClose}>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={previewModal.onClose}>
               Tutup
             </Button>
-            <Button
-              color="primary"
-              as="a"
+            <a
               href={previewUrl || "#"}
               target="_blank"
               rel="noopener noreferrer"
+              className={buttonVariants()}
             >
               Buka di Tab Baru
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+            </a>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirm Dialog */}
       <ConfirmDialog />

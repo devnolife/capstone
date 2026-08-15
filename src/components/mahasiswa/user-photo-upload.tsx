@@ -1,15 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  Input,
-  Chip,
-  Image,
-  Avatar,
-  addToast,
-} from '@heroui/react';
-import { Camera, Trash2, Upload, ScanFace, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { addToast } from '@/lib/toast';
+import { getInitials } from '@/lib/utils';
+import { Camera, Trash2, Upload, ScanFace, RefreshCw, Loader2 } from 'lucide-react';
 import { useConfirmDialog } from '@/components/ui/confirm-dialog';
 
 interface UserPhoto {
@@ -30,11 +29,11 @@ interface UserPhotoUploadProps {
 
 const statusMeta: Record<
   UserPhoto['verificationStatus'],
-  { label: string; color: 'warning' | 'success' | 'danger' }
+  { label: string; className: string }
 > = {
-  PENDING: { label: 'Menunggu Verifikasi Wajah', color: 'warning' },
-  VERIFIED: { label: 'Wajah Terverifikasi', color: 'success' },
-  REJECTED: { label: 'Verifikasi Ditolak', color: 'danger' },
+  PENDING: { label: 'Menunggu Verifikasi Wajah', className: 'bg-warning/15 text-warning' },
+  VERIFIED: { label: 'Wajah Terverifikasi', className: 'bg-success/15 text-success' },
+  REJECTED: { label: 'Verifikasi Ditolak', className: 'bg-destructive/10 text-destructive' },
 };
 
 export function UserPhotoUpload({ projectId, readOnly = false }: UserPhotoUploadProps) {
@@ -173,31 +172,34 @@ export function UserPhotoUpload({ projectId, readOnly = false }: UserPhotoUpload
           </div>
           <div>
             <h2 className="font-semibold text-lg">Foto Bersama Pengguna</h2>
-            <p className="text-xs text-default-500">
+            <p className="text-xs text-muted-foreground">
               Unggah foto bersama pengguna aplikasi — wajib minimal 1 foto,
               wajah akan diverifikasi otomatis
             </p>
           </div>
         </div>
-        <Chip
-          size="sm"
-          color={photos.length >= 1 ? 'success' : 'warning'}
-          variant="flat"
+        <Badge
+          className={
+            photos.length >= 1
+              ? 'bg-success/15 text-success'
+              : 'bg-warning/15 text-warning'
+          }
         >
           {photos.length}/1 minimum
-        </Chip>
+        </Badge>
       </div>
 
       {!readOnly && (
         <div className="mb-5 flex flex-col sm:flex-row gap-3">
-          <Input
-            size="sm"
-            label="Keterangan foto (opsional)"
-            placeholder="Contoh: Foto bersama Bpk. Ahmad (pemilik toko) saat uji coba aplikasi"
-            value={caption}
-            onValueChange={setCaption}
-            className="flex-1"
-          />
+          <div className="flex-1 space-y-1.5">
+            <Label htmlFor="user-photo-caption">Keterangan foto (opsional)</Label>
+            <Input
+              id="user-photo-caption"
+              placeholder="Contoh: Foto bersama Bpk. Ahmad (pemilik toko) saat uji coba aplikasi"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+            />
+          </div>
           <input
             ref={fileInputRef}
             type="file"
@@ -206,24 +208,23 @@ export function UserPhotoUpload({ projectId, readOnly = false }: UserPhotoUpload
             onChange={handleFileSelect}
           />
           <Button
-            color="primary"
-            variant="flat"
-            isLoading={uploading}
-            startContent={!uploading && <Upload size={16} />}
-            onPress={() => fileInputRef.current?.click()}
+            variant="outline"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
             className="sm:self-end"
           >
+            {uploading ? <Loader2 className="animate-spin" /> : <Upload size={16} />}
             Pilih Foto
           </Button>
         </div>
       )}
 
       {loading ? (
-        <p className="text-sm text-default-400">Memuat foto...</p>
+        <p className="text-sm text-muted-foreground">Memuat foto...</p>
       ) : photos.length === 0 ? (
         <div className="flex flex-col items-center gap-2 py-8 rounded-xl border border-dashed border-zinc-300 dark:border-zinc-700">
-          <ScanFace size={32} className="text-default-300" />
-          <p className="text-sm text-default-400">
+          <ScanFace size={32} className="text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">
             Belum ada foto bersama pengguna.
           </p>
         </div>
@@ -236,56 +237,63 @@ export function UserPhotoUpload({ projectId, readOnly = false }: UserPhotoUpload
                 key={photo.id}
                 className="rounded-xl border border-zinc-200 dark:border-zinc-700 overflow-hidden bg-zinc-50 dark:bg-zinc-800/50"
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={photo.fileUrl}
                   alt={photo.caption || photo.fileName}
-                  className="w-full h-40 object-cover rounded-none"
-                  radius="none"
+                  className="w-full h-40 object-cover"
                 />
                 <div className="p-3 space-y-2">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <Chip size="sm" color={meta.color} variant="flat" startContent={<ScanFace size={12} />}>
+                    <Badge className={meta.className}>
+                      <ScanFace size={12} />
                       {meta.label}
-                    </Chip>
+                    </Badge>
                     {!readOnly && photo.verificationStatus !== 'VERIFIED' && (
                       <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        isLoading={verifyingId === photo.id}
-                        onPress={() => handleReverify(photo)}
+                        size="icon-sm"
+                        variant="ghost"
+                        disabled={verifyingId === photo.id}
+                        onClick={() => handleReverify(photo)}
                         title="Verifikasi ulang wajah"
                       >
-                        <RefreshCw size={12} />
+                        {verifyingId === photo.id ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <RefreshCw size={12} />
+                        )}
                       </Button>
                     )}
                   </div>
                   {photo.verificationResult?.note && (
-                    <p className="text-[11px] text-default-400 line-clamp-2">
+                    <p className="text-[11px] text-muted-foreground line-clamp-2">
                       {photo.verificationResult.note}
                     </p>
                   )}
                   {photo.caption && (
-                    <p className="text-xs text-default-600 line-clamp-2">
+                    <p className="text-xs text-foreground line-clamp-2">
                       {photo.caption}
                     </p>
                   )}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs text-default-500">
-                      <Avatar
-                        src={photo.uploadedBy.image || undefined}
-                        name={photo.uploadedBy.name}
-                        className="w-4 h-4 text-[8px]"
-                      />
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      <Avatar className="size-4">
+                        <AvatarImage
+                          src={photo.uploadedBy.image || undefined}
+                          alt={photo.uploadedBy.name}
+                        />
+                        <AvatarFallback className="text-[8px]">
+                          {getInitials(photo.uploadedBy.name)}
+                        </AvatarFallback>
+                      </Avatar>
                       <span className="truncate max-w-28">{photo.uploadedBy.name}</span>
                     </div>
                     {!readOnly && (
                       <Button
-                        isIconOnly
-                        size="sm"
-                        variant="light"
-                        color="danger"
-                        onPress={() => handleDelete(photo)}
+                        size="icon-sm"
+                        variant="ghost"
+                        className="text-destructive"
+                        onClick={() => handleDelete(photo)}
                       >
                         <Trash2 size={14} />
                       </Button>

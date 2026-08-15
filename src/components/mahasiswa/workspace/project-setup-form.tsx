@@ -3,25 +3,30 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Switch } from '@/components/ui/switch';
+import { Spinner } from '@/components/ui/spinner';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
-  Card,
-  CardBody,
-  Input,
-  Textarea,
-  Button,
   Select,
+  SelectContent,
   SelectItem,
-  Divider,
-  Chip,
-  Avatar,
-  Progress,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Tooltip,
-  Autocomplete,
-  AutocompleteItem,
-  Switch,
-  Spinner,
-  addToast,
-} from '@heroui/react';
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { addToast } from '@/lib/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
@@ -63,6 +68,7 @@ import {
   AlertTriangle,
   X,
   Plus,
+  Loader2,
   ExternalLink,
   User,
   KeyRound,
@@ -627,7 +633,7 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
         <div className="text-center">
-          <Spinner size="lg" color="primary" />
+          <Spinner className="size-8 text-primary" />
           <p className="mt-4 text-app-secondary-invert">Memuat data project...</p>
         </div>
       </div>
@@ -638,12 +644,12 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
   if (error && !originalProject) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <Card className="max-w-md border border-border bg-card">
-          <CardBody className="text-center py-8">
-            <AlertCircle size={48} className="mx-auto text-danger mb-4" />
+        <Card className="max-w-md border border-border bg-card py-0">
+          <CardContent className="text-center py-8">
+            <AlertCircle size={48} className="mx-auto text-destructive mb-4" />
             <h2 className="text-lg font-semibold mb-2">Error</h2>
             <p className="text-app-secondary-invert mb-4">{error}</p>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
     );
@@ -665,11 +671,15 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
           actions={
             <div className="flex items-center gap-2">
               {/* Progress Indicator */}
-              <Tooltip content={`${formCompletion.filledCount}/${formCompletion.total} field terisi`}>
-                <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${formCompletion.percentage === 100
-                  ? 'border-success/40 bg-success/10'
-                  : 'border-border bg-app-quinary'
-                  }`}>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <div className={`flex items-center gap-2 px-3 py-2 rounded-full border transition-all duration-300 ${formCompletion.percentage === 100
+                      ? 'border-success/40 bg-success/10'
+                      : 'border-border bg-app-quinary'
+                      }`} />
+                  }
+                >
                   {/* Progress Circle */}
                   <div className="relative w-7 h-7">
                     <svg className="w-7 h-7 -rotate-90" viewBox="0 0 28 28">
@@ -704,46 +714,54 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                     }`}>
                     {formCompletion.percentage}%
                   </span>
-                </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {`${formCompletion.filledCount}/${formCompletion.total} field terisi`}
+                </TooltipContent>
               </Tooltip>
 
               {/* Preview Toggle */}
-              <Tooltip content={showPreview ? 'Sembunyikan Preview' : 'Tampilkan Preview'}>
-                <Button
-                  variant="flat"
-                  size="sm"
-                  isIconOnly
-                  radius="full"
-                  onPress={() => setShowPreview(!showPreview)}
-                  className={`w-10 h-10 ${showPreview ? 'bg-primary/15 text-primary' : 'bg-app-quinary text-app-teritary-invert'}`}
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setShowPreview(!showPreview)}
+                      className={`w-10 h-10 rounded-full ${showPreview ? 'bg-primary/15 text-primary' : 'bg-app-quinary text-app-teritary-invert'}`}
+                    />
+                  }
                 >
                   {showPreview ? <Eye size={18} /> : <EyeOff size={18} />}
-                </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {showPreview ? 'Sembunyikan Preview' : 'Tampilkan Preview'}
+                </TooltipContent>
               </Tooltip>
 
               {/* Save Button */}
               {isEditable ? (
                 <Button
-                  color="primary"
                   size="sm"
-                  startContent={!isLoading && <Save size={16} />}
-                  isLoading={isLoading}
-                  isDisabled={!isFormValid}
-                  onPress={handleSubmit}
+                  disabled={!isFormValid || isLoading}
+                  onClick={handleSubmit}
                   className="font-semibold px-5 h-10 rounded-full"
                 >
+                  {isLoading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Save size={16} />
+                  )}
                   Simpan Perubahan
                 </Button>
               ) : (
-                <Chip
-                  size="lg"
-                  variant="flat"
-                  color="warning"
-                  startContent={<Eye size={14} className="ml-1" />}
-                  className="h-10 font-medium"
+                <Badge
+                  variant="outline"
+                  className="h-10 px-4 font-medium border-warning/40 bg-warning/10 text-warning"
                 >
+                  <Eye size={14} />
                   Mode baca saja
-                </Chip>
+                </Badge>
               )}
             </div>
           }
@@ -761,9 +779,9 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-semibold text-foreground">Data setup terkunci</h3>
                   {projectStatus && (
-                    <Chip size="sm" variant="flat" color="warning" className="font-medium">
+                    <Badge variant="outline" className="font-medium border-warning/40 bg-warning/10 text-warning">
                       {projectStatus.replace(/_/g, ' ')}
-                    </Chip>
+                    </Badge>
                   )}
                 </div>
                 <p className="max-w-xl text-sm text-app-secondary-invert">
@@ -778,14 +796,12 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
               </div>
             </div>
             <Button
-              as={Link}
-              href="/mahasiswa/project?tab=diskusi"
-              variant="flat"
+              variant="ghost"
               size="sm"
-              radius="full"
-              className="shrink-0 bg-app-quinary font-medium"
-              startContent={<FileText size={14} />}
+              className="shrink-0 rounded-full bg-app-quinary font-medium"
+              render={<Link href="/mahasiswa/project?tab=diskusi" />}
             >
+              <FileText size={14} />
               Ajukan revisi lewat diskusi
             </Button>
           </div>
@@ -803,7 +819,7 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
           >
             <AlertCircle size={16} />
             <span className="flex-1">{error}</span>
-            <Button size="sm" variant="light" color="danger" isIconOnly onPress={() => setError('')}>
+            <Button size="icon-sm" variant="ghost" onClick={() => setError('')}>
               <X size={14} />
             </Button>
           </motion.div>
@@ -816,8 +832,8 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
         <div className={`space-y-5 ${showPreview ? 'lg:col-span-8' : 'lg:col-span-12'}`}>
 
           {/* Card 1: Basic Info */}
-          <Card className="border border-border bg-card">
-            <CardBody className="p-5">
+          <Card className="border border-border bg-card py-0">
+            <CardContent className="p-5">
               <SectionHeader
                 icon={FileText}
                 title="Informasi Dasar"
@@ -826,109 +842,116 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
 
               <div className="space-y-4">
                 {/* Title */}
-                <Input
-                  label="Judul Project"
-                  labelPlacement="outside"
-                  placeholder="Contoh: Sistem Monitoring IoT untuk Smart Agriculture"
-                  value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                  isRequired
-                  variant="bordered"
-                  classNames={{
-                    label: 'text-sm font-medium',
-                    inputWrapper: 'border-input bg-input/30',
-                  }}
-                  startContent={<Sparkles size={16} className="text-app-teritary-invert" />}
-                  endContent={
-                    formData.title.length >= 5 && <CheckCircle2 size={16} className="text-success" />
-                  }
-                  description={
-                    <span className={formData.title.length < 5 ? 'text-warning tabular-nums' : 'text-success tabular-nums'}>
-                      {formData.title.length}/100 karakter (min. 5)
-                    </span>
-                  }
-                />
+                <div className="space-y-1.5">
+                  <Label htmlFor="setup-title" className="text-sm font-medium">
+                    Judul Project <span className="text-destructive">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Sparkles
+                      size={16}
+                      className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                    />
+                    <Input
+                      id="setup-title"
+                      placeholder="Contoh: Sistem Monitoring IoT untuk Smart Agriculture"
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      required
+                      className="pl-8 pr-8"
+                    />
+                    {formData.title.length >= 5 && (
+                      <CheckCircle2
+                        size={16}
+                        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-success"
+                      />
+                    )}
+                  </div>
+                  <p className={`text-xs tabular-nums ${formData.title.length < 5 ? 'text-warning' : 'text-success'}`}>
+                    {formData.title.length}/100 karakter (min. 5)
+                  </p>
+                </div>
 
                 {/* Description */}
-                <Textarea
-                  label="Deskripsi Project"
-                  labelPlacement="outside"
-                  placeholder="Jelaskan latar belakang masalah, solusi yang ditawarkan, dan manfaat project..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  minRows={3}
-                  maxRows={6}
-                  isRequired
-                  variant="bordered"
-                  classNames={{
-                    label: 'text-sm font-medium',
-                    inputWrapper: 'border-input bg-input/30',
-                  }}
-                  description={
-                    <span className={formData.description.length < 20 ? 'text-warning tabular-nums' : 'text-success tabular-nums'}>
-                      {formData.description.length}/1000 karakter (min. 20)
-                    </span>
-                  }
-                />
+                <div className="space-y-1.5">
+                  <Label htmlFor="setup-description" className="text-sm font-medium">
+                    Deskripsi Project <span className="text-destructive">*</span>
+                  </Label>
+                  <Textarea
+                    id="setup-description"
+                    placeholder="Jelaskan latar belakang masalah, solusi yang ditawarkan, dan manfaat project..."
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    rows={3}
+                    required
+                  />
+                  <p className={`text-xs tabular-nums ${formData.description.length < 20 ? 'text-warning' : 'text-success'}`}>
+                    {formData.description.length}/1000 karakter (min. 20)
+                  </p>
+                </div>
 
                 {/* Semester & Academic Year Row */}
                 <div className="grid grid-cols-2 gap-3">
-                  <Select
-                    label="Semester"
-                    labelPlacement="outside"
-                    placeholder="Pilih semester"
-                    selectedKeys={formData.semester ? [formData.semester] : []}
-                    onChange={(e) => {
-                      const selected = semesterOptions.find((s) => s.name === e.target.value);
-                      setFormData({
-                        ...formData,
-                        semester: e.target.value,
-                        tahunAkademik: selected?.tahunAkademik || '',
-                      });
-                    }}
-                    isRequired
-                    variant="bordered"
-                    classNames={{
-                      label: 'text-sm font-medium',
-                      trigger: 'border-input bg-input/30',
-                    }}
-                    startContent={<Calendar size={14} className="text-app-teritary-invert" />}
-                  >
-                    {semesterOptions.map((sem) => (
-                      <SelectItem key={sem.name}>{sem.name}</SelectItem>
-                    ))}
-                  </Select>
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">
+                      Semester <span className="text-destructive">*</span>
+                    </Label>
+                    <Select
+                      value={formData.semester || null}
+                      onValueChange={(value) => {
+                        const name = typeof value === 'string' ? value : '';
+                        const selected = semesterOptions.find((s) => s.name === name);
+                        setFormData({
+                          ...formData,
+                          semester: name,
+                          tahunAkademik: selected?.tahunAkademik || '',
+                        });
+                      }}
+                    >
+                      <SelectTrigger aria-label="Pilih Semester" className="w-full">
+                        <Calendar size={14} className="text-app-teritary-invert" />
+                        <SelectValue placeholder="Pilih semester" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {semesterOptions.map((sem) => (
+                          <SelectItem key={sem.name} value={sem.name}>
+                            {sem.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                  <Input
-                    label="Tahun Akademik"
-                    labelPlacement="outside"
-                    placeholder="Otomatis"
-                    value={formData.tahunAkademik}
-                    isReadOnly
-                    variant="bordered"
-                    classNames={{
-                      label: 'text-sm font-medium',
-                      inputWrapper: 'border-input bg-input/20',
-                    }}
-                    startContent={<BookOpen size={14} className="text-app-teritary-invert" />}
-                  />
+                  <div className="space-y-1.5">
+                    <Label className="text-sm font-medium">Tahun Akademik</Label>
+                    <div className="relative">
+                      <BookOpen
+                        size={14}
+                        className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                      />
+                      <Input
+                        placeholder="Otomatis"
+                        value={formData.tahunAkademik}
+                        readOnly
+                        aria-label="Tahun Akademik"
+                        className="pl-8"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* Objectives */}
-                <Textarea
-                  label="Tujuan Project"
-                  labelPlacement="outside"
-                  placeholder="Apa yang ingin dicapai dengan project ini?"
-                  value={formData.objectives}
-                  onChange={(e) => setFormData({ ...formData, objectives: e.target.value })}
-                  minRows={2}
-                  variant="bordered"
-                  classNames={{
-                    label: 'text-sm font-medium',
-                    inputWrapper: 'border-input bg-input/30',
-                  }}
-                  startContent={<Target size={14} className="text-app-teritary-invert mt-2" />}
-                />
+                <div className="space-y-1.5">
+                  <Label htmlFor="setup-objectives" className="text-sm font-medium">
+                    Tujuan Project
+                  </Label>
+                  <Textarea
+                    id="setup-objectives"
+                    placeholder="Apa yang ingin dicapai dengan project ini?"
+                    value={formData.objectives}
+                    onChange={(e) => setFormData({ ...formData, objectives: e.target.value })}
+                    rows={2}
+                  />
+                </div>
 
                 {/* Visibility Toggle */}
                 <div className="flex items-center justify-between p-3 rounded-lg border border-border bg-app-quinary">
@@ -942,53 +965,56 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                     </div>
                   </div>
                   <Switch
-                    size="sm"
-                    isSelected={isPublic}
-                    onValueChange={setIsPublic}
+                    checked={isPublic}
+                    onCheckedChange={setIsPublic}
                   />
                 </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Card 2: Category & Tech */}
-          <Card className="border border-border bg-card">
-            <CardBody className="p-5">
+          <Card className="border border-border bg-card py-0">
+            <CardContent className="p-5">
               <SectionHeader
                 icon={Tag}
                 title="Kategori & Teknologi"
                 subtitle="Jenis dan tech stack"
                 action={
-                  <Chip size="sm" variant="flat" color="primary">
+                  <Badge variant="secondary">
                     {selectedTechs.length} tech
-                  </Chip>
+                  </Badge>
                 }
               />
 
               <div className="space-y-5">
                 {/* Category Grid */}
                 <div>
-                  <label className="text-sm font-medium mb-2 block">
-                    Kategori Project <span className="text-danger">*</span>
-                  </label>
+                  <Label className="text-sm font-medium mb-2 block">
+                    Kategori Project <span className="text-destructive">*</span>
+                  </Label>
                   <div className="grid grid-cols-4 sm:grid-cols-8 gap-2">
                     {PROJECT_CATEGORIES.map((cat) => {
                       const Icon = cat.icon;
                       const isSelected = formData.category === cat.key;
                       return (
-                        <Tooltip key={cat.key} content={cat.label}>
-                          <motion.button
-                            type="button"
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => setFormData({ ...formData, category: cat.key })}
-                            className={`
+                        <Tooltip key={cat.key}>
+                          <TooltipTrigger
+                            render={
+                              <motion.button
+                                type="button"
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={() => setFormData({ ...formData, category: cat.key })}
+                                className={`
                               relative p-2.5 rounded-xl transition-all duration-200 flex flex-col items-center gap-1
                               ${isSelected
-                                ? 'bg-primary/10 ring-2 ring-primary'
-                                : 'bg-app-quinary hover:bg-app-quaternary border border-border'
-                              }
+                                    ? 'bg-primary/10 ring-2 ring-primary'
+                                    : 'bg-app-quinary hover:bg-app-quaternary border border-border'
+                                  }
                             `}
+                              />
+                            }
                           >
                             {isSelected && (
                               <motion.div
@@ -1005,43 +1031,53 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                             <span className="text-[10px] font-medium text-center leading-tight truncate w-full">
                               {cat.label.split(' ')[0]}
                             </span>
-                          </motion.button>
+                          </TooltipTrigger>
+                          <TooltipContent>{cat.label}</TooltipContent>
                         </Tooltip>
                       );
                     })}
                   </div>
                 </div>
 
-                <Divider className="my-2" />
+                <Separator className="my-2" />
 
                 {/* Technology Selection */}
                 <div>
-                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <Label className="text-sm font-medium mb-2 flex items-center gap-2">
                     <Code2 size={14} />
-                    Teknologi <span className="text-danger">*</span>
-                  </label>
+                    Teknologi <span className="text-destructive">*</span>
+                  </Label>
 
-                  <Autocomplete
-                    placeholder="Cari teknologi..."
-                    size="sm"
-                    variant="bordered"
-                    startContent={<Search size={14} className="text-app-teritary-invert" />}
-                    inputValue={techSearch}
-                    onInputChange={setTechSearch}
-                    onSelectionChange={(key) => {
-                      if (key) handleAddTech(key.toString());
-                    }}
-                    classNames={{
-                      base: 'mb-3',
-                    }}
-                  >
-                    {ALL_TECHNOLOGIES.filter(t =>
-                      !selectedTechs.includes(t) &&
-                      t.toLowerCase().includes(techSearch.toLowerCase())
-                    ).map((tech) => (
-                      <AutocompleteItem key={tech}>{tech}</AutocompleteItem>
-                    ))}
-                  </Autocomplete>
+                  <div className="relative mb-3">
+                    <Search
+                      size={14}
+                      className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                    />
+                    <Input
+                      placeholder="Cari teknologi..."
+                      value={techSearch}
+                      onChange={(e) => setTechSearch(e.target.value)}
+                      className="pl-8 h-8"
+                      aria-label="Cari teknologi"
+                    />
+                    {techSearch.length > 0 && (
+                      <div className="absolute z-30 mt-1 max-h-48 w-full overflow-y-auto rounded-lg bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10">
+                        {ALL_TECHNOLOGIES.filter(t =>
+                          !selectedTechs.includes(t) &&
+                          t.toLowerCase().includes(techSearch.toLowerCase())
+                        ).map((tech) => (
+                          <button
+                            key={tech}
+                            type="button"
+                            onClick={() => handleAddTech(tech)}
+                            className="flex w-full items-center rounded-md px-2 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground"
+                          >
+                            {tech}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
                   {/* Selected Techs */}
                   <div className="flex flex-wrap gap-1.5 min-h-[40px] p-2.5 bg-app-quinary rounded-lg border border-dashed border-border">
@@ -1059,15 +1095,17 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
                           >
-                            <Chip
-                              size="sm"
-                              variant="flat"
-                              color="primary"
-                              onClose={() => handleRemoveTech(tech)}
-                              classNames={{ base: 'h-6' }}
-                            >
+                            <Badge variant="secondary" className="h-6 gap-1">
                               {tech}
-                            </Chip>
+                              <button
+                                type="button"
+                                aria-label={`Hapus ${tech}`}
+                                onClick={() => handleRemoveTech(tech)}
+                                className="opacity-60 hover:opacity-100"
+                              >
+                                <X size={10} />
+                              </button>
+                            </Badge>
                           </motion.div>
                         ))}
                       </AnimatePresence>
@@ -1079,36 +1117,35 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                     {['React', 'Next.js', 'Node.js', 'Python', 'TypeScript', 'PostgreSQL'].map((tech) => (
                       <Button
                         key={tech}
-                        size="sm"
-                        variant="bordered"
-                        radius="full"
-                        className="h-6 text-[10px] px-2 border-border"
-                        isDisabled={selectedTechs.includes(tech)}
-                        onPress={() => handleAddTech(tech)}
-                        startContent={<Plus size={10} />}
+                        size="xs"
+                        variant="outline"
+                        className="h-6 rounded-full text-[10px] px-2"
+                        disabled={selectedTechs.includes(tech)}
+                        onClick={() => handleAddTech(tech)}
                       >
+                        <Plus size={10} />
                         {tech}
                       </Button>
                     ))}
                   </div>
                 </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Card 3: GitHub & Team - Side by Side */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* GitHub Repository */}
-            <Card className="border border-border bg-card">
-              <CardBody className="p-5">
+            <Card className="border border-border bg-card py-0">
+              <CardContent className="p-5">
                 <SectionHeader
                   icon={Github}
                   title="Repository GitHub"
                   action={
                     hasGitHubConnected && (
-                      <Chip size="sm" variant="dot" color="success" classNames={{ base: 'h-5' }}>
+                      <Badge variant="outline" className="border-success/40 bg-success/10 text-success">
                         @{githubUsername}
-                      </Chip>
+                      </Badge>
                     )
                   }
                 />
@@ -1121,13 +1158,11 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                         <p className="text-sm font-medium text-warning">GitHub Belum Terhubung</p>
                         <p className="text-xs text-warning/80 mb-2">Login dengan GitHub untuk memilih repository</p>
                         <Button
-                          as={Link}
-                          href="/login"
                           size="sm"
-                          color="warning"
-                          variant="flat"
-                          startContent={<Github size={12} />}
+                          variant="outline"
+                          render={<Link href="/login" />}
                         >
+                          <Github size={12} />
                           Hubungkan
                         </Button>
                       </div>
@@ -1158,10 +1193,10 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                         </div>
                       </div>
                       <div className="flex gap-1">
-                        <Button size="sm" variant="light" isIconOnly onPress={() => setIsRepoSelectorOpen(true)}>
+                        <Button size="icon-sm" variant="ghost" onClick={() => setIsRepoSelectorOpen(true)}>
                           <Settings size={12} />
                         </Button>
-                        <Button size="sm" variant="light" color="danger" isIconOnly onPress={handleRemoveRepo}>
+                        <Button size="icon-sm" variant="ghost" className="text-destructive" onClick={handleRemoveRepo}>
                           <Trash2 size={12} />
                         </Button>
                       </div>
@@ -1170,11 +1205,11 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                 ) : (
                   <div className="space-y-3">
                     <Button
-                      variant="bordered"
-                      className="w-full h-14 border-dashed border-border"
-                      startContent={<FolderGit2 size={18} />}
-                      onPress={() => setIsRepoSelectorOpen(true)}
+                      variant="outline"
+                      className="w-full h-14 border-dashed"
+                      onClick={() => setIsRepoSelectorOpen(true)}
                     >
+                      <FolderGit2 size={18} />
                       <div className="text-left">
                         <p className="font-medium text-sm">Pilih Repository</p>
                         <p className="text-xs text-app-teritary-invert">dari akun GitHub Anda</p>
@@ -1182,23 +1217,28 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                     </Button>
 
                     <div className="relative">
-                      <Divider />
+                      <Separator />
                       <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-app-teritary-invert">
                         atau
                       </span>
                     </div>
 
-                    <Input
-                      size="sm"
-                      variant="bordered"
-                      placeholder="https://github.com/user/repo"
-                      value={formData.githubRepoUrl}
-                      onChange={(e) => setFormData({ ...formData, githubRepoUrl: e.target.value })}
-                      startContent={<LinkIcon size={12} className="text-app-teritary-invert" />}
-                    />
+                    <div className="relative">
+                      <LinkIcon
+                        size={12}
+                        className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                      />
+                      <Input
+                        placeholder="https://github.com/user/repo"
+                        value={formData.githubRepoUrl}
+                        onChange={(e) => setFormData({ ...formData, githubRepoUrl: e.target.value })}
+                        className="pl-8 h-8"
+                        aria-label="URL Repository GitHub"
+                      />
+                    </div>
                   </div>
                 )}
-              </CardBody>
+              </CardContent>
             </Card>
 
             {/* Team Members */}
@@ -1215,60 +1255,68 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
           </div>
 
           {/* Production URL & Testing Credentials - di bawah GitHub & Team */}
-          <Card className="border border-border bg-card">
-            <CardBody className="p-5">
+          <Card className="border border-border bg-card py-0">
+            <CardContent className="p-5">
               <div className="space-y-5">
                 {/* Production URL */}
                 <div>
-                  <label className="text-sm font-medium mb-2 flex items-center gap-2">
+                  <Label className="text-sm font-medium mb-2 flex items-center gap-2">
                     <Globe size={16} className="text-primary" />
                     URL Production/Demo
-                    <span className="text-danger">*</span>
-                  </label>
+                    <span className="text-destructive">*</span>
+                  </Label>
                   <div className="flex gap-2">
-                    <Input
-                      size="sm"
-                      variant="bordered"
-                      placeholder="https://your-app.vercel.app"
-                      value={formData.productionUrl}
-                      onChange={(e) => setFormData({ ...formData, productionUrl: e.target.value })}
-                      startContent={<Globe size={14} className="text-app-teritary-invert" />}
-                      endContent={
-                        urlValidation.status === 'checking' ? (
-                          <Spinner size="sm" className="w-4 h-4" />
+                    <div className="relative flex-1">
+                      <Globe
+                        size={14}
+                        className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                      />
+                      <Input
+                        placeholder="https://your-app.vercel.app"
+                        value={formData.productionUrl}
+                        onChange={(e) => setFormData({ ...formData, productionUrl: e.target.value })}
+                        required
+                        aria-label="URL Production"
+                        aria-invalid={urlValidation.status === 'invalid'}
+                        className={`pl-8 pr-8 ${urlValidation.status === 'valid' ? 'border-success' : ''}`}
+                      />
+                      <span className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2">
+                        {urlValidation.status === 'checking' ? (
+                          <Spinner className="size-4" />
                         ) : urlValidation.status === 'valid' ? (
                           <CheckCircle2 size={16} className="text-success" />
                         ) : urlValidation.status === 'invalid' ? (
-                          <XCircle size={16} className="text-danger" />
-                        ) : null
-                      }
-                      isRequired
-                      className="flex-1"
-                      classNames={{
-                        inputWrapper: `border-input bg-input/30 ${urlValidation.status === 'valid' ? 'border-success' :
-                          urlValidation.status === 'invalid' ? 'border-danger' : ''
-                          }`,
-                      }}
-                    />
+                          <XCircle size={16} className="text-destructive" />
+                        ) : null}
+                      </span>
+                    </div>
                     {formData.productionUrl && urlValidation.status !== 'checking' && (
-                      <Tooltip content="Buka di tab baru">
-                        <Button
-                          size="sm"
-                          variant="flat"
-                          isIconOnly
-                          as="a"
-                          href={formData.productionUrl.startsWith('http') ? formData.productionUrl : `https://${formData.productionUrl}`}
-                          target="_blank"
-                          className="h-10 w-10"
+                      <Tooltip>
+                        <TooltipTrigger
+                          render={
+                            <Button
+                              variant="secondary"
+                              size="icon"
+                              className="h-10 w-10"
+                              render={
+                                <a
+                                  href={formData.productionUrl.startsWith('http') ? formData.productionUrl : `https://${formData.productionUrl}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                />
+                              }
+                            />
+                          }
                         >
                           <ExternalLink size={16} />
-                        </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Buka di tab baru</TooltipContent>
                       </Tooltip>
                     )}
                   </div>
                   {urlValidation.status === 'checking' && (
                     <p className="text-xs mt-1.5 flex items-center gap-1 text-app-teritary-invert">
-                      <Spinner size="sm" className="w-3 h-3" />
+                      <Spinner className="size-3" />
                       Memeriksa URL...
                     </p>
                   )}
@@ -1279,7 +1327,7 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                     </p>
                   )}
                   {urlValidation.status === 'invalid' && (
-                    <p className="text-xs mt-1.5 flex items-center gap-1 text-danger">
+                    <p className="text-xs mt-1.5 flex items-center gap-1 text-destructive">
                       <XCircle size={12} />
                       {urlValidation.message}
                     </p>
@@ -1289,67 +1337,72 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                   )}
                 </div>
 
-                <Divider />
+                <Separator />
 
                 {/* Testing Credentials */}
                 <div>
                   <div className="flex items-center gap-2 mb-4">
                     <KeyRound size={16} className="text-warning" />
                     <span className="text-sm font-medium">Akun Testing</span>
-                    <Chip size="sm" variant="flat" color="warning" classNames={{ base: 'h-5 text-[10px]' }}>
+                    <Badge variant="outline" className="h-5 text-[10px] border-warning/40 bg-warning/10 text-warning">
                       Untuk Penguji
-                    </Chip>
+                    </Badge>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
-                      size="sm"
-                      variant="bordered"
-                      label="Username/Email"
-                      labelPlacement="outside"
-                      placeholder="user@example.com"
-                      value={testingCredentials.username}
-                      onChange={(e) => setTestingCredentials({ ...testingCredentials, username: e.target.value })}
-                      startContent={<User size={14} className="text-app-teritary-invert" />}
-                      classNames={{
-                        label: 'text-xs font-medium',
-                        inputWrapper: 'border-input bg-input/30',
-                      }}
-                    />
-                    <Input
-                      size="sm"
-                      variant="bordered"
-                      label="Password"
-                      labelPlacement="outside"
-                      placeholder="password123"
-                      value={testingCredentials.password}
-                      onChange={(e) => setTestingCredentials({ ...testingCredentials, password: e.target.value })}
-                      startContent={<KeyRound size={14} className="text-app-teritary-invert" />}
-                      classNames={{
-                        label: 'text-xs font-medium',
-                        inputWrapper: 'border-input bg-input/30',
-                      }}
-                    />
+                    <div className="space-y-1.5">
+                      <Label htmlFor="setup-testing-username" className="text-xs font-medium">
+                        Username/Email
+                      </Label>
+                      <div className="relative">
+                        <User
+                          size={14}
+                          className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                        />
+                        <Input
+                          id="setup-testing-username"
+                          placeholder="user@example.com"
+                          value={testingCredentials.username}
+                          onChange={(e) => setTestingCredentials({ ...testingCredentials, username: e.target.value })}
+                          className="pl-8"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="setup-testing-password" className="text-xs font-medium">
+                        Password
+                      </Label>
+                      <div className="relative">
+                        <KeyRound
+                          size={14}
+                          className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-app-teritary-invert"
+                        />
+                        <Input
+                          id="setup-testing-password"
+                          placeholder="password123"
+                          value={testingCredentials.password}
+                          onChange={(e) => setTestingCredentials({ ...testingCredentials, password: e.target.value })}
+                          className="pl-8"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <Textarea
-                    size="sm"
-                    variant="bordered"
-                    label="Catatan Testing (Opsional)"
-                    labelPlacement="outside"
-                    placeholder="Langkah-langkah login, fitur utama yang bisa dicoba, atau informasi tambahan untuk penguji..."
-                    value={testingCredentials.notes}
-                    onChange={(e) => setTestingCredentials({ ...testingCredentials, notes: e.target.value })}
-                    minRows={2}
-                    className="mt-4"
-                    classNames={{
-                      label: 'text-xs font-medium',
-                      inputWrapper: 'border-input bg-input/30',
-                    }}
-                  />
+                  <div className="space-y-1.5 mt-4">
+                    <Label htmlFor="setup-testing-notes" className="text-xs font-medium">
+                      Catatan Testing (Opsional)
+                    </Label>
+                    <Textarea
+                      id="setup-testing-notes"
+                      placeholder="Langkah-langkah login, fitur utama yang bisa dicoba, atau informasi tambahan untuk penguji..."
+                      value={testingCredentials.notes}
+                      onChange={(e) => setTestingCredentials({ ...testingCredentials, notes: e.target.value })}
+                      rows={2}
+                    />
+                  </div>
                 </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Card: Consent Document Upload */}
@@ -1361,8 +1414,8 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
           />
 
           {/* Card 4: Optional Fields (Collapsible) */}
-          <Card className="border border-border bg-card">
-            <CardBody className="p-0">
+          <Card className="border border-border bg-card py-0">
+            <CardContent className="p-0">
               <button
                 onClick={() => setShowOptional(!showOptional)}
                 className="w-full p-5 flex items-center justify-between hover:bg-app-quinary transition-colors rounded-xl"
@@ -1396,42 +1449,38 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                     <div className="px-5 pb-6 pt-4 border-t border-border">
                       <div className="grid gap-6">
                         {/* Methodology */}
-                        <Textarea
-                          label="Metodologi Pengembangan"
-                          labelPlacement="outside"
-                          placeholder="Jelaskan metodologi yang akan digunakan dalam pengembangan project ini. Contoh: Agile/Scrum, Waterfall, Prototype, RAD, dll..."
-                          value={formData.methodology}
-                          onChange={(e) => setFormData({ ...formData, methodology: e.target.value })}
-                          minRows={3}
-                          variant="bordered"
-                          classNames={{
-                            label: 'text-sm font-medium mb-2',
-                            inputWrapper: 'border-input bg-input/30',
-                            input: 'placeholder:text-app-teritary-invert',
-                          }}
-                        />
+                        <div className="space-y-1.5">
+                          <Label htmlFor="setup-methodology" className="text-sm font-medium">
+                            Metodologi Pengembangan
+                          </Label>
+                          <Textarea
+                            id="setup-methodology"
+                            placeholder="Jelaskan metodologi yang akan digunakan dalam pengembangan project ini. Contoh: Agile/Scrum, Waterfall, Prototype, RAD, dll..."
+                            value={formData.methodology}
+                            onChange={(e) => setFormData({ ...formData, methodology: e.target.value })}
+                            rows={3}
+                          />
+                        </div>
 
                         {/* Expected Outcome */}
-                        <Textarea
-                          label="Output yang Diharapkan"
-                          labelPlacement="outside"
-                          placeholder="Jelaskan output/deliverable yang diharapkan dari project ini..."
-                          value={formData.expectedOutcome}
-                          onChange={(e) => setFormData({ ...formData, expectedOutcome: e.target.value })}
-                          minRows={3}
-                          variant="bordered"
-                          classNames={{
-                            label: 'text-sm font-medium mb-2',
-                            inputWrapper: 'border-input bg-input/30',
-                            input: 'placeholder:text-app-teritary-invert',
-                          }}
-                        />
+                        <div className="space-y-1.5">
+                          <Label htmlFor="setup-outcome" className="text-sm font-medium">
+                            Output yang Diharapkan
+                          </Label>
+                          <Textarea
+                            id="setup-outcome"
+                            placeholder="Jelaskan output/deliverable yang diharapkan dari project ini..."
+                            value={formData.expectedOutcome}
+                            onChange={(e) => setFormData({ ...formData, expectedOutcome: e.target.value })}
+                            rows={3}
+                          />
+                        </div>
                       </div>
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </CardBody>
+            </CardContent>
           </Card>
         </div>
 
@@ -1446,8 +1495,8 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
             >
               <div className="sticky top-20 space-y-4">
                 {/* Live Preview Card - Clean Design */}
-                <Card className="border border-border bg-card rounded-2xl overflow-hidden">
-                  <CardBody className="p-5 space-y-4">
+                <Card className="border border-border bg-card rounded-2xl overflow-hidden py-0">
+                  <CardContent className="p-5 space-y-4">
                     {/* Header: Category + Title */}
                     <div className="space-y-3">
                       {/* Category Badge */}
@@ -1541,12 +1590,12 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                     {/* Author Section */}
                     <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary">
                       <div className="relative">
-                        <Avatar
-                          src={session?.user?.image || ''}
-                          name={session?.user?.name || ''}
-                          size="sm"
-                          className="w-10 h-10"
-                        />
+                        <Avatar className="w-10 h-10">
+                          <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
+                          <AvatarFallback>
+                            {(session?.user?.name || '?').charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
                         <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-success rounded-full border-2 border-background flex items-center justify-center">
                           <Check size={8} className="text-white" />
                         </div>
@@ -1559,11 +1608,11 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                         </p>
                       </div>
                     </div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
 
                 {/* Checklist Card - Enhanced */}
-                <Card className="border border-border bg-card overflow-hidden">
+                <Card className="border border-border bg-card overflow-hidden py-0">
                   <div className="p-4 border-b border-border bg-app-quinary">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -1577,18 +1626,10 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                       </div>
                     </div>
                   </div>
-                  <CardBody className="p-4 pt-2">
+                  <CardContent className="p-4 pt-2">
                     <Progress
                       value={formCompletion.percentage}
-                      color={formCompletion.percentage === 100 ? 'success' : 'primary'}
-                      size="md"
                       className="mb-4"
-                      classNames={{
-                        track: 'h-2 bg-app-primary',
-                        indicator: formCompletion.percentage === 100
-                          ? 'bg-success'
-                          : 'bg-primary'
-                      }}
                     />
                     <div className="space-y-1">
                       {formCompletion.fields.map((field, index) => (
@@ -1619,12 +1660,12 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                         </motion.div>
                       ))}
                     </div>
-                  </CardBody>
+                  </CardContent>
                 </Card>
 
                 {/* Tips Card - Enhanced */}
-                <Card className="border border-border bg-card overflow-hidden">
-                  <CardBody className="p-4">
+                <Card className="border border-border bg-card overflow-hidden py-0">
+                  <CardContent className="p-4">
                     <div className="flex items-center gap-2 mb-3">
                       <div className="bg-app-primary text-foreground flex size-7 items-center justify-center rounded-lg">
                         <Lightbulb size={14} />
@@ -1649,7 +1690,7 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
                         </motion.li>
                       ))}
                     </ul>
-                  </CardBody>
+                  </CardContent>
                 </Card>
               </div>
             </motion.div>

@@ -2,21 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Spinner,
-  Select,
-  SelectItem,
-} from '@heroui/react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
 import {
   Github,
   ExternalLink,
-  RefreshCw,
   AlertCircle,
-  GitBranch,
 } from 'lucide-react';
 import { GitHubCodeViewer } from '@/components/github';
 import { parseGitHubUrl } from '@/lib/github';
@@ -96,7 +88,7 @@ export function CodeBrowser({ projectId }: { projectId: string }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -107,7 +99,7 @@ export function CodeBrowser({ projectId }: { projectId: string }) {
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
           <AlertCircle size={32} className="text-destructive" />
         </div>
-        <p className="text-danger text-lg font-medium">
+        <p className="text-destructive text-lg font-medium">
           {error || 'Project tidak ditemukan'}
         </p>
       </div>
@@ -117,10 +109,10 @@ export function CodeBrowser({ projectId }: { projectId: string }) {
   if (!project.githubRepoUrl) {
     return (
       <div className="text-center py-12">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-warning/10 flex items-center justify-center">
-          <Github size={32} className="text-warning" />
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-amber-500/10 flex items-center justify-center">
+          <Github size={32} className="text-amber-500" />
         </div>
-        <p className="text-warning text-lg font-medium">
+        <p className="text-amber-600 dark:text-amber-400 text-lg font-medium">
           Project ini tidak memiliki repository GitHub
         </p>
       </div>
@@ -135,7 +127,7 @@ export function CodeBrowser({ projectId }: { projectId: string }) {
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
           <AlertCircle size={32} className="text-destructive" />
         </div>
-        <p className="text-danger text-lg font-medium">
+        <p className="text-destructive text-lg font-medium">
           URL GitHub tidak valid
         </p>
       </div>
@@ -145,8 +137,8 @@ export function CodeBrowser({ projectId }: { projectId: string }) {
   return (
     <div className="w-full space-y-4 pb-8">
       {/* Header */}
-      <Card className="border border-border bg-card shadow-none">
-        <CardBody className="p-4">
+      <Card className="border border-border bg-card shadow-none py-0">
+        <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
@@ -164,24 +156,27 @@ export function CodeBrowser({ projectId }: { projectId: string }) {
 
             <div className="flex items-center gap-3">
               <Button
-                as="a"
-                href={project.githubRepoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
                 size="sm"
-                variant="bordered"
-                startContent={<ExternalLink size={14} />}
+                variant="outline"
+                render={
+                  <a
+                    href={project.githubRepoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  />
+                }
               >
+                <ExternalLink size={14} />
                 Buka di GitHub
               </Button>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Full Height Code Viewer */}
-      <Card className="border border-border bg-card shadow-none overflow-hidden">
-        <CardBody className="p-0">
+      <Card className="border border-border bg-card shadow-none overflow-hidden py-0">
+        <CardContent className="p-0">
           <div className="min-h-[calc(100vh-220px)]">
             <GitHubCodeViewer
               owner={githubInfo.owner}
@@ -193,7 +188,7 @@ export function CodeBrowser({ projectId }: { projectId: string }) {
               onBranchChange={(branch) => setSelectedBranch(branch)}
             />
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Tooltip } from '@heroui/react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   FolderGit2,
   FileText,
@@ -141,10 +141,15 @@ export function ProjectCard({
               <Crown size={10} /> Ketua Kelompok
             </span>
           ) : (
-            <Tooltip content={`Ketua: ${ownerName || 'Tidak diketahui'}`}>
-              <span className="text-app-teritary-invert inline-flex cursor-help items-center gap-1.5 rounded-full border border-border px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest">
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <span className="text-app-teritary-invert inline-flex cursor-help items-center gap-1.5 rounded-full border border-border px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest" />
+                }
+              >
                 <Users size={10} /> Anggota
-              </span>
+              </TooltipTrigger>
+              <TooltipContent>{`Ketua: ${ownerName || 'Tidak diketahui'}`}</TooltipContent>
             </Tooltip>
           )}
         </div>

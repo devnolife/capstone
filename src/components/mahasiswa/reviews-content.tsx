@@ -3,20 +3,26 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import {
-  Button,
-  Card,
-  CardBody,
-  Chip,
-  Input,
   Select,
+  SelectContent,
   SelectItem,
-  Progress,
-  Avatar,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Progress } from '@/components/ui/progress';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import {
   Accordion,
   AccordionItem,
-  Tooltip,
-} from '@heroui/react';
+  AccordionTrigger,
+  AccordionContent,
+} from '@/components/ui/accordion';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import {
   ClipboardCheck,
   Clock,
@@ -37,9 +43,10 @@ import {
   User,
   Download,
   FileDown,
+  Loader2,
 } from 'lucide-react';
-import { formatDateTime } from '@/lib/utils';
-import { addToast } from '@heroui/react';
+import { cn, formatDateTime, getInitials } from '@/lib/utils';
+import { addToast } from '@/lib/toast';
 import { PageHeader } from '@/components/caret/PageHeader';
 
 interface ReviewScore {
@@ -171,11 +178,11 @@ const STATS_CONFIG = [
   },
 ];
 
-function getScoreColor(score: number, max: number): 'success' | 'warning' | 'danger' {
+function getScoreColor(score: number, max: number): string {
   const percentage = (score / max) * 100;
-  if (percentage >= 70) return 'success';
-  if (percentage >= 50) return 'warning';
-  return 'danger';
+  if (percentage >= 70) return '[&_[data-slot=progress-indicator]]:bg-success';
+  if (percentage >= 50) return '[&_[data-slot=progress-indicator]]:bg-warning';
+  return '[&_[data-slot=progress-indicator]]:bg-destructive';
 }
 
 /** Titik status semantik kecil untuk chip status review. */
@@ -196,7 +203,7 @@ function getScoreGrade(score: number): { label: string; color: string; bgColor: 
   if (score >= 85) return { label: 'Excellent', color: 'text-success', bgColor: 'bg-success/10' };
   if (score >= 70) return { label: 'Good', color: 'text-foreground', bgColor: 'bg-app-quaternary' };
   if (score >= 55) return { label: 'Fair', color: 'text-warning', bgColor: 'bg-warning/10' };
-  return { label: 'Needs Work', color: 'text-danger', bgColor: 'bg-danger/10' };
+  return { label: 'Needs Work', color: 'text-destructive', bgColor: 'bg-destructive/10' };
 }
 
 // Helper to get member display name
@@ -210,7 +217,7 @@ function getMemberDisplayName(member: ProjectMemberInfo): string {
 // Helper to group member scores by member
 function groupScoresByMember(memberScores: MemberReviewScore[]): Map<string, { member: ProjectMemberInfo; scores: MemberReviewScore[]; totalScore: number; maxScore: number }> {
   const grouped = new Map<string, { member: ProjectMemberInfo; scores: MemberReviewScore[]; totalScore: number; maxScore: number }>();
-  
+
   memberScores.forEach((ms) => {
     const existing = grouped.get(ms.member.id);
     if (existing) {
@@ -226,7 +233,7 @@ function groupScoresByMember(memberScores: MemberReviewScore[]): Map<string, { m
       });
     }
   });
-  
+
   return grouped;
 }
 
@@ -241,16 +248,14 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
       transition={{ delay: index * 0.1 }}
     >
       <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
-        <CardBody className="p-0">
+        <CardContent className="p-0">
           {/* Header */}
           <div className="border-b border-border bg-app-quinary p-4 md:p-5">
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <Avatar
-                  name={review.reviewer.name}
-                  size="md"
-                  className="shrink-0"
-                />
+                <Avatar className="shrink-0">
+                  <AvatarFallback>{getInitials(review.reviewer.name)}</AvatarFallback>
+                </Avatar>
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-foreground">{review.reviewer.name}</p>
                   <p className="text-app-teritary-invert font-mono text-[10px] tracking-wider">@{review.reviewer.username}</p>
@@ -311,10 +316,14 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
                 <div className="mt-3">
                   <Progress
                     value={review.overallScore || 0}
-                    color={review.overallScore && review.overallScore >= 70 ? 'success' : review.overallScore && review.overallScore >= 55 ? 'warning' : 'danger'}
-                    size="sm"
-                    className="h-2"
-                    classNames={{ track: 'bg-app-primary' }}
+                    className={cn(
+                      '[&_[data-slot=progress-track]]:h-2 [&_[data-slot=progress-track]]:bg-app-primary',
+                      review.overallScore && review.overallScore >= 70
+                        ? '[&_[data-slot=progress-indicator]]:bg-success'
+                        : review.overallScore && review.overallScore >= 55
+                          ? '[&_[data-slot=progress-indicator]]:bg-warning'
+                          : '[&_[data-slot=progress-indicator]]:bg-destructive'
+                    )}
                   />
                 </div>
               </div>
@@ -333,50 +342,46 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
 
             {/* Scores Accordion */}
             {review.scores.length > 0 && (
-              <Accordion variant="bordered" className="rounded-xl border-border px-0">
-                <AccordionItem
-                  key="scores"
-                  aria-label="Lihat Nilai per Kriteria"
-                  title={
+              <Accordion className="rounded-xl border border-border px-3">
+                <AccordionItem value="scores">
+                  <AccordionTrigger>
                     <div className="flex items-center gap-2">
                       <TrendingUp size={16} className="text-app-teritary-invert" />
                       <span className="text-sm font-medium">
                         Nilai per Kriteria ({review.scores.length})
                       </span>
                     </div>
-                  }
-                  classNames={{
-                    content: 'pt-0 pb-4',
-                  }}
-                >
-                  <div className="space-y-3">
-                    {review.scores.map((score) => (
-                      <div key={score.id} className="rounded-lg bg-app-quinary p-3">
-                        <div className="mb-2 flex items-center justify-between">
-                          <div>
-                            <span className="text-sm font-medium">{score.rubrik.name}</span>
-                            <Chip size="sm" variant="flat" className="ml-2 h-5 text-[10px]">
-                              {score.rubrik.kategori}
-                            </Chip>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-3">
+                      {review.scores.map((score) => (
+                        <div key={score.id} className="rounded-lg bg-app-quinary p-3">
+                          <div className="mb-2 flex items-center justify-between">
+                            <div>
+                              <span className="text-sm font-medium">{score.rubrik.name}</span>
+                              <Badge variant="secondary" className="ml-2 h-5 text-[10px]">
+                                {score.rubrik.kategori}
+                              </Badge>
+                            </div>
+                            <span className="font-bold tabular-nums">
+                              {score.score}
+                              <span className="text-app-teritary-invert font-normal">/{score.rubrik.bobotMax}</span>
+                            </span>
                           </div>
-                          <span className="font-bold tabular-nums">
-                            {score.score}
-                            <span className="text-app-teritary-invert font-normal">/{score.rubrik.bobotMax}</span>
-                          </span>
+                          <Progress
+                            value={(score.score / score.rubrik.bobotMax) * 100}
+                            className={cn(
+                              '[&_[data-slot=progress-track]]:h-1.5 [&_[data-slot=progress-track]]:bg-app-primary',
+                              getScoreColor(score.score, score.rubrik.bobotMax)
+                            )}
+                          />
+                          {score.feedback && (
+                            <p className="text-app-teritary-invert mt-2 text-xs italic">&quot;{score.feedback}&quot;</p>
+                          )}
                         </div>
-                        <Progress
-                          value={(score.score / score.rubrik.bobotMax) * 100}
-                          color={getScoreColor(score.score, score.rubrik.bobotMax)}
-                          size="sm"
-                          className="h-1.5"
-                          classNames={{ track: 'bg-app-primary' }}
-                        />
-                        {score.feedback && (
-                          <p className="text-app-teritary-invert mt-2 text-xs italic">&quot;{score.feedback}&quot;</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  </AccordionContent>
                 </AccordionItem>
               </Accordion>
             )}
@@ -385,103 +390,101 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
             {review.memberScores && review.memberScores.length > 0 && (() => {
               const groupedScores = groupScoresByMember(review.memberScores);
               const membersArray = Array.from(groupedScores.values());
-              
+
               return (
-                <Accordion variant="bordered" className="rounded-xl border-border px-0">
-                  <AccordionItem
-                    key="member-scores"
-                    aria-label="Lihat Nilai Individu per Anggota"
-                    title={
+                <Accordion className="rounded-xl border border-border px-3">
+                  <AccordionItem value="member-scores">
+                    <AccordionTrigger>
                       <div className="flex items-center gap-2">
                         <Users size={16} className="text-app-teritary-invert" />
                         <span className="text-sm font-medium">
                           Nilai Individu per Anggota ({membersArray.length} anggota)
                         </span>
                       </div>
-                    }
-                    classNames={{
-                      content: 'pt-0 pb-4',
-                    }}
-                  >
-                    <div className="space-y-4">
-                      {membersArray.map(({ member, scores, totalScore, maxScore }) => {
-                        const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
-                        const memberGrade = getScoreGrade(percentage);
-                        
-                        return (
-                          <div 
-                            key={member.id} 
-                            className="rounded-xl border border-border bg-app-quinary p-4"
-                          >
-                            {/* Member Header */}
-                            <div className="mb-3 flex items-center justify-between">
-                              <div className="flex items-center gap-3">
-                                <span className="bg-app-primary text-foreground flex size-9 items-center justify-center rounded-lg">
-                                  <User size={16} />
-                                </span>
-                                <div>
-                                  <p className="text-sm font-semibold">{getMemberDisplayName(member)}</p>
-                                  <div className="flex items-center gap-2">
-                                    <Chip 
-                                      size="sm" 
-                                      variant="flat" 
-                                      className="h-5 text-[10px]"
-                                      color={member.role === 'leader' ? 'primary' : 'default'}
-                                    >
-                                      {member.role === 'leader' ? 'Ketua' : 'Anggota'}
-                                    </Chip>
-                                    {member.user?.username && (
-                                      <span className="text-app-teritary-invert text-xs">@{member.user.username}</span>
-                                    )}
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-4">
+                        {membersArray.map(({ member, scores, totalScore, maxScore }) => {
+                          const percentage = maxScore > 0 ? Math.round((totalScore / maxScore) * 100) : 0;
+                          const memberGrade = getScoreGrade(percentage);
+
+                          return (
+                            <div
+                              key={member.id}
+                              className="rounded-xl border border-border bg-app-quinary p-4"
+                            >
+                              {/* Member Header */}
+                              <div className="mb-3 flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <span className="bg-app-primary text-foreground flex size-9 items-center justify-center rounded-lg">
+                                    <User size={16} />
+                                  </span>
+                                  <div>
+                                    <p className="text-sm font-semibold">{getMemberDisplayName(member)}</p>
+                                    <div className="flex items-center gap-2">
+                                      <Badge
+                                        className={cn(
+                                          'h-5 text-[10px]',
+                                          member.role === 'leader'
+                                            ? 'bg-primary/10 text-primary'
+                                            : 'bg-muted text-muted-foreground'
+                                        )}
+                                      >
+                                        {member.role === 'leader' ? 'Ketua' : 'Anggota'}
+                                      </Badge>
+                                      {member.user?.username && (
+                                        <span className="text-app-teritary-invert text-xs">@{member.user.username}</span>
+                                      )}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                              <div className="text-right">
-                                <div className={`rounded-full px-3 py-1 ${memberGrade.bgColor}`}>
-                                  <span className={`text-xs font-bold tabular-nums ${memberGrade.color}`}>
-                                    {totalScore.toFixed(1)}/{maxScore.toFixed(1)}
-                                  </span>
-                                </div>
-                                <p className={`mt-1 text-xs ${memberGrade.color}`}>{memberGrade.label}</p>
-                              </div>
-                            </div>
-                            
-                            {/* Member's Individual Scores */}
-                            <div className="space-y-2">
-                              {scores.map((score) => (
-                                <div 
-                                  key={score.id} 
-                                  className="rounded-lg border border-border bg-app-quaternary p-2.5"
-                                >
-                                  <div className="mb-1.5 flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                      <span className="text-xs font-medium">{score.rubrik.name}</span>
-                                      <Chip size="sm" variant="flat" className="h-4 px-1 text-[9px]">
-                                        {score.rubrik.kategori}
-                                      </Chip>
-                                    </div>
-                                    <span className="text-xs font-bold tabular-nums">
-                                      {score.score}
-                                      <span className="text-app-teritary-invert font-normal">/{score.maxScore}</span>
+                                <div className="text-right">
+                                  <div className={`rounded-full px-3 py-1 ${memberGrade.bgColor}`}>
+                                    <span className={`text-xs font-bold tabular-nums ${memberGrade.color}`}>
+                                      {totalScore.toFixed(1)}/{maxScore.toFixed(1)}
                                     </span>
                                   </div>
-                                  <Progress
-                                    value={(score.score / score.maxScore) * 100}
-                                    color={getScoreColor(score.score, score.maxScore)}
-                                    size="sm"
-                                    className="h-1"
-                                    classNames={{ track: 'bg-app-primary' }}
-                                  />
-                                  {score.feedback && (
-                                    <p className="text-app-teritary-invert mt-1.5 text-[10px] italic">&quot;{score.feedback}&quot;</p>
-                                  )}
+                                  <p className={`mt-1 text-xs ${memberGrade.color}`}>{memberGrade.label}</p>
                                 </div>
-                              ))}
+                              </div>
+
+                              {/* Member's Individual Scores */}
+                              <div className="space-y-2">
+                                {scores.map((score) => (
+                                  <div
+                                    key={score.id}
+                                    className="rounded-lg border border-border bg-app-quaternary p-2.5"
+                                  >
+                                    <div className="mb-1.5 flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-xs font-medium">{score.rubrik.name}</span>
+                                        <Badge variant="secondary" className="h-4 px-1 text-[9px]">
+                                          {score.rubrik.kategori}
+                                        </Badge>
+                                      </div>
+                                      <span className="text-xs font-bold tabular-nums">
+                                        {score.score}
+                                        <span className="text-app-teritary-invert font-normal">/{score.maxScore}</span>
+                                      </span>
+                                    </div>
+                                    <Progress
+                                      value={(score.score / score.maxScore) * 100}
+                                      className={cn(
+                                        '[&_[data-slot=progress-track]]:h-1 [&_[data-slot=progress-track]]:bg-app-primary',
+                                        getScoreColor(score.score, score.maxScore)
+                                      )}
+                                    />
+                                    {score.feedback && (
+                                      <p className="text-app-teritary-invert mt-1.5 text-[10px] italic">&quot;{score.feedback}&quot;</p>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })}
-                    </div>
+                          );
+                        })}
+                      </div>
+                    </AccordionContent>
                   </AccordionItem>
                 </Accordion>
               );
@@ -531,22 +534,25 @@ function ReviewCard({ review, index, onExport, isExporting }: { review: Review; 
                 </span>
               </div>
               {review.status === 'COMPLETED' && onExport && (
-                <Tooltip content="Download laporan review ini">
-                  <Button
-                    size="sm"
-                    variant="flat"
-                    color="secondary"
-                    isIconOnly
-                    isLoading={isExporting}
-                    onPress={() => onExport(review.id)}
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        size="icon-sm"
+                        variant="outline"
+                        disabled={isExporting}
+                        onClick={() => onExport(review.id)}
+                      />
+                    }
                   >
-                    <Download size={14} />
-                  </Button>
+                    {isExporting ? <Loader2 className="animate-spin" /> : <Download size={14} />}
+                  </TooltipTrigger>
+                  <TooltipContent>Download laporan review ini</TooltipContent>
                 </Tooltip>
               )}
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </motion.div>
   );
@@ -650,7 +656,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
 
   // Filter reviews
   const filteredReviews = reviews.filter((review) => {
-    const matchesSearch = 
+    const matchesSearch =
       review.project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       review.reviewer.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus = statusFilter === 'all' || review.status === statusFilter;
@@ -693,7 +699,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
       {stats.completedReviews > 0 && (
         <motion.div variants={itemVariants}>
           <Card className="overflow-hidden rounded-2xl border border-border bg-card shadow-none">
-            <CardBody className="p-4">
+            <CardContent className="p-4">
               <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
                 <div className="flex items-center gap-3">
                   <span className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
@@ -704,20 +710,24 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
                     <p className="text-app-teritary-invert text-xs">Download laporan lengkap dengan nilai dan feedback</p>
                   </div>
                 </div>
-                <Tooltip content="Download laporan semua review yang sudah selesai">
-                  <Button
-                    color="secondary"
-                    variant="flat"
-                    startContent={!isExporting && <Download size={16} />}
-                    isLoading={isExporting}
-                    onPress={handleExportAll}
-                    size="sm"
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        disabled={isExporting}
+                        onClick={handleExportAll}
+                      />
+                    }
                   >
+                    {isExporting ? <Loader2 className="animate-spin" /> : <Download size={16} />}
                     Export Semua ({stats.completedReviews})
-                  </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Download laporan semua review yang sudah selesai</TooltipContent>
                 </Tooltip>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
         </motion.div>
       )}
@@ -762,39 +772,39 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
               <h3 className="text-sm font-semibold">Filter Review</h3>
             </div>
           </div>
-          <CardBody className="p-4">
+          <CardContent className="p-4">
             <div className="flex flex-col gap-3 md:flex-row">
-              <Input
-                placeholder="Cari berdasarkan project atau reviewer..."
-                value={searchQuery}
-                onValueChange={setSearchQuery}
-                startContent={<Search size={18} className="text-app-teritary-invert" />}
-                className="md:flex-1"
-                size="sm"
-                classNames={{
-                  inputWrapper: 'border border-border bg-app-quinary',
-                }}
-              />
+              <div className="relative md:flex-1">
+                <Search
+                  size={18}
+                  className="text-app-teritary-invert absolute left-2.5 top-1/2 -translate-y-1/2"
+                />
+                <Input
+                  placeholder="Cari berdasarkan project atau reviewer..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="border border-border bg-app-quinary pl-9"
+                />
+              </div>
               <Select
-                placeholder="Semua Status"
-                selectedKeys={statusFilter ? [statusFilter] : []}
-                onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string || 'all')}
-                className="md:w-[200px]"
-                size="sm"
-                classNames={{
-                  trigger: 'border border-border bg-app-quinary',
-                }}
-                items={[
-                  { key: 'all', label: 'Semua Status' },
-                  { key: 'PENDING', label: 'Menunggu' },
-                  { key: 'IN_PROGRESS', label: 'Sedang Direview' },
-                  { key: 'COMPLETED', label: 'Selesai' },
-                ]}
+                value={statusFilter}
+                onValueChange={(value) => setStatusFilter((value as string) || 'all')}
               >
-                {(item) => <SelectItem key={item.key}>{item.label}</SelectItem>}
+                <SelectTrigger
+                  size="sm"
+                  className="border border-border bg-app-quinary md:w-[200px]"
+                >
+                  <SelectValue placeholder="Semua Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Semua Status</SelectItem>
+                  <SelectItem value="PENDING">Menunggu</SelectItem>
+                  <SelectItem value="IN_PROGRESS">Sedang Direview</SelectItem>
+                  <SelectItem value="COMPLETED">Selesai</SelectItem>
+                </SelectContent>
               </Select>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -802,7 +812,7 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
       <motion.div variants={itemVariants}>
         {filteredReviews.length === 0 ? (
           <Card className="rounded-2xl border border-border bg-card shadow-none">
-            <CardBody className="py-16 text-center">
+            <CardContent className="py-16 text-center">
               {reviews.length === 0 ? (
                 <>
                   <div className="bg-app-primary text-app-secondary-invert mx-auto mb-4 flex size-20 items-center justify-center rounded-full">
@@ -812,14 +822,13 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
                   <p className="text-app-secondary-invert mx-auto mb-4 max-w-sm text-sm">
                     Review akan muncul setelah dosen penguji ditugaskan dan mulai menilai project Anda
                   </p>
-                  <Button
-                    as={Link}
+                  <Link
                     href="/mahasiswa/projects"
-                    color="primary"
-                    startContent={<Zap size={18} />}
+                    className={buttonVariants()}
                   >
+                    <Zap size={18} />
                     Lihat Project Saya
-                  </Button>
+                  </Link>
                 </>
               ) : (
                 <>
@@ -831,9 +840,9 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
                     Tidak ada review yang cocok dengan filter Anda
                   </p>
                   <Button
-                    variant="flat"
+                    variant="outline"
                     className="mt-4"
-                    onPress={() => {
+                    onClick={() => {
                       setSearchQuery('');
                       setStatusFilter('all');
                     }}
@@ -842,15 +851,15 @@ export function MahasiswaReviewsContent({ reviews, stats }: ReviewsContentProps)
                   </Button>
                 </>
               )}
-            </CardBody>
+            </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
             {filteredReviews.map((review, index) => (
-              <ReviewCard 
-                key={review.id} 
-                review={review} 
-                index={index} 
+              <ReviewCard
+                key={review.id}
+                review={review}
+                index={index}
                 onExport={handleExportSingle}
                 isExporting={isExporting}
               />

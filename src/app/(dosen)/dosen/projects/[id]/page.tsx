@@ -4,17 +4,18 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Spinner } from '@/components/ui/spinner';
+import { Separator } from '@/components/ui/separator';
 import {
-  Card,
-  CardBody,
-  Button,
-  Chip,
-  Avatar,
-  Spinner,
-  Divider,
   Accordion,
+  AccordionContent,
   AccordionItem,
-} from '@heroui/react';
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { motion, AnimatePresence } from 'framer-motion';
 import DiscussionSection from '@/components/shared/discussion-section';
 import { WorkLogSection } from '@/components/mahasiswa/work-log-section';
@@ -218,6 +219,23 @@ function getAvatarUrl(mahasiswa: Project['mahasiswa']): string | undefined {
   return mahasiswa.image || undefined;
 }
 
+/** Pemetaan warna status (HeroUI legacy) ke varian Badge shadcn. */
+function statusBadgeVariant(
+  status: string
+): 'default' | 'secondary' | 'destructive' | 'outline' {
+  switch (getStatusColor(status)) {
+    case 'danger':
+      return 'destructive';
+    case 'success':
+    case 'secondary':
+      return 'secondary';
+    case 'primary':
+      return 'default';
+    default:
+      return 'outline';
+  }
+}
+
 const REQUIREMENTS_SECTIONS = [
   {
     key: 'basic',
@@ -310,7 +328,7 @@ export default function DosenProjectDetailPage({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-[60vh]">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -321,14 +339,13 @@ export default function DosenProjectDetailPage({
         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
           <AlertCircle size={32} className="text-destructive" />
         </div>
-        <p className="text-danger text-lg font-medium">{error || 'Project tidak ditemukan'}</p>
+        <p className="text-destructive text-lg font-medium">{error || 'Project tidak ditemukan'}</p>
         <Button
-          as={Link}
-          href="/dosen/projects"
-          variant="flat"
+          render={<Link href="/dosen/projects" />}
+          variant="secondary"
           className="mt-4"
-          startContent={<ArrowLeft size={16} />}
         >
+          <ArrowLeft size={16} />
           Kembali ke Daftar Project
         </Button>
       </div>
@@ -356,23 +373,20 @@ export default function DosenProjectDetailPage({
           actions={
             <>
               <Button
-                as={Link}
-                href="/dosen/projects"
-                variant="flat"
+                render={<Link href="/dosen/projects" />}
+                variant="secondary"
                 size="sm"
-                startContent={<ArrowLeft size={16} />}
               >
+                <ArrowLeft size={16} />
                 Kembali
               </Button>
               {canReview && (
                 <Button
-                  as={Link}
-                  href={`/dosen/projects/${project.id}/review`}
-                  color="warning"
+                  render={<Link href={`/dosen/projects/${project.id}/review`} />}
                   size="sm"
                   className="font-semibold"
-                  startContent={hasExistingReview ? <Eye size={16} /> : <PlayCircle size={16} />}
                 >
+                  {hasExistingReview ? <Eye size={16} /> : <PlayCircle size={16} />}
                   {hasExistingReview ? 'Lanjutkan Review' : 'Mulai Review'}
                 </Button>
               )}
@@ -381,7 +395,7 @@ export default function DosenProjectDetailPage({
         />
 
         <Card className="border border-border bg-card shadow-none overflow-hidden mt-3">
-          <CardBody className="p-5">
+          <CardContent className="p-5">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="bg-app-primary text-foreground flex size-12 shrink-0 items-center justify-center rounded-xl">
@@ -447,7 +461,7 @@ export default function DosenProjectDetailPage({
                 </div>
               )}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -462,20 +476,24 @@ export default function DosenProjectDetailPage({
                 <div className="flex items-center gap-2">
                   <Users size={18} className="text-app-secondary-invert" />
                   <h3 className="font-semibold">Tim Project</h3>
-                  <Chip size="sm" variant="flat" color="primary" className="tabular-nums">
+                  <Badge className="tabular-nums">
                     {1 + (project.members?.filter(m => m.role !== 'leader').length || 0)} anggota
-                  </Chip>
+                  </Badge>
                 </div>
               </div>
-              <CardBody className="p-4 space-y-4">
+              <CardContent className="p-4 space-y-4">
                 {/* Ketua (Owner) */}
                 <div className="flex items-center gap-3 p-3 rounded-xl bg-app-quaternary border border-border">
-                  <Avatar
-                    name={project.mahasiswa.name}
-                    src={avatarUrl}
-                    className="w-10 h-10 ring-2 ring-border"
-                    imgProps={{ referrerPolicy: "no-referrer" }}
-                  />
+                  <Avatar className="size-10 ring-2 ring-border">
+                    <AvatarImage
+                      src={avatarUrl}
+                      alt={project.mahasiswa.name}
+                      referrerPolicy="no-referrer"
+                    />
+                    <AvatarFallback>
+                      {project.mahasiswa.name.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
                       <p className="font-semibold text-sm">{project.mahasiswa.name}</p>
@@ -486,7 +504,7 @@ export default function DosenProjectDetailPage({
                       {project.mahasiswa.prodi && ` - ${project.mahasiswa.prodi}`}
                     </p>
                   </div>
-                  <Chip size="sm" color="primary" variant="flat">Ketua</Chip>
+                  <Badge>Ketua</Badge>
                   {project.mahasiswa.githubUsername && (
                     <a
                       href={`https://github.com/${project.mahasiswa.githubUsername}`}
@@ -506,12 +524,16 @@ export default function DosenProjectDetailPage({
                     key={member.id}
                     className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-border"
                   >
-                    <Avatar
-                      name={member.user?.name || member.name || 'Member'}
-                      src={member.user?.image || member.githubAvatarUrl || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
-                      className="w-10 h-10 ring-2 ring-border"
-                      imgProps={{ referrerPolicy: "no-referrer" }}
-                    />
+                    <Avatar className="size-10 ring-2 ring-border">
+                      <AvatarImage
+                        src={member.user?.image || member.githubAvatarUrl || (member.githubUsername ? `https://github.com/${member.githubUsername}.png` : undefined)}
+                        alt={member.user?.name || member.name || 'Member'}
+                        referrerPolicy="no-referrer"
+                      />
+                      <AvatarFallback>
+                        {(member.user?.name || member.name || 'M').charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">{member.user?.name || member.name || member.githubUsername}</p>
                       <p className="text-xs text-app-secondary-invert">
@@ -519,7 +541,7 @@ export default function DosenProjectDetailPage({
                         {member.user?.prodi && ` - ${member.user.prodi}`}
                       </p>
                     </div>
-                    <Chip size="sm" color="success" variant="flat">Anggota</Chip>
+                    <Badge variant="secondary">Anggota</Badge>
                     {(member.user?.githubUsername || member.githubUsername) && (
                       <a
                         href={`https://github.com/${member.user?.githubUsername || member.githubUsername}`}
@@ -540,12 +562,16 @@ export default function DosenProjectDetailPage({
                     key={invitation.id}
                     className="flex items-center gap-3 p-3 rounded-xl bg-app-quinary border border-border"
                   >
-                    <Avatar
-                      name={invitation.invitee.name}
-                      src={invitation.invitee.image || undefined}
-                      className="w-10 h-10 ring-2 ring-border opacity-75"
-                      imgProps={{ referrerPolicy: "no-referrer" }}
-                    />
+                    <Avatar className="size-10 ring-2 ring-border opacity-75">
+                      <AvatarImage
+                        src={invitation.invitee.image || undefined}
+                        alt={invitation.invitee.name}
+                        referrerPolicy="no-referrer"
+                      />
+                      <AvatarFallback>
+                        {invitation.invitee.name.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm text-app-secondary-invert">{invitation.invitee.name}</p>
                       <p className="text-xs text-app-secondary-invert">
@@ -553,14 +579,14 @@ export default function DosenProjectDetailPage({
                         {invitation.invitee.prodi && ` - ${invitation.invitee.prodi}`}
                       </p>
                     </div>
-                    <Chip size="sm" color="warning" variant="flat">Menunggu</Chip>
+                    <Badge variant="outline">Menunggu</Badge>
                   </div>
                 ))}
 
                 {/* Description */}
                 {project.description && (
                   <>
-                    <Divider />
+                    <Separator />
                     <div>
                       <div className="flex items-center gap-2 mb-2">
                         <FileText size={14} className="text-app-secondary-invert" />
@@ -570,7 +596,7 @@ export default function DosenProjectDetailPage({
                     </div>
                   </>
                 )}
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
 
@@ -584,13 +610,16 @@ export default function DosenProjectDetailPage({
                       <ListChecks size={16} className="text-app-secondary-invert" />
                       <h3 className="font-semibold text-sm">Persyaratan Proyek</h3>
                     </div>
-                    <Chip size="sm" variant="flat" color={project.requirements.completionPercent >= 80 ? 'success' : project.requirements.completionPercent >= 50 ? 'warning' : 'default'} className="h-5 text-xs tabular-nums">
+                    <Badge
+                      variant={project.requirements.completionPercent >= 80 ? 'secondary' : 'outline'}
+                      className="h-5 text-xs tabular-nums"
+                    >
                       {project.requirements.completionPercent}% Lengkap
-                    </Chip>
+                    </Badge>
                   </div>
                 </div>
-                <CardBody className="p-3">
-                  <Accordion variant="splitted" selectionMode="single" className="px-0 gap-2">
+                <CardContent className="p-3">
+                  <Accordion className="gap-2">
                     {REQUIREMENTS_SECTIONS.map((section) => {
                       const SectionIcon = section.icon;
                       const filledFields = section.fields.filter(
@@ -604,46 +633,45 @@ export default function DosenProjectDetailPage({
                       return (
                         <AccordionItem
                           key={section.key}
-                          aria-label={section.title}
-                          classNames={{
-                            base: 'border border-border rounded-lg bg-app-quinary',
-                            title: 'font-medium text-sm',
-                            trigger: 'px-3 py-2',
-                            content: 'px-3 pb-3',
-                          }}
-                          title={
-                            <div className="flex items-center gap-2">
+                          className="border border-border rounded-lg bg-app-quinary border-b"
+                        >
+                          <AccordionTrigger className="px-3 py-2">
+                            <div className="flex flex-1 items-center gap-2">
                               <div className="bg-app-primary text-foreground flex size-7 shrink-0 items-center justify-center rounded-md">
                                 <SectionIcon size={14} />
                               </div>
                               <span className="flex-1 text-sm">{section.title}</span>
-                              <Chip size="sm" variant="flat" color={filledFields.length === totalFields ? 'success' : 'default'} className="h-5 text-xs tabular-nums">
+                              <Badge
+                                variant={filledFields.length === totalFields ? 'secondary' : 'outline'}
+                                className="h-5 text-xs tabular-nums"
+                              >
                                 {filledFields.length}/{totalFields}
-                              </Chip>
+                              </Badge>
                             </div>
-                          }
-                        >
-                          <div className="space-y-2">
-                            {filledFields.map((field) => {
-                              const value = project.requirements?.[field.key as keyof ProjectRequirements];
-                              if (!value) return null;
-                              const displayValue = field.key === 'deadlineDate' && typeof value === 'string'
-                                ? formatDateTime(value)
-                                : String(value);
+                          </AccordionTrigger>
+                          <AccordionContent className="px-3 pb-3">
+                            <div className="space-y-2">
+                              {filledFields.map((field) => {
+                                const value = project.requirements?.[field.key as keyof ProjectRequirements];
+                                if (!value) return null;
+                                const displayValue = field.key === 'deadlineDate' && typeof value === 'string'
+                                  ? formatDateTime(value)
+                                  : String(value);
 
-                              return (
-                                <div key={field.key} className="bg-background rounded-md p-2.5 border border-border">
-                                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert mb-1">{field.label}</p>
-                                  <p className="text-sm text-app-secondary-invert whitespace-pre-wrap">{displayValue}</p>
-                                </div>
-                              );
-                            })}
-                          </div>
+                                return (
+                                  <div key={field.key} className="bg-background rounded-md p-2.5 border border-border">
+                                    <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert mb-1">{field.label}</p>
+                                    <p className="text-sm text-app-secondary-invert whitespace-pre-wrap">{displayValue}</p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </AccordionContent>
                         </AccordionItem>
                       );
                     })}
                   </Accordion>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -652,7 +680,7 @@ export default function DosenProjectDetailPage({
           {project.githubRepoUrl && githubInfo && (
             <motion.div variants={itemVariants}>
               <Card className="border border-border bg-card shadow-none overflow-hidden">
-                <CardBody className="p-0">
+                <CardContent className="p-0">
                   <div className="flex items-center gap-3 p-3 border-b border-border">
                     <div className="bg-app-primary text-foreground flex size-9 shrink-0 items-center justify-center rounded-lg">
                       <Github size={18} />
@@ -664,34 +692,33 @@ export default function DosenProjectDetailPage({
                     <div className="flex items-center gap-1.5">
                       <Button
                         size="sm"
-                        variant="flat"
-                        color="primary"
-                        startContent={showCodeViewer ? <ChevronUp size={14} /> : <Eye size={14} />}
-                        onPress={() => setShowCodeViewer(!showCodeViewer)}
+                        variant="secondary"
+                        onClick={() => setShowCodeViewer(!showCodeViewer)}
                         className="h-8"
                       >
+                        {showCodeViewer ? <ChevronUp size={14} /> : <Eye size={14} />}
                         {showCodeViewer ? 'Tutup' : 'Lihat Kode'}
                       </Button>
                       <Button
-                        as={Link}
-                        href={`/dosen/projects/${project.id}/code`}
+                        render={<Link href={`/dosen/projects/${project.id}/code`} />}
                         size="sm"
-                        variant="flat"
-                        color="secondary"
-                        startContent={<Code size={14} />}
+                        variant="secondary"
                         className="h-8"
                       >
+                        <Code size={14} />
                         Fullscreen
                       </Button>
                       <Button
-                        as="a"
-                        href={project.githubRepoUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        size="sm"
-                        variant="bordered"
-                        isIconOnly
-                        className="h-8 w-8 min-w-8"
+                        render={
+                          <a
+                            href={project.githubRepoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          />
+                        }
+                        size="icon-sm"
+                        variant="outline"
+                        className="h-8 w-8"
                       >
                         <ExternalLink size={14} />
                       </Button>
@@ -720,7 +747,7 @@ export default function DosenProjectDetailPage({
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -728,18 +755,18 @@ export default function DosenProjectDetailPage({
           {/* Bukti: Laporan Pengerjaan per-commit (read-only) */}
           <motion.div variants={itemVariants}>
             <Card className="border border-border bg-card shadow-none overflow-hidden">
-              <CardBody className="p-5">
+              <CardContent className="p-5">
                 <WorkLogSection projectId={projectId} readOnly />
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
 
           {/* Bukti: Foto Bersama Pengguna + status verifikasi wajah (read-only) */}
           <motion.div variants={itemVariants}>
             <Card className="border border-border bg-card shadow-none overflow-hidden">
-              <CardBody className="p-5">
+              <CardContent className="p-5">
                 <UserPhotoUpload projectId={projectId} readOnly />
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
 
@@ -760,7 +787,7 @@ export default function DosenProjectDetailPage({
           {/* Review Action Card */}
           <motion.div variants={itemVariants}>
             <Card className="border border-border bg-card shadow-none overflow-hidden">
-              <CardBody className="p-4">
+              <CardContent className="p-4">
                 {canReview ? (
                   <div className="p-3 rounded-xl bg-warning/10 border border-warning/40">
                     <div className="flex items-start gap-2">
@@ -775,13 +802,11 @@ export default function DosenProjectDetailPage({
                       </div>
                     </div>
                     <Button
-                      as={Link}
-                      href={`/dosen/projects/${project.id}/review`}
-                      color="warning"
+                      render={<Link href={`/dosen/projects/${project.id}/review`} />}
                       className="w-full font-semibold mt-3"
                       size="sm"
-                      startContent={hasExistingReview ? <Eye size={14} /> : <PlayCircle size={14} />}
                     >
+                      {hasExistingReview ? <Eye size={14} /> : <PlayCircle size={14} />}
                       {hasExistingReview ? 'Lanjutkan Review' : 'Mulai Review'}
                     </Button>
                   </div>
@@ -793,7 +818,7 @@ export default function DosenProjectDetailPage({
                     </p>
                   </div>
                 )}
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
 
@@ -807,15 +832,15 @@ export default function DosenProjectDetailPage({
                     <h4 className="font-semibold text-sm">Review Sebelumnya</h4>
                   </div>
                 </div>
-                <CardBody className="p-3">
+                <CardContent className="p-3">
                   <div className="space-y-2">
                     {project.reviews.map((review) => (
                       <div key={review.id} className="p-2.5 rounded-lg bg-app-quinary border border-border">
                         <div className="flex items-center justify-between mb-1">
                           <p className="font-medium text-sm">{review.reviewer.name}</p>
-                          <Chip size="sm" color={getStatusColor(review.status)} variant="flat" className="h-5 text-xs">
+                          <Badge variant={statusBadgeVariant(review.status)} className="h-5 text-xs">
                             {getStatusLabel(review.status)}
-                          </Chip>
+                          </Badge>
                         </div>
                         {review.overallScore !== null && (
                           <div className="flex items-center gap-1 text-sm">
@@ -829,7 +854,7 @@ export default function DosenProjectDetailPage({
                       </div>
                     ))}
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -844,10 +869,10 @@ export default function DosenProjectDetailPage({
                       <Building2 size={16} className="text-app-secondary-invert" />
                       <h3 className="font-semibold text-sm">Dokumen Stakeholder</h3>
                     </div>
-                    <Chip size="sm" variant="flat" color="primary" className="h-5 text-xs tabular-nums">{project.stakeholderDocuments.length}</Chip>
+                    <Badge className="h-5 text-xs tabular-nums">{project.stakeholderDocuments.length}</Badge>
                   </div>
                 </div>
-                <CardBody className="p-3">
+                <CardContent className="p-3">
                   <div className="space-y-2">
                     {project.stakeholderDocuments.map((doc) => (
                       <div key={doc.id} className="flex items-center justify-between p-2.5 rounded-lg bg-app-quinary border border-border">
@@ -862,13 +887,20 @@ export default function DosenProjectDetailPage({
                             </p>
                           </div>
                         </div>
-                        <Button as="a" href={doc.fileUrl} target="_blank" size="sm" variant="flat" color="primary" isIconOnly className="h-7 w-7 min-w-7">
+                        <Button
+                          render={
+                            <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" />
+                          }
+                          size="icon-sm"
+                          variant="secondary"
+                          className="h-7 w-7"
+                        >
                           <Download size={12} />
                         </Button>
                       </div>
                     ))}
                   </div>
-                </CardBody>
+                </CardContent>
               </Card>
             </motion.div>
           )}
@@ -882,7 +914,7 @@ export default function DosenProjectDetailPage({
                   <h4 className="font-semibold text-sm">Timeline</h4>
                 </div>
               </div>
-              <CardBody className="p-3">
+              <CardContent className="p-3">
                 <div className="space-y-2.5">
                   <div className="flex items-center gap-2.5">
                     <div className="w-2 h-2 rounded-full bg-app-teritary-invert" />
@@ -908,7 +940,7 @@ export default function DosenProjectDetailPage({
                     </div>
                   )}
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           </motion.div>
         </div>

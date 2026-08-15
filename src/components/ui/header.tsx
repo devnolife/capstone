@@ -3,18 +3,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Spinner } from '@/components/ui/spinner';
 import {
-  Button,
-  Avatar,
-  Dropdown,
-  DropdownTrigger,
   DropdownMenu,
-  DropdownItem,
-  Badge,
-  Input,
-  Skeleton,
-  Spinner,
-} from '@heroui/react';
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import {
   Bell,
   Moon,
@@ -210,9 +210,10 @@ export function Header({ title, onMenuClick }: HeaderProps) {
       <div className="flex items-center gap-3">
         {/* Mobile Menu Button */}
         <Button
-          isIconOnly
-          variant="light"
-          onPress={onMenuClick}
+          size="icon"
+          variant="ghost"
+          onClick={onMenuClick}
+          aria-label="Menu"
           className="md:hidden"
         >
           <Menu size={22} />
@@ -240,42 +241,38 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
       {/* Center - Search Bar (Desktop) */}
       <div className="hidden md:flex flex-1 max-w-2xl mx-8">
-        <Input
-          ref={searchInputRef}
-          classNames={{
-            base: 'w-full',
-            inputWrapper: 'bg-[var(--color-fog)] dark:bg-zinc-800/60 hover:bg-[var(--color-pebble)] dark:hover:bg-zinc-800 border-transparent shadow-none',
-          }}
-          placeholder="Cari project, mahasiswa, NIM..."
-          size="sm"
-          radius="lg"
-          value={searchQuery}
-          onValueChange={setSearchQuery}
-          onKeyDown={handleSearchKeyDown}
-          isClearable
-          onClear={() => setSearchQuery('')}
-          startContent={<Search size={18} className="text-default-400" />}
-          endContent={
-            <div className="hidden lg:flex items-center gap-1 text-default-600">
-              <kbd className="px-1.5 py-0.5 text-[10px] font-medium bg-default-200 rounded">
-                <Command size={10} className="inline" />
-              </kbd>
-              <kbd className="px-1.5 py-0.5 text-[10px] font-medium bg-default-200 rounded">K</kbd>
-            </div>
-          }
-          type="search"
-        />
+        <div className="relative w-full">
+          <Search
+            size={18}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <Input
+            ref={searchInputRef}
+            type="search"
+            aria-label="Cari"
+            placeholder="Cari project, mahasiswa, NIM..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
+            className="h-9 w-full rounded-lg border-transparent bg-[var(--color-fog)] pl-10 pr-20 shadow-none hover:bg-[var(--color-pebble)] dark:bg-zinc-800/60 dark:hover:bg-zinc-800"
+          />
+          <div className="pointer-events-none absolute right-3 top-1/2 hidden -translate-y-1/2 items-center gap-1 text-muted-foreground lg:flex">
+            <kbd className="px-1.5 py-0.5 text-[10px] font-medium bg-muted rounded">
+              <Command size={10} className="inline" />
+            </kbd>
+            <kbd className="px-1.5 py-0.5 text-[10px] font-medium bg-muted rounded">K</kbd>
+          </div>
+        </div>
       </div>
 
       {/* Right Side */}
       <div className="flex items-center gap-3">
         {/* Mobile Search Button */}
         <Button
-          isIconOnly
-          variant="light"
-          size="sm"
+          size="icon-sm"
+          variant="ghost"
           className="md:hidden"
-          onPress={() => submitSearch('')}
+          onClick={() => submitSearch('')}
           aria-label="Cari"
         >
           <Search size={20} />
@@ -283,199 +280,184 @@ export function Header({ title, onMenuClick }: HeaderProps) {
 
         {/* Theme Toggle - Desktop */}
         <Button
-          isIconOnly
-          variant="light"
-          onPress={toggleTheme}
-          size="sm"
+          size="icon-sm"
+          variant="ghost"
+          onClick={toggleTheme}
+          aria-label="Ganti tema"
           className="hidden md:flex"
         >
           {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
         </Button>
 
         {/* Notifications - Real-time with polling */}
-        <Dropdown
-          placement="bottom-end"
-          isOpen={isDropdownOpen}
-          onOpenChange={setIsDropdownOpen}
-        >
-          <DropdownTrigger>
-            <Button isIconOnly variant="light" size="sm">
-              <Badge
-                color="danger"
-                content={unreadCount > 99 ? '99+' : unreadCount}
-                size="sm"
-                shape="circle"
-                isInvisible={unreadCount === 0}
-              >
-                <Bell size={20} />
-              </Badge>
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu
+        <DropdownMenu open={isDropdownOpen} onOpenChange={setIsDropdownOpen}>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                size="icon-sm"
+                variant="ghost"
+                aria-label="Notifikasi"
+                className="relative"
+              />
+            }
+          >
+            <Bell size={20} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 flex min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] leading-4 font-medium text-white">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
             aria-label="Notifications"
             className="w-80 max-w-[calc(100vw-2rem)]"
-            closeOnSelect={false}
           >
-            <DropdownItem
-              key="header"
-              className="h-14 gap-2"
-              isReadOnly
-              textValue="Notifications Header"
-            >
-              <div className="flex items-center justify-between w-full">
-                <div>
-                  <p className="font-semibold">Notifikasi</p>
-                  <p className="text-xs text-default-500">
-                    {unreadCount > 0 ? `${unreadCount} notifikasi baru` : 'Tidak ada notifikasi baru'}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Button
-                    isIconOnly
-                    size="sm"
-                    variant="light"
-                    onPress={() => refreshNotifications()}
-                    isDisabled={notifLoading}
-                  >
-                    <RefreshCw size={14} className={notifLoading ? 'animate-spin' : ''} />
-                  </Button>
-                  {unreadCount > 0 && (
-                    <Button
-                      size="sm"
-                      variant="light"
-                      onPress={() => markAllAsRead()}
-                      startContent={<Check size={14} />}
-                      className="text-xs"
-                    >
-                      Baca semua
-                    </Button>
-                  )}
-                </div>
+            <div className="flex items-center justify-between gap-2 px-2 py-2">
+              <div>
+                <p className="font-semibold">Notifikasi</p>
+                <p className="text-xs text-muted-foreground">
+                  {unreadCount > 0 ? `${unreadCount} notifikasi baru` : 'Tidak ada notifikasi baru'}
+                </p>
               </div>
-            </DropdownItem>
+              <div className="flex items-center gap-1">
+                <Button
+                  size="icon-sm"
+                  variant="ghost"
+                  aria-label="Muat ulang notifikasi"
+                  onClick={() => refreshNotifications()}
+                  disabled={notifLoading}
+                >
+                  <RefreshCw size={14} className={notifLoading ? 'animate-spin' : ''} />
+                </Button>
+                {unreadCount > 0 && (
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => markAllAsRead()}
+                    className="text-xs"
+                  >
+                    <Check size={14} />
+                    Baca semua
+                  </Button>
+                )}
+              </div>
+            </div>
+
+            <DropdownMenuSeparator />
 
             {notifLoading && notifications.length === 0 ? (
-              <DropdownItem key="loading" isReadOnly textValue="Loading">
-                <div className="flex items-center justify-center py-4">
-                  <Spinner size="sm" />
-                </div>
-              </DropdownItem>
+              <div className="flex items-center justify-center py-4">
+                <Spinner />
+              </div>
             ) : notifications.length === 0 ? (
-              <DropdownItem key="empty" isReadOnly textValue="No notifications">
-                <div className="flex flex-col items-center justify-center py-6 text-center">
-                  <Bell size={32} className="text-default-300 mb-2" />
-                  <p className="text-sm text-default-500">Tidak ada notifikasi</p>
-                </div>
-              </DropdownItem>
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <Bell size={32} className="text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground">Tidak ada notifikasi</p>
+              </div>
             ) : (
-              <>
-                {notifications.map((notification) => (
-                  <DropdownItem
-                    key={notification.id}
-                    textValue={notification.title}
-                    className={`py-3 ${!notification.isRead ? 'bg-primary-50 dark:bg-primary-900/20' : ''}`}
-                    onPress={() => handleNotificationClick(notification)}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="mt-0.5">
-                        {getNotificationIcon(notification.type)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className={`text-sm ${!notification.isRead ? 'font-semibold' : ''} truncate`}>
-                            {notification.title}
-                          </p>
-                          {!notification.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                          )}
-                        </div>
-                        <p className="text-xs text-default-500 line-clamp-2 mt-0.5">
-                          {notification.message}
-                        </p>
-                        <p className="text-[10px] text-default-400 mt-1">
-                          {formatRelativeTime(notification.createdAt)}
-                        </p>
-                      </div>
+              notifications.map((notification) => (
+                <DropdownMenuItem
+                  key={notification.id}
+                  closeOnClick={false}
+                  className={`py-3 ${!notification.isRead ? 'bg-primary/5' : ''}`}
+                  onClick={() => handleNotificationClick(notification)}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5">
+                      {getNotificationIcon(notification.type)}
                     </div>
-                  </DropdownItem>
-                ))}
-              </>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className={`text-sm ${!notification.isRead ? 'font-semibold' : ''} truncate`}>
+                          {notification.title}
+                        </p>
+                        {!notification.isRead && (
+                          <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                        )}
+                      </div>
+                      <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">
+                        {notification.message}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        {formatRelativeTime(notification.createdAt)}
+                      </p>
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+              ))
             )}
 
-            <DropdownItem
-              key="view-all"
-              className="text-primary text-center border-t border-default-100"
-              href={`${basePath}/notifications`}
-              onPress={() => setIsDropdownOpen(false)}
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              render={<Link href={`${basePath}/notifications`} />}
+              className="justify-center text-primary"
+              onClick={() => setIsDropdownOpen(false)}
             >
               Lihat semua notifikasi
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         {/* User Menu */}
-        <Dropdown placement="bottom-end">
-          <DropdownTrigger>
-            <Button
-              variant="light"
-              className="p-1 min-w-0 h-auto"
-            >
-              <Avatar
-                isBordered
-                className="w-8 h-8"
-                color="primary"
-                name={session?.user?.name || 'User'}
-                size="sm"
-                src={getSimakPhotoUrl((session?.user as { nim?: string })?.nim) || session?.user?.image || undefined}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                aria-label="Menu profil"
+                className="h-auto p-1"
               />
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu aria-label="Profile Actions" variant="flat">
-            <DropdownItem
-              key="profile-info"
-              className="h-14 gap-2"
-              textValue="Profile Info"
-              isReadOnly
-            >
+            }
+          >
+            <Avatar className="w-8 h-8 ring-2 ring-primary/40">
+              <AvatarImage
+                src={
+                  getSimakPhotoUrl((session?.user as { nim?: string })?.nim) ||
+                  session?.user?.image ||
+                  undefined
+                }
+                alt={session?.user?.name || 'User'}
+              />
+              <AvatarFallback>
+                {(session?.user?.name || 'User').charAt(0).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" aria-label="Profile Actions">
+            <div className="px-2 py-2">
               <p className="font-semibold">{session?.user?.name}</p>
-              <p className="text-xs text-default-500">
+              <p className="text-xs text-muted-foreground">
                 {(session?.user as { username?: string })?.username}
               </p>
-            </DropdownItem>
-            <DropdownItem
-              key="my-profile"
-              href={`${basePath}/profile`}
-              startContent={<User size={18} />}
-            >
+            </div>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem render={<Link href={`${basePath}/profile`} />}>
+              <User size={18} />
               Profil Saya
-            </DropdownItem>
-            <DropdownItem
-              key="settings"
-              href={`${basePath}/settings`}
-              startContent={<Settings size={18} />}
-            >
+            </DropdownMenuItem>
+            <DropdownMenuItem render={<Link href={`${basePath}/settings`} />}>
+              <Settings size={18} />
               Pengaturan
-            </DropdownItem>
+            </DropdownMenuItem>
             {/* Mobile Theme Toggle */}
-            <DropdownItem
-              key="theme"
-              className="md:hidden"
-              startContent={theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-              onPress={toggleTheme}
-            >
+            <DropdownMenuItem className="md:hidden" onClick={toggleTheme}>
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               {theme === 'dark' ? 'Mode Terang' : 'Mode Gelap'}
-            </DropdownItem>
-            <DropdownItem
-              key="logout"
-              color="danger"
-              startContent={<LogOut size={18} />}
-              onPress={handleLogout}
-              isDisabled={isLoggingOut}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              variant="destructive"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
             >
+              <LogOut size={18} />
               {isLoggingOut ? 'Keluar...' : 'Keluar'}
-            </DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

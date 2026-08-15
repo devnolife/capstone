@@ -4,29 +4,28 @@ import React, { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Slider } from '@/components/ui/slider';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Spinner } from '@/components/ui/spinner';
+import { Progress } from '@/components/ui/progress';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
-  Card,
-  CardHeader,
-  CardBody,
-  Button,
-  Textarea,
-  Slider,
-  Divider,
-  Chip,
-  Avatar,
-  Tabs,
-  Tab,
-  Spinner,
-  Progress,
-  addToast,
-  Input,
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  useDisclosure,
-} from '@heroui/react';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Loader2 } from 'lucide-react';
+import { addToast } from '@/lib/toast';
 import {
   ArrowLeft,
   Save,
@@ -245,16 +244,51 @@ interface ProjectScreenshot {
 }
 
 const getStakeholderTypeConfig = (type: string) => {
-  const config: Record<string, { color: "success" | "primary" | "warning" | "secondary" | "danger" | "default"; icon: React.ElementType; label: string }> = {
-    SIGNATURE: { color: "success", icon: FileSignature, label: "Tanda Tangan" },
-    PHOTO: { color: "primary", icon: Camera, label: "Foto" },
-    AGREEMENT_LETTER: { color: "warning", icon: FileText, label: "Surat Persetujuan" },
-    ID_CARD: { color: "secondary", icon: IdCard, label: "Kartu Identitas" },
-    SCREENSHOT: { color: "primary", icon: ImageIcon, label: "Screenshot" },
-    SUPPORTING_DOCUMENT: { color: "warning", icon: FileText, label: "Dokumen Pelengkap" },
-    OTHER: { color: "danger", icon: File, label: "Lainnya" },
+  const config: Record<string, { variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ElementType; label: string }> = {
+    SIGNATURE: { variant: "secondary", icon: FileSignature, label: "Tanda Tangan" },
+    PHOTO: { variant: "default", icon: Camera, label: "Foto" },
+    AGREEMENT_LETTER: { variant: "outline", icon: FileText, label: "Surat Persetujuan" },
+    ID_CARD: { variant: "secondary", icon: IdCard, label: "Kartu Identitas" },
+    SCREENSHOT: { variant: "default", icon: ImageIcon, label: "Screenshot" },
+    SUPPORTING_DOCUMENT: { variant: "outline", icon: FileText, label: "Dokumen Pelengkap" },
+    OTHER: { variant: "destructive", icon: File, label: "Lainnya" },
   };
   return config[type] || config.OTHER;
+};
+
+type LegacyColor = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger';
+
+/** Pemetaan warna legacy (HeroUI) ke varian Badge shadcn. */
+const badgeVariantFromColor = (
+  color: LegacyColor
+): 'default' | 'secondary' | 'destructive' | 'outline' => {
+  switch (color) {
+    case 'danger':
+      return 'destructive';
+    case 'success':
+    case 'secondary':
+      return 'secondary';
+    case 'primary':
+      return 'default';
+    default:
+      return 'outline';
+  }
+};
+
+/** Warna indikator Progress agar semantik warna lama tetap terlihat. */
+const progressIndicatorClass = (color: LegacyColor): string => {
+  switch (color) {
+    case 'success':
+      return '[&_[data-slot=slider-indicator]]:bg-success [&_[data-slot=progress-indicator]]:bg-success';
+    case 'warning':
+      return '[&_[data-slot=progress-indicator]]:bg-warning';
+    case 'danger':
+      return '[&_[data-slot=progress-indicator]]:bg-destructive';
+    case 'secondary':
+      return '[&_[data-slot=progress-indicator]]:bg-secondary';
+    default:
+      return '';
+  }
 };
 
 // Animation variants
@@ -281,7 +315,7 @@ const itemVariants = {
 };
 
 // Get score color based on percentage
-const getScoreColor = (score: number, max: number) => {
+const getScoreColor = (score: number, max: number): LegacyColor => {
   const percentage = (score / max) * 100;
   if (percentage >= 80) return 'success';
   if (percentage >= 60) return 'primary';
@@ -321,7 +355,9 @@ export default function ReviewPage({
   const [isApproving, setIsApproving] = useState(false);
 
   // Presentation scheduling state
-  const { isOpen: isScheduleOpen, onOpen: onScheduleOpen, onClose: onScheduleClose } = useDisclosure();
+  const [isScheduleOpen, setIsScheduleOpen] = useState(false);
+  const onScheduleOpen = () => setIsScheduleOpen(true);
+  const onScheduleClose = () => setIsScheduleOpen(false);
   const [scheduleForm, setScheduleForm] = useState({
     scheduledDate: '',
     startTime: '09:00',
@@ -1090,7 +1126,7 @@ export default function ReviewPage({
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
-        <Spinner size="lg" color="primary" />
+        <Spinner className="size-8 text-primary" />
         <p className="text-app-secondary-invert">Memuat data review...</p>
       </div>
     );
@@ -1103,8 +1139,8 @@ export default function ReviewPage({
           <FolderGit2 size={36} className="text-destructive" />
         </div>
         <h3 className="font-semibold text-lg mb-2">Project Tidak Ditemukan</h3>
-        <p className="text-danger mb-4">{error || 'Project tidak ditemukan'}</p>
-        <Button as={Link} href="/dosen/projects" color="primary">
+        <p className="text-destructive mb-4">{error || 'Project tidak ditemukan'}</p>
+        <Button render={<Link href="/dosen/projects" />}>
           Kembali ke Daftar Project
         </Button>
       </div>
@@ -1123,14 +1159,13 @@ export default function ReviewPage({
       {/* Hero Header */}
       <motion.div variants={itemVariants}>
         <Card className="border border-border bg-card shadow-none overflow-hidden">
-          <CardBody className="p-6 md:p-8 relative">
+          <CardContent className="p-6 md:p-8 relative">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <Button
-                  as={Link}
-                  href="/dosen/projects"
-                  variant="flat"
-                  isIconOnly
+                  render={<Link href="/dosen/projects" />}
+                  variant="outline"
+                  size="icon"
                   className="rounded-full border border-input bg-input/30 text-foreground hover:bg-input/50"
                 >
                   <ArrowLeft size={20} />
@@ -1141,12 +1176,9 @@ export default function ReviewPage({
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <h1 className="font-display text-2xl md:text-3xl font-[450] tracking-tight">Review Project</h1>
-                    <Chip
-                      color={getStatusColor(project.status)}
-                      variant="flat"
-                    >
+                    <Badge variant={badgeVariantFromColor(getStatusColor(project.status))}>
                       {getStatusLabel(project.status)}
-                    </Chip>
+                    </Badge>
                   </div>
                   <p className="text-app-secondary-invert text-sm md:text-base">
                     {project.title}
@@ -1155,44 +1187,42 @@ export default function ReviewPage({
               </div>
               <div className="flex flex-wrap items-center gap-3">
                 <Button
-                  variant="flat"
+                  variant="outline"
                   className="rounded-full border border-input bg-input/30 text-foreground hover:bg-input/50"
-                  startContent={<Save size={18} />}
-                  onPress={() => handleSaveReview(false)}
-                  isLoading={isSaving}
+                  onClick={() => handleSaveReview(false)}
+                  disabled={isSaving}
                 >
+                  {isSaving ? <Loader2 className="animate-spin" /> : <Save size={18} />}
                   Simpan Draft
                 </Button>
                 <Button
                   className="rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 active:scale-[0.98]"
-                  startContent={<Send size={18} />}
-                  onPress={() => handleSaveReview(true)}
-                  isLoading={isSaving}
+                  onClick={() => handleSaveReview(true)}
+                  disabled={isSaving}
                 >
+                  {isSaving ? <Loader2 className="animate-spin" /> : <Send size={18} />}
                   Submit Review
                 </Button>
 
                 {/* ACC & Revision buttons - show when project is IN_REVIEW */}
                 {(project.status === 'IN_REVIEW') && (
                   <>
-                    <Divider orientation="vertical" className="h-8 bg-border" />
+                    <Separator orientation="vertical" className="h-8 bg-border" />
                     <Button
-                      variant="flat"
-                      color="warning"
+                      variant="outline"
                       className="rounded-full"
-                      startContent={<RotateCcw size={18} />}
-                      onPress={handleRequestRevision}
-                      isLoading={isApproving}
+                      onClick={handleRequestRevision}
+                      disabled={isApproving}
                     >
+                      {isApproving ? <Loader2 className="animate-spin" /> : <RotateCcw size={18} />}
                       Minta Revisi
                     </Button>
                     <Button
-                      color="success"
                       className="rounded-full font-semibold"
-                      startContent={<ThumbsUp size={18} />}
-                      onPress={handleApproveForPresentation}
-                      isLoading={isApproving}
+                      onClick={handleApproveForPresentation}
+                      disabled={isApproving}
                     >
+                      {isApproving ? <Loader2 className="animate-spin" /> : <ThumbsUp size={18} />}
                       ACC Presentasi
                     </Button>
                   </>
@@ -1201,26 +1231,25 @@ export default function ReviewPage({
                 {/* Reschedule button - show when project already approved/scheduled */}
                 {(project.status === 'READY_FOR_PRESENTATION' || project.status === 'PRESENTATION_SCHEDULED') && (
                   <>
-                    <Divider orientation="vertical" className="h-8 bg-white/30" />
+                    <Separator orientation="vertical" className="h-8 bg-border" />
                     <Button
-                      className="bg-white/20 text-white hover:bg-white/30"
-                      variant="flat"
-                      startContent={<Calendar size={18} />}
-                      onPress={openScheduleModal}
+                      variant="secondary"
+                      onClick={openScheduleModal}
                     >
+                      <Calendar size={18} />
                       {project.presentationSchedule ? 'Ubah Jadwal' : 'Jadwalkan Presentasi'}
                     </Button>
                   </>
                 )}
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
       {error && (
-        <motion.div variants={itemVariants} className="bg-danger/10 text-danger border border-danger/40 rounded-xl p-4 text-sm flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-danger/15">
+        <motion.div variants={itemVariants} className="bg-destructive/10 text-destructive border border-destructive/40 rounded-xl p-4 text-sm flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-destructive/15">
             <MessageSquare size={16} />
           </div>
           {error}
@@ -1238,13 +1267,17 @@ export default function ReviewPage({
               <h2 className="font-bold text-lg">Informasi Mahasiswa</h2>
             </div>
           </div>
-          <CardBody className="p-5">
+          <CardContent className="p-5">
             <div className="flex flex-col md:flex-row md:items-center gap-4">
-              <Avatar
-                name={project.mahasiswa.name}
-                src={project.mahasiswa.image || undefined}
-                className="w-16 h-16 ring-2 ring-border"
-              />
+              <Avatar className="size-16 ring-2 ring-border">
+                <AvatarImage
+                  src={project.mahasiswa.image || undefined}
+                  alt={project.mahasiswa.name}
+                />
+                <AvatarFallback>
+                  {project.mahasiswa.name.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1 space-y-2">
                 <div>
                   <p className="font-semibold text-lg">{project.mahasiswa.name}</p>
@@ -1265,19 +1298,18 @@ export default function ReviewPage({
               </div>
               {project.githubRepoUrl && (
                 <Button
-                  as="a"
-                  href={project.githubRepoUrl}
-                  target="_blank"
-                  variant="flat"
-                  color="default"
-                  startContent={<Github size={16} />}
-                  endContent={<ExternalLink size={14} />}
+                  render={
+                    <a href={project.githubRepoUrl} target="_blank" rel="noopener noreferrer" />
+                  }
+                  variant="secondary"
                 >
+                  <Github size={16} />
                   Repository
+                  <ExternalLink size={14} />
                 </Button>
               )}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       </motion.div>
 
@@ -1285,47 +1317,54 @@ export default function ReviewPage({
         {/* Main Review Form */}
         <motion.div variants={itemVariants} className="lg:col-span-2 space-y-6">
           <Card className="border border-border bg-card shadow-none overflow-hidden">
-            <Tabs
-              aria-label="Review sections"
-              color="primary"
-              variant="underlined"
-              classNames={{
-                tabList: "px-4 pt-4 gap-6",
-                cursor: "bg-primary",
-                tab: "px-0 h-10",
-                tabContent: "group-data-[selected=true]:text-primary font-medium"
-              }}
-            >
+            <Tabs defaultValue="penilaian" aria-label="Review sections">
+              <TabsList variant="line" className="px-4 pt-4 gap-6">
+                <TabsTrigger value="penilaian" className="h-10">
+                  <Star size={16} />
+                  <span>Penilaian</span>
+                </TabsTrigger>
+                <TabsTrigger value="feedback" className="h-10">
+                  <MessageSquare size={16} />
+                  <span>Feedback</span>
+                  {comments.length > 0 && (
+                    <Badge>{comments.length}</Badge>
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="referensi" className="h-10">
+                  <FileText size={16} />
+                  <span>Referensi</span>
+                  {(project.documents.length + stakeholderDocs.length + screenshots.length) > 0 && (
+                    <Badge variant="secondary">{project.documents.length + stakeholderDocs.length + screenshots.length}</Badge>
+                  )}
+                </TabsTrigger>
+                {project.githubRepoUrl && (
+                  <TabsTrigger value="code" className="h-10">
+                    <Code size={16} />
+                    <span>Kode</span>
+                  </TabsTrigger>
+                )}
+              </TabsList>
+
               {/* === TAB 1: PENILAIAN (Kelompok + Individu) === */}
-              <Tab
-                key="penilaian"
-                title={
-                  <div className="flex items-center gap-2">
-                    <Star size={16} />
-                    <span>Penilaian</span>
-                  </div>
-                }
-              >
-                <CardBody className="space-y-6 pt-4">
+              <TabsContent value="penilaian">
+                <CardContent className="space-y-6 pt-4">
                   {/* Sub-tab toggle: Kelompok / Individu */}
                   {project.members && project.members.length > 0 && (
                     <div className="flex gap-2 p-1 bg-app-quinary border border-border rounded-lg w-fit">
                       <Button
                         size="sm"
-                        variant={penilaianSubTab === 'kelompok' ? 'solid' : 'light'}
-                        color={penilaianSubTab === 'kelompok' ? 'primary' : 'default'}
-                        onPress={() => setPenilaianSubTab('kelompok')}
-                        startContent={<Star size={14} />}
+                        variant={penilaianSubTab === 'kelompok' ? 'default' : 'ghost'}
+                        onClick={() => setPenilaianSubTab('kelompok')}
                       >
+                        <Star size={14} />
                         Kelompok
                       </Button>
                       <Button
                         size="sm"
-                        variant={penilaianSubTab === 'individu' ? 'solid' : 'light'}
-                        color={penilaianSubTab === 'individu' ? 'primary' : 'default'}
-                        onPress={() => setPenilaianSubTab('individu')}
-                        startContent={<Users size={14} />}
+                        variant={penilaianSubTab === 'individu' ? 'default' : 'ghost'}
+                        onClick={() => setPenilaianSubTab('individu')}
                       >
+                        <Users size={14} />
                         Individu
                         <span
                           className={`ml-1.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[11px] font-semibold tabular-nums ${penilaianSubTab === 'individu'
@@ -1368,9 +1407,9 @@ export default function ReviewPage({
                                   </span>
                                   <p className="font-semibold">{rubrik.name}</p>
                                 </div>
-                                <Chip size="sm" variant="flat" color="secondary" className="mb-2">
+                                <Badge variant="secondary" className="mb-2">
                                   {rubrik.kategori}
-                                </Chip>
+                                </Badge>
                                 {rubrik.description && (
                                   <p className="text-xs text-app-teritary-invert mt-1">
                                     {rubrik.description}
@@ -1393,31 +1432,27 @@ export default function ReviewPage({
                                 <span>{rubrik.bobotMax}</span>
                               </div>
                               <Slider
-                                size="md"
                                 step={1}
-                                maxValue={rubrik.bobotMax}
-                                minValue={0}
+                                max={rubrik.bobotMax}
+                                min={0}
                                 value={scores[rubrik.id]?.score || 0}
-                                onChange={(value) => {
+                                onValueChange={(value) => {
+                                  const next = Array.isArray(value) ? value[0] : value;
                                   setScores((prev) => ({
                                     ...prev,
                                     [rubrik.id]: {
                                       ...prev[rubrik.id],
-                                      score: value as number,
+                                      score: next,
                                     },
                                   }));
                                   setIsGroupSaved(false);
                                 }}
-                                color={getScoreColor(scores[rubrik.id]?.score || 0, rubrik.bobotMax)}
                                 className="max-w-full"
-                                classNames={{ track: 'bg-app-primary' }}
-                                showTooltip
                               />
                             </div>
 
                             <Textarea
                               placeholder="Berikan feedback untuk kategori ini..."
-                              variant="bordered"
                               value={scores[rubrik.id]?.feedback || ''}
                               onChange={(e) => {
                                 setScores((prev) => ({
@@ -1429,10 +1464,7 @@ export default function ReviewPage({
                                 }));
                                 setIsGroupSaved(false);
                               }}
-                              minRows={2}
-                              classNames={{
-                                inputWrapper: "border-border"
-                              }}
+                              rows={2}
                             />
                           </motion.div>
                         ))
@@ -1459,24 +1491,24 @@ export default function ReviewPage({
                         </div>
                         <Progress
                           value={totalScore}
-                          color={getScoreColor(totalScore, 100)}
-                          className="mt-4"
-                          size="md"
-                          classNames={{ track: 'bg-app-primary' }}
+                          className={`mt-4 ${progressIndicatorClass(getScoreColor(totalScore, 100))}`}
                         />
                       </div>
 
                       {/* Save Group Score Button */}
                       <Button
-                        fullWidth
-                        color={isGroupSaved ? 'success' : 'primary'}
-                        variant="solid"
                         size="lg"
-                        startContent={isGroupSaved ? <CheckCircle2 size={20} /> : <Save size={20} />}
-                        isLoading={isSavingGroup}
-                        onPress={handleSaveGroupScore}
-                        className="font-semibold"
+                        onClick={handleSaveGroupScore}
+                        disabled={isSavingGroup}
+                        className="w-full font-semibold"
                       >
+                        {isSavingGroup ? (
+                          <Loader2 className="animate-spin" />
+                        ) : isGroupSaved ? (
+                          <CheckCircle2 size={20} />
+                        ) : (
+                          <Save size={20} />
+                        )}
                         {isSavingGroup
                           ? 'Menyimpan...'
                           : isGroupSaved
@@ -1537,12 +1569,12 @@ export default function ReviewPage({
                                 >
                                   {/* Avatar */}
                                   <div className="relative flex-shrink-0">
-                                    <Avatar
-                                      name={name}
-                                      src={avatar}
-                                      size="sm"
-                                      className={isLeader ? 'ring-2 ring-border' : ''}
-                                    />
+                                    <Avatar className={`size-8 ${isLeader ? 'ring-2 ring-border' : ''}`}>
+                                      <AvatarImage src={avatar} alt={name} />
+                                      <AvatarFallback className="text-xs">
+                                        {name.charAt(0).toUpperCase()}
+                                      </AvatarFallback>
+                                    </Avatar>
                                     {hasScores && (
                                       <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-success flex items-center justify-center">
                                         <CheckCircle2 size={10} className="text-background" />
@@ -1595,32 +1627,34 @@ export default function ReviewPage({
                               {/* Back Button & Member Info Header */}
                               <div className="flex items-center gap-4">
                                 <Button
-                                  variant="flat"
+                                  variant="secondary"
                                   size="sm"
-                                  startContent={<ArrowLeft size={16} />}
-                                  onPress={() => setSelectedMemberId(null)}
+                                  onClick={() => setSelectedMemberId(null)}
                                 >
+                                  <ArrowLeft size={16} />
                                   Kembali
                                 </Button>
-                                <Divider orientation="vertical" className="h-8" />
+                                <Separator orientation="vertical" className="h-8" />
                                 <div className="flex items-center gap-3 flex-1">
-                                  <Avatar
-                                    name={name}
-                                    src={avatar}
-                                    size="md"
-                                    className={isLeader ? 'ring-2 ring-border' : ''}
-                                  />
+                                  <Avatar className={`size-10 ${isLeader ? 'ring-2 ring-border' : ''}`}>
+                                    <AvatarImage src={avatar} alt={name} />
+                                    <AvatarFallback>
+                                      {name.charAt(0).toUpperCase()}
+                                    </AvatarFallback>
+                                  </Avatar>
                                   <div>
                                     <div className="flex items-center gap-2">
                                       <p className="font-semibold">{name}</p>
                                       {isLeader ? (
-                                        <Chip size="sm" color="warning" variant="flat" startContent={<Crown size={10} />}>
+                                        <Badge variant="outline">
+                                          <Crown size={10} />
                                           Ketua
-                                        </Chip>
+                                        </Badge>
                                       ) : (
-                                        <Chip size="sm" color="default" variant="flat" startContent={<UserCheck size={10} />}>
+                                        <Badge variant="outline">
+                                          <UserCheck size={10} />
                                           Anggota
-                                        </Chip>
+                                        </Badge>
                                       )}
                                     </div>
                                     {nim && <p className="text-xs text-app-teritary-invert">NIM: {nim}</p>}
@@ -1632,9 +1666,7 @@ export default function ReviewPage({
                                 </div>
                               </div>
 
-                              <Divider />
-
-                              {/* Rubrik Assessment Form */}
+                              <Separator />
                               <div className="space-y-4">
                                 {individualRubriks.map((rubrik, rubrikIndex) => {
                                   const memberData = memberScores.find((ms) => ms.memberId === selectedMember.id);
@@ -1657,9 +1689,9 @@ export default function ReviewPage({
                                             </span>
                                             <p className="font-semibold">{rubrik.name}</p>
                                           </div>
-                                          <Chip size="sm" variant="flat" color="secondary" className="mb-2">
+                                          <Badge variant="secondary" className="mb-2">
                                             {rubrik.kategori}
-                                          </Chip>
+                                          </Badge>
                                           {rubrik.description && (
                                             <p className="text-xs text-app-teritary-invert mt-1">{rubrik.description}</p>
                                           )}
@@ -1676,32 +1708,29 @@ export default function ReviewPage({
                                           <span>{rubrik.bobotMax}</span>
                                         </div>
                                         <Slider
-                                          size="md"
                                           step={1}
-                                          maxValue={rubrik.bobotMax}
-                                          minValue={0}
+                                          max={rubrik.bobotMax}
+                                          min={0}
                                           value={currentScore}
-                                          onChange={(value) =>
-                                            updateMemberScore(selectedMember.id, rubrik.id, 'score', value as number)
+                                          onValueChange={(value) =>
+                                            updateMemberScore(
+                                              selectedMember.id,
+                                              rubrik.id,
+                                              'score',
+                                              Array.isArray(value) ? value[0] : value
+                                            )
                                           }
-                                          color={getScoreColor(currentScore, rubrik.bobotMax)}
                                           className="max-w-full"
-                                          classNames={{ track: 'bg-app-primary' }}
-                                          showTooltip
                                         />
                                       </div>
 
                                       <Textarea
                                         placeholder={`Berikan feedback untuk ${name} pada kriteria ini...`}
-                                        variant="bordered"
                                         value={currentFeedback}
                                         onChange={(e) =>
                                           updateMemberScore(selectedMember.id, rubrik.id, 'feedback', e.target.value)
                                         }
-                                        minRows={2}
-                                        classNames={{
-                                          inputWrapper: "border-border"
-                                        }}
+                                        rows={2}
                                       />
                                     </motion.div>
                                   );
@@ -1727,24 +1756,24 @@ export default function ReviewPage({
                                 </div>
                                 <Progress
                                   value={memberScore}
-                                  color={getScoreColor(memberScore, 100)}
-                                  className="mt-4"
-                                  size="md"
-                                  classNames={{ track: 'bg-app-primary' }}
+                                  className={`mt-4 ${progressIndicatorClass(getScoreColor(memberScore, 100))}`}
                                 />
                               </div>
 
                               {/* Save Individual Score Button */}
                               <Button
-                                fullWidth
-                                color={savedMemberIds.has(selectedMember.id) ? 'success' : 'primary'}
-                                variant="solid"
                                 size="lg"
-                                startContent={savedMemberIds.has(selectedMember.id) ? <CheckCircle2 size={20} /> : <Save size={20} />}
-                                isLoading={savingMemberId === selectedMember.id}
-                                onPress={() => handleSaveMemberScore(selectedMember.id)}
-                                className="font-semibold"
+                                onClick={() => handleSaveMemberScore(selectedMember.id)}
+                                disabled={savingMemberId === selectedMember.id}
+                                className="w-full font-semibold"
                               >
+                                {savingMemberId === selectedMember.id ? (
+                                  <Loader2 className="animate-spin" />
+                                ) : savedMemberIds.has(selectedMember.id) ? (
+                                  <CheckCircle2 size={20} />
+                                ) : (
+                                  <Save size={20} />
+                                )}
                                 {savingMemberId === selectedMember.id
                                   ? 'Menyimpan...'
                                   : savedMemberIds.has(selectedMember.id)
@@ -1755,10 +1784,10 @@ export default function ReviewPage({
                               {/* Navigation Buttons */}
                               <div className="flex items-center justify-between pt-4 border-t border-border">
                                 <Button
-                                  variant="flat"
-                                  startContent={<ArrowLeft size={16} />}
-                                  onPress={() => setSelectedMemberId(null)}
+                                  variant="secondary"
+                                  onClick={() => setSelectedMemberId(null)}
                                 >
+                                  <ArrowLeft size={16} />
                                   Kembali ke Daftar
                                 </Button>
                                 <div className="flex items-center gap-2">
@@ -1771,22 +1800,21 @@ export default function ReviewPage({
                                       <>
                                         {prevMember && (
                                           <Button
-                                            variant="flat"
+                                            variant="secondary"
                                             size="sm"
-                                            startContent={<ArrowLeft size={14} />}
-                                            onPress={() => setSelectedMemberId(prevMember.id)}
+                                            onClick={() => setSelectedMemberId(prevMember.id)}
                                           >
+                                            <ArrowLeft size={14} />
                                             Sebelumnya
                                           </Button>
                                         )}
                                         {nextMember && (
                                           <Button
-                                            color="primary"
                                             size="sm"
-                                            endContent={<ChevronRight size={14} />}
-                                            onPress={() => setSelectedMemberId(nextMember.id)}
+                                            onClick={() => setSelectedMemberId(nextMember.id)}
                                           >
                                             Selanjutnya
+                                            <ChevronRight size={14} />
                                           </Button>
                                         )}
                                       </>
@@ -1800,23 +1828,12 @@ export default function ReviewPage({
                       )}
                     </>
                   )}
-                </CardBody>
-              </Tab>
+                </CardContent>
+              </TabsContent>
 
               {/* === TAB 2: FEEDBACK (Komentar) === */}
-              <Tab
-                key="feedback"
-                title={
-                  <div className="flex items-center gap-2">
-                    <MessageSquare size={16} />
-                    <span>Feedback</span>
-                    {comments.length > 0 && (
-                      <Chip size="sm" variant="flat" color="primary">{comments.length}</Chip>
-                    )}
-                  </div>
-                }
-              >
-                <CardBody className="space-y-6 pt-4">
+              <TabsContent value="feedback">
+                <CardContent className="space-y-6 pt-4">
                   {/* Overall Comment */}
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
@@ -1827,17 +1844,13 @@ export default function ReviewPage({
                     </div>
                     <Textarea
                       placeholder="Tulis komentar umum tentang project ini..."
-                      variant="bordered"
                       value={overallComment}
                       onChange={(e) => setOverallComment(e.target.value)}
-                      minRows={4}
-                      classNames={{
-                        inputWrapper: "border-border"
-                      }}
+                      rows={4}
                     />
                   </div>
 
-                  <Divider />
+                  <Separator />
 
                   {/* Additional Comments */}
                   <div className="space-y-4">
@@ -1848,7 +1861,7 @@ export default function ReviewPage({
                         </div>
                         <p className="font-semibold">Komentar Tambahan</p>
                       </div>
-                      <Chip size="sm" variant="flat">{comments.length} komentar</Chip>
+                      <Badge variant="outline">{comments.length} komentar</Badge>
                     </div>
 
                     {comments.length > 0 && (
@@ -1874,12 +1887,10 @@ export default function ReviewPage({
                                 )}
                               </div>
                               <Button
-                                size="sm"
-                                variant="light"
-                                color="danger"
-                                isIconOnly
-                                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                onPress={() => {
+                                size="icon-sm"
+                                variant="ghost"
+                                className="text-destructive hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
+                                onClick={() => {
                                   setComments(comments.filter((_, i) => i !== index));
                                 }}
                               >
@@ -1894,67 +1905,49 @@ export default function ReviewPage({
                     <div className="flex gap-3">
                       <Textarea
                         placeholder="Tambah komentar baru..."
-                        variant="bordered"
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
-                        minRows={2}
+                        rows={2}
                         className="flex-1"
-                        classNames={{
-                          inputWrapper: "border-border"
-                        }}
                       />
                       <Button
-                        color="primary"
-                        onPress={addComment}
-                        isDisabled={!newComment.trim()}
+                        onClick={addComment}
+                        disabled={!newComment.trim()}
                         className="self-end"
-                        startContent={<Plus size={16} />}
                       >
+                        <Plus size={16} />
                         Tambah
                       </Button>
                     </div>
                   </div>
-                </CardBody>
-              </Tab>
+                </CardContent>
+              </TabsContent>
 
               {/* === TAB 3: REFERENSI (Dokumen + Screenshot) === */}
-              <Tab
-                key="referensi"
-                title={
-                  <div className="flex items-center gap-2">
-                    <FileText size={16} />
-                    <span>Referensi</span>
-                    {(project.documents.length + stakeholderDocs.length + screenshots.length) > 0 && (
-                      <Chip size="sm" variant="flat" color="secondary">{project.documents.length + stakeholderDocs.length + screenshots.length}</Chip>
-                    )}
-                  </div>
-                }
-              >
-                <CardBody className="pt-4 space-y-6">
+              <TabsContent value="referensi">
+                <CardContent className="pt-4 space-y-6">
                   {/* Sub-tab toggle: Dokumen / Screenshot */}
                   <div className="flex gap-2 p-1 bg-app-quinary border border-border rounded-lg w-fit">
                     <Button
                       size="sm"
-                      variant={referensiSubTab === 'dokumen' ? 'solid' : 'light'}
-                      color={referensiSubTab === 'dokumen' ? 'primary' : 'default'}
-                      onPress={() => setReferensiSubTab('dokumen')}
-                      startContent={<FileText size={14} />}
+                      variant={referensiSubTab === 'dokumen' ? 'default' : 'ghost'}
+                      onClick={() => setReferensiSubTab('dokumen')}
                     >
+                      <FileText size={14} />
                       Dokumen
                       {(project.documents.length + stakeholderDocs.length) > 0 && (
-                        <Chip size="sm" variant="flat" color="secondary" className="ml-1">{project.documents.length + stakeholderDocs.length}</Chip>
+                        <Badge variant="secondary" className="ml-1">{project.documents.length + stakeholderDocs.length}</Badge>
                       )}
                     </Button>
                     <Button
                       size="sm"
-                      variant={referensiSubTab === 'screenshot' ? 'solid' : 'light'}
-                      color={referensiSubTab === 'screenshot' ? 'primary' : 'default'}
-                      onPress={() => setReferensiSubTab('screenshot')}
-                      startContent={<ImageIcon size={14} />}
+                      variant={referensiSubTab === 'screenshot' ? 'default' : 'ghost'}
+                      onClick={() => setReferensiSubTab('screenshot')}
                     >
+                      <ImageIcon size={14} />
                       Screenshot
                       {screenshots.length > 0 && (
-                        <Chip size="sm" variant="flat" color="primary" className="ml-1">{screenshots.length}</Chip>
+                        <Badge variant="secondary" className="ml-1">{screenshots.length}</Badge>
                       )}
                     </Button>
                   </div>
@@ -1990,15 +1983,14 @@ export default function ReviewPage({
                                   </div>
                                 </div>
                                 <Button
-                                  as="a"
-                                  href={doc.filePath}
-                                  target="_blank"
+                                  render={
+                                    <a href={doc.filePath} target="_blank" rel="noopener noreferrer" />
+                                  }
                                   size="sm"
-                                  variant="flat"
-                                  color="primary"
-                                  endContent={<ExternalLink size={14} />}
+                                  variant="secondary"
                                 >
                                   Lihat
+                                  <ExternalLink size={14} />
                                 </Button>
                               </motion.div>
                             ))}
@@ -2038,15 +2030,15 @@ export default function ReviewPage({
                                       />
                                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <Button
-                                          as="a"
-                                          href={doc.fileUrl}
-                                          target="_blank"
+                                          render={
+                                            <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" />
+                                          }
                                           size="sm"
-                                          variant="flat"
+                                          variant="secondary"
                                           className="bg-white/20 backdrop-blur-sm text-white"
-                                          endContent={<ExternalLink size={14} />}
                                         >
                                           Lihat Full
+                                          <ExternalLink size={14} />
                                         </Button>
                                       </div>
                                     </div>
@@ -2055,15 +2047,15 @@ export default function ReviewPage({
                                       <FileText size={48} className="text-app-teritary-invert" />
                                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <Button
-                                          as="a"
-                                          href={doc.fileUrl}
-                                          target="_blank"
+                                          render={
+                                            <a href={doc.fileUrl} target="_blank" rel="noopener noreferrer" />
+                                          }
                                           size="sm"
-                                          variant="flat"
+                                          variant="secondary"
                                           className="bg-white/20 backdrop-blur-sm text-white"
-                                          endContent={<ExternalLink size={14} />}
                                         >
                                           Buka File
+                                          <ExternalLink size={14} />
                                         </Button>
                                       </div>
                                     </div>
@@ -2071,14 +2063,10 @@ export default function ReviewPage({
 
                                   {/* Document Info */}
                                   <div className="p-4 space-y-3">
-                                    <Chip
-                                      size="sm"
-                                      color={typeConfig.color}
-                                      variant="flat"
-                                      startContent={<TypeIcon size={12} />}
-                                    >
+                                    <Badge variant={typeConfig.variant}>
+                                      <TypeIcon size={12} />
                                       {typeConfig.label}
-                                    </Chip>
+                                    </Badge>
 
                                     <div className="space-y-1">
                                       <p className="font-medium text-sm">{doc.stakeholderName}</p>
@@ -2141,15 +2129,15 @@ export default function ReviewPage({
                                 />
                                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                   <Button
-                                    as="a"
-                                    href={screenshot.fileUrl}
-                                    target="_blank"
+                                    render={
+                                      <a href={screenshot.fileUrl} target="_blank" rel="noopener noreferrer" />
+                                    }
                                     size="sm"
-                                    variant="flat"
+                                    variant="secondary"
                                     className="bg-white/20 backdrop-blur-sm text-white"
-                                    endContent={<ExternalLink size={14} />}
                                   >
                                     Lihat Full
+                                    <ExternalLink size={14} />
                                   </Button>
                                 </div>
                               </div>
@@ -2159,7 +2147,7 @@ export default function ReviewPage({
                                   <p className="text-xs text-app-secondary-invert line-clamp-2">{screenshot.description}</p>
                                 )}
                                 {screenshot.category && (
-                                  <Chip size="sm" variant="flat" color="secondary">{screenshot.category}</Chip>
+                                  <Badge variant="secondary">{screenshot.category}</Badge>
                                 )}
                                 <p className="text-xs text-app-teritary-invert">{formatDate(screenshot.createdAt)}</p>
                               </div>
@@ -2178,21 +2166,13 @@ export default function ReviewPage({
                       )}
                     </>
                   )}
-                </CardBody>
-              </Tab>
+                </CardContent>
+              </TabsContent>
 
               {/* === TAB 4: KODE (conditional) === */}
               {project.githubRepoUrl && (
-                <Tab
-                  key="code"
-                  title={
-                    <div className="flex items-center gap-2">
-                      <Code size={16} />
-                      <span>Kode</span>
-                    </div>
-                  }
-                >
-                  <CardBody className="pt-4">
+                <TabsContent value="code">
+                  <CardContent className="pt-4">
                     <div className="space-y-4">
                       <div className="flex items-center justify-between p-4 rounded-xl bg-app-quinary border border-border">
                         <div className="flex items-center gap-3">
@@ -2204,16 +2184,19 @@ export default function ReviewPage({
                           </p>
                         </div>
                         <Button
-                          as="a"
-                          href={project.githubRepoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          render={
+                            <a
+                              href={project.githubRepoUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            />
+                          }
                           size="sm"
-                          variant="flat"
-                          startContent={<Github size={14} />}
-                          endContent={<ExternalLink size={12} />}
+                          variant="secondary"
                         >
+                          <Github size={14} />
                           Buka di GitHub
+                          <ExternalLink size={12} />
                         </Button>
                       </div>
                       {(() => {
@@ -2224,7 +2207,7 @@ export default function ReviewPage({
                               <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
                                 <Github size={28} className="text-destructive" />
                               </div>
-                              <p className="text-danger">URL GitHub tidak valid</p>
+                              <p className="text-destructive">URL GitHub tidak valid</p>
                             </div>
                           );
                         return (
@@ -2248,8 +2231,8 @@ export default function ReviewPage({
                         );
                       })()}
                     </div>
-                  </CardBody>
-                </Tab>
+                  </CardContent>
+                </TabsContent>
               )}
             </Tabs>
           </Card>
@@ -2265,19 +2248,19 @@ export default function ReviewPage({
                 <h3 className="font-semibold">Info Project</h3>
               </div>
             </div>
-            <CardBody className="space-y-4 text-sm">
+            <CardContent className="space-y-4 text-sm">
               <div className="space-y-1">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Judul</p>
                 <p className="font-medium">{project.title}</p>
               </div>
-              <Divider />
+              <Separator />
               <div className="space-y-1">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Semester</p>
                 <p className="font-medium">{project.semester} {project.tahunAkademik}</p>
               </div>
               {project.githubRepoUrl && (
                 <>
-                  <Divider />
+                  <Separator />
                   <div className="space-y-1">
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Repository</p>
                     <a
@@ -2295,14 +2278,14 @@ export default function ReviewPage({
               )}
               {project.description && (
                 <>
-                  <Divider />
+                  <Separator />
                   <div className="space-y-1">
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Deskripsi</p>
                     <p className="text-xs text-app-secondary-invert">{project.description}</p>
                   </div>
                 </>
               )}
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Production URL & Testing Credentials Card */}
@@ -2314,7 +2297,7 @@ export default function ReviewPage({
                   <h3 className="font-semibold">Production URL & Testing</h3>
                 </div>
               </div>
-              <CardBody className="p-4 space-y-4">
+              <CardContent className="p-4 space-y-4">
                 {/* Production URL */}
                 <div className="space-y-2">
                   <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">URL Production</p>
@@ -2323,10 +2306,9 @@ export default function ReviewPage({
                       {project.requirements.productionUrl}
                     </div>
                     <Button
-                      size="sm"
-                      variant="flat"
-                      isIconOnly
-                      onPress={() => copyToClipboard(project.requirements!.productionUrl!, 'url')}
+                      size="icon-sm"
+                      variant="secondary"
+                      onClick={() => copyToClipboard(project.requirements!.productionUrl!, 'url')}
                     >
                       {copiedField === 'url' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
                     </Button>
@@ -2334,11 +2316,10 @@ export default function ReviewPage({
 
                   <Button
                     size="sm"
-                    color="primary"
                     className="w-full"
-                    onPress={openWithCredentials}
-                    startContent={<ExternalLink size={14} />}
+                    onClick={openWithCredentials}
                   >
+                    <ExternalLink size={14} />
                     Buka & Test Aplikasi
                   </Button>
                 </div>
@@ -2358,10 +2339,9 @@ export default function ReviewPage({
                           <p className="text-sm font-mono truncate">{project.requirements.testingUsername}</p>
                         </div>
                         <Button
-                          size="sm"
-                          variant="light"
-                          isIconOnly
-                          onPress={() => copyToClipboard(project.requirements!.testingUsername!, 'username')}
+                          size="icon-sm"
+                          variant="ghost"
+                          onClick={() => copyToClipboard(project.requirements!.testingUsername!, 'username')}
                         >
                           {copiedField === 'username' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
                         </Button>
@@ -2375,10 +2355,9 @@ export default function ReviewPage({
                           <p className="text-sm font-mono truncate">{project.requirements.testingPassword}</p>
                         </div>
                         <Button
-                          size="sm"
-                          variant="light"
-                          isIconOnly
-                          onPress={() => copyToClipboard(project.requirements!.testingPassword!, 'password')}
+                          size="icon-sm"
+                          variant="ghost"
+                          onClick={() => copyToClipboard(project.requirements!.testingPassword!, 'password')}
                         >
                           {copiedField === 'password' ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
                         </Button>
@@ -2398,7 +2377,7 @@ export default function ReviewPage({
                     </div>
                   </div>
                 )}
-              </CardBody>
+              </CardContent>
             </Card>
           )}
 
@@ -2414,16 +2393,12 @@ export default function ReviewPage({
                       <Server size={18} className="text-app-secondary-invert" />
                       <h3 className="font-semibold">Deployment Setup</h3>
                     </div>
-                    <Chip
-                      size="sm"
-                      color={getDeploymentCategoryColor(platform.category)}
-                      variant="flat"
-                    >
+                    <Badge variant={badgeVariantFromColor(getDeploymentCategoryColor(platform.category) as LegacyColor)}>
                       {getDeploymentCategoryLabel(platform.category)}
-                    </Chip>
+                    </Badge>
                   </div>
                 </div>
-                <CardBody className="p-4 space-y-4">
+                <CardContent className="p-4 space-y-4">
                   {/* Platform */}
                   <div className="space-y-1">
                     <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-app-teritary-invert">Platform</p>
@@ -2463,15 +2438,10 @@ export default function ReviewPage({
                               <p className="text-xs text-app-teritary-invert mb-1.5">{cat.label}</p>
                               <div className="flex flex-wrap gap-1.5">
                                 {cat.selected.map((tool) => (
-                                  <Chip
-                                    key={tool.key}
-                                    size="sm"
-                                    variant="flat"
-                                    color="primary"
-                                    startContent={<CheckCircle2 size={10} />}
-                                  >
+                                  <Badge key={tool.key}>
+                                    <CheckCircle2 size={10} />
                                     {tool.label}
-                                  </Chip>
+                                  </Badge>
                                 ))}
                               </div>
                             </div>
@@ -2504,7 +2474,7 @@ export default function ReviewPage({
                       </div>
                     </div>
                   )}
-                </CardBody>
+                </CardContent>
               </Card>
             );
           })()}
@@ -2517,7 +2487,7 @@ export default function ReviewPage({
                 <h3 className="font-semibold">Statistik Review</h3>
               </div>
             </div>
-            <CardBody className="space-y-4">
+            <CardContent className="space-y-4">
               <div className="flex items-center justify-between p-3 rounded-xl bg-app-quinary border border-border">
                 <div className="flex items-center gap-2">
                   <FileText size={16} className="text-app-secondary-invert" />
@@ -2536,7 +2506,7 @@ export default function ReviewPage({
                   {comments.length}
                 </span>
               </div>
-              <Divider />
+              <Separator />
               {/* Score Circle */}
               <div className="text-center py-4">
                 <div className="relative w-28 h-28 mx-auto">
@@ -2569,28 +2539,26 @@ export default function ReviewPage({
                   </div>
                 </div>
               </div>
-            </CardBody>
+            </CardContent>
           </Card>
 
           {/* Action Buttons - Mobile */}
           <div className="md:hidden space-y-2">
             <Button
-              fullWidth
-              variant="flat"
-              className="rounded-full border border-input bg-input/30 text-foreground hover:bg-input/50"
-              startContent={<Save size={18} />}
-              onPress={() => handleSaveReview(false)}
-              isLoading={isSaving}
+              variant="outline"
+              className="w-full rounded-full border border-input bg-input/30 text-foreground hover:bg-input/50"
+              onClick={() => handleSaveReview(false)}
+              disabled={isSaving}
             >
+              {isSaving ? <Loader2 className="animate-spin" /> : <Save size={18} />}
               Simpan Draft
             </Button>
             <Button
-              fullWidth
-              className="rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 active:scale-[0.98]"
-              startContent={<Send size={18} />}
-              onPress={() => handleSaveReview(true)}
-              isLoading={isSaving}
+              className="w-full rounded-full bg-primary text-primary-foreground font-semibold hover:bg-primary/90 active:scale-[0.98]"
+              onClick={() => handleSaveReview(true)}
+              disabled={isSaving}
             >
+              {isSaving ? <Loader2 className="animate-spin" /> : <Send size={18} />}
               Submit Review
             </Button>
           </div>
@@ -2598,81 +2566,88 @@ export default function ReviewPage({
       </div >
 
       {/* Presentation Scheduling Modal */}
-      <Modal
-        isOpen={isScheduleOpen}
-        onClose={onScheduleClose}
-        size="lg"
-        classNames={{
-          backdrop: 'bg-black/60 backdrop-blur-md',
-          base: 'border border-border bg-card rounded-2xl',
+      <Dialog
+        open={isScheduleOpen}
+        onOpenChange={(open) => {
+          if (!open) onScheduleClose();
         }}
       >
-        <ModalContent>
-          <ModalHeader className="flex flex-col gap-1 border-b border-border">
-            <div className="flex items-center gap-2">
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
               <Calendar size={20} className="text-primary" />
               <span>{project?.presentationSchedule ? 'Ubah Jadwal Presentasi' : 'Jadwalkan Presentasi'}</span>
-            </div>
-            <p className="text-sm font-normal text-app-secondary-invert">
+            </DialogTitle>
+            <DialogDescription>
               Atur jadwal presentasi untuk project &quot;{project?.title}&quot;
-            </p>
-          </ModalHeader>
-          <ModalBody className="gap-4">
-            <Input
-              label="Tanggal Presentasi"
-              type="date"
-              isRequired
-              value={scheduleForm.scheduledDate}
-              onChange={(e) => setScheduleForm((prev) => ({ ...prev, scheduledDate: e.target.value }))}
-              startContent={<Calendar size={16} className="text-app-teritary-invert" />}
-            />
-            <div className="grid grid-cols-2 gap-4">
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="scheduledDate">Tanggal Presentasi *</Label>
               <Input
-                label="Jam Mulai"
-                type="time"
-                isRequired
-                value={scheduleForm.startTime}
-                onChange={(e) => setScheduleForm((prev) => ({ ...prev, startTime: e.target.value }))}
-                startContent={<Clock size={16} className="text-app-teritary-invert" />}
-              />
-              <Input
-                label="Jam Selesai"
-                type="time"
-                value={scheduleForm.endTime}
-                onChange={(e) => setScheduleForm((prev) => ({ ...prev, endTime: e.target.value }))}
-                startContent={<Clock size={16} className="text-app-teritary-invert" />}
+                id="scheduledDate"
+                type="date"
+                required
+                value={scheduleForm.scheduledDate}
+                onChange={(e) => setScheduleForm((prev) => ({ ...prev, scheduledDate: e.target.value }))}
               />
             </div>
-            <Input
-              label="Lokasi / Ruangan"
-              placeholder="Contoh: Ruang Sidang Lt. 3"
-              value={scheduleForm.location}
-              onChange={(e) => setScheduleForm((prev) => ({ ...prev, location: e.target.value }))}
-              startContent={<MapPin size={16} className="text-app-teritary-invert" />}
-            />
-            <Textarea
-              label="Catatan Tambahan"
-              placeholder="Catatan untuk mahasiswa..."
-              value={scheduleForm.notes}
-              onChange={(e) => setScheduleForm((prev) => ({ ...prev, notes: e.target.value }))}
-              minRows={2}
-            />
-          </ModalBody>
-          <ModalFooter className="border-t border-border bg-app-quinary">
-            <Button variant="flat" onPress={onScheduleClose}>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="startTime">Jam Mulai *</Label>
+                <Input
+                  id="startTime"
+                  type="time"
+                  required
+                  value={scheduleForm.startTime}
+                  onChange={(e) => setScheduleForm((prev) => ({ ...prev, startTime: e.target.value }))}
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="endTime">Jam Selesai</Label>
+                <Input
+                  id="endTime"
+                  type="time"
+                  value={scheduleForm.endTime}
+                  onChange={(e) => setScheduleForm((prev) => ({ ...prev, endTime: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="location">Lokasi / Ruangan</Label>
+              <Input
+                id="location"
+                placeholder="Contoh: Ruang Sidang Lt. 3"
+                value={scheduleForm.location}
+                onChange={(e) => setScheduleForm((prev) => ({ ...prev, location: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="notes">Catatan Tambahan</Label>
+              <Textarea
+                id="notes"
+                placeholder="Catatan untuk mahasiswa..."
+                value={scheduleForm.notes}
+                onChange={(e) => setScheduleForm((prev) => ({ ...prev, notes: e.target.value }))}
+                rows={2}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="secondary" onClick={onScheduleClose}>
               Batal
             </Button>
             <Button
-              color="success"
-              onPress={handleSchedulePresentation}
-              isLoading={isScheduling}
-              startContent={<Calendar size={16} />}
+              onClick={handleSchedulePresentation}
+              disabled={isScheduling}
             >
+              {isScheduling ? <Loader2 className="animate-spin" /> : <Calendar size={16} />}
               {project?.presentationSchedule ? 'Simpan Perubahan Jadwal' : 'ACC & Jadwalkan'}
             </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </motion.div >
   );
 }

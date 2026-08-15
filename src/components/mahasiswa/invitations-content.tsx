@@ -1,15 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import {
-  Card,
-  CardHeader,
-  CardBody,
-  Button,
-  Avatar,
-  Chip,
-  Spinner,
-} from '@heroui/react';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Spinner } from '@/components/ui/spinner';
+import { getInitials } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail,
@@ -20,6 +17,7 @@ import {
   AlertCircle,
   Users,
   Inbox,
+  Loader2,
 } from 'lucide-react';
 import { PageHeader } from '@/components/caret/PageHeader';
 
@@ -112,13 +110,13 @@ export default function InvitationsContent() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadgeClass = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'pending': return 'warning';
-      case 'accepted': return 'success';
-      case 'rejected': return 'danger';
-      case 'cancelled': return 'default';
-      default: return 'default';
+      case 'pending': return 'bg-warning/15 text-warning';
+      case 'accepted': return 'bg-success/15 text-success';
+      case 'rejected': return 'bg-destructive/10 text-destructive';
+      case 'cancelled': return 'bg-muted text-muted-foreground';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -138,7 +136,7 @@ export default function InvitationsContent() {
   if (isLoading) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <Spinner size="lg" />
+        <Spinner className="size-8" />
       </div>
     );
   }
@@ -155,16 +153,14 @@ export default function InvitationsContent() {
 
       {/* Error Message */}
       {error && (
-        <div className="flex items-center gap-2.5 rounded-xl border border-danger/40 bg-danger/10 p-4 text-danger">
+        <div className="flex items-center gap-2.5 rounded-xl border border-destructive/40 bg-destructive/10 p-4 text-destructive">
           <AlertCircle size={18} className="shrink-0" />
           <p className="text-sm font-medium">{error}</p>
           <Button
-            size="sm"
-            variant="light"
-            color="danger"
-            isIconOnly
-            className="ml-auto"
-            onPress={() => setError('')}
+            size="icon-sm"
+            variant="ghost"
+            className="ml-auto text-destructive"
+            onClick={() => setError('')}
           >
             <X size={14} />
           </Button>
@@ -186,7 +182,7 @@ export default function InvitationsContent() {
             </div>
           </div>
         </CardHeader>
-        <CardBody className="p-4 md:p-5">
+        <CardContent className="p-4 md:p-5">
           {pendingInvitations.length === 0 ? (
             <div className="text-app-teritary-invert flex flex-col items-center justify-center py-8">
               <span className="bg-app-primary mb-3 flex size-14 items-center justify-center rounded-full">
@@ -208,13 +204,15 @@ export default function InvitationsContent() {
                   >
                     <div className="flex items-start gap-4">
                       {/* Inviter Avatar */}
-                      <Avatar
-                        src={invitation.inviter.image || undefined}
-                        name={invitation.inviter.name || invitation.inviter.username}
-                        size="md"
-                        isBordered
-                        color="primary"
-                      />
+                      <Avatar className="ring-2 ring-primary/40">
+                        <AvatarImage
+                          src={invitation.inviter.image || undefined}
+                          alt={invitation.inviter.name || invitation.inviter.username}
+                        />
+                        <AvatarFallback>
+                          {getInitials(invitation.inviter.name || invitation.inviter.username)}
+                        </AvatarFallback>
+                      </Avatar>
 
                       {/* Content */}
                       <div className="min-w-0 flex-1">
@@ -224,9 +222,9 @@ export default function InvitationsContent() {
                             {invitation.inviter.name || invitation.inviter.username}
                           </p>
                           {invitation.inviter.nim && (
-                            <Chip size="sm" variant="flat" className="bg-app-quaternary text-app-secondary-invert">
+                            <Badge className="bg-app-quaternary text-app-secondary-invert">
                               {invitation.inviter.nim}
-                            </Chip>
+                            </Badge>
                           )}
                         </div>
 
@@ -265,43 +263,44 @@ export default function InvitationsContent() {
                         <div className="flex gap-2">
                           <Button
                             size="sm"
-                            color="success"
-                            startContent={<Check size={14} />}
-                            isLoading={processingId === invitation.id}
-                            isDisabled={processingId !== null}
-                            onPress={() => handleResponse(invitation.id, 'accept')}
+                            className="bg-success text-success-foreground hover:bg-success/90"
+                            disabled={processingId !== null}
+                            onClick={() => handleResponse(invitation.id, 'accept')}
                           >
+                            {processingId === invitation.id ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <Check size={14} />
+                            )}
                             Terima
                           </Button>
                           <Button
                             size="sm"
-                            color="danger"
-                            variant="flat"
-                            startContent={<X size={14} />}
-                            isLoading={processingId === invitation.id}
-                            isDisabled={processingId !== null}
-                            onPress={() => handleResponse(invitation.id, 'reject')}
+                            variant="destructive"
+                            disabled={processingId !== null}
+                            onClick={() => handleResponse(invitation.id, 'reject')}
                           >
+                            {processingId === invitation.id ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              <X size={14} />
+                            )}
                             Tolak
                           </Button>
                         </div>
                       </div>
 
                       {/* Status Badge */}
-                      <Chip
-                        size="sm"
-                        color={getStatusColor(invitation.status)}
-                        variant="flat"
-                      >
+                      <Badge className={getStatusBadgeClass(invitation.status)}>
                         {getStatusLabel(invitation.status)}
-                      </Chip>
+                      </Badge>
                     </div>
                   </motion.div>
                 ))}
               </div>
             </AnimatePresence>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* History */}
@@ -320,18 +319,22 @@ export default function InvitationsContent() {
               </div>
             </div>
           </CardHeader>
-          <CardBody className="p-4 md:p-5">
+          <CardContent className="p-4 md:p-5">
             <div className="space-y-3">
               {historyInvitations.map((invitation) => (
                 <div
                   key={invitation.id}
                   className="flex items-center gap-3 rounded-lg border border-border bg-app-quinary p-3"
                 >
-                  <Avatar
-                    src={invitation.inviter.image || undefined}
-                    name={invitation.inviter.name || invitation.inviter.username}
-                    size="sm"
-                  />
+                  <Avatar size="sm">
+                    <AvatarImage
+                      src={invitation.inviter.image || undefined}
+                      alt={invitation.inviter.name || invitation.inviter.username}
+                    />
+                    <AvatarFallback>
+                      {getInitials(invitation.inviter.name || invitation.inviter.username)}
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">
                       {invitation.project.title}
@@ -340,17 +343,13 @@ export default function InvitationsContent() {
                       Diundang oleh {invitation.inviter.name || invitation.inviter.username}
                     </p>
                   </div>
-                  <Chip
-                    size="sm"
-                    color={getStatusColor(invitation.status)}
-                    variant="flat"
-                  >
+                  <Badge className={getStatusBadgeClass(invitation.status)}>
                     {getStatusLabel(invitation.status)}
-                  </Chip>
+                  </Badge>
                 </div>
               ))}
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       )}
     </div>
