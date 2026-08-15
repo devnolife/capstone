@@ -73,6 +73,7 @@ import { GitHubRepoSelector } from '@/components/github/repo-selector';
 import TeamMembersNimNew from '@/components/mahasiswa/team-members-nim-new';
 import ConsentFileUpload from '@/components/mahasiswa/consent-file-upload';
 import { PageHeader } from '@/components/caret/PageHeader';
+import { isLeaderRole } from '@/lib/project-roles';
 
 interface Semester {
   id: string;
@@ -150,6 +151,7 @@ interface ProjectData {
   semester: string;
   tahunAkademik: string;
   status: string;
+  mahasiswaId?: string;
   productionUrl?: string;
   isPublic?: boolean;
   requirements?: ProjectRequirementsData | null;
@@ -347,10 +349,13 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
         if (project.isPublic !== undefined) {
           setIsPublic(project.isPublic);
         }
-        // Convert existing members to pendingTeamMembers format
+        // Convert existing members to pendingTeamMembers format.
+        // Ketua ditampilkan terpisah oleh TeamMembersNimNew, jadi dia harus
+        // dikeluarkan dari daftar ini — kalau ikut, ketua tampil ganda dan
+        // memakan satu slot anggota.
         if (project.members && project.members.length > 0) {
           const convertedMembers: PendingMember[] = project.members
-            .filter(m => m.role !== 'OWNER') // Exclude owner
+            .filter(m => !isLeaderRole(m.role) && m.userId !== project.mahasiswaId)
             .filter((m): m is typeof m & { user: { id: string } } | typeof m & { userId: string } =>
               !!(m.user?.id || m.userId)
             ) // Only include members with a valid user ID
@@ -541,11 +546,14 @@ export function ProjectSetupForm({ projectId: id, canEdit = true }: { projectId:
     setError('');
 
     try {
-      // Compute removed members: ids that were in original project but not in current state
+      // Compute removed members: ids that were in original project but not in
+      // current state. Ketua sengaja dikecualikan supaya tidak pernah ikut
+      // terhapus — barisnya dibutuhkan dosen untuk menilai individu.
       const originalMemberIds = (originalProject?.members || [])
-        .filter((m) => m.role !== 'OWNER')
+        .filter((m) => !isLeaderRole(m.role))
         .map((m) => m.user?.id || m.userId)
-        .filter((v): v is string => !!v);
+        .filter((v): v is string => !!v)
+        .filter((memberUserId) => memberUserId !== originalProject?.mahasiswaId);
       const currentMemberIds = new Set(
         pendingTeamMembers.map((m) => m.id).filter((v): v is string => !!v)
       );

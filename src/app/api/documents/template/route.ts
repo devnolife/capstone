@@ -1,5 +1,6 @@
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { isLeaderRole } from '@/lib/project-roles';
 import { NextRequest, NextResponse } from 'next/server';
 
 // Template types
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
         role: 'Ketua Tim',
       },
       ...project.members
-        .filter((m) => m.role !== 'OWNER')
+        .filter((m) => !isLeaderRole(m.role) && m.userId !== project.mahasiswaId)
         .map((m) => ({
           name: m.user?.name || m.name || 'Anggota',
           nim: m.user?.nim || '-',

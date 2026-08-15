@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import { projectSchema } from '@/lib/validations';
 import { encryptNullable } from '@/lib/crypto';
 import { calculateRequirementsCompletion } from '@/lib/student-journey';
+import { PROJECT_ROLE_LEADER } from '@/lib/project-roles';
 
 // GET /api/projects - Get projects based on user role
 export async function GET(request: Request) {
@@ -287,7 +288,7 @@ export async function POST(request: Request) {
         data: {
           projectId: newProject.id,
           userId: session.user.id,
-          role: 'leader',
+          role: PROJECT_ROLE_LEADER,
           name: session.user.name,
           githubUsername: session.user.githubUsername || null,
         },

@@ -4,6 +4,7 @@ import prisma from '@/lib/prisma';
 import { projectSchema } from '@/lib/validations';
 import { encryptNullable, decryptNullable } from '@/lib/crypto';
 import { calculateRequirementsCompletion } from '@/lib/student-journey';
+import { PROJECT_ROLE_LEADER } from '@/lib/project-roles';
 
 // GET /api/projects/[id] - Get single project
 export async function GET(
@@ -214,6 +215,7 @@ export async function PUT(
     // Get existing project
     const existingProject = await prisma.project.findUnique({
       where: { id },
+      include: { mahasiswa: { select: { name: true } } },
     });
 
     if (!existingProject) {
@@ -457,6 +459,26 @@ export async function PUT(
         },
       });
 
+      /* Pastikan ketua selalu punya baris anggota. Dosen memberi nilai individu
+         dengan menelusuri project.members, jadi ketua yang tidak terdaftar di
+         sana tidak bisa dinilai sama sekali. Upsert ini memulihkan project lama
+         yang barisnya sudah terlanjur hilang. */
+      await tx.projectMember.upsert({
+        where: {
+          projectId_userId: {
+            projectId: id,
+            userId: existingProject.mahasiswaId,
+          },
+        },
+        create: {
+          projectId: id,
+          userId: existingProject.mahasiswaId,
+          role: PROJECT_ROLE_LEADER,
+          name: existingProject.mahasiswa?.name ?? null,
+        },
+        update: { role: PROJECT_ROLE_LEADER },
+      });
+
       // 2. Update or create project requirements.
       // Hanya field yang ADA di request body yang ditulis, supaya PUT parsial
       // (mis. hanya ganti judul) tidak menghapus data yang diisi lewat form
@@ -533,13 +555,17 @@ export async function PUT(
         (isOwner || isAdmin)
       ) {
         const cleanIds = (removedMemberIds as unknown[])
-          .filter((v): v is string => typeof v === 'string' && v.length > 0);
+          .filter((v): v is string => typeof v === 'string' && v.length > 0)
+          // Ketua tidak boleh dihapus dari daftar anggota: barisnya dipakai
+          // dosen untuk memberi nilai individu. Disaring lewat mahasiswaId
+          // (bukan kolom role) agar tetap aman meski role salah/berubah.
+          .filter((memberUserId) => memberUserId !== existingProject.mahasiswaId);
         if (cleanIds.length > 0) {
           await tx.projectMember.deleteMany({
             where: {
               projectId: id,
               userId: { in: cleanIds },
-              role: { not: 'OWNER' },
+              role: { not: PROJECT_ROLE_LEADER },
             },
           });
         }
